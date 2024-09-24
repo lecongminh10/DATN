@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
             $table->text('comment_text'); 
             $table->dateTime('comment_date')->nullable(); 
-            $table->json('images')->nullable(); $table->json('images')->nullable(); 
+            $table->json('images')->nullable();
             $table->softDeletes()->comment('Thời gian xóa mềm');
             $table->foreignId('deleted_by')->nullable()->constrained('users')->comment('Người thực hiện xóa mềm');
             $table->timestamps();
