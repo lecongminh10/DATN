@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('username')->unique()->comment('Tên đăng nhập');
             $table->string('email')->unique()->comment('Email');
             $table->string('password')->comment('Mật khẩu (đã mã hóa)');
-            $table->foreignId('permissions_id')->constrained('permissions')->comment('Khóa ngoại liên kết đến bảng permissions');
             $table->string('language')->nullable()->comment('Ngôn ngữ ưu tiên');
             $table->string('currency')->nullable()->comment('Tiền tệ ưu tiên');
             $table->integer('loyalty_points')->default(0)->comment('Điểm khách hàng thân thiết');
@@ -28,6 +27,7 @@ return new class extends Migration
             $table->string('gender')->nullable()->comment('Giới tính');
             $table->string('phone_number', 20)->nullable()->comment('Số điện thoại');
             
+            $table->rememberToken();
             $table->softDeletes()->comment('Thời gian xóa mềm');
             $table->foreignId('deleted_by')->nullable()->constrained('users')->comment('Người thực hiện xóa mềm');
             $table->timestamps();

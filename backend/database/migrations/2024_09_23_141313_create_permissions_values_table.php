@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permissions_value', function (Blueprint $table) {
+        Schema::create('permissions_values', function (Blueprint $table) {
             $table->id();
             $table->foreignId('permissions_id')->constrained('permissions')->comment('Khóa ngoại liên kết với bảng permissions');
             $table->string('value')->unique()->comment('Tên giá trị ');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions_value');
+        Schema::dropIfExists('permissions_values');
     }
 };
