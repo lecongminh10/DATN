@@ -26,6 +26,8 @@ return new class extends Migration
             $table->integer('view')->default(0)->comment('Số lượt xem');
             $table->integer('buycount')->default(0)->comment('Số lượng lượt mua');
             $table->integer('wishlistscount')->default(0)->comment('Số lượng lượt yêu thích');
+            $table->string('images')->comment('Ảnh sản phẩm');
+            $table->string('code')->comment('mã sản phẩm');
             $table->boolean('is_active')->default(true)->comment('Cờ kích hoạt sản phẩm');
             $table->boolean('is_hotdeal')->default(false)->comment('Trạng thái hot của sản phẩm');
             $table->boolean('is_homeview')->default(false)->comment('Trạng thái hiển thị ra màn hình chủ');
