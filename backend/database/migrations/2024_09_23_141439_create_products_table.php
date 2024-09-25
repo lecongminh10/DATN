@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('name')->comment('Tên sản phẩm');
             $table->text('short_description')->nullable()->comment('Mô tả ngắn');
             $table->longText('content')->comment('Mô tả chi tiết sản phẩm');
-            $table->string('sku')->unique()->comment('Mã SKU');
             $table->decimal('price_regular', 10, 2)->comment('Giá sản phẩm');
             $table->decimal('price_sale', 10, 2)->nullable()->comment('Giá giảm');
             $table->integer('stock')->comment('Số lượng tồn kho');
