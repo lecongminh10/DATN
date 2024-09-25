@@ -19,15 +19,18 @@ return new class extends Migration
             $table->string('language')->nullable()->comment('Ngôn ngữ ưu tiên');
             $table->string('currency')->nullable()->comment('Tiền tệ ưu tiên');
             $table->integer('loyalty_points')->default(0)->comment('Điểm khách hàng thân thiết');
-            $table->foreignId('created_by')->nullable()->constrained('users')->comment('Người tạo tài khoản');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->comment('Thời gian cập nhật tài khoản');
             $table->boolean('is_verified')->default(false)->comment('Cờ xác nhận email');
             $table->string('profile_picture')->nullable()->comment('URL hình ảnh hồ sơ');
             $table->date('date_of_birth')->nullable()->comment('Ngày sinh');
-            $table->string('gender')->nullable()->comment('Giới tính');
-            $table->string('phone_number', 20)->nullable()->comment('Số điện thoại');
-            
+            $table->enum('gender', ['male', 'female', 'other'])->nullable()->comment('Giới tính');
+            $table->string('phone_number', 11)->unique()->nullable()->comment('Số điện thoại');
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active')->comment('Trạng thái tài khoản');
+
             $table->rememberToken();
+            $table->timestamp('email_verified_at')->nullable()->comment('Thời gian xác nhận email');
+            $table->timestamp('last_login_at')->nullable()->comment('Thời gian đăng nhập cuối');
+            $table->foreignId('created_by')->nullable()->constrained('users')->comment('Người tạo tài khoản');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->comment('Thời gian cập nhật tài khoản');
             $table->softDeletes()->comment('Thời gian xóa mềm');
             $table->foreignId('deleted_by')->nullable()->constrained('users')->comment('Người thực hiện xóa mềm');
             $table->timestamps();

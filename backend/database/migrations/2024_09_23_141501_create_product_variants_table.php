@@ -19,6 +19,9 @@ return new class extends Migration
             $table->integer('stock')->comment('Số lượng tồn kho của biến thể');
             $table->string('sku')->unique()->comment('Mã SKU của biến thể');
          
+            $table->enum('status', ['available', 'out_of_stock', 'discontinued'])->default('available')->comment('Trạng thái của biến thể');
+            $table->json('variant_image')->nullable()->comment('Ảnh của biến thể sản phẩm');
+            
             $table->softDeletes()->comment('Thời gian xóa mềm');
             $table->foreignId('deleted_by')->nullable()->constrained('users')->comment('Người thực hiện xóa mềm');
             $table->timestamps(); 

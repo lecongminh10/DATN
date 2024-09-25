@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('applies_to', 20)->comment('Xác định phạm vi áp dụng (category, product, all)');
             $table->string('code')->unique()->comment('Mã giảm giá (mã định danh duy nhất)');
+            $table->string('description')->nullable()->comment('Mô tả mã giảm giá');
             $table->enum('discount_type', ['percentage', 'fixed_amount'])->comment('Loại giảm giá (theo %, số tiền cố định)');
             $table->decimal('discount_value', 10, 2)->comment('Giá trị giảm giá (phần trăm hoặc số tiền cố định)');
             $table->decimal('max_discount_amount', 10, 2)->nullable()->comment('Giảm giá tối đa (nếu là giảm phần trăm)');
@@ -25,7 +26,6 @@ return new class extends Migration
             $table->integer('per_user_limit')->nullable()->comment('Số lần tối đa mỗi người dùng có thể sử dụng mã');
             $table->boolean('is_active')->default(true)->comment('Trạng thái hoạt động của mã (true/false)');
             $table->boolean('is_stackable')->default(false)->comment('Mã có thể dùng chung với mã khác không (true/false)');
-            $table->boolean('is_auto_apply')->default(false)->comment('Tự động áp dụng mã nếu đủ điều kiện (true/false)');
             $table->boolean('eligible_users_only')->default(false)->comment('Mã chỉ dành cho một số người dùng được chọn (true/false)');
             $table->unsignedBigInteger('created_by')->comment('ID của người tạo mã giảm giá (liên kết với bảng users hoặc admins)');
           
