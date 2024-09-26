@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+
+    protected $table = 'categories';
+
     protected $fillable = [
         'name',
         'description',
@@ -23,5 +26,8 @@ class Category extends Model
         'deleted_at' => 'boolean'
     ];
 
-    
+    public function products() {
+        return $this->hasMany(Product::class);
+    }
+  
 }

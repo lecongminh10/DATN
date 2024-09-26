@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ProductGalleryService;
 use App\Services\ProductService;
 use App\Services\ProductVariantService;
+use App\Services\TagService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -14,18 +15,22 @@ use Illuminate\Http\UploadedFile;
 class ProductController extends Controller
 {
     protected $productService;
+    protected $tagService;
     protected $productVariantService;
     protected $productGalleryService;
 
-    const PATH_UPLOAD = '';
+    // const PATH_UPLOAD = 'public/products'; => sau mở lại
 
     public function __construct(
         ProductService $productService,
         ProductVariantService $productVariantService,
-        ProductGalleryService $productGalleryService
+        TagService $tagService,
+        ProductGalleryService $productGalleryService,
+
     ) {
         $this->productService = $productService;
         $this->productVariantService = $productVariantService;
+        $this->tagService = $tagService;
         $this->productGalleryService = $productGalleryService;
     }
     /**
@@ -41,64 +46,74 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $baseUrl = env('APP_URL') . '/storage';
+        // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
         $dataProduct = $request->except(['product_variants', 'product_galaries']);
 
         // Gán giá trị mặc định cho các trường boolean nếu không có
-        $dataProduct['is_active']       ??= 0;
-        $dataProduct['is_hotdeal']      ??= 0;
-        $dataProduct['is_homeview']     ??= 0;
-        $dataProduct['is_hotview']      ??= 0;
+        $dataProduct['is_active'] ??= 0;
+        $dataProduct['is_hot_deal'] ??= 0;
+        $dataProduct['is_show_home'] ??= 0;
+        $dataProduct['is_new'] ??= 0;
+        $dataProduct['is_good_deal'] ??= 0;
 
         // Xử lý slug(tạo slug)
-        // $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         }
 
         // Xử lý images
-        if (isset($dataProduct['images']) && $dataProduct['images'] instanceof UploadedFile) {
-            $relativePathProduct = $dataProduct['images']->store(self::PATH_UPLOAD);
-            $dataProduct['images'] = $baseUrl . '/' . str_replace('public/', '', $relativePathProduct);
-        }
-
-        $dataProductVariantsTmp = $request->product_variants;
-        $dataProductVariants = [];
-
-        foreach ($dataProductVariantsTmp as $key => $item) {
-            $tmp = explode('-', $key);
-            $dataProductVariants[] = [
-                'product_attribute_id' => $tmp[1],
-                'price_modifier' => $item['price_modifier'],
-                'stock' => $item['stock'] ?? 0,
-                'sku' => $item['sku'] ?? null,
-            ];
-        }
-
-        $dataProductGalleries = $request->product_galleries ?: [];
-        $product = $this->productService->saveOrUpdate($dataProduct);
-
-        // foreach ($dataProductVariants as $dataProductVariant) {
-        //     $dataProductVariant['product_id'] = $product->id;
-
+        // if (isset($dataProduct['images']) && $dataProduct['images'] instanceof UploadedFile) {
+        //     $relativePathProduct = $dataProduct['images']->store(self::PATH_UPLOAD);
+        //     $dataProduct['images'] = $baseUrl . '/' . str_replace('public/', '', $relativePathProduct);
         // }
 
+        $product = $this->productService->saveOrUpdate($dataProduct);
 
-        foreach ($dataProductGalleries as $image_gallery) {
-            $relativePath = $image_gallery->store(self::PATH_UPLOAD);
-            $dataProductGallery = $baseUrl . '/' . str_replace('public/', '', $relativePath);
-            $this->productGalleryService->saveOrUpdate([
-                'product_id' => $product->id,
-                'image_gallery' => $dataProductGallery
-            ]);
+        if ($request->has('product_variants')) {
+            $dataProductVariants = [];
+            foreach ($request->product_variants as $item) {
+
+                $dataProductVariants = [
+                    'product_id' => $product->id,
+                    'product_attribute_id' => $item['product_attribute_id'],
+                    'price_modifier' => $item['price_modifier'],
+                    'stock' => $item['stock'] ?? 0,
+                    'sku' => $item['sku'] ?? null,
+                    "status" => $item["status"] ?? 0,
+                ];
+                $this->productVariantService->saveOrUpdate($dataProductVariants);
+            }
 
         }
 
-        //$product = $this->productService->saveOrUpdate($dataProduct);// chưa có service 
+        if ($request->has('product_galaries')) {
+            foreach ($request->product_galaries as $image_gallery) {
+                // Kiểm tra nếu image_gallery là một file tải lên hợp lệ
+                if (isset($image_gallery['image_gallery'])) {
+
+                    // if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) => thay vào if
+                    // $relativePath = $image_gallery['image_gallery']->store(self::PATH_UPLOAD);
+                    // $dataProductGallery = $baseUrl . '/' . str_replace('public/', '', $relativePath); => khi muốn lưu và folder
+
+                    $dataProductGallery = $image_gallery['image_gallery'];
+                    $this->productGalleryService->saveOrUpdate([
+                        'product_id' => $product->id,
+                        'image_gallery' => $dataProductGallery,
+                        'is_main' => $image_gallery['is_main'] ?? 0,  // Thiết lập giá trị is_main
+                    ]);
+                }
+            }
+        }
+
+        if ($request->has('product_tags')) {
+                foreach ($request->product_tags as $tag_id) {
+                    $product->tags()->attach($tag_id);
+                }
+        }
 
         return response()->json([
-            'message' => 'Success',
-            'product' => $product
+                'message' => 'Success',
+                'product' => $product
         ], 201);
 
     }

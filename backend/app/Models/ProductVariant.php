@@ -17,6 +17,8 @@ class ProductVariant extends Model
         'price_modifier',
         'stock',
         'sku',
+        "status",
+        "variant_image",
         'deleted_at',
         'deleted_by'
     ];

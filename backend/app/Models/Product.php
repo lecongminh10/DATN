@@ -12,12 +12,11 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'category_id',
+        'category_id',  
         'code',
         'name',
         'short_description',
         'content',
-        'sku',
         'price_regular',
         'price_sale',
         'stock',
@@ -31,6 +30,7 @@ class Product extends Model
         'is_hot_deal',
         'is_show_home',
         'is_new',
+        'is_good_deal',
         'slug',
         'meta_title',
         'meta_description',
@@ -43,11 +43,18 @@ class Product extends Model
         'is_hot_deal' => 'boolean',
         'is_show_home' => 'boolean',
         'is_new' => 'boolean',
+        'is_good_deal' => 'boolean',
         'deleted_at' => 'boolean',
     ];
 
     public function catgories() {
         return $this->belongsTo(Category::class);
+    }
+
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');
     }
 
     public function galleries()
