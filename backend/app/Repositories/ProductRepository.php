@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Category;
 use App\Models\Product;
 
 
@@ -18,11 +19,39 @@ class ProductRepository extends BaseRepository
     }
 
 
-    // public function getAll()
-    // {
+    public function getAll($search = null, $perPage = null)
+    {
+        $query = Product::query();
 
-    //     return $this->model->all();
-    // }
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('code', 'LIKE', '%' . $search . '%')
+                    ->orWhere('short_description', 'LIKE', '%' . $search . '%')
+                    ->orWhere('content', 'LIKE', '%' . $search . '%');
+            });
+
+            // Lọc theo tên tag
+            $query->orWhereHas('tags', function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            });
+
+            // Lọc theo tên danh mục (categories)
+            $query->orWhereHas('category', function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            });
+
+            // Bạn có thể thêm điều kiện lọc theo các thuộc tính khác như biến thể
+            // $query->orWhereHas('variants', function ($q) use ($search) {
+            //     $q->where('color', 'LIKE', '%' . $search . '%')
+            //         ->orWhere('ram', 'LIKE', '%' . $search . '%');
+            // });
+        }
+
+        return $query->paginate($perPage);
+    }
+
+
 
     // public function getById($id)
     // {
