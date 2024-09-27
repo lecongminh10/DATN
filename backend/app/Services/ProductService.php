@@ -17,9 +17,10 @@ class ProductService extends BaseService
         $this ->productService = $productService;
     }
 
-    // public function getAll(){
-    //     return $this->productService->getAll();
-    // }
+    public function getSeachProduct($search, $perPage)
+    {
+        return $this->productService->getAll($search, $perPage);
+    }
 
     // public function deleteProduct(Product $product)
     // {

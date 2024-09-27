@@ -12,7 +12,7 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'category_id',  
+        'category_id',
         'code',
         'name',
         'short_description',
@@ -47,7 +47,8 @@ class Product extends Model
         'deleted_at' => 'boolean',
     ];
 
-    public function catgories() {
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
 

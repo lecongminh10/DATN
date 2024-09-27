@@ -19,5 +19,7 @@ use App\Http\Controllers\Api\Products\ProductController;
 //     return $request->user();
 // });
 
-Route::post('/products', [ProductController::class, 'store'])->name('store');
+Route::get('/list-product', [ProductController::class, 'index'])->name('index');
+
+Route::post('/add-products', [ProductController::class, 'store'])->name('store');
 

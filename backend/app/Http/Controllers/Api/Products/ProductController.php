@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Products;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Product;
 // use App\Models\Product;
 use App\Services\ProductGalleryService;
 use App\Services\ProductService;
@@ -36,10 +38,17 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->input('search');
+        $perPage = $request->input('perPage');
+        $products = $this->productService->getSeachProduct($search, $perPage);
+        return response()->json([
+            'message' => 'success',
+            'products' => $products,
+        ], 200);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -106,14 +115,14 @@ class ProductController extends Controller
         }
 
         if ($request->has('product_tags')) {
-                foreach ($request->product_tags as $tag_id) {
-                    $product->tags()->attach($tag_id);
-                }
+            foreach ($request->product_tags as $tag_id) {
+                $product->tags()->attach($tag_id);
+            }
         }
 
         return response()->json([
-                'message' => 'Success',
-                'product' => $product
+            'message' => 'Success',
+            'product' => $product
         ], 201);
 
     }
