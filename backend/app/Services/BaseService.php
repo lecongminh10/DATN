@@ -64,4 +64,9 @@ class BaseService
             throw $e;
         }
     }
+
+    public function getIdWithTrashed(int $id)
+    {
+        return $this->repository->getByIdWithTrashed($id); 
+    }
 }
