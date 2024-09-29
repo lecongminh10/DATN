@@ -76,4 +76,9 @@ class  BaseRepository
          throw $e;
       }
    }
+
+   public function getByIdWithTrashed(int $id)
+   {
+       return $this->model->withTrashed()->findOrFail($id); 
+   }
 }
