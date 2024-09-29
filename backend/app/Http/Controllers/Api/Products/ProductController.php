@@ -138,11 +138,88 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        // Tìm product bằng id
+        $product = $this->productService->getById($id);
+        if (!$product) {
+            return response()->json([
+                'message' => 'Product not found'
+            ], 404);
+        }
 
+        // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
+        $dataProduct = $request->except(['product_variants', 'product_galaries']);
+
+        // Gán giá trị mặc định cho các trường boolean nếu không có
+        $dataProduct['is_active'] ??= 0;
+        $dataProduct['is_hot_deal'] ??= 0;
+        $dataProduct['is_show_home'] ??= 0;
+        $dataProduct['is_new'] ??= 0;
+        $dataProduct['is_good_deal'] ??= 0;
+
+        // Xử lý slug(tạo slug)
+        if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
+            $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
+        }
+
+        // Cập nhật dữ liệu của product
+        $product = $this->productService->saveOrUpdate($dataProduct, $product->id);
+
+        // Xử lý cập nhật product variants
+        if ($request->has('product_variants')) {
+            foreach ($request->product_variants as $item) {
+                $dataProductVariant = [
+                    'product_id' => $product->id,
+                    'product_attribute_id' => $item['product_attribute_id'],
+                    'price_modifier' => $item['price_modifier'],
+                    'stock' => $item['stock'] ?? 0,
+                    'sku' => $item['sku'] ?? null,
+                    'status' => $item['status'] ?? 0,
+                ];
+
+                // Nếu có `id` thì cập nhật, nếu không có thì tạo mới
+                if (isset($item['id'])) {
+                    $this->productVariantService->saveOrUpdate($dataProductVariant, $item['id']);
+                } else {
+                    $this->productVariantService->saveOrUpdate($dataProductVariant);
+                }
+            }
+        }
+
+        // Xử lý cập nhật product galleries
+        if ($request->has('product_galaries')) {
+            foreach ($request->product_galaries as $image_gallery) {
+                // Kiểm tra nếu `image_gallery` là một file tải lên hợp lệ
+                if (isset($image_gallery['image_gallery'])) {
+                    $dataProductGallery = $image_gallery['image_gallery'];
+                    
+                    $galleryData = [
+                        'product_id' => $product->id,
+                        'image_gallery' => $dataProductGallery,
+                        'is_main' => $image_gallery['is_main'] ?? 0,  // Thiết lập giá trị is_main
+                    ];
+
+                    // Nếu có `id` thì cập nhật, nếu không có thì tạo mới
+                    if (isset($image_gallery['id'])) {
+                        $this->productGalleryService->saveOrUpdate($galleryData, $image_gallery['id']);
+                    } else {
+                        $this->productGalleryService->saveOrUpdate($galleryData);
+                    }
+                }
+            }
+        }
+
+        // Xử lý cập nhật product tags
+        if ($request->has('product_tags')) {
+            $product->tags()->sync($request->product_tags);
+        }
+
+        return response()->json([
+            'message' => 'Update successful',
+            'product' => $product
+        ], 200);
+    }
     /**
      * Remove the specified resource from storage.
      */
@@ -210,6 +287,6 @@ class ProductController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        
     }
 }
