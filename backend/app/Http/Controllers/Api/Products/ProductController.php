@@ -146,6 +146,68 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    public function deleteMuitpalt(Request $request)
+    {
+    // Xác thực yêu cầu
+    $request->validate([
+        'ids' => 'required|array',
+        'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
+        'action' => 'required|string', // Thêm xác thực cho trường action
+    ]);
+
+    // Lấy các ID và action từ yêu cầu
+    $ids = $request->input('ids'); // Lấy mảng ID
+    $action = $request->input('action'); // Lấy giá trị của trường action
+
+        if (count($ids) > 0) {
+            foreach ($ids as $id) {
+                switch ($action) {
+                    case 'soft_delete':
+                        foreach ($ids as $id) {
+                            $isSoftDeleted = $this->productService->isProductSoftDeleted($id);
+                            if(!$isSoftDeleted){
+                                Product::destroy($id); 
+                            }
+                        }
+                        return response()->json(['message' => 'Soft delete successful'], 200);
+        
+                    case 'hard_delete':
+                        foreach ($ids as $id) {
+                            $this->hardDelete($id); 
+                        }
+                        return response()->json(['message' => 'Hard erase successful'], 200);
+        
+                    default:
+                        return response()->json(['message' => 'Invalid action'], 400);
+                }
+            }
+            return response()->json(['message' => 'Categories deleted successfully'],200);
+        } else {
+            return response()->json(['message' => 'Error: No IDs provided'], 500);
+        }
+    }
+
+    public function hardDelete(int $id)
+    {
+         $data = $this->productService->getIdWithTrashed($id);
+    
+        if (!$data) {
+            return response()->json(['message' => 'Category not found.'], 404);
+        }
+    
+        // Xóa cứng category
+        $data->forceDelete();
+    
+        // Nếu cần, có thể xóa hình ảnh liên quan
+        // $currentImage = $data->image;
+        // $filename = basename($currentImage);
+        // if ($currentImage && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
+        //     Storage::delete(self::PATH_UPLOAD . '/' . $filename);
+        // }
+    
+        return response()->json(['message' => 'Delete with success'], 200);
+    }
+
     public function destroy(string $id)
     {
         //

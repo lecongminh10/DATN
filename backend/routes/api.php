@@ -23,3 +23,5 @@ Route::get('/list-product', [ProductController::class, 'index'])->name('index');
 
 Route::post('/add-products', [ProductController::class, 'store'])->name('store');
 
+Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('products.delete-multiple');
+
