@@ -51,6 +51,20 @@ class ProductRepository extends BaseRepository
         return $query->paginate($perPage);
     }
 
+    public function isSoftDeleted(int $id): bool
+    {
+        // Lấy product bao gồm cả các product đã bị xóa mềm
+        $product = $this->model->withTrashed()->findOrFail($id);
+
+        // Kiểm tra xem product có tồn tại và đã bị xóa mềm không
+        return $product ? $product->trashed() : false;
+    }
+
+    public function getByIdWithTrashed(int $id)
+   {
+       return $this->model->withTrashed()->findOrFail($id); 
+   }
+
 
 
     // public function getById($id)
