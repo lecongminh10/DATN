@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Category;
 use App\Models\Product;
 
 
@@ -18,11 +19,53 @@ class ProductRepository extends BaseRepository
     }
 
 
-    // public function getAll()
-    // {
+    public function getAll($search = null, $perPage = null)
+    {
+        $query = Product::query();
 
-    //     return $this->model->all();
-    // }
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('code', 'LIKE', '%' . $search . '%')
+                    ->orWhere('short_description', 'LIKE', '%' . $search . '%')
+                    ->orWhere('content', 'LIKE', '%' . $search . '%');
+            });
+
+            // Lọc theo tên tag
+            $query->orWhereHas('tags', function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            });
+
+            // Lọc theo tên danh mục (categories)
+            $query->orWhereHas('category', function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            });
+
+            // Bạn có thể thêm điều kiện lọc theo các thuộc tính khác như biến thể
+            // $query->orWhereHas('variants', function ($q) use ($search) {
+            //     $q->where('color', 'LIKE', '%' . $search . '%')
+            //         ->orWhere('ram', 'LIKE', '%' . $search . '%');
+            // });
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    public function isSoftDeleted(int $id): bool
+    {
+        // Lấy product bao gồm cả các product đã bị xóa mềm
+        $product = $this->model->withTrashed()->findOrFail($id);
+
+        // Kiểm tra xem product có tồn tại và đã bị xóa mềm không
+        return $product ? $product->trashed() : false;
+    }
+
+    public function getByIdWithTrashed(int $id)
+   {
+       return $this->model->withTrashed()->findOrFail($id); 
+   }
+
+
 
     // public function getById($id)
     // {
