@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Products\ProductController;
+use App\Http\Controllers\Api\Users\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,12 @@ use App\Http\Controllers\Api\Products\ProductController;
 
 Route::post('/products', [ProductController::class, 'store'])->name('store');
 
+
+
+// users
+Route::get('users', [UserController::class, 'index'])->name('index');
+Route::post('users', [UserController::class, 'store'])->name('store');
+Route::get('users/{id}', [UserController::class, 'show'])->name('show');
+Route::put('users/{id}', [UserController::class, 'update'])->name('update');
+Route::delete('users/{id}', [UserController::class, 'destroy'])->name('destroy');
+Route::delete('users/{id}/force', [UserController::class, 'forceDelete'])->name('forceDelete');
