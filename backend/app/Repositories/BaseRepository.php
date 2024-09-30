@@ -40,7 +40,7 @@ class  BaseRepository
             $result = $this->model->findOrFail($id);
             if ($result) {
                 $result->delete();
-            } 
+            }
          }
          DB::commit();
 
@@ -76,4 +76,6 @@ class  BaseRepository
          throw $e;
       }
    }
+
+
 }
