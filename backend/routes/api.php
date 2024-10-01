@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\AttributeController;
+use App\Http\Controllers\Api\Attributes\AttributeController;
 use App\Http\Controllers\Api\AttributeValueController;
 
 use App\Http\Controllers\Api\Categories\CategoryController;
@@ -38,17 +38,23 @@ Route::prefix('categories')->group(function () {
     Route::get('/{category}', [CategoryController::class, 'show'])->name('categories.show');
     Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-    Route::post('/delete-multiple', [CategoryController::class, 'deleteMuitpalt'])->name('categories.delete-multiple');// xóa mềm nhiều id cùng một lúc
+    Route::post('/delete-multiple', [CategoryController::class, 'deleteMuitpalt'])->name('categories.delete-multiple'); // xóa mềm nhiều id cùng một lúc
     Route::delete('/{category}/hard-delete', [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
 });
 
-
+//Attributes
 Route::prefix('attributes')->group(function () {
     Route::get('/', [AttributeController::class, 'index']);
     Route::get('/{id}', [AttributeController::class, 'show']);
     Route::post('/', [AttributeController::class, 'store']);
     Route::put('/{id}', [AttributeController::class, 'update']);
     Route::delete('/{id}', [AttributeController::class, 'destroy']);
-
-    Route::delete('/values/{id}', [AttributeController::class, 'destroyValue']);
+    //Delete
+    Route::post('/delete-multiple', [AttributeController::class, 'deleteMultiple']);
+    Route::delete('attributes/{id}/soft-delete', [AttributeController::class, 'softDelete']);
+    Route::delete('attributes/{id}/hard-delete', [AttributeController::class, 'hardDelete']);
 });
+//Delete AttributeValue
+Route::post('/attribute-value/delete-multiple', [AttributeController::class, 'deleteAttributeValueMultiple']);
+Route::delete('attribute-value/{id}/soft-delete', [AttributeController::class, 'deleteAttributeValueMultiple']);
+Route::delete('attribute-value/{id}/hard-delete', [AttributeController::class, 'hardDeleteAttributeValue']);

@@ -69,4 +69,6 @@ class BaseService
     {
         return $this->repository->getByIdWithTrashed($id); 
     }
+
+    
 }
