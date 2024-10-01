@@ -9,26 +9,26 @@ use Illuminate\Support\Facades\DB;
 
 class BaseService
 {
-    protected $repository;
+    protected $service;
 
-    public function __construct(BaseRepository $repository )
+    public function __construct(BaseRepository $service )
     {
-        $this ->repository = $repository;
+        $this ->service = $service;
     }
 
     public function getAll(){
 
-        return $this ->repository ->getAll();
+        return $this ->service ->getAll();
     }
 
     public function getById($id){
 
-        return $this ->repository ->getById($id);
+        return $this ->service ->getById($id);
     }
 
     public function paginate($perPage = 10)
     {
-        return $this->repository->paginate($perPage);
+        return $this->service->paginate($perPage);
     }
 
     public function saveOrUpdate(array $input , int $id = null){
@@ -36,9 +36,8 @@ class BaseService
             DB::beginTransaction();
             if(isset($id)){
                 $input['id'] = $id;
-                
             }
-            $result = $this->repository->saveOrUpdateItem($input , $id);
+            $result = $this->service->saveOrUpdateItem($input , $id);
             DB::commit();
             if($result){
                 return $result;
@@ -54,7 +53,7 @@ class BaseService
     public function delete(int $id){
         try{
             DB::beginTransaction();
-            $result = $this->repository->delete($id);
+            $result = $this->service->delete($id);
             DB::commit();
             return $result;
 
@@ -63,5 +62,10 @@ class BaseService
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function getIdWithTrashed(int $id)
+    {
+        return $this->repository->getByIdWithTrashed($id); 
     }
 }

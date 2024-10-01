@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('attributes_values', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_attributes')->comment('Khóa ngoại liên kết với bảng Attributes');
-            $table->string('attribute_value')->comment('Giá trị thuộc tính');
+            $table->string('attribute_value')->unique()->comment('Giá trị thuộc tính');
             $table->foreign('id_attributes')->references('id')->on('attributes')->onDelete('cascade');
 
             $table->softDeletes()->comment('Thời gian xóa mềm');
