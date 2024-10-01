@@ -11,6 +11,7 @@ use App\Services\TagService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -106,14 +107,14 @@ class ProductController extends Controller
         }
 
         if ($request->has('product_tags')) {
-                foreach ($request->product_tags as $tag_id) {
-                    $product->tags()->attach($tag_id);
-                }
+            foreach ($request->product_tags as $tag_id) {
+                $product->tags()->attach($tag_id);
+            }
         }
 
         return response()->json([
-                'message' => 'Success',
-                'product' => $product
+            'message' => 'Success',
+            'product' => $product
         ], 201);
 
     }
@@ -137,8 +138,106 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    // public function destroy(string $id)
+    // {
+    //     // Lấy thông tin sản phẩm
+    //     $product = $this->productService->getById($id);
+
+    //     if ($product) {
+    //         // Xóa mềm các biến thể của sản phẩm (nếu có)
+    //         $product->variants()->delete();
+
+    //         // Xóa mềm các ảnh liên quan đến sản phẩm
+    //         $product->galleries()->delete();
+
+    //         // Xóa mềm chính sản phẩm
+    //         $product->delete();
+
+    //         return redirect()->back()->with('success', 'Sản phẩm và các ảnh liên quan đã được xóa mềm.');
+    //     }
+
+    //     return redirect()->back()->with('error', 'Sản phẩm không tồn tại.');
+    // }
+
+    public function destroy(int $id)
     {
-        //
+        $data = $this->productService->getIdWithTrashed($id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+        $data->delete();
+        if ($data->trashed()) {
+            return response()->json(['message' => 'Product soft deleted successfully'], 200);
+        }
+
+        return response()->json(['message' => 'Product permanently deleted and cover file removed'], 200);
     }
+
+    public function deleteMuitpalt(Request $request)
+    {
+        // Xác thực yêu cầu
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
+            'action' => 'required|string', // Thêm xác thực cho trường action
+        ]);
+    
+        // Lấy các ID và action từ yêu cầu
+        $ids = $request->input('ids'); // Lấy mảng ID
+        $action = $request->input('action'); // Lấy giá trị của trường action
+    
+        if (count($ids) > 0) {
+            foreach ($ids as $id) {
+                // Đảm bảo $id là số nguyên trước khi gọi hàm
+                if (is_int($id)) {
+                    switch ($action) {
+                        case 'soft_delete':
+                            $isSoftDeleted = $this->productService->isProductSoftDeleted($id);
+                            if (!$isSoftDeleted) {
+                                $this->destroy($id);  // Gọi destroy nếu chưa bị soft delete
+                            }
+                            break;
+    
+                        case 'hard_delete':
+                            $this->hardDelete($id); // Gọi hardDelete
+                            break;
+    
+                        default:
+                            return response()->json(['message' => 'Invalid action'], 400);
+                    }
+                } else {
+                    // Nếu có $id không hợp lệ, trả về lỗi
+                    return response()->json(['message' => 'Invalid ID format'], 400);
+                }
+            }
+            return response()->json(['message' => 'Products deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Error: No IDs provided'], 500);
+        }
+    }
+    
+
+    public function hardDelete(int $id)
+    {
+        $data = $this->productService->getIdWithTrashed($id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Product not found.'], 404);
+        }
+
+        // Xóa cứng sản phẩm
+        $data->forceDelete();
+
+        // Nếu cần, có thể xóa hình ảnh liên quan
+        // $currentImage = $data->image;
+        // $filename = basename($currentImage);
+        // if ($currentImage && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
+        //     Storage::delete(self::PATH_UPLOAD . '/' . $filename);
+        // }
+
+        return response()->json(['message' => 'Delete with success'], 200);
+    }
+
+
 }

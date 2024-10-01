@@ -17,6 +17,18 @@ class ProductService extends BaseService
         $this ->productService = $productService;
     }
 
+
+    public function getIdWithTrashed($id)
+    {
+        return Product::withTrashed()->find($id);
+    }
+
+    public function isProductSoftDeleted($id)
+    {
+        $product = Product::withTrashed()->find($id);
+        return $product ? $product->trashed() : false;
+    }
+
     // public function getAll(){
     //     return $this->productService->getAll();
     // }
