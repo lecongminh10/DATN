@@ -21,3 +21,7 @@ use App\Http\Controllers\Api\Products\ProductController;
 
 Route::post('/products', [ProductController::class, 'store'])->name('store');
 
+
+Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+Route::delete('/hardDelete/{id}', [ProductController::class, 'hardDelete'])->name('products.hardDelete');
+Route::post('/products/delete-multiple', [ProductController::class, 'deleteMuitpalt']);
