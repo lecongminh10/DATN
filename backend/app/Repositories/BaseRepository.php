@@ -40,7 +40,7 @@ class  BaseRepository
             $result = $this->model->findOrFail($id);
             if ($result) {
                 $result->delete();
-            } 
+            }
          }
          DB::commit();
 
@@ -79,6 +79,6 @@ class  BaseRepository
 
    public function getByIdWithTrashed(int $id)
    {
-       return $this->model->withTrashed()->findOrFail($id); 
+       return $this->model->withTrashed()->findOrFail($id);
    }
 }
