@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\PermissionValue;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,35 +12,40 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable ,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'users';
+
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
+        'language',
+        'currency',
+        'loyalty_points',
+        'is_verified',
+        'profile_picture',
+        'date_of_birth',
+        'gender',
+        'phone_number',
+        'status',
         'remember_token',
+        'email_verified_at',
+        'last_login_at',
+        'created_by',
+        'updated_by',
+        'deleted_at',
+        'deleted_by',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'is_verified' => 'boolean',
+        'deleted_at' => 'boolean'
     ];
+
+    public function permissionsValues()
+    {
+        return $this->belongsToMany(PermissionValue::class, 'permissions_value_users', 'user_id', 'permission_value_id')
+                    ->withTimestamps();
+    }
 }

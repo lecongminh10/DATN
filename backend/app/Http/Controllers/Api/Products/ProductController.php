@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Products;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
-// use App\Models\Product;
 use App\Services\ProductGalleryService;
 use App\Services\ProductService;
 use App\Services\ProductVariantService;
@@ -13,6 +12,7 @@ use App\Services\TagService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+
 
 class ProductController extends Controller
 {
@@ -221,6 +221,21 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    public function destroy(int $id)
+    {
+        $data = $this->productService->getIdWithTrashed($id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+        $data->delete();
+        if ($data->trashed()) {
+            return response()->json(['message' => 'Product soft deleted successfully'], 200);
+        }
+
+        return response()->json(['message' => 'Product permanently deleted and cover file removed'], 200);
+    }
+
     public function deleteMuitpalt(Request $request)
     {
         // Xác thực yêu cầu
@@ -229,18 +244,28 @@ class ProductController extends Controller
             'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
             'action' => 'required|string', // Thêm xác thực cho trường action
         ]);
+<<<<<<< HEAD
 
         // Lấy các ID và action từ yêu cầu
         $ids = $request->input('ids'); // Lấy mảng ID
         $action = $request->input('action'); // Lấy giá trị của trường action
 
+=======
+    
+        // Lấy các ID và action từ yêu cầu
+        $ids = $request->input('ids'); // Lấy mảng ID
+        $action = $request->input('action'); // Lấy giá trị của trường action
+    
+>>>>>>> 19445f900723eb584e14270fabec89f8009f9537
         if (count($ids) > 0) {
             foreach ($ids as $id) {
-                switch ($action) {
-                    case 'soft_delete':
-                        foreach ($ids as $id) {
+                // Đảm bảo $id là số nguyên trước khi gọi hàm
+                if (is_int($id)) {
+                    switch ($action) {
+                        case 'soft_delete':
                             $isSoftDeleted = $this->productService->isProductSoftDeleted($id);
                             if (!$isSoftDeleted) {
+<<<<<<< HEAD
                                 Product::destroy($id);
                             }
                         }
@@ -257,20 +282,44 @@ class ProductController extends Controller
                 }
             }
             return response()->json(['message' => 'Categories deleted successfully'], 200);
+=======
+                                $this->destroy($id);  // Gọi destroy nếu chưa bị soft delete
+                            }
+                            break;
+    
+                        case 'hard_delete':
+                            $this->hardDelete($id); // Gọi hardDelete
+                            break;
+    
+                        default:
+                            return response()->json(['message' => 'Invalid action'], 400);
+                    }
+                } else {
+                    // Nếu có $id không hợp lệ, trả về lỗi
+                    return response()->json(['message' => 'Invalid ID format'], 400);
+                }
+            }
+            return response()->json(['message' => 'Products deleted successfully'], 200);
+>>>>>>> 19445f900723eb584e14270fabec89f8009f9537
         } else {
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
     }
+    
 
     public function hardDelete(int $id)
     {
         $data = $this->productService->getIdWithTrashed($id);
 
         if (!$data) {
-            return response()->json(['message' => 'Category not found.'], 404);
+            return response()->json(['message' => 'Product not found.'], 404);
         }
 
+<<<<<<< HEAD
         // Xóa cứng category
+=======
+        // Xóa cứng sản phẩm
+>>>>>>> 19445f900723eb584e14270fabec89f8009f9537
         $data->forceDelete();
 
         // Nếu cần, có thể xóa hình ảnh liên quan
@@ -283,5 +332,9 @@ class ProductController extends Controller
         return response()->json(['message' => 'Delete with success'], 200);
     }
 
+<<<<<<< HEAD
     public function destroy(string $id) {}
+=======
+
+>>>>>>> 19445f900723eb584e14270fabec89f8009f9537
 }
