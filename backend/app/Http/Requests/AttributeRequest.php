@@ -24,7 +24,7 @@ class AttributeRequest extends FormRequest
         return [
             'attribute_name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255', 
-            'attribute_value.*' => 'string|max:255',
+            'attribute_value' => 'array|max:255',
         ];
     }
 

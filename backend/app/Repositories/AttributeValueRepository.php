@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Attribute;
 use App\Models\AttributeValue;
 
 class AttributeValueRepository extends BaseRepository
@@ -13,9 +14,18 @@ class AttributeValueRepository extends BaseRepository
         parent::__construct($atributeValue);
         $this->model = $atributeValue;
     }
-
-    public function getByAttributeId($attributeId)
+    public function deleteValues(array $ids)
     {
-        return $this->model->where('id_attributes', $attributeId)->get();
+        return $this->model->destroy($ids);
+    }
+
+    public function find($id)
+    {
+        return $this->model->find($id);
+    }
+    public function isSoftDeleted(int $id): bool
+    {
+        $attributeValue = $this->model->withTrashed()->findOrFail($id);
+        return $attributeValue ? $attributeValue->trashed() : false;
     }
 }

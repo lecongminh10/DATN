@@ -28,5 +28,16 @@ class AttributeRepository extends BaseRepository
         return $query->paginate($perPage);
     }
 
+    public function find($id)
+    {
+        return $this->model->find($id);
+    }
+
+    public function isSoftDeleted(int $id): bool
+    {
+        $attribute = $this->model->withTrashed()->findOrFail($id);
+        return $attribute ? $attribute->trashed() : false;
+    }
+
 }
 
