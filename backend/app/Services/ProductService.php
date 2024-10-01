@@ -17,21 +17,20 @@ class ProductService extends BaseService
         $this ->productService = $productService;
     }
 
-
-    public function getIdWithTrashed($id)
+    public function getSeachProduct($search, $perPage)
     {
-        return Product::withTrashed()->find($id);
+        return $this->productService->getAll($search, $perPage);
     }
 
-    public function isProductSoftDeleted($id)
+    public function isProductSoftDeleted(int $id): bool
     {
-        $product = Product::withTrashed()->find($id);
-        return $product ? $product->trashed() : false;
+        return $this->productService->isSoftDeleted($id); // Gọi phương thức kiểm tra trong repository
     }
 
-    // public function getAll(){
-    //     return $this->productService->getAll();
-    // }
+    public function getIdWithTrashed(int $id)
+    {
+        return $this->productService->getByIdWithTrashed($id); 
+    }
 
     // public function deleteProduct(Product $product)
     // {
