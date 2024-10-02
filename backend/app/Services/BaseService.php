@@ -66,6 +66,8 @@ class BaseService
 
     public function getIdWithTrashed(int $id)
     {
-        return $this->repository->getByIdWithTrashed($id); 
+        return $this->service->getByIdWithTrashed($id); // Trc là sửa cái này
     }
+
+    
 }

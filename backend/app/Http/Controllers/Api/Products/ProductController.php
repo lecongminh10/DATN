@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Products;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Services\CategoryService;
 use App\Models\Product;
 use App\Services\ProductGalleryService;
 use App\Services\ProductService;
@@ -20,6 +21,8 @@ class ProductController extends Controller
     protected $tagService;
     protected $productVariantService;
     protected $productGalleryService;
+
+    protected $categoryService;
 
     // const PATH_UPLOAD = 'public/products'; => sau mở lại
 
@@ -40,19 +43,45 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+
         $search = $request->input('search');
         $perPage = $request->input('perPage');
         $products = $this->productService->getSeachProduct($search, $perPage);
-        return response()->json([
-            'message' => 'success',
-            'products' => $products,
-        ], 200);
+        // dd($products);
+        // return response()->json([
+        //     'message' => 'success',
+        //     'products' => $products,
+        // ], 200);
+        return view('admin.products.list-product')->with([
+            'products' => $products
+        ]);
+    }
+
+    public function showProduct(int $id)
+    {
+        $data = $this->productService->getById($id);
+        // return response()->json([
+        //     'message' => 'success',
+        //     'data' => $data,
+        // ], 200);
+        return view('admin.products.show-product')->with([
+            'data' => $data
+        ]);
     }
 
 
     /**
      * Store a newly created resource in storage.
      */
+
+    // public function showAdd()
+    // {
+    //     $category = $this->categoryService->getAll();
+    //     return view('admin.products.add-product')->with([
+    //         'categories' => $category
+    //     ]);
+    // }
+
     public function store(Request $request)
     {
         // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
@@ -148,6 +177,7 @@ class ProductController extends Controller
             ], 404);
         }
 
+
         // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
         $dataProduct = $request->except(['product_variants', 'product_galaries']);
 
@@ -193,7 +223,7 @@ class ProductController extends Controller
                 // Kiểm tra nếu `image_gallery` là một file tải lên hợp lệ
                 if (isset($image_gallery['image_gallery'])) {
                     $dataProductGallery = $image_gallery['image_gallery'];
-                    
+
                     $galleryData = [
                         'product_id' => $product->id,
                         'image_gallery' => $dataProductGallery,
@@ -212,9 +242,36 @@ class ProductController extends Controller
 
         // Xử lý cập nhật product tags
         if ($request->has('product_tags')) {
-            $product->tags()->sync($request->product_tags);
-        }
+            $product = Product::with('tags')->find($id);
+            if ($product != null) {
+                $product_tags_currents=[];
+                if( $product->tags){
+                    $product_tags_currents = $product->tags->pluck('id')->toArray();
+                }
+                $newTags = $request->input('product_tags'); 
+                $tagsToAdd = [];
+                $tagsToRemove = [];
 
+                foreach ($newTags as $newTag) {
+                    if (!in_array($newTag, $product_tags_currents)) {
+                        $tagsToAdd[] = $newTag;
+                    }
+                }
+                foreach ($product_tags_currents as $currentTag) {
+                    if (!in_array($currentTag, $newTags)) {
+                        $tagsToRemove[] = $currentTag;
+                    }
+                }
+
+                if (count($tagsToRemove) > 0) {
+                    $product->tags()->detach($tagsToRemove);  
+                }
+                if (count($tagsToAdd) > 0) {
+                    $product->tags()->attach($tagsToAdd);  
+                }
+            }
+        }
+        
         return response()->json([
             'message' => 'Update successful',
             'product' => $product
@@ -223,6 +280,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy(int $id)
     {
         $data = $this->productService->getIdWithTrashed($id);
@@ -246,33 +304,31 @@ class ProductController extends Controller
             'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
             'action' => 'required|string', // Thêm xác thực cho trường action
         ]);
-    
+
         // Lấy các ID và action từ yêu cầu
         $ids = $request->input('ids'); // Lấy mảng ID
         $action = $request->input('action'); // Lấy giá trị của trường action
-    
+
         if (count($ids) > 0) {
             foreach ($ids as $id) {
-                // Đảm bảo $id là số nguyên trước khi gọi hàm
-                if (is_int($id)) {
-                    switch ($action) {
-                        case 'soft_delete':
+                switch ($action) {
+                    case 'soft_delete':
+                        foreach ($ids as $id) {
                             $isSoftDeleted = $this->productService->isProductSoftDeleted($id);
                             if (!$isSoftDeleted) {
-                                $this->destroy($id);  // Gọi destroy nếu chưa bị soft delete
+                                $this->destroy($id);
                             }
-                            break;
-    
-                        case 'hard_delete':
-                            $this->hardDelete($id); // Gọi hardDelete
-                            break;
-    
-                        default:
-                            return response()->json(['message' => 'Invalid action'], 400);
-                    }
-                } else {
-                    // Nếu có $id không hợp lệ, trả về lỗi
-                    return response()->json(['message' => 'Invalid ID format'], 400);
+                        }
+                        return response()->json(['message' => 'Soft delete successful'], 200);
+
+                    case 'hard_delete':
+                        foreach ($ids as $id) {
+                            $this->hardDelete($id);
+                        }
+                        return response()->json(['message' => 'Hard erase successful'], 200);
+
+                    default:
+                        return response()->json(['message' => 'Invalid action'], 400);
                 }
             }
             return response()->json(['message' => 'Products deleted successfully'], 200);
@@ -280,7 +336,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
     }
-    
+
 
     public function hardDelete(int $id)
     {

@@ -21,25 +21,26 @@ class ProductRepository extends BaseRepository
 
     public function getAll($search = null, $perPage = null)
     {
-        $query = Product::query();
+
+        $query = Product::select('products.*', 'categories.name as category_name')
+            ->join('categories', 'categories.id', '=', 'products.category_id');
+
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('code', 'LIKE', '%' . $search . '%')
-                    ->orWhere('short_description', 'LIKE', '%' . $search . '%')
-                    ->orWhere('content', 'LIKE', '%' . $search . '%');
+                $q->where('products.name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('products.code', 'LIKE', '%' . $search . '%')
+                    ->orWhere('products.short_description', 'LIKE', '%' . $search . '%')
+                    ->orWhere('products.content', 'LIKE', '%' . $search . '%');
             });
 
             // Lọc theo tên tag
             $query->orWhereHas('tags', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
+                $q->where('tags.name', 'LIKE', '%' . $search . '%');
             });
 
             // Lọc theo tên danh mục (categories)
-            $query->orWhereHas('category', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
-            });
+            $query->orWhere('categories.name', 'LIKE', '%' . $search . '%');
 
             // Bạn có thể thêm điều kiện lọc theo các thuộc tính khác như biến thể
             // $query->orWhereHas('variants', function ($q) use ($search) {
@@ -61,9 +62,9 @@ class ProductRepository extends BaseRepository
     }
 
     public function getByIdWithTrashed(int $id)
-   {
-       return $this->model->withTrashed()->findOrFail($id); 
-   }
+    {
+        return $this->model->withTrashed()->findOrFail($id);
+    }
 
 
 
