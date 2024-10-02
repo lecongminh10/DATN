@@ -66,8 +66,11 @@ class BaseService
 
     public function getIdWithTrashed(int $id)
     {
-        return $this->service->getByIdWithTrashed($id); // Trc là sửa cái này
+        return $this->service->getByIdWithTrashed($id);
     }
-
+    
+    public function isSoftDeleted(int $id){
+        return $this->service->isSoftDeleted($id);
+    }
     
 }

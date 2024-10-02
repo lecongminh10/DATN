@@ -27,11 +27,6 @@ class UserService extends BaseService
         return $this->userService->create($data);
     }
 
-    public function getUserById($id)
-    {
-        return $this->userService->findById($id);
-    }
-
     public function updateUser($id, array $data)
     {
         return $this->userService->update($id, $data);
