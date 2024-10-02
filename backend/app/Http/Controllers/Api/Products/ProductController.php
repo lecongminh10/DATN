@@ -121,7 +121,6 @@ class ProductController extends Controller
                 ];
                 $this->productVariantService->saveOrUpdate($dataProductVariants);
             }
-
         }
 
         if ($request->has('product_galaries')) {
@@ -153,7 +152,6 @@ class ProductController extends Controller
             'message' => 'Success',
             'product' => $product
         ], 201);
-
     }
 
     /**
@@ -346,7 +344,11 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found.'], 404);
         }
 
+<<<<<<< HEAD
+        // Xóa cứng category
+=======
         // Xóa cứng sản phẩm
+>>>>>>> 19445f900723eb584e14270fabec89f8009f9537
         $data->forceDelete();
 
         // Nếu cần, có thể xóa hình ảnh liên quan
@@ -359,5 +361,9 @@ class ProductController extends Controller
         return response()->json(['message' => 'Delete with success'], 200);
     }
 
+<<<<<<< HEAD
+    public function destroy(string $id) {}
+=======
 
+>>>>>>> 19445f900723eb584e14270fabec89f8009f9537
 }
