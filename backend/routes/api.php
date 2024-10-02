@@ -26,13 +26,13 @@ use App\Http\Controllers\Api\PermissionController;
 // });
 
 // Products
-Route::prefix('products')->group(function () {
-    Route::get('/list-product', [ProductController::class, 'index'])->name('index');
-    Route::get('/{id}', [ProductController::class, 'showProduct'])->name('products.show');
-    Route::post('/add-products', [ProductController::class, 'store'])->name('store');
-    Route::put('/{id}', [ProductController::class, 'update'])->name('products.update');
-    Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('products.delete-multiple');
-});
+// Route::prefix('products')->group(function () {
+//     Route::get('/list-product', [ProductController::class, 'index'])->name('index');
+//     Route::get('/{id}', [ProductController::class, 'showProduct'])->name('products.show');
+//     Route::post('/add-products', [ProductController::class, 'store'])->name('store');
+//     Route::put('/{id}', [ProductController::class, 'update'])->name('products.update');
+//     Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('products.delete-multiple');
+// });
 
 // users
 Route::group(['prefix' => 'api'], function () {
@@ -55,29 +55,29 @@ Route::prefix('categories')->group(function () {
     Route::delete('/{category}/hard-delete', [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
 });
 //Attributes
-Route::prefix('attributes')->group(function () {
-    Route::get('/', [AttributeController::class, 'index']);
-    Route::get('/{id}', [AttributeController::class, 'show']);
-    Route::post('/', [AttributeController::class, 'store']);
-    Route::put('/{id}', [AttributeController::class, 'update']);
-    Route::delete('/{id}', [AttributeController::class, 'destroy']);
-    Route::delete('/values/{id}', [AttributeController::class, 'destroyValue']);
-    Route::post('/delete-multiple', [AttributeController::class, 'deleteMultiple']);
-    Route::delete('/{id}/soft-delete', [AttributeController::class, 'softDelete']);
-    Route::delete('/{id}/hard-delete', [AttributeController::class, 'hardDelete']);
+// Route::prefix('attributes')->group(function () {
+//     Route::get('/', [AttributeController::class, 'index']);
+//     Route::get('/{id}', [AttributeController::class, 'show']);
+//     Route::post('/', [AttributeController::class, 'store']);
+//     Route::put('/{id}', [AttributeController::class, 'update']);
+//     Route::delete('/{id}', [AttributeController::class, 'destroy']);
+//     Route::delete('/values/{id}', [AttributeController::class, 'destroyValue']);
+//     Route::post('/delete-multiple', [AttributeController::class, 'deleteMultiple']);
+//     Route::delete('/{id}/soft-delete', [AttributeController::class, 'softDelete']);
+//     Route::delete('/{id}/hard-delete', [AttributeController::class, 'hardDelete']);
 
-    //AtributeValue
-    Route::post('/attribute-value/delete-multiple', [AttributeController::class, 'deleteAttributeValueMultiple']);
-    Route::delete('attribute-value/{id}/soft-delete', [AttributeController::class, 'deleteAttributeValueMultiple']);
-    Route::delete('attribute-value/{id}/hard-delete', [AttributeController::class, 'hardDeleteAttributeValue']);
+//     //AtributeValue
+//     Route::post('/attribute-value/delete-multiple', [AttributeController::class, 'deleteAttributeValueMultiple']);
+//     Route::delete('attribute-value/{id}/soft-delete', [AttributeController::class, 'deleteAttributeValueMultiple']);
+//     Route::delete('attribute-value/{id}/hard-delete', [AttributeController::class, 'hardDeleteAttributeValue']);
 
-});
+// });
 
 Route::prefix('permissions')->group(function () {
     Route::get('/', [PermissionController::class, 'index']);
     Route::get('/{id}', [PermissionController::class, 'show']);
-    Route::post('/', [PermissionController::class, 'storeOrUpdate']);
-    Route::put('/{id}', [PermissionController::class, 'storeOrUpdate']);
+    Route::post('/', [PermissionController::class, 'store']);
+    Route::put('/{id}', [PermissionController::class, 'Update']);
     Route::delete('/{id}', [PermissionController::class, 'destroy']); // xóa mềm perrmission
     Route::post('/deleteMutipath',[PermissionController::class,'detroyPermissionValue']); // xóa mềm permission value
     Route::post('/deletePermission/{id}',[PermissionController::class,'deletePermission']); //xóa cứng permission

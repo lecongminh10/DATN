@@ -25,10 +25,7 @@ class PermissionController extends Controller
         $search = $request->input('search');
         $perPage = $request->input('perPage');
         $permission = $this->permissionService->getSeachPermission($search, $perPage);
-        return response()->json([
-            'message' => 'success',
-            'permission' => $permission,
-        ], 200);
+        return view();
     }
 
     public function show($id)
@@ -37,38 +34,54 @@ class PermissionController extends Controller
         return response()->json($permission);
     }
 
-    public function storeOrUpdate(PermissionRequest $request, $id = null)
+    public function store(PermissionRequest $request)
     {
-        // Lưu hoặc cập nhật permission
-        if ($id) {
-            $permissions = $this->permissionService->saveOrUpdate($request->all(), $id);
-        } else {
-            $permissions = $this->permissionService->saveOrUpdate($request->all());
-        }
+        // Lưu permission mới
+        $permissions = $this->permissionService->saveOrUpdate($request->all());
         $permissionsValuesResponse = [];
+
+        // Lưu các permission_values nếu có
         if ($request->has('permissions_values')) {
             foreach ($request->permissions_values as $item) {
                 $permissionValue = [
                     'permissions_id' => $permissions->id,
                     'value' => $item['value']
                 ];
+                $result = $this->permissionValueService->saveOrUpdate($permissionValue);
+                if ($result) {
+                    $permissionsValuesResponse[] = $permissionValue; // Lưu lại permission value nếu thành công
+                } else {
+                    return response()->json(['error' => 'Failed to save permission value.'], 500);
+                }
+            }
+        }
+
+        return response()->json([
+            'permissions' => $permissions,
+            'permissions_values' => $permissionsValuesResponse
+        ], 201);
+    }
+    public function update(PermissionRequest $request, $id)
+    {
+        // Cập nhật permission
+        $permissions = $this->permissionService->saveOrUpdate($request->all(), $id);
+        $permissionsValuesResponse = [];
+
+        // Cập nhật các permission_values nếu có
+        if ($request->has('permissions_values')) {
+            foreach ($request->permissions_values as $item) {
+                $permissionValue = [
+                    'permissions_id' => $permissions->id,
+                    'value' => $item['value']
+                ];
+
                 if (isset($item['id'])) {
-                    // Cập nhật permissions_value
+                    // Cập nhật permission_value nếu đã tồn tại
                     $result = $this->permissionValueService->saveOrUpdate($permissionValue, $item['id']);
                     if ($result) {
                         $permissionsValuesResponse[] = $permissionValue; // Lưu lại permission value nếu thành công
                     } else {
                         return response()->json(['error' => 'Failed to update permission value.'], 500);
-                    }
-                } else {
-                    // Thêm mới permissions_value
-                    $result = $this->permissionValueService->saveOrUpdate($permissionValue); // Giả sử bạn có phương thức saveOrUpdate
-
-                    // Kiểm tra xem permission_value có lưu thành công không
-                    if ($result) {
-                        $permissionsValuesResponse[] = $permissionValue; // Lưu lại permission value nếu thành công
-                    } else {
-                        return response()->json(['error' => 'Failed to save permission value.'], 500);
                     }
                 }
             }
@@ -76,7 +89,7 @@ class PermissionController extends Controller
         return response()->json([
             'permissions' => $permissions,
             'permissions_values' => $permissionsValuesResponse
-        ], 201);
+        ], 200);
     }
     public function destroy($id)
     {

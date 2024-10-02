@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Products;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -48,13 +48,13 @@ class ProductController extends Controller
         $perPage = $request->input('perPage');
         $products = $this->productService->getSeachProduct($search, $perPage);
         // dd($products);
-        // return response()->json([
-        //     'message' => 'success',
-        //     'products' => $products,
-        // ], 200);
-        return view('admin.products.list-product')->with([
-            'products' => $products
-        ]);
+        return response()->json([
+            'message' => 'success',
+            'products' => $products,
+        ], 200);
+        // return view('admin.products.list-product')->with([
+        //     'products' => $products
+        // ]);
     }
 
     public function showProduct(int $id)
@@ -246,7 +246,7 @@ class ProductController extends Controller
                 if( $product->tags){
                     $product_tags_currents = $product->tags->pluck('id')->toArray();
                 }
-                $newTags = $request->input('product_tags'); 
+                $newTags = $request->input('product_tags');
                 $tagsToAdd = [];
                 $tagsToRemove = [];
 
@@ -262,14 +262,14 @@ class ProductController extends Controller
                 }
 
                 if (count($tagsToRemove) > 0) {
-                    $product->tags()->detach($tagsToRemove);  
+                    $product->tags()->detach($tagsToRemove);
                 }
                 if (count($tagsToAdd) > 0) {
-                    $product->tags()->attach($tagsToAdd);  
+                    $product->tags()->attach($tagsToAdd);
                 }
             }
         }
-        
+
         return response()->json([
             'message' => 'Update successful',
             'product' => $product
@@ -281,7 +281,7 @@ class ProductController extends Controller
 
     public function destroy(int $id)
     {
-        $data = $this->productService->getIdWithTrashed($id);
+        $data = $this->productService->getById($id);
 
         if (!$data) {
             return response()->json(['message' => 'Product not found'], 404);
@@ -321,7 +321,10 @@ class ProductController extends Controller
 
                     case 'hard_delete':
                         foreach ($ids as $id) {
-                            $this->hardDelete($id);
+                            $isSoftDeleted = $this->productService->isProductSoftDeleted($id);
+                            if($isSoftDeleted){
+                                $this->hardDelete($id);
+                            }
                         }
                         return response()->json(['message' => 'Hard erase successful'], 200);
 
@@ -343,12 +346,7 @@ class ProductController extends Controller
         if (!$data) {
             return response()->json(['message' => 'Product not found.'], 404);
         }
-
-<<<<<<< HEAD
         // Xóa cứng category
-=======
-        // Xóa cứng sản phẩm
->>>>>>> 19445f900723eb584e14270fabec89f8009f9537
         $data->forceDelete();
 
         // Nếu cần, có thể xóa hình ảnh liên quan
@@ -360,10 +358,4 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Delete with success'], 200);
     }
-
-<<<<<<< HEAD
-    public function destroy(string $id) {}
-=======
-
->>>>>>> 19445f900723eb584e14270fabec89f8009f9537
 }
