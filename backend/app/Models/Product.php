@@ -24,7 +24,6 @@ class Product extends Model
         'price_sale',
         'stock',
         'rating',
-        'tags',
         'warranty_period',
         'view',
         'buycount',
