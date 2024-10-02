@@ -22,15 +22,6 @@ class ProductService extends BaseService
         return $this->productService->getAll($search, $perPage);
     }
 
-    public function isProductSoftDeleted(int $id): bool
-    {
-        return $this->productService->isSoftDeleted($id); // Gọi phương thức kiểm tra trong repository
-    }
-
-    public function getIdWithTrashed(int $id)
-    {
-        return $this->productService->getByIdWithTrashed($id); 
-    }
 
     // public function deleteProduct(Product $product)
     // {

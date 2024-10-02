@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Categories;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -94,7 +94,7 @@ class CategoryController extends Controller
 
     public function destroy(int $id)
     {
-        $data = $this->categoryService->getIdWithTrashed($id);
+        $data = $this->categoryService->getById($id);
     
         if (!$data) {
             return response()->json(['message' => 'Category not found'], 404);
@@ -126,7 +126,7 @@ class CategoryController extends Controller
                 switch ($action) {
                     case 'soft_delete':
                         foreach ($ids as $id) {
-                            $isSoftDeleted = $this->categoryService->isCategorySoftDeleted($id);
+                            $isSoftDeleted = $this->categoryService->isSoftDeleted($id);
                             if(!$isSoftDeleted){
                                 $this->destroy($id); 
                             }
@@ -135,7 +135,10 @@ class CategoryController extends Controller
         
                     case 'hard_delete':
                         foreach ($ids as $id) {
-                            $this->hardDelete($id); 
+                            $isSoftDeleted = $this->categoryService->isSoftDeleted($id);
+                            if( $isSoftDeleted){
+                                $this->hardDelete($id);
+                            } 
                         }
                         return response()->json(['message' => 'Hard erase successful'], 200);
         
