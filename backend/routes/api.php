@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\AttributeController;
+use App\Http\Controllers\Api\Attributes\AttributeController;
 use App\Http\Controllers\Api\AttributeValueController;
 
 use App\Http\Controllers\Api\Categories\CategoryController;
@@ -54,7 +54,6 @@ Route::prefix('categories')->group(function () {
     Route::post('/delete-multiple', [CategoryController::class, 'deleteMuitpalt'])->name('categories.delete-multiple'); // xóa mềm nhiều id cùng một lúc
     Route::delete('/{category}/hard-delete', [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
 });
-
 //Attributes
 Route::prefix('attributes')->group(function () {
     Route::get('/', [AttributeController::class, 'index']);
@@ -84,4 +83,3 @@ Route::prefix('permissions')->group(function () {
     Route::post('/deletePermission/{id}',[PermissionController::class,'deletePermission']); //xóa cứng permission
     Route::post('/deletePervalue',[PermissionController::class,'detroyValuePermission']); // xóa cứng permission value
 });
-
