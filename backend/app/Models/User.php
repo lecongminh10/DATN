@@ -14,6 +14,9 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    const TYPE_ADMIN = 'admin_role';
+    const TYPE_SUBADMIN = 'sub_admin_role';
+    const TYPE_CLIENT = 'client_role';
     protected $table = 'users';
 
     protected $fillable = [
@@ -47,5 +50,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(PermissionValue::class, 'permissions_value_users', 'user_id', 'permission_value_id')
                     ->withTimestamps();
+    }
+
+    public function isAdmin()
+    {
+        return $this->permissionsValues()
+                    ->whereIn('value', [self::TYPE_ADMIN, self::TYPE_SUBADMIN])
+                    ->exists();
     }
 }

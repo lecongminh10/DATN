@@ -35,9 +35,7 @@ class ProductController extends Controller
         $this->tagService = $tagService;
         $this->productGalleryService = $productGalleryService;
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -49,10 +47,6 @@ class ProductController extends Controller
         ], 200);
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
@@ -127,20 +121,14 @@ class ProductController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        // Tìm product bằng id
+       // Tìm product bằng id
         $product = $this->productService->getById($id);
         if (!$product) {
             return response()->json([
@@ -149,7 +137,7 @@ class ProductController extends Controller
         }
 
         // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
-        $dataProduct = $request->except(['product_variants', 'product_galaries']);
+        $dataProduct = $request->except(['product_variants', 'product_galaries','product_tags']);
 
         // Gán giá trị mặc định cho các trường boolean nếu không có
         $dataProduct['is_active'] ??= 0;
@@ -212,12 +200,37 @@ class ProductController extends Controller
 
         // Xử lý cập nhật product tags
         if ($request->has('product_tags')) {
-            $product->tags()->sync($request->product_tags);
-        }
+            $product = Product::with('tags')->find($id);
+            if ($product != null) {
+                $product_tags_currents=[];
+                if( $product->tags){
+                    $product_tags_currents = $product->tags->pluck('id')->toArray();
+                }
+                $newTags = $request->input('product_tags'); 
+                $tagsToAdd = [];
+                $tagsToRemove = [];
 
+                foreach ($newTags as $newTag) {
+                    if (!in_array($newTag, $product_tags_currents)) {
+                        $tagsToAdd[] = $newTag;
+                    }
+                }
+                foreach ($product_tags_currents as $currentTag) {
+                    if (!in_array($currentTag, $newTags)) {
+                        $tagsToRemove[] = $currentTag;
+                    }
+                }
+
+                if (count($tagsToRemove) > 0) {
+                    $product->tags()->detach($tagsToRemove);  
+                }
+                if (count($tagsToAdd) > 0) {
+                    $product->tags()->attach($tagsToAdd);  
+                }
+            }
+        }
         return response()->json([
             'message' => 'Update successful',
-            'product' => $product
         ], 200);
     }
     /**

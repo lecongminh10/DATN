@@ -22,7 +22,6 @@ return new class extends Migration
             $table->decimal('price_sale', 10, 2)->nullable()->comment('Giá giảm');
             $table->integer('stock')->comment('Số lượng tồn kho');
             $table->decimal('rating', 2, 1)->nullable()->comment('Điểm đánh giá');
-            $table->string('tags')->nullable()->comment('Các thẻ liên quan đến sản phẩm');
             $table->integer('warranty_period')->nullable()->comment('Thời gian bảo hành (tháng)');
             $table->integer('view')->default(0)->comment('Số lượt xem');
             $table->integer('buycount')->default(0)->comment('Số lượng lượt mua');
