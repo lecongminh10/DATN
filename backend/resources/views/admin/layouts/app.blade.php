@@ -29,6 +29,8 @@
     <!-- custom Css-->
     <link href="{{ asset('theme/assets/css/custom.min.css')}}" rel="stylesheet" type="text/css" />
 
+    @yield('libray_css')
+    @yield('style_css')
 </head>
 
 <body>
@@ -89,6 +91,7 @@
     <script src="{{ asset('theme/assets/js/pages/plugins/lord-icon-2.1.0.js')}}"></script>
     <script src="{{ asset('theme/assets/js/plugins.js')}}"></script>
 
+
     <!-- apexcharts -->
     <script src="{{ asset('theme/assets/libs/apexcharts/apexcharts.min.js')}}"></script>
 
@@ -102,6 +105,7 @@
     <!-- Dashboard init -->
     <script src="{{ asset('theme/assets/js/pages/dashboard-ecommerce.init.js')}}"></script>
 
+    
     @yield('script_libray')
     @yield('scripte_logic')
     <!-- App js -->

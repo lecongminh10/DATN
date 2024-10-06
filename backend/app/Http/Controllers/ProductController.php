@@ -10,6 +10,9 @@ use App\Services\ProductGalleryService;
 use App\Services\ProductService;
 use App\Services\ProductVariantService;
 use App\Services\TagService;
+use App\Services\AttributeService;
+use App\Services\AttributeValueService;
+
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -21,7 +24,8 @@ class ProductController extends Controller
     protected $tagService;
     protected $productVariantService;
     protected $productGalleryService;
-
+    protected $attributeService;
+    protected $attributeValueService;
     protected $categoryService;
 
     // const PATH_UPLOAD = 'public/products'; => sau mở lại
@@ -31,12 +35,19 @@ class ProductController extends Controller
         ProductVariantService $productVariantService,
         TagService $tagService,
         ProductGalleryService $productGalleryService,
+        CategoryService $categoryService,
+        AttributeService $attributeService,
+        AttributeValueService $attributeValueService,
+
 
     ) {
         $this->productService = $productService;
         $this->productVariantService = $productVariantService;
         $this->tagService = $tagService;
         $this->productGalleryService = $productGalleryService;
+        $this->categoryService = $categoryService;
+        $this->attributeService = $attributeService;
+        $this->attributeValueService = $attributeValueService;
     }
     /**
      * Display a listing of the resource.
@@ -47,23 +58,14 @@ class ProductController extends Controller
         $search = $request->input('search');
         $perPage = $request->input('perPage');
         $products = $this->productService->getSeachProduct($search, $perPage);
-        // dd($products);
-        return response()->json([
-            'message' => 'success',
-            'products' => $products,
-        ], 200);
-        // return view('admin.products.list-product')->with([
-        //     'products' => $products
-        // ]);
+        return view('admin.products.list-product')->with([
+            'products' => $products
+        ]);
     }
 
     public function showProduct(int $id)
     {
         $data = $this->productService->getById($id);
-        // return response()->json([
-        //     'message' => 'success',
-        //     'data' => $data,
-        // ], 200);
         return view('admin.products.show-product')->with([
             'data' => $data
         ]);
@@ -74,13 +76,20 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
 
-    // public function showAdd()
-    // {
-    //     $category = $this->categoryService->getAll();
-    //     return view('admin.products.add-product')->with([
-    //         'categories' => $category
-    //     ]);
-    // }
+    public function showAdd()
+    {
+        $category = $this->categoryService->getAll();
+        $tags = $this->tagService->getAll();
+        $attribute = $this->attributeService->getAll();
+        $attributeValue = $this->attributeValueService->getAll();
+
+        return view('admin.products.add-product')->with([
+            'category' => $category,
+            'tags' => $tags,
+            'attribute' => $attribute,
+            'attributeValue' => $attributeValue
+        ]);
+    }
 
     public function store(Request $request)
     {
@@ -160,6 +169,22 @@ class ProductController extends Controller
     public function show(string $id)
     {
         //
+    }
+
+    public function showUpdate(int $id)
+    {
+        // $category = $this->categoryService->getAll();
+        // return view('admin.products.update-product')->with([
+        //     // 'categories' => $category
+        // ]);
+        $product = $this->productService->getById($id);
+        $category = $this->categoryService->getAll();
+        $tag = $this->tagService->getAll();
+        return view('admin.products.update-product')->with([
+            'product' => $product,
+            'category' => $category,
+            'tag' => $tag
+        ]);
     }
 
     /**
