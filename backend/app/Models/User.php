@@ -17,6 +17,10 @@ class User extends Authenticatable
     const TYPE_ADMIN = 'admin_role';
     const TYPE_SUBADMIN = 'sub_admin_role';
     const TYPE_CLIENT = 'client_role';
+
+    const PERMISSION_ADMIN = 1;
+    const PERMISSION_CLIENT =2;
+    
     protected $table = 'users';
 
     protected $fillable = [
@@ -39,6 +43,10 @@ class User extends Authenticatable
         'updated_by',
         'deleted_at',
         'deleted_by',
+        'google_id',
+        'facebook_id',
+        'github_id',
+        'twitter_id'
     ];
 
     protected $casts = [

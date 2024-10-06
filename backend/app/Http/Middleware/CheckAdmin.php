@@ -9,9 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckAdmin
 {
+        public function handle(Request $request, Closure $next): Response
+        {
+            if (!Auth::check()) {
+                return redirect()->route('admin.login');
+            }
+            if (Auth::user()->isAdmin()) {
+                return $next($request); 
+            }
+            return abort(403, 'Unauthorized action.'); 
+        }
 
-    public function handle(Request $request, Closure $next): Response
-    {
-        return Auth::user()->isAdmin() ? $next($request) : abort(403);
-    }
+    
 }

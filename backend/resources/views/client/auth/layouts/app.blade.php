@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="{{asset('theme/assets/images/favicon.ico')}}">
 
     <!-- Layout config Js -->
-    <script src="{{asset('theme/assets/js/layout.js')}}')}}"></script>
+    <script src="{{asset('theme/assets/js/layout.js')}}"></script>
     <!-- Bootstrap Css -->
     <link href="{{asset('theme/assets/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
@@ -26,18 +26,27 @@
 
 <body>
 
-    <!-- auth-page wrapper -->
-    <div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
-        <div class="bg-overlay"></div>
-        <!-- auth-page content -->
-        <div class="auth-page-content overflow-hidden pt-lg-5">
+    <div class="auth-page-wrapper pt-5">
+        <!-- auth page bg -->
+        <div class="auth-one-bg-position auth-one-bg" id="auth-particles">
+            <div class="bg-overlay"></div>
+
+            <div class="shape">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1440 120">
+                    <path d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- auth page content -->
+        <div class="auth-page-content">
             @yield('content')
             <!-- end container -->
         </div>
         <!-- end auth page content -->
 
         <!-- footer -->
-        @include('admin.auth.layouts.footer')
+        @include('client.auth.layouts.footer')
         <!-- end Footer -->
     </div>
     <!-- end auth-page-wrapper -->
@@ -50,6 +59,10 @@
     <script src="{{asset('theme/assets/js/pages/plugins/lord-icon-2.1.0.js')}}"></script>
     <script src="{{asset('theme/assets/js/plugins.js')}}"></script>
 
+    <!-- particles js -->
+    <script src="{{asset('theme/assets/libs/particles.js/particles.js')}}"></script>
+    <!-- particles app js -->
+    <script src="{{asset('theme/assets/js/pages/particles.app.js')}}"></script>
     <!-- password-addon init -->
     <script src="{{asset('theme/assets/js/pages/password-addon.init.js')}}"></script>
 </body>
