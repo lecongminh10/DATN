@@ -67,7 +67,7 @@ class SocialiteController extends Controller
                         ->first();
             if ($user) {
                 Auth::login($user);
-                return redirect()->route('client');
+                return redirect()->intended(Auth::user()->isAdmin() ? '/admin' : '/');;
             }
             $uniqueUsername = $this->generateUniqueUsername($facebookUser->name);
             $newUser = User::create([
@@ -84,7 +84,7 @@ class SocialiteController extends Controller
                 Log::error('Không thể thêm quyền cho người dùng mới: ' . $e->getMessage());
             }
             Auth::login($newUser);
-            return redirect()->intended('dashboard');
+            return redirect()->route('client');
         } catch (Exception $e) {
             Log::error('Lỗi khi đăng nhập bằng Facebook:', [
                 'message' => $e->getMessage(),
@@ -108,7 +108,7 @@ class SocialiteController extends Controller
             ->first();
             if ($user) {
                 Auth::login($user);
-                return redirect()->intended('/');
+                return redirect()->intended(Auth::user()->isAdmin() ? '/admin' : '/');
             } 
             $uniqueUsername = $this->generateUniqueUsername($githubUser->nickname);
             $newUser = User::create([
@@ -151,7 +151,7 @@ class SocialiteController extends Controller
 
             if ($user) {
                 Auth::login($user);
-                return redirect()->route('/');
+                redirect()->intended(Auth::user()->isAdmin() ? '/admin' : '/');
             }
 
             $newUser = User::create([
