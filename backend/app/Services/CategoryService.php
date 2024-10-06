@@ -29,12 +29,6 @@ class CategoryService extends BaseService
         return $this->categoryService->getNameandIdAll();
     }
 
-
-    public function isCategorySoftDeleted(int $id): bool
-    {
-        return $this->categoryService->isSoftDeleted($id); // Gọi phương thức kiểm tra trong repository
-    }
-
     public function getSeachCategory($search, $perPage)
     {
         return $this->categoryService->getAll($search, $perPage);

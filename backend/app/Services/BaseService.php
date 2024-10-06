@@ -66,6 +66,11 @@ class BaseService
 
     public function getIdWithTrashed(int $id)
     {
-        return $this->repository->getByIdWithTrashed($id); 
+        return $this->service->getByIdWithTrashed($id);
     }
+    
+    public function isSoftDeleted(int $id){
+        return $this->service->isSoftDeleted($id);
+    }
+    
 }

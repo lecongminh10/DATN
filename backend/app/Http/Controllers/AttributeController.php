@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttributeRequest; // Xác thực cho thuộc tính
@@ -131,41 +131,31 @@ class AttributeController extends Controller
         }
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id)
     {
-        // Bắt đầu giao dịch
-        DB::beginTransaction();
-
-        try {
-            // Tìm thuộc tính theo ID
-            $attribute = Attribute::findOrFail($id);
-            $attribute->attributeValues()->delete();
-
-            // Xóa mềm thuộc tính
-            $attribute->delete();
-
-            // Cam kết giao dịch
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Xóa thành công'
-            ], 200);
-        } catch (\Exception $e) {
-            // Nếu có lỗi, rollback
-            DB::rollBack();
-            return response()->json([
-                'error' => 'Đã xảy ra lỗi khi xóa thuộc tính',
-                'message' => $e->getMessage()
-            ], 500);
+        $data = $this->attributeService->getById($id);
+        if(!$data){
+            return abort(404);
         }
+        $data->delete();
+        if($data->trashed()){
+            return response()->json(['message' => 'Attribute soft deleted successfully'], 200); 
+        }
+
+        return response()->json(['message' => 'Attribute permanently deleted and cover file removed'], 200);
     }
 
-    public function destroyValue(int $id): JsonResponse
+    public function destroyValue(int $id)
     {
         try {
-            $attributeValue = AttributeValue::findOrFail($id);
-            $attributeValue->delete();
-
+            $data = $this->attributeValueService->getById($id);
+            if (!$data) {
+                return response()->json(['message' => 'Attribute Values not found'], 404);
+            }
+            $data->delete();
+            if ($data->trashed()) {
+                return response()->json(['message' => 'Attribute Values soft deleted successfully'], 200);
+            }
             return response()->json([
                 'message' => 'Xóa thành công giá trị thuộc tính'
             ], 200);
@@ -176,6 +166,84 @@ class AttributeController extends Controller
                 'error' => 'Đã xảy ra lỗi khi xóa giá trị thuộc tính',
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function hardDeleteAttribute(int $id){
+        $data= $this->attributeService->getIdWithTrashed($id);
+        if (!$data) {
+            return response()->json(['message' => 'Attribute not found.'], 404);
+        }
+        $data->forceDelete();
+        return response()->json(['message' => 'Delete with success'], 200);
+    }
+
+    public function hardDeleteAttributeValue(int $id){
+        $data = $this->attributeValueService->getIdWithTrashed($id);
+        if (!$data) {
+            return response()->json(['message' => 'Attribute Value not found.'], 404);
+        }
+        $data->forceDelete();
+        return response()->json(['message' => 'Delete with success'], 200);
+    }
+
+    public function deleteMuitpalt(Request $request)
+    {
+    $request->validate([
+        'ids' => 'required|array',
+        'ids.*' => 'integer', 
+        'action' => 'required|string',
+    ]);
+
+    $ids = $request->input('ids');
+    $action = $request->input('action'); 
+
+        if (count($ids) > 0) {
+            foreach ($ids as $id) {
+
+                switch ($action) {
+                    case 'soft_delete_attribute':
+                        foreach ($ids as $id) {
+                            $isSoftDeleted = $this->attributeService->isSoftDeleted($id);
+                            if(!$isSoftDeleted){
+                                $this->destroy($id); 
+                            }
+                        }
+                        return response()->json(['message' => 'Soft delete successful'], 200);
+                     
+                    case 'hard_delete_attribute':
+                        foreach ($ids as $id) {
+                            $isSoftDeleted = $this->attributeService->isSoftDeleted($id);
+                            if( $isSoftDeleted){
+                                $this->hardDeleteAttribute($id);
+                            } 
+                        }
+                        return response()->json(['message' => 'Hard erase successful'], 200);
+
+                    case 'soft_delete_attribute_values':
+                        foreach ($ids as $id) {
+                            $isSoftDeleted = $this->attributeValueService->isSoftDeleted($id);
+                            if(!$isSoftDeleted){
+                                    $this->destroyValue($id); 
+                                }
+                            }
+                            return response()->json(['message' => 'Soft delete successful'], 200);
+
+                    case 'hard_delete_attribute_value':
+                        foreach ($ids as $id) {
+                            $isSoftDeleted = $this->attributeValueService->isSoftDeleted($id);
+                            if($isSoftDeleted){
+                                $this->hardDeleteAttributeValue($id);
+                            } 
+                        }
+                        return response()->json(['message' => 'Hard erase successful'], 200);
+                    default:
+                        return response()->json(['message' => 'Invalid action'], 400);
+                }
+            }
+            return response()->json(['message' => 'Categories deleted successfully'],200);
+        } else {
+            return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class  BaseRepository
 {
    protected $model;
+   protected $repository;
 
    public function __construct(Model $model)
    {
@@ -80,5 +81,10 @@ class  BaseRepository
    public function getByIdWithTrashed(int $id)
    {
        return $this->model->withTrashed()->findOrFail($id);
+   }
+
+   public function isSoftDeleted(int $id){
+      $repository = $this->model->withTrashed()->findOrFail($id);
+      return $repository ? $repository->trashed() :false;
    }
 }
