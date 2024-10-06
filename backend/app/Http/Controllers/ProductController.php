@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Products;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Services\CategoryService;
 use App\Models\Product;
+// use App\Models\Product;
 use App\Services\ProductGalleryService;
 use App\Services\ProductService;
 use App\Services\ProductVariantService;
@@ -14,15 +14,12 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 
-
 class ProductController extends Controller
 {
     protected $productService;
     protected $tagService;
     protected $productVariantService;
     protected $productGalleryService;
-
-    protected $categoryService;
 
     // const PATH_UPLOAD = 'public/products'; => sau mở lại
 
@@ -43,45 +40,19 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-
         $search = $request->input('search');
         $perPage = $request->input('perPage');
         $products = $this->productService->getSeachProduct($search, $perPage);
-        // dd($products);
         return response()->json([
             'message' => 'success',
             'products' => $products,
         ], 200);
-        // return view('admin.products.list-product')->with([
-        //     'products' => $products
-        // ]);
-    }
-
-    public function showProduct(int $id)
-    {
-        $data = $this->productService->getById($id);
-        // return response()->json([
-        //     'message' => 'success',
-        //     'data' => $data,
-        // ], 200);
-        return view('admin.products.show-product')->with([
-            'data' => $data
-        ]);
     }
 
 
     /**
      * Store a newly created resource in storage.
      */
-
-    // public function showAdd()
-    // {
-    //     $category = $this->categoryService->getAll();
-    //     return view('admin.products.add-product')->with([
-    //         'categories' => $category
-    //     ]);
-    // }
-
     public function store(Request $request)
     {
         // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
@@ -121,6 +92,7 @@ class ProductController extends Controller
                 ];
                 $this->productVariantService->saveOrUpdate($dataProductVariants);
             }
+
         }
 
         if ($request->has('product_galaries')) {
@@ -152,6 +124,7 @@ class ProductController extends Controller
             'message' => 'Success',
             'product' => $product
         ], 201);
+
     }
 
     /**
@@ -174,7 +147,6 @@ class ProductController extends Controller
                 'message' => 'Product not found'
             ], 404);
         }
-
 
         // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
         $dataProduct = $request->except(['product_variants', 'product_galaries']);
@@ -221,7 +193,7 @@ class ProductController extends Controller
                 // Kiểm tra nếu `image_gallery` là một file tải lên hợp lệ
                 if (isset($image_gallery['image_gallery'])) {
                     $dataProductGallery = $image_gallery['image_gallery'];
-
+                    
                     $galleryData = [
                         'product_id' => $product->id,
                         'image_gallery' => $dataProductGallery,
@@ -240,36 +212,9 @@ class ProductController extends Controller
 
         // Xử lý cập nhật product tags
         if ($request->has('product_tags')) {
-            $product = Product::with('tags')->find($id);
-            if ($product != null) {
-                $product_tags_currents=[];
-                if( $product->tags){
-                    $product_tags_currents = $product->tags->pluck('id')->toArray();
-                }
-                $newTags = $request->input('product_tags'); 
-                $tagsToAdd = [];
-                $tagsToRemove = [];
-
-                foreach ($newTags as $newTag) {
-                    if (!in_array($newTag, $product_tags_currents)) {
-                        $tagsToAdd[] = $newTag;
-                    }
-                }
-                foreach ($product_tags_currents as $currentTag) {
-                    if (!in_array($currentTag, $newTags)) {
-                        $tagsToRemove[] = $currentTag;
-                    }
-                }
-
-                if (count($tagsToRemove) > 0) {
-                    $product->tags()->detach($tagsToRemove);  
-                }
-                if (count($tagsToAdd) > 0) {
-                    $product->tags()->attach($tagsToAdd);  
-                }
-            }
+            $product->tags()->sync($request->product_tags);
         }
-        
+
         return response()->json([
             'message' => 'Update successful',
             'product' => $product
@@ -278,84 +223,70 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-
-    public function destroy(int $id)
-    {
-        $data = $this->productService->getById($id);
-
-        if (!$data) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
-        $data->delete();
-        if ($data->trashed()) {
-            return response()->json(['message' => 'Product soft deleted successfully'], 200);
-        }
-
-        return response()->json(['message' => 'Product permanently deleted and cover file removed'], 200);
-    }
-
     public function deleteMuitpalt(Request $request)
     {
-        // Xác thực yêu cầu
-        $request->validate([
-            'ids' => 'required|array',
-            'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
-            'action' => 'required|string', // Thêm xác thực cho trường action
-        ]);
+    // Xác thực yêu cầu
+    $request->validate([
+        'ids' => 'required|array',
+        'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
+        'action' => 'required|string', // Thêm xác thực cho trường action
+    ]);
 
-        // Lấy các ID và action từ yêu cầu
-        $ids = $request->input('ids'); // Lấy mảng ID
-        $action = $request->input('action'); // Lấy giá trị của trường action
+    // Lấy các ID và action từ yêu cầu
+    $ids = $request->input('ids'); // Lấy mảng ID
+    $action = $request->input('action'); // Lấy giá trị của trường action
 
         if (count($ids) > 0) {
             foreach ($ids as $id) {
                 switch ($action) {
                     case 'soft_delete':
                         foreach ($ids as $id) {
-                            $isSoftDeleted = $this->productService->isSoftDeleted($id);
-                            if (!$isSoftDeleted) {
-                                $this->destroy($id);
+                            $isSoftDeleted = $this->productService->isProductSoftDeleted($id);
+                            if(!$isSoftDeleted){
+                                Product::destroy($id); 
                             }
                         }
                         return response()->json(['message' => 'Soft delete successful'], 200);
-
+        
                     case 'hard_delete':
                         foreach ($ids as $id) {
-                            $isSoftDeleted = $this->productService->isSoftDeleted($id);
-                            if($isSoftDeleted){
-                                $this->hardDelete($id);
-                            }
+                            $this->hardDelete($id); 
                         }
                         return response()->json(['message' => 'Hard erase successful'], 200);
-
+        
                     default:
                         return response()->json(['message' => 'Invalid action'], 400);
                 }
             }
-            return response()->json(['message' => 'Products deleted successfully'], 200);
+            return response()->json(['message' => 'Categories deleted successfully'],200);
         } else {
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
     }
 
-
     public function hardDelete(int $id)
     {
-        $data = $this->productService->getIdWithTrashed($id);
-
+         $data = $this->productService->getIdWithTrashed($id);
+    
         if (!$data) {
-            return response()->json(['message' => 'Product not found.'], 404);
+            return response()->json(['message' => 'Category not found.'], 404);
         }
+    
         // Xóa cứng category
         $data->forceDelete();
-
+    
         // Nếu cần, có thể xóa hình ảnh liên quan
         // $currentImage = $data->image;
         // $filename = basename($currentImage);
         // if ($currentImage && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
         //     Storage::delete(self::PATH_UPLOAD . '/' . $filename);
         // }
-
+    
         return response()->json(['message' => 'Delete with success'], 200);
+    }
+
+    public function destroy(string $id)
+    {
+        
     }
 }
