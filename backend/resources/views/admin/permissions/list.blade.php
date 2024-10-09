@@ -8,18 +8,28 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="card-title mb-0 flex-grow-1">Danh sách Quyền</h5>
-                                    <div class="flex-shrink-0">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="card-title mb-0">Danh sách Quyền</h5>
+                                    {{-- <form action="{{ route('permissions.index') }}" method="GET"
+                                        class="d-flex align-items-center flex-grow-1">
+                                        <div class="input-group me-2" style="max-width: 300px;">
+                                            <input type="text" id="search" name="search" class="form-control"
+                                                placeholder="Nhập từ khóa tìm kiếm" value="{{ request('search') }}">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="ri-search-line"></i>
+                                            </button>
+                                        </div>
+                                    </form> --}}
+                                    <div>
                                         <div class="d-flex flex-wrap gap-2">
                                             <a href="{{ route('permissions.create') }}">
-                                                <button class="btn btn-danger add-btn" data-bs-toggle="modal"
+                                                <button class="btn btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#showModal">
                                                     <i class="ri-add-line align-bottom me-1"></i>Thêm mới
                                                 </button>
                                             </a>
                                             <button class="btn btn-danger" onClick="deleteMultiplePermissions()">
-                                                <i class="ri-delete-bin-2-line"></i>
+                                                <i class="ri-delete-bin-2-line"></i> Xóa nhiều
                                             </button>
                                         </div>
                                     </div>
@@ -57,7 +67,6 @@
                                                 <th scope="row">{{ $item->id }}</th>
                                                 <td>{{ $item->permission_name }}</td>
                                                 <td>{{ $item->description }}</td>
-                                                {{-- <td>{{ $item->deleted_at }}</td> --}}
                                                 <td>{{ $item->created_at }}</td>
                                                 <td>{{ $item->updated_at }}</td>
                                                 <td>
@@ -66,21 +75,19 @@
                                                             data-bs-toggle="dropdown" aria-expanded="false">
                                                             <i class="ri-more-2-fill"></i>
                                                         </a>
-
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ route('permissions.show', $item->id) }}">Detail</a>
+                                                                    href="{{ route('permissions.show', $item->id) }}"><i
+                                                                    class="ri-eye-fill align-bottom me-2 fs-16">Xem</i></a>
                                                             </li>
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ route('permissions.edit', $item->id) }}">Edit</a>
+                                                                    href="{{ route('permissions.edit', $item->id) }}"><i class="las la-braille"></i>Sửa</a>
                                                             </li>
                                                             <li>
                                                                 <a class="dropdown-item" href="#"
-                                                                    onclick="event.preventDefault(); confirmDeletePermission('{{ $item->id }}', '{{ $item->permission_name }}');">
-                                                                    Xóa
-                                                                </a>
+                                                                    onclick="event.preventDefault(); confirmDeletePermission('{{ $item->id }}', '{{ $item->permission_name }}');"><i class="ri-delete-bin-2-line">Xóa</i></a>
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -99,115 +106,13 @@
                                                         @method('DELETE')
                                                     </form>
                                                 </td>
-
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-center mt-4">
-                                    {{ $permissions->links('pagination::bootstrap-5') }}
+                                    {{ $permissions->appends(request()->query())->links('pagination::bootstrap-5') }}
                                 </div>
-                            </div>
-                        </div>
-                    </div><!--end col-->
-                </div><!--end row-->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="card-title mb-0 flex-grow-1">Danh sách Giá trị Quyền</h5>
-                                    <div class="flex-shrink-0">
-                                        <div class="d-flex flex-wrap gap-2">
-                                            {{-- <a href="{{route('permissions.create')}}">
-                                                <button class="btn btn-danger add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
-                                                    <i class="ri-add-line align-bottom me-1"></i>Thêm mới
-                                                </button>
-                                            </a> --}}
-                                            <button class="btn btn-danger" onClick="deleteMultiplePermissionValues()">
-                                                <i class="ri-delete-bin-2-line"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <table id="example"
-                                    class="table table-bordered dt-responsive nowrap table-striped align-middle"
-                                    style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" style="width: 10px;">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="checkAllValues">
-                                                </div>
-                                            </th>
-                                            <th data-ordering="false">Id.</th>
-                                            <th data-ordering="false">Permissions_id.</th>
-                                            <th data-ordering="false">Value</th>
-                                            <th data-ordering="false">Description</th>
-                                            <th data-ordering="false">Created_at</th>
-                                            <th data-ordering="false">Updated_at</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($permissionValues as $value)
-                                            <tr>
-                                                <th scope="row">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input value-checkbox" type="checkbox"
-                                                            name="value_ids[]" value="{{ $value->id }}">
-
-                                                    </div>
-                                                </th>
-                                                <th scope="row">{{ $value->id }}</th>
-                                                <td>{{ $value->permissions_id }}</td>
-                                                <td>
-                                                    <span
-                                                        class="badge bg-primary-subtle text-primary">{{ $value->value }}</span>
-                                                </td>
-                                                <td>{{ $value->description }}</td>
-                                                <td>{{ $value->created_at }}</td>
-                                                <td>{{ $value->updated_at }}</td>
-                                                <td>
-                                                    <div class="dropdown">
-                                                        <a href="#" role="button" id="dropdownMenuLink"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="ri-more-2-fill"></i>
-                                                        </a>
-
-                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                            <li>
-                                                                <a class="dropdown-item" href="#"
-                                                                    onclick="event.preventDefault(); confirmDeleteValue('{{ $value->id }}', '{{ $value->value }}');">
-                                                                    Xóa
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <!-- Soft delete form -->
-                                                    <form id="soft-delete-value-{{ $value->id }}"
-                                                        action="{{ route('permissions.destroyPermissionValue', $value->id) }}"
-                                                        method="POST" style="display: none;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                    </form>
-                                                    <!-- Hard delete form -->
-                                                    <form id="hard-delete-value-{{ $value->id }}"
-                                                        action="{{ route('permissions.destroyPermissionValueHard', $value->id) }}"
-                                                        method="POST" style="display: none;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                {{-- <div class="d-flex justify-content-center mt-4">
-                                    {{ $permissionValues->links('pagination::bootstrap-4') }}
-                                </div> --}}
                             </div>
                         </div>
                     </div><!--end col-->

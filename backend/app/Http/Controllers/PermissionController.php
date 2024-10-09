@@ -28,7 +28,7 @@ class PermissionController extends Controller
         $permission = $this->permissionService->getSeachPermission($search, $perPage);
         $permissions = Permission::paginate(10);
         $permissionValues = $this->permissionValueService->paginate(10);
-        return view('admin.permissions.list', compact('permissions', 'permissionValues'));
+        return view('admin.permissions.list', compact('permissions', 'permissionValues','search'));
     }
 
     public function show($id)
