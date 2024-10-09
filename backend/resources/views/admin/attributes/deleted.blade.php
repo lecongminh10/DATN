@@ -35,20 +35,19 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
-                                            <form method="GET" action="{{ route('admin.attributes.deleted') }}"
-                                                class="mb-4 d-flex">
-                                                <input type="text" class="form-control search me-2"
-                                                    placeholder="Nhập từ khóa tìm kiếm..." name="search"
-                                                    value="{{ request('search') }}">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="ri-search-line"></i>
-                                                </button>
-                                            </form>
+                                            <div class="search-box mb-3">
+                                                <form method="GET" action="{{ route('admin.attributes.deleted') }}">
+                                                    <input type="text" class="form-control search" name="search"
+                                                        placeholder="Nhập từ khóa tìm kiếm..."
+                                                        value="{{ request()->input('search') }}">
+                                                    <i class="ri-search-line search-icon"></i>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="listjs-table" id="customerList">
-                                    <div class="card-header border-0">
+                                    <div class="card-header border-0 mt-2">
                                         <div class="d-flex justify-content-between align-items-center w-100">
                                             <h1 class="card-title fw-semibold mb-0"></h1>
                                             <div class="d-flex align-items-center">
@@ -67,7 +66,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="table-responsive table-card mt-3 mb-1">
+                                    <div class="table-responsive table-card mt-2 mb-1">
                                         <table
                                             class="table table-bordered table-hover table-striped align-middle table-nowrap">
                                             <thead class="table-light">
@@ -80,6 +79,7 @@
                                                     </th>
                                                     <th>ID</th>
                                                     <th>Tên thuộc tính</th>
+                                                    <th>Người xóa</th>
                                                     <th>Ngày xóa</th>
                                                     <th>Thao tác</th>
                                                     <th>Action</th>
@@ -96,7 +96,7 @@
                                                         </th>
                                                         <td>{{ $item->id }}</td>
                                                         <td>{{ $item->attribute_name }}</td>
-
+                                                        <td>{{ $item->deleted_by }}</td>
                                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') }}</td>
                                                         <td>{{ $item->deleted_at->format('d-m-Y H:i:s') }}</td>
                                                         <td>
@@ -106,8 +106,9 @@
                                                                 @csrf
                                                                 @method('PATCH')
                                                                 <button
-                                                                onclick="return confirm('Bạn có chắc muốn khôi phục không?')" 
-                                                                type="submit" class="btn btn-sm btn-success edit-item-btn">Khôi
+                                                                    onclick="return confirm('Bạn có chắc muốn khôi phục không?')"
+                                                                    type="submit"
+                                                                    class="btn btn-sm btn-info edit-item-btn">Khôi
                                                                     phục</button>
                                                             </form>
                                                             <form
@@ -115,8 +116,9 @@
                                                                 method="POST" style="display:inline;">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button onclick="return confirm('Bạn có chắc chắn xóa vĩnh viễn không?')"
-                                                                    type="submit" 
+                                                                <button
+                                                                    onclick="return confirm('Bạn có chắc chắn xóa vĩnh viễn không?')"
+                                                                    type="submit"
                                                                     class="btn btn-sm btn-danger remove-item-btn">Xóa
                                                                     vĩnh viễn</button>
                                                             </form>
@@ -130,8 +132,8 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="results-info">
-                                <p class="pagination  mb-0 ms-3">
+                            <div class="results-info ms-3">
+                                <p class="pagination mb-0">
                                     Showing
                                     {{ $data->firstItem() }}
                                     to
@@ -143,7 +145,7 @@
                             </div>
                             <div class="pagination-wrap me-3">
                                 <nav aria-label="Page navigation">
-                                    <ul class="pagination">
+                                    <ul class="pagination mb-0">
                                         @if ($data->onFirstPage())
                                             <li class="page-item disabled">
                                                 <span class="page-link">Previous</span>
@@ -158,8 +160,9 @@
                                         @endif
                                         @foreach ($data->links()->elements as $element)
                                             @if (is_string($element))
-                                                <li class="page-item disabled"><span
-                                                        class="page-link">{{ $element }}</span></li>
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">{{ $element }}</span>
+                                                </li>
                                             @endif
                                             @if (is_array($element))
                                                 @foreach ($element as $page => $url)
@@ -178,8 +181,7 @@
                                         @endforeach
                                         @if ($data->hasMorePages())
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $data->nextPageUrl() }}"
-                                                    aria-label="Next">
+                                                <a class="page-link" href="{{ $data->nextPageUrl() }}" aria-label="Next">
                                                     Next
                                                 </a>
                                             </li>
