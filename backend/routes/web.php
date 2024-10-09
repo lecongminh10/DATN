@@ -26,9 +26,9 @@ use Illuminate\Support\Facades\Route;
 // });
 // Route::resource('permissions', PermissionController::class);
 
-Route::prefix('auth')->group(function(){
+Route::prefix('auth')->group(function () {
     Route::get('admin/login', [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
-    Route::get('/login',[LoginController::class,'showFormLogin'])->name('client.login');
+    Route::get('/login', [LoginController::class, 'showFormLogin'])->name('client.login');
     Route::post('login', [LoginController::class, 'login'])->name('auth.login');
     Route::get('logout', [LoginController::class, 'logout'])->name('auth.logout');
     Route::get('register', [RegisterController::class, 'showFormRegister'])->name('show.register');
@@ -40,7 +40,7 @@ Route::prefix('auth')->group(function(){
     Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
     Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-    
+
     Route::get('google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
@@ -54,14 +54,35 @@ Route::prefix('auth')->group(function(){
     Route::get('twitter/callback', [SocialiteController::class, 'handleTwitterCallback']);
 });
 
+Route::prefix('/permissions')->name('permissions.')->group(function () {
+    Route::get('/', [PermissionController::class, 'index'])->name('index');
+    Route::get('/create', [PermissionController::class, 'create'])->name('create');
+    Route::get('/{id}', [PermissionController::class, 'show'])->name('show');
+    Route::post('/', [PermissionController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [PermissionController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [PermissionController::class, 'update'])->name('update');
 
 
-Route::middleware('isAdmin')->prefix('admin')->group(function(){
-        Route::get('', function () {
-            return view('admin.dashboard');
-        })->name('admin');
+
+    // Sử dụng DELETE cho việc xóa mềm và xóa cứng
+    Route::delete('/{id}', [PermissionController::class, 'destroyPermission'])->name('destroyPermission');
+    Route::delete('/{id}/hard', [PermissionController::class, 'destroyPermissionHard'])->name('destroyPermissionHard');
+
+    Route::delete('/{id}/value', [PermissionController::class, 'destroyPermissionValue'])->name('destroyPermissionValue');
+    Route::delete('/{id}/value/hard', [PermissionController::class, 'destroyPermissionValueHard'])->name('destroyPermissionValueHard');
+
+    Route::post('/destroy-multiple', [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
+    Route::post('/values/destroy-multiple', [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
 });
-Route::prefix('/')->group(function(){
+
+
+
+Route::middleware('isAdmin')->prefix('admin')->group(function () {
+    Route::get('', function () {
+        return view('admin.dashboard');
+    })->name('admin');
+});
+Route::prefix('/')->group(function () {
     Route::get('', function () {
         return view('client.home');
     })->name('client');
