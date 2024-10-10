@@ -17,7 +17,7 @@ class UserRepository extends BaseRepository
 
     public function getAllUser()
     {
-        return User::all();
+        return User::with('permissionsValues')->get();
     }
 
     public function create(array $data)
