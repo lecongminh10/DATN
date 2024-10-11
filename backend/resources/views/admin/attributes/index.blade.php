@@ -58,7 +58,7 @@
                                                     href="{{ route('admin.attributes.create') }}">
                                                     <i class="ri-add-box-fill"></i> Thêm
                                                 </a>
-                                                <a href="{{ route('admin.attributes.deleted') }}"
+                                                <a href="{{ route('admin.attributes.deleted1') }}"
                                                     class="btn btn-soft-danger ms-2">
                                                     <i class="ri-delete-bin-2-line"></i>Thùng rác
                                                 </a>

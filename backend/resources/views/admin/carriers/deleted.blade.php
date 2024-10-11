@@ -71,6 +71,10 @@
                                             </div>
                                             <div class="col-xl-6 d-flex justify-content-end align-items-center">
                                                 <div class="">
+                                                    <button class="btn btn-soft-danger me-1" id="deleteMultipleBtn"
+                                                        style="display: none;">
+                                                        <i class="ri-delete-bin-5-fill"></i>
+                                                    </button>
                                                     <a class="btn btn-success add-btn me-1"
                                                         href="{{ route('admin.carriers.create') }}">
                                                         <i class="ri-add-box-fill"></i> Thêm

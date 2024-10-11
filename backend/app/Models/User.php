@@ -48,4 +48,11 @@ class User extends Authenticatable
         return $this->belongsToMany(PermissionValue::class, 'permissions_value_users', 'user_id', 'permission_value_id')
                     ->withTimestamps();
     }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'user_coupons')
+                    ->withPivot('times_used', 'deleted_by')
+                    ->withTimestamps();
+    }
 }

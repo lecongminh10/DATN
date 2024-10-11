@@ -39,5 +39,10 @@ class Category extends Model
     public function products() {
         return $this->hasMany(Product::class);
     }
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupons_categories')
+                    ->withTimestamps();
+    }
 
 }
