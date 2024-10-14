@@ -14,5 +14,8 @@ class  ProductGalleryRepository extends BaseRepository
       $this->productGalleryRepository = $productGalleryRepository;
    }
 
+   public function getGalaryByProduct(int $id){
+      return ProductGallery::where('product_id', $id)->select('id','image_gallery')->get();
+   }
 
 }

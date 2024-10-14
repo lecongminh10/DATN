@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Services\CategoryService;
 use App\Models\Product;
@@ -10,6 +12,10 @@ use App\Services\ProductGalleryService;
 use App\Services\ProductService;
 use App\Services\ProductVariantService;
 use App\Services\TagService;
+use App\Services\AttributeService;
+use App\Services\AttributeValueService;
+use App\Models\Attribute;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -21,7 +27,8 @@ class ProductController extends Controller
     protected $tagService;
     protected $productVariantService;
     protected $productGalleryService;
-
+    protected $attributeService;
+    protected $attributeValueService;
     protected $categoryService;
 
     // const PATH_UPLOAD = 'public/products'; => sau mở lại
@@ -31,12 +38,19 @@ class ProductController extends Controller
         ProductVariantService $productVariantService,
         TagService $tagService,
         ProductGalleryService $productGalleryService,
+        CategoryService $categoryService,
+        AttributeService $attributeService,
+        AttributeValueService $attributeValueService,
+
 
     ) {
         $this->productService = $productService;
         $this->productVariantService = $productVariantService;
         $this->tagService = $tagService;
         $this->productGalleryService = $productGalleryService;
+        $this->categoryService = $categoryService;
+        $this->attributeService = $attributeService;
+        $this->attributeValueService = $attributeValueService;
     }
     /**
      * Display a listing of the resource.
@@ -47,127 +61,126 @@ class ProductController extends Controller
         $search = $request->input('search');
         $perPage = $request->input('perPage');
         $products = $this->productService->getSeachProduct($search, $perPage);
-        // dd($products);
-        return response()->json([
-            'message' => 'success',
-            'products' => $products,
-        ], 200);
-        // return view('admin.products.list-product')->with([
-        //     'products' => $products
-        // ]);
+        return view('admin.products.list-product')->with([
+            'products' => $products
+        ]);
     }
 
     public function showProduct(int $id)
     {
-        $data = $this->productService->getById($id);
-        // return response()->json([
-        //     'message' => 'success',
-        //     'data' => $data,
-        // ], 200);
+        $data = $this->productService->getById($id)->load(['category','variants', 'tags', 'galleries']);
+        
+        $variants = $this->productVariantService->getAttributeByProduct($id);
+
+        $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
+        ->select('id', 'attribute_name')
+        ->get();
         return view('admin.products.show-product')->with([
-            'data' => $data
+            'data'           => $data ,
+            'attribute'      =>$attributesWithValues,
+            'variants'       =>$variants
         ]);
     }
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
-
-    // public function showAdd()
-    // {
-    //     $category = $this->categoryService->getAll();
-    //     return view('admin.products.add-product')->with([
-    //         'categories' => $category
-    //     ]);
-    // }
-
-    public function store(Request $request)
+    public function showAdd()
     {
-        // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
-        $dataProduct = $request->except(['product_variants', 'product_galaries']);
+        Artisan::call('generate:attributes-json');
+        Artisan::call('generate:tags-json');
+        $categories = Category::with('children')->whereNull('parent_id')->get();
+        $tags = $this->tagService->getAll();
+        $attribute = $this->attributeService->getAll();
+        $attributeValue = $this->attributeValueService->getAll();
 
-        // Gán giá trị mặc định cho các trường boolean nếu không có
+        return view('admin.products.add-product')->with([
+            'categories' => $categories,
+            'tags' => $tags,
+            'attribute' => $attribute,
+            'attributeValue' => $attributeValue
+        ]);
+    }
+
+    public function store(StoreProductRequest $request)
+    {
+        
+        $dataProduct = $request->validated();
+        unset($dataProduct['product_variants'], $dataProduct['product_galaries']);
+
         $dataProduct['is_active'] ??= 0;
         $dataProduct['is_hot_deal'] ??= 0;
         $dataProduct['is_show_home'] ??= 0;
         $dataProduct['is_new'] ??= 0;
         $dataProduct['is_good_deal'] ??= 0;
 
-        // Xử lý slug(tạo slug)
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         }
-
-        // Xử lý images
-        // if (isset($dataProduct['images']) && $dataProduct['images'] instanceof UploadedFile) {
-        //     $relativePathProduct = $dataProduct['images']->store(self::PATH_UPLOAD);
-        //     $dataProduct['images'] = $baseUrl . '/' . str_replace('public/', '', $relativePathProduct);
-        // }
-
         $product = $this->productService->saveOrUpdate($dataProduct);
 
         if ($request->has('product_variants')) {
-            $dataProductVariants = [];
             foreach ($request->product_variants as $item) {
-
                 $dataProductVariants = [
                     'product_id' => $product->id,
                     'product_attribute_id' => $item['product_attribute_id'],
                     'price_modifier' => $item['price_modifier'],
+                    'original_price' =>$item['original_price'],
                     'stock' => $item['stock'] ?? 0,
-                    'sku' => $item['sku'] ?? null,
-                    "status" => $item["status"] ?? 0,
+                    'status' => $item['status'] ?? '',
+                    'sku' => substr(bin2hex(random_bytes(5)), 0, 10)
                 ];
+                if (isset($item['variant_image']) && $item['variant_image'] instanceof UploadedFile) {
+                    $extension = $item['variant_image']->getClientOriginalExtension();
+                    $imageName = time() . '_' . uniqid() . '.' . $extension;
+                    $imagePath = $item['variant_image']->storeAs('public/products/variant_images', $imageName);
+                    $dataProductVariants['variant_image'] = str_replace('public/', '', $imagePath);
+                }
                 $this->productVariantService->saveOrUpdate($dataProductVariants);
             }
         }
 
         if ($request->has('product_galaries')) {
             foreach ($request->product_galaries as $image_gallery) {
-                // Kiểm tra nếu image_gallery là một file tải lên hợp lệ
-                if (isset($image_gallery['image_gallery'])) {
-
-                    // if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) => thay vào if
-                    // $relativePath = $image_gallery['image_gallery']->store(self::PATH_UPLOAD);
-                    // $dataProductGallery = $baseUrl . '/' . str_replace('public/', '', $relativePath); => khi muốn lưu và folder
-
-                    $dataProductGallery = $image_gallery['image_gallery'];
-                    $this->productGalleryService->saveOrUpdate([
-                        'product_id' => $product->id,
-                        'image_gallery' => $dataProductGallery,
-                        'is_main' => $image_gallery['is_main'] ?? 0,  // Thiết lập giá trị is_main
-                    ]);
+                $dataProductGallery = [
+                    'product_id' => $product->id,
+                    'is_main' => $image_gallery['is_main'] ?? 0, 
+                ];
+                if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {  
+                    $extension = $image_gallery['image_gallery']->getClientOriginalExtension();
+                    $imageName = time() . '_' . uniqid() . '.' . $extension;
+                    $relativePath = $image_gallery['image_gallery']->storeAs('public/products/gallery', $imageName);
+                    $dataProductGallery['image_gallery'] = str_replace('public/', '', $relativePath);
+                    $this->productGalleryService->saveOrUpdate($dataProductGallery);
                 }
             }
         }
-
         if ($request->has('product_tags')) {
             foreach ($request->product_tags as $tag_id) {
                 $product->tags()->attach($tag_id);
             }
         }
-
-        return response()->json([
-            'message' => 'Success',
-            'product' => $product
-        ], 201);
+        return redirect()->route('admin.products.listProduct')->with(['message'=>'Thêm sản phẩm thành công ']);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function showUpdate(int $id)
     {
-        //
+        Artisan::call('generate:attributes-json');
+        Artisan::call('generate:tags-json');
+        $product = $this->productService->getById($id)->load(['category', 'tags', 'galleries']);
+        if (!$product) {
+            return redirect()->route('admin.products.index')->with('error', 'Product not found');
+        }
+        $categories = Category::with('children')->whereNull('parent_id')->get();
+        $selectedTags = $product->tags->pluck('id')->toArray();
+        $variants = $this->productVariantService->getProductVariant($id);
+        return view('admin.products.update-product', compact('product','categories','selectedTags','variants'));
     }
+    
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
-        // Tìm product bằng id
         $product = $this->productService->getById($id);
         if (!$product) {
             return response()->json([
@@ -175,105 +188,99 @@ class ProductController extends Controller
             ], 404);
         }
 
-
-        // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
         $dataProduct = $request->except(['product_variants', 'product_galaries']);
 
-        // Gán giá trị mặc định cho các trường boolean nếu không có
         $dataProduct['is_active'] ??= 0;
         $dataProduct['is_hot_deal'] ??= 0;
         $dataProduct['is_show_home'] ??= 0;
         $dataProduct['is_new'] ??= 0;
         $dataProduct['is_good_deal'] ??= 0;
 
-        // Xử lý slug(tạo slug)
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         }
 
-        // Cập nhật dữ liệu của product
         $product = $this->productService->saveOrUpdate($dataProduct, $product->id);
-
-        // Xử lý cập nhật product variants
         if ($request->has('product_variants')) {
+            $currentVariant = $this->productVariantService->getVariantByProduct($id);
+            $submittedVariantIds = [];
+        
             foreach ($request->product_variants as $item) {
                 $dataProductVariant = [
                     'product_id' => $product->id,
                     'product_attribute_id' => $item['product_attribute_id'],
                     'price_modifier' => $item['price_modifier'],
+                    'original_price' => $item['original_price'],
                     'stock' => $item['stock'] ?? 0,
-                    'sku' => $item['sku'] ?? null,
-                    'status' => $item['status'] ?? 0,
+                    'status' => $item['status'] ?? '',
+                    'sku' => $item['sku'] ?? substr(bin2hex(random_bytes(5)), 0, 10),
                 ];
 
-                // Nếu có `id` thì cập nhật, nếu không có thì tạo mới
+                if (isset($item['variant_image']) && $item['variant_image'] instanceof UploadedFile) {
+                    $extension = $item['variant_image']->getClientOriginalExtension();
+                    $imageName = time() . '_' . uniqid() . '.' . $extension;
+                    $imagePath = $item['variant_image']->storeAs('public/products/variant_images', $imageName);
+                    $dataProductVariant['variant_image'] = str_replace('public/', '', $imagePath);
+                }
                 if (isset($item['id'])) {
+                    $submittedVariantIds[] = $item['id'];
                     $this->productVariantService->saveOrUpdate($dataProductVariant, $item['id']);
                 } else {
                     $this->productVariantService->saveOrUpdate($dataProductVariant);
                 }
             }
-        }
-
-        // Xử lý cập nhật product galleries
-        if ($request->has('product_galaries')) {
-            foreach ($request->product_galaries as $image_gallery) {
-                // Kiểm tra nếu `image_gallery` là một file tải lên hợp lệ
-                if (isset($image_gallery['image_gallery'])) {
-                    $dataProductGallery = $image_gallery['image_gallery'];
-
-                    $galleryData = [
-                        'product_id' => $product->id,
-                        'image_gallery' => $dataProductGallery,
-                        'is_main' => $image_gallery['is_main'] ?? 0,  // Thiết lập giá trị is_main
-                    ];
-
-                    // Nếu có `id` thì cập nhật, nếu không có thì tạo mới
-                    if (isset($image_gallery['id'])) {
-                        $this->productGalleryService->saveOrUpdate($galleryData, $image_gallery['id']);
-                    } else {
-                        $this->productGalleryService->saveOrUpdate($galleryData);
+            foreach ($currentVariant as $variant) {
+                if (!in_array($variant->id, $submittedVariantIds)) {
+                    $variantImagePath = public_path('storage/' . $variant->variant_image);
+                    if (file_exists($variantImagePath)) {
+                        unlink($variantImagePath); 
                     }
-                }
-            }
-        }
-
-        // Xử lý cập nhật product tags
-        if ($request->has('product_tags')) {
-            $product = Product::with('tags')->find($id);
-            if ($product != null) {
-                $product_tags_currents=[];
-                if( $product->tags){
-                    $product_tags_currents = $product->tags->pluck('id')->toArray();
-                }
-                $newTags = $request->input('product_tags'); 
-                $tagsToAdd = [];
-                $tagsToRemove = [];
-
-                foreach ($newTags as $newTag) {
-                    if (!in_array($newTag, $product_tags_currents)) {
-                        $tagsToAdd[] = $newTag;
-                    }
-                }
-                foreach ($product_tags_currents as $currentTag) {
-                    if (!in_array($currentTag, $newTags)) {
-                        $tagsToRemove[] = $currentTag;
-                    }
-                }
-
-                if (count($tagsToRemove) > 0) {
-                    $product->tags()->detach($tagsToRemove);  
-                }
-                if (count($tagsToAdd) > 0) {
-                    $product->tags()->attach($tagsToAdd);  
+                    $variant->forceDelete();
                 }
             }
         }
         
-        return response()->json([
-            'message' => 'Update successful',
-            'product' => $product
-        ], 200);
+
+        if ($request->has('product_galaries')) {
+            $currentGalary = $this->productGalleryService->getGalaryByProduct($id);
+            $submittedGalleryIds = [];
+        
+            foreach ($request->product_galaries as $image_gallery) {
+                $dataProductGallery = [
+                    'product_id' => $product->id,
+                    'is_main' => $image_gallery['is_main'] ?? 0,
+                ];
+                if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {
+                    $extension = $image_gallery['image_gallery']->getClientOriginalExtension();
+                    $imageName = time() . '_' . uniqid() . '.' . $extension;
+                    $relativePath = $image_gallery['image_gallery']->storeAs('public/products/gallery', $imageName);
+                    $dataProductGallery['image_gallery'] = str_replace('public/', '', $relativePath);
+                    $this->productGalleryService->saveOrUpdate($dataProductGallery);
+                }
+                if (isset($image_gallery['id'])) {
+                    $submittedGalleryIds[] = $image_gallery['id']; // Keep track of submitted IDs
+                    $this->productGalleryService->saveOrUpdate($dataProductGallery, $image_gallery['id']);
+                }
+            }
+        
+            foreach ($currentGalary as $item) {
+                if (!in_array($item->id, $submittedGalleryIds)) {
+                    $imagePath = public_path('storage/' . $item->image_gallery);
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                    $item->forceDelete();
+                }
+            }
+        }
+        
+        
+
+        if ($request->has('product_tags')) {
+            $product->tags()->sync($request->product_tags);
+        }
+
+        return back();
     }
     /**
      * Remove the specified resource from storage.
@@ -358,4 +365,15 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Delete with success'], 200);
     }
+
+    public function getVariants(Request $request ,int $id)
+    {
+        $perPage = $request->get('per_page', 10); // Số mục mỗi trang
+        $searchTerm = $request->get('search', ''); // Từ khóa tìm kiếm
+
+        $variants = $this->productVariantService->getVariantsByProductId($id, $perPage, $searchTerm);
+
+        return response()->json($variants);
+    }
+
 }
