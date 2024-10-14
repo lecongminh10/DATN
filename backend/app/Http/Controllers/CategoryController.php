@@ -173,4 +173,18 @@ class CategoryController extends Controller
         return response()->json(['message' => 'Delete with success'], 200);
     }
 
+    public function updateParent(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:categories,id',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $category = Category::find($request->id);
+        $category->parent_id = $request->parent_id;
+        $category->save();
+
+        return response()->json(['success' => true]);
+    }
+
 }

@@ -1,0 +1,89 @@
+/* Attribute */
+#attributeForm {
+    display: none; 
+    margin-top: 20px; 
+    padding: 15px; 
+    border-radius: 5px; 
+}
+
+#attributeForm img {
+    max-width: 100px; 
+    margin-top: 10px; 
+}
+
+.row {
+    bottom: -17px
+}
+
+
+
+
+
+/* galary */
+#preview_container {
+    display: flex; 
+    flex-wrap: wrap; 
+}
+
+.image-container {
+    position: relative; 
+    margin-right: 10px; 
+    margin-top: 10px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: 150px; 
+}
+
+#preview_container img {
+    max-width: 150px; 
+    border: 2px solid transparent; 
+}
+
+.is-main {
+    border-color: black; 
+}
+
+.checkbox-container {
+    position: absolute; 
+    top: 5px; 
+    left: 5px; 
+    padding: 2px;
+    border-radius: 50%;
+    z-index: 1;
+    opacity: 0; 
+    transition: opacity 0.3s ease; 
+    
+}
+
+.image-container:hover .checkbox-container {
+    opacity: 1; 
+}
+
+/* Hiển thị checkbox khi được chọn */
+.checkbox-container.active {
+    opacity: 1; 
+}
+
+.is_main_checkbox {
+    width: 20px; 
+    height: 20px; 
+}
+
+/* Dấu x */
+.remove-image {
+    position: absolute;
+    top: 7px; 
+    right: 7px; 
+    cursor: pointer; 
+    background-color: red; 
+    color: white; 
+    border: none; 
+    border-radius: 20%; 
+    width: 20px; 
+    height: 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+}

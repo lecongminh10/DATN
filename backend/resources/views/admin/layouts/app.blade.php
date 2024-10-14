@@ -23,7 +23,9 @@
     <link href="{{ asset('theme/assets/css/app.min.css')}}" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="{{ asset('theme/assets/css/custom.min.css')}}" rel="stylesheet" type="text/css" />
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @yield('libray_css')
+    @yield('style_css')
 </head>
 
 <body>
@@ -84,8 +86,7 @@
     <script src="{{ asset('theme/assets/js/pages/plugins/lord-icon-2.1.0.js')}}"></script>
     <script src="{{ asset('theme/assets/js/plugins.js')}}"></script>
 
-
-
+    
     @yield('script_libray')
     @yield('scripte_logic')
     <!-- App js -->
