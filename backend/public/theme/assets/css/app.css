@@ -16230,7 +16230,13 @@ span.flatpickr-weekday {
   position: absolute;
   bottom: -18px;
   right: -35px;
-}rder-radius: 0.25rem;
+}
+button.remove-item-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: red; 
 }
 @media (max-width: 576.98px) {
   .about-img-section::before {
