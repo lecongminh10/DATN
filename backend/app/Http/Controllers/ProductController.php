@@ -358,4 +358,13 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Delete with success'], 200);
     }
+
+
+    public function showSotfDelete(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = $request->input('perPage', 10);
+        $data = $this->productService->show_soft_delete($search , $perPage);
+        return view('admin.products.deleted', compact('data'));
+    }
 }
