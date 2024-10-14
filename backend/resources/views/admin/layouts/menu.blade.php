@@ -38,7 +38,7 @@
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarDashboards">
-                        <ul class="nav nav-sm flex-column">
+                        {{-- <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="dashboard-analytics.html" class="nav-link" data-key="t-analytics">
                                     Analytics </a>
@@ -63,7 +63,7 @@
                             <li class="nav-item">
                                 <a href="dashboard-job.html" class="nav-link" data-key="t-job">Job</a>
                             </li>
-                        </ul>
+                        </ul> --}}
                     </div>
                 </li> <!-- end Dashboard Menu -->
                 <li class="nav-item">
@@ -74,12 +74,29 @@
                     <div class="collapse menu-dropdown" id="sidebarApps">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="#sidebarCalendar" class="nav-link" data-bs-toggle="collapse"
+                                <a href="#sidebarCalendar1" class="nav-link" data-bs-toggle="collapse"
                                     role="button" aria-expanded="false" aria-controls="sidebarCalendar"
                                     data-key="t-calender">
-                                    Quản lý Products
+                                    Quản lý danh mục
                                 </a>
-                                <div class="collapse menu-dropdown" id="sidebarCalendar">
+                                 <a href="#sidebarCalendar2" class="nav-link" data-bs-toggle="collapse"
+                                    role="button" aria-expanded="false" aria-controls="sidebarCalendar"
+                                    data-key="t-calender">
+                                    Quản lý sản phẩm
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarCalendar1">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{route('categories.index')}}" class="nav-link"
+                                                data-key="t-main-calender"> Danh sách </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{route('categories.create')}}" class="nav-link"
+                                                data-key="t-main-calender">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="collapse menu-dropdown" id="sidebarCalendar2">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
                                             <a href="{{ route('admin.products.listProduct') }}" class="nav-link"
@@ -87,16 +104,15 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.products.addProduct') }}" class="nav-link"
-                                                data-key="t-month-grid"> Thêm </a>
+                                                data-key="t-month-grid"> Thêm mới</a>
                                         </li>
                                     </ul>
                                 </div>
                             </li>
-                            
                         </ul>
                     </div>
                 </li>
-
+<div>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarLayouts" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarLayouts">
@@ -925,6 +941,6 @@
         </div>
         <!-- Sidebar -->
     </div>
-
+</div>
     <div class="sidebar-background"></div>
 </div>
