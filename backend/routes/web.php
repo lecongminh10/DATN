@@ -10,7 +10,6 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -35,7 +34,7 @@ Route::get('/admin', function () {
     return view('admin/dashboard');
 });
 
-Route::middleware('isAdmin')->group([
+Route::group([
     'prefix' => 'admin',
     'as' => 'admin.'
 ], function () {
@@ -66,7 +65,7 @@ Route::post('/update-category-parent', [CategoryController::class, 'updateParent
 Route::get('/client', function () {
     return view('client/home');
 });
-=======
+
 Route::prefix('auth')->group(function(){
     Route::get('admin/login', [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
     Route::get('/login',[LoginController::class,'showFormLogin'])->name('client.login');
