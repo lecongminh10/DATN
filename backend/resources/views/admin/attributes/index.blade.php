@@ -29,28 +29,28 @@
                                     <div class="row g-4 align-items-center">
                                         <div class="col-sm">
                                             <div>
-                                                <h5 class="card-title mb-0 "><a class="text-dark" href="{{ route('admin.attributes.index') }}">Attribute List</a></h5>
+                                                <h5 class="card-title "><a class="text-dark"
+                                                        href="{{ route('admin.attributes.index') }}">Attribute List</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
-                                            <form method="GET" action="{{ route('admin.attributes.index') }}"
-                                                class="mb-4 d-flex">
-                                                <input type="text" class="form-control search me-2"
-                                                    placeholder="Nhập từ khóa tìm kiếm..." name="search"
-                                                    value="{{ request('search') }}">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="ri-search-line"></i>
-                                                </button>
-                                            </form>
+                                            <div class="search-box mb-2">
+                                                <form method="GET" action="{{ route('admin.attributes.index') }}">
+                                                    <input type="text" class="form-control search" name="search"
+                                                        placeholder="Nhập từ khóa tìm kiếm..."
+                                                        value="{{ request()->input('search') }}">
+                                                    <i class="ri-search-line search-icon"></i>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="listjs-table" id="customerList">
-                                    <div class="card-header border-0">
+                                    <div class="card-header border-0 mt-1">
                                         <div class="d-flex justify-content-between align-items-center w-100">
                                             <h1 class="card-title fw-semibold mb-0"></h1>
                                             <div class="d-flex align-items-center">
-                                                <button class="btn btn-soft-danger ms-2" id="deleteMultipleBtn"
+                                                <button class="btn btn-soft-danger" id="deleteMultipleBtn"
                                                     style="display: none;">
                                                     <i class="ri-delete-bin-5-fill"></i>
                                                 </button>
@@ -58,17 +58,17 @@
                                                     href="{{ route('admin.attributes.create') }}">
                                                     <i class="ri-add-box-fill"></i> Thêm
                                                 </a>
-                                                <a href="{{ route('admin.attributes.deleted') }}"
+                                                <a href="{{ route('admin.attributes.deleted1') }}"
                                                     class="btn btn-soft-danger ms-2">
                                                     <i class="ri-delete-bin-2-line"></i>Thùng rác
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="table-responsive table-card mt-3 mb-1">
+                                    <div class="table-responsive table-card mt-1">
                                         <table
-                                            class="table table-bordered table-hover table-striped align-middle table-nowrap">
-                                            <thead class="table-light">
+                                            class="table align-middle">
+                                            <thead class="table-light text-muted">
                                                 <tr>
                                                     <th scope="col" style="width: 50px;">
                                                         <div class="form-check">
@@ -81,7 +81,7 @@
                                                     <th>Attributes Description</th>
                                                     <th>Created_at</th>
                                                     <th>Updated_at</th>
-                                                    <th>Action</th>
+                                                    <th class="text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
@@ -156,9 +156,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="results-info">
-                                <p class="pagination  mb-0 ms-3">
+                        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+                            <div class="results-info ms-3">
+                                <p class="pagination mb-0">
                                     Showing
                                     {{ $attributes->firstItem() }}
                                     to
@@ -170,23 +170,23 @@
                             </div>
                             <div class="pagination-wrap me-3">
                                 <nav aria-label="Page navigation">
-                                    <ul class="pagination">
+                                    <ul class="pagination mb-0">
                                         @if ($attributes->onFirstPage())
                                             <li class="page-item disabled">
                                                 <span class="page-link">Previous</span>
                                             </li>
                                         @else
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $attributes->previousPageUrl() }}"
-                                                    aria-label="Previous">
+                                                <a class="page-link" href="{{ $attributes->previousPageUrl() }}" aria-label="Previous">
                                                     Previous
                                                 </a>
                                             </li>
                                         @endif
                                         @foreach ($attributes->links()->elements as $element)
                                             @if (is_string($element))
-                                                <li class="page-item disabled"><span
-                                                        class="page-link">{{ $element }}</span></li>
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">{{ $element }}</span>
+                                                </li>
                                             @endif
                                             @if (is_array($element))
                                                 @foreach ($element as $page => $url)
@@ -196,17 +196,15 @@
                                                         </li>
                                                     @else
                                                         <li class="page-item">
-                                                            <a class="page-link"
-                                                                href="{{ $url }}">{{ $page }}</a>
+                                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                                                         </li>
                                                     @endif
                                                 @endforeach
                                             @endif
-                                        @endforeach
+                                        @endforeach                       
                                         @if ($attributes->hasMorePages())
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $attributes->nextPageUrl() }}"
-                                                    aria-label="Next">
+                                                <a class="page-link" href="{{ $attributes->nextPageUrl() }}" aria-label="Next">
                                                     Next
                                                 </a>
                                             </li>
@@ -218,7 +216,7 @@
                                     </ul>
                                 </nav>
                             </div>
-                        </div>
+                        </div>      
                     </div>
                 </div><!-- end card -->
             </div>
@@ -231,6 +229,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @endsection
 @section('scripte_logic')
+    <script>
+        document.getElementById('search-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const query = this.value;
+                window.location.href = `/search?query=${encodeURIComponent(query)}`;
+            }
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxes = document.querySelectorAll('input[name="chk_child"]');

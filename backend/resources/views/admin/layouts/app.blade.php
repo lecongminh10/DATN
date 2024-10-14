@@ -28,6 +28,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('libray_css')
     @yield('style_css')
+    
 </head>
 
 <body>

@@ -39,6 +39,21 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
+                            <div class="card-header border-bottom-dashed">
+                                <div class="row g-4 align-items-center">
+                                    <div class="col-sm">
+                                        <div>
+                                            <h5 class="card-title mb-0">Edit Attribute</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <div class="d-flex flex-wrap align-items-start gap-2">
+                                            <button type="button" class="btn btn-info"><i
+                                                    class="ri-file-download-line align-bottom me-1"></i> Import</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label" for="attribute-name-input">Attribute Name</label>
@@ -82,7 +97,10 @@
                         </div>
                         <!-- Nút submit -->
                         <div class="text-end mb-3">
-                            <button type="submit" class="btn btn-success w-sm">Update</button>
+                            <button type="submit" class="btn btn-success w-sm"><i class="ri-check-double-line me-2"></i>Update</button>
+                            <a href="{{ route('admin.attributes.index') }}" class=" btn btn-secondary w-sm"><i
+                                class="ri-arrow-left-line"></i> Quay lại danh
+                            sách</a>
                         </div>
                     </div>
                 </div>

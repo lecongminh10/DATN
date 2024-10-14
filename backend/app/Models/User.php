@@ -60,6 +60,13 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'user_coupons')
+                    ->withPivot('times_used', 'deleted_by')
+                    ->withTimestamps();
+    }
+  
     public function isAdmin()
     {
         return $this->permissionsValues()
