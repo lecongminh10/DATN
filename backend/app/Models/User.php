@@ -14,6 +14,13 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    const TYPE_ADMIN = 'admin_role';
+    const TYPE_SUBADMIN = 'sub_admin_role';
+    const TYPE_CLIENT = 'client_role';
+
+    const PERMISSION_ADMIN = 1;
+    const PERMISSION_CLIENT =2;
+    
     protected $table = 'users';
 
     protected $fillable = [
@@ -36,6 +43,10 @@ class User extends Authenticatable
         'updated_by',
         'deleted_at',
         'deleted_by',
+        'google_id',
+        'facebook_id',
+        'github_id',
+        'twitter_id'
     ];
 
     protected $casts = [
@@ -54,5 +65,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Coupon::class, 'user_coupons')
                     ->withPivot('times_used', 'deleted_by')
                     ->withTimestamps();
+    }
+  
+    public function isAdmin()
+    {
+        return $this->permissionsValues()
+                    ->whereIn('value', [self::TYPE_ADMIN, self::TYPE_SUBADMIN])
+                    ->exists();
     }
 }

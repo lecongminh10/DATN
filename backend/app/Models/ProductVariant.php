@@ -16,6 +16,7 @@ class ProductVariant extends Model
         'product_id',
         'product_attribute_id',
         'price_modifier',
+        'original_price',
         'stock',
         'sku',
         "status",
