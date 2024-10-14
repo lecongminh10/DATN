@@ -107,7 +107,7 @@
                                         <button type="submit" class="btn btn-primary me-2">Thêm mới</button>
                                     </div>
                                     <div class="text-end">
-                                        <a href="{{ route('users.index') }}" class="btn btn-info">Danh sách người dùng</a>
+                                        <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người dùng</a>
                                     </div>
                                 </div>
                             </div>

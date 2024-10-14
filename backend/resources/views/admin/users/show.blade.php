@@ -91,7 +91,7 @@
                             </div>
                             <div class="col-12">
                                 <div class="text-end">
-                                    <a href="{{ route('users.index') }}" class="btn btn-info">Danh sách người dùng</a>
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người dùng</a>
                                 </div>
                             </div>
                         </form>

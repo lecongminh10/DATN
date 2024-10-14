@@ -59,7 +59,7 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [AttributeController::class, 'deleteMuitpalt'])->name('admin.attributes.deleteMultiple');
     });
-        Route::get('/attribute/listsotfdeleted',            [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
+    Route::get('/attribute/listsotfdeleted',            [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
 
 
     //Carriers
@@ -96,7 +96,7 @@ Route::group([
         // Xóa nhiều
         Route::post('/couponsDelete-multiple',              [CouponController::class, 'deleteMuitpalt'])->name('coupons.deleteMultiple');
     });
-        Route::get('/listsotfdeleted',                       [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
+    Route::get('/listsotfdeleted',                       [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
 
     Route::prefix('attributes')->group(function () {
         Route::get('/',                                     [AttributeController::class, 'index'])->name('attributes.index');
@@ -117,9 +117,9 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [AttributeController::class, 'deleteMuitpalt'])->name('attributes.deleteMultiple');
     });
-        Route::get('/attributeshortdeleted',                 [AttributeController::class, 'showSotfDelete'])->name('attributes.attributeshortdeleted');
+    Route::get('/attributeshortdeleted',                 [AttributeController::class, 'showSotfDelete'])->name('attributes.attributeshortdeleted');
 
-        Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
+    Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
     Route::prefix('categories')->group(function () {
         Route::get('/',                                    [CategoryController::class, 'index'])->name('categories.index');
         Route::get('create',                               [CategoryController::class, 'create'])->name('categories.create');
@@ -135,14 +135,14 @@ Route::group([
         Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
 
         Route::post('/update-category-parent',            [CategoryController::class, 'updateParent']);
-
     });
-        Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
-        Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
-        Route::post('/categories/trashed/restore-multiple',   [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
-        Route::post('/categories/trashed/hard-delete-multiple',[CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
+    Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
+    Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
+    Route::post('/categories/trashed/restore-multiple',   [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
+    Route::post('/categories/trashed/hard-delete-multiple', [CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
 
-    Route::prefix('users')->group( function () {
+    //Users
+    Route::prefix('users')->group(function () {
         Route::get('/',                                     [UserController::class, 'index'])->name('users.index');
         Route::get('/add',                                  [UserController::class, 'add'])->name('users.add');
         Route::post('/store',                               [UserController::class, 'store'])->name('users.store');
@@ -153,26 +153,25 @@ Route::group([
         Route::get('/deleteMultiple',                       [UserController::class, 'listdeleteMultiple'])->name('users.listdeleteMultiple');
         Route::post('/deleteMultiple',                      [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
         Route::post('/manage/{id}',                         [UserController::class, 'manage'])->name('users.manage');
-
     });
-  
+
+    //Permissions
     Route::prefix('/permissions')->name('permissions.')->group(function () {
-      Route::get('/',                                      [PermissionController::class, 'index'])->name('index');
-      Route::get('/create',                                [PermissionController::class, 'create'])->name('create');
-      Route::get('/{id}',                                  [PermissionController::class, 'show'])->name('show');
-      Route::post('/',                                     [PermissionController::class, 'store'])->name('store');
-      Route::get('/{id}/edit',                             [PermissionController::class, 'edit'])->name('edit');
-      Route::put('/{id}',                                  [PermissionController::class, 'update'])->name('update');
-      Route::delete('/{id}',                               [PermissionController::class, 'destroyPermission'])->name('destroyPermission');
-      Route::delete('/{id}/hard',                          [PermissionController::class, 'destroyPermissionHard'])->name('destroyPermissionHard');
+        Route::get('/',                                      [PermissionController::class, 'index'])->name('index');
+        Route::get('/create',                                [PermissionController::class, 'create'])->name('create');
+        Route::get('/{id}',                                  [PermissionController::class, 'show'])->name('show');
+        Route::post('/',                                     [PermissionController::class, 'store'])->name('store');
+        Route::get('/{id}/edit',                             [PermissionController::class, 'edit'])->name('edit');
+        Route::put('/{id}',                                  [PermissionController::class, 'update'])->name('update');
+        Route::delete('/{id}',                               [PermissionController::class, 'destroyPermission'])->name('destroyPermission');
+        Route::delete('/{id}/hard',                          [PermissionController::class, 'destroyPermissionHard'])->name('destroyPermissionHard');
 
-      Route::delete('/{id}/value',                         [PermissionController::class, 'destroyPermissionValue'])->name('destroyPermissionValue');
-      Route::delete('/{id}/value/hard',                    [PermissionController::class, 'destroyPermissionValueHard'])->name('destroyPermissionValueHard');
+        Route::delete('/{id}/value',                         [PermissionController::class, 'destroyPermissionValue'])->name('destroyPermissionValue');
+        Route::delete('/{id}/value/hard',                    [PermissionController::class, 'destroyPermissionValueHard'])->name('destroyPermissionValueHard');
 
-      Route::post('/destroy-multiple',                     [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
-      Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
-  });
-  
+        Route::post('/destroy-multiple',                     [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
+        Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
+    });
 })->middleware('isAdmin');
 
 Route::get('/client', function () {
@@ -211,5 +210,4 @@ Route::prefix('/')->group(function () {
     Route::get('', function () {
         return view('client.home');
     })->name('client');
-
 });
