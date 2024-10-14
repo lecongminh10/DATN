@@ -7,6 +7,8 @@ use App\Http\Controllers\CarrierController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -59,7 +61,7 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [AttributeController::class, 'deleteMuitpalt'])->name('admin.attributes.deleteMultiple');
     });
-    Route::get('/attribute/listsotfdeleted',                                  [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
+        Route::get('/attribute/listsotfdeleted',            [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
 
 
     //Carriers
@@ -87,16 +89,16 @@ Route::group([
         Route::get('{id}/edit',                             [CouponController::class, 'edit'])->name('coupons.edit');
         Route::put('/{id}',                                 [CouponController::class, 'update'])->name('coupons.update');
         Route::patch('/restore/{id}',                       [CouponController::class, 'restore'])->name('coupons.restore');
-        // Route::get('/listsotfdeleted',                           [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
-        Route::get('/showsotfdelete/{id}',                 [CouponController::class, 'showSotfDeleteID'])->name('coupons.showsotfdelete');
+        // Route::get('/listsotfdeleted',                   [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
+        Route::get('/showsotfdelete/{id}',                  [CouponController::class, 'showSotfDeleteID'])->name('coupons.showsotfdelete');
         // Xóa mềm Coupons
         Route::delete('/{id}',                              [CouponController::class, 'destroyCoupon'])->name('coupons.destroy');
         // Xóa cứng Coupons
         Route::delete('/{id}/hard-delete',                  [CouponController::class, 'hardDeleteCoupon'])->name('coupons.hardDelete');
         // Xóa nhiều
-        Route::post('/couponsDelete-multiple',                     [CouponController::class, 'deleteMuitpalt'])->name('coupons.deleteMultiple');
+        Route::post('/couponsDelete-multiple',              [CouponController::class, 'deleteMuitpalt'])->name('coupons.deleteMultiple');
     });
-    Route::get('/listsotfdeleted',                      [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
+        Route::get('/listsotfdeleted',                       [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
 
     Route::prefix('attributes')->group(function () {
         Route::get('/',                                     [AttributeController::class, 'index'])->name('attributes.index');
@@ -117,30 +119,42 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [AttributeController::class, 'deleteMuitpalt'])->name('attributes.deleteMultiple');
     });
-    Route::get('/attributeshortdeleted',                              [AttributeController::class, 'showSotfDelete'])->name('attributes.attributeshortdeleted');
+        Route::get('/attributeshortdeleted',                 [AttributeController::class, 'showSotfDelete'])->name('attributes.attributeshortdeleted');
 
-    Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
+        Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
     Route::prefix('categories')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
-        Route::get('create', [CategoryController::class, 'create'])->name('categories.create');
-        Route::post('/', [CategoryController::class, 'store'])->name('categories.store');
-        // Route::get('/{category}', [CategoryController::class, 'show'])->name('categories.show');
-        Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
-        Route::get('/{category}',         [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-        Route::delete('/categories/delete-multiple', [CategoryController::class, 'deleteMultiple'])->name('categories.delete-multiple');
-        // Route::delete('/{category}/hard-delete', [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
-        Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
-        Route::delete('/categories/{id}/hard-delete', [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
+        Route::get('/',                                    [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('create',                               [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/',                                   [CategoryController::class, 'store'])->name('categories.store');
+        // Route::get('/{category}',                       [CategoryController::class, 'show'])->name('categories.show');
+        Route::get('/categories/{category}',               [CategoryController::class, 'show'])->name('categories.show');
+        Route::get('/{category}',                          [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/{category}',                          [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/{category}',                       [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::delete('/categories/delete-multiple',       [CategoryController::class, 'deleteMultiple'])->name('categories.delete-multiple');
+        // Route::delete('/{category}/hard-delete',        [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
+        Route::patch('/categories/{id}/restore',           [CategoryController::class, 'restore'])->name('categories.restore');
+        Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
 
-        Route::post('/update-category-parent', [CategoryController::class, 'updateParent']);
+        Route::post('/update-category-parent',            [CategoryController::class, 'updateParent']);
 
     });
-    Route::get('/categoryTrashed', [CategoryController::class, 'trashed'])->name('categories.trashed');
-    Route::get('/categoriesTrashed/search', [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
-    Route::post('/categories/trashed/restore-multiple', [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
-    Route::post('/categories/trashed/hard-delete-multiple', [CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
+        Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
+        Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
+        Route::post('/categories/trashed/restore-multiple',   [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
+        Route::post('/categories/trashed/hard-delete-multiple',[CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
+
+  Route::prefix('users')->group( function () {
+      Route::get('/',                                     [UserController::class, 'index'])->name('users.index');
+      Route::get('/add',                                  [UserController::class, 'add'])->name('users.add');
+      Route::post('/store',                               [UserController::class, 'store'])->name('users.store');
+      Route::get('show/{id}',                             [UserController::class, 'show'])->name('users.show');
+      Route::get('/edit/{id}',                            [UserController::class, 'edit'])->name('users.edit');
+      Route::put('update/{id}',                           [UserController::class, 'update'])->name('users.update');
+      Route::delete('/users/{id}/delete',                 [UserController::class, 'destroy'])->name('users.delete');
+      Route::post('/users/deleteMultiple',                [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+  });
+  
 });
 
 Route::get('/client', function () {
@@ -148,35 +162,36 @@ Route::get('/client', function () {
 });
 
 Route::prefix('auth')->group(function () {
-    Route::get('admin/login', [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
-    Route::get('/login', [LoginController::class, 'showFormLogin'])->name('client.login');
-    Route::post('login', [LoginController::class, 'login'])->name('auth.login');
-    Route::get('logout', [LoginController::class, 'logout'])->name('auth.logout');
-    Route::get('register', [RegisterController::class, 'showFormRegister'])->name('show.register');
-    Route::post('register', [RegisterController::class, 'register'])->name('register');
+    Route::get('admin/login',                             [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
+    Route::get('/login',                                  [LoginController::class, 'showFormLogin'])->name('client.login');
+    Route::post('login',                                  [LoginController::class, 'login'])->name('auth.login');
+    Route::get('logout',                                  [LoginController::class, 'logout'])->name('auth.logout');
+    Route::get('register',                                [RegisterController::class, 'showFormRegister'])->name('show.register');
+    Route::post('register',                               [RegisterController::class, 'register'])->name('register');
 
-    // Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.showconfirm');
-    // Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm'])->name('password.confirm');
-    Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
-    Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    // Route::get('password/confirm',                     [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.showconfirm');
+    // Route::post('password/confirm',                    [ConfirmPasswordController::class, 'confirm'])->name('password.confirm');
+    Route::post('password/email',                         [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset',                          [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('password/reset',                         [ResetPasswordController::class, 'reset'])->name('password.update');
+    Route::get('password/reset/{token}',                  [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 
-    Route::get('google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
-    Route::get('google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+    Route::get('google',                                  [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('google/callback',                         [SocialiteController::class, 'handleGoogleCallback']);
 
-    Route::get('facebook', [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
-    Route::get('facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
+    Route::get('facebook',                                [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
+    Route::get('facebook/callback',                       [SocialiteController::class, 'handleFacebookCallback']);
 
-    Route::get('github', [SocialiteController::class, 'redirectToGitHub'])->name('auth.github');
-    Route::get('github/callback', [SocialiteController::class, 'handleGitHubCallback']);
+    Route::get('github',                                  [SocialiteController::class, 'redirectToGitHub'])->name('auth.github');
+    Route::get('github/callback',                         [SocialiteController::class, 'handleGitHubCallback']);
 
-    Route::get('twitter', [SocialiteController::class, 'redirectToTwitter'])->name('auth.twitter');
-    Route::get('twitter/callback', [SocialiteController::class, 'handleTwitterCallback']);
+    Route::get('twitter',                                 [SocialiteController::class, 'redirectToTwitter'])->name('auth.twitter');
+    Route::get('twitter/callback',                        [SocialiteController::class, 'handleTwitterCallback']);
 });
 
 Route::prefix('/')->group(function () {
     Route::get('', function () {
         return view('client.home');
     })->name('client');
+
 });

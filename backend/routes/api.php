@@ -34,16 +34,15 @@ use App\Http\Controllers\PermissionController;
 //     Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('products.delete-multiple');
 // });
 
-// users
-// Route::prefix('users')->group( function () {
-//     Route::get('/', [UserController::class, 'index'])->name('users.index');
-//     Route::post('', [UserController::class, 'store'])->name('users.store');
-//     Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
-//     Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
-//     Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');// xóa mềm
-//     Route::delete('/{id}/hardDelete', [UserController::class, 'hardDelete'])->name('users.hardDelete');// xóa cứng
-//     Route::post('/delete-multiple', [UserController::class, 'deleteMuitpalt'])->name('users.delete-multiple');
-// });
+Route::prefix('users')->group( function () {
+    Route::get('/',                         [UserController::class, 'index'])->name('users.index');
+    Route::post('/',                        [UserController::class, 'store'])->name('users.store');
+    Route::get('/{id}',                     [UserController::class, 'show'])->name('users.show');
+    Route::put('/{id}',                     [UserController::class, 'update'])->name('users.update');
+    Route::delete('/{id}',                  [UserController::class, 'destroy'])->name('users.destroy');// xóa mềm
+    Route::delete('/{id}/hardDelete',       [UserController::class, 'hardDelete'])->name('users.hardDelete');// xóa cứng
+    Route::post('/delete-multiple',         [UserController::class, 'deleteMuitpalt'])->name('users.delete-multiple');
+});
 
 // categories
 // Route::prefix('categories')->group(function () {
