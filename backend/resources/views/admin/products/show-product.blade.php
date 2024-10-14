@@ -1,12 +1,19 @@
 @extends('admin.layouts.app')
+@section('libray_css')
+        <link href="{{asset('theme/assets/libs/swiper/swiper-bundle.min.css')}}" rel="stylesheet" type="text/css" />
+@endsection
+@section('style_css')
+    <style>
 
+    </style>
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Product Details</h4>
+                        <h4 class="mb-sm-0">Chi tiết sản phẩm </h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
@@ -26,15 +33,12 @@
                                 <div class="col-xl-4 col-md-8 mx-auto">
                                     <div class="product-img-slider sticky-side-div">
                                         <div class="swiper product-thumbnail-slider p-2 rounded bg-light">
-                                            <h1>Images</h1>
-                                            
-                                            {{-- @include('components.molecules.swiper-wrapper', ['galleries' => $data->galleries , 'variants'=>$data->variants]) --}}
-                                            {{-- <div class="swiper-button-next"></div>
-                                            <div class="swiper-button-prev"></div> --}}
+                                            @include('admin.products.galary.swiper-wrapper', ['galleries' => $data->galleries , 'variants'=>$data->variants])
+                                            <div class="swiper-button-next"></div>
+                                            <div class="swiper-button-prev"></div>
                                         </div>
-                                        <!-- end swiper thumbnail slide -->
                                         <div class="swiper product-nav-slider mt-2">
-                                            {{-- @include('components.molecules.swiper-wrapper-nav', ['galleries' => $data->galleries , 'variants'=>$data->variants]) --}}
+                                            @include('admin.products.galary.swiper-wrapper-nav', ['galleries' => $data->galleries , 'variants'=>$data->variants])
                                         </div>
                                         <!-- end swiper nav slide -->
                                     </div>
@@ -50,7 +54,7 @@
                                                 <h4>{{ $data->name }}</h4>
                                                 <div class="hstack gap-3 flex-wrap">
                                                     <div class="vr"></div>
-                                                    <div class="text-muted">Category : <span class="text-body fw-medium">{{ $data->category_name }}</span></div>
+                                                    <div class="text-muted">Category : <span class="text-body fw-medium">{{ $data->category->name }}</span></div>
                                                     <div class="vr"></div>
                                                     <div class="text-muted">Create At : <span class="text-body fw-medium">{{ $data->created_at }}</span></div>
                                                     <div class="vr"></div>
@@ -59,18 +63,13 @@
                                             </div>
                                             <div class="flex-shrink-0">
                                                 <div>
-                                                    <a href="#" class="btn btn-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="ri-pencil-fill align-bottom"></i></a>
+                                                    <a href="{{ route('admin.products.updateProduct', $data->id) }}" class="btn btn-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="ri-pencil-fill align-bottom"></i></a>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
-                                            <div class="text-muted fs-16">
-                                                <span class="mdi mdi-star text-warning"></span>
-                                                <span class="mdi mdi-star text-warning"></span>
-                                                <span class="mdi mdi-star text-warning"></span>
-                                                <span class="mdi mdi-star text-warning"></span>
-                                                <span class="mdi mdi-star text-warning"></span>
+                                        <div class="d-flex flex-wrap gap-2 align-items-center mt-3"  id="starRating">
+                                            <div class="text-muted fs-16" id ="starRating_text-muted">
                                             </div>
                                             <div class="text-muted">( 5.50k Customer Review )</div>
                                         </div>
@@ -85,9 +84,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="flex-grow-1">
-                                                            <p class="text-muted mb-1">	Price regular:</p>
-                                                            <h5 class="mb-0"> ₫</h5>
-                                                            {{-- <h5 class="mb-0">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</h5> --}}
+                                                            <p class="text-muted mb-1">Giá gốc:</p>
+                                                            <h5 class="mb-0">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</h5>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -102,9 +100,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="flex-grow-1">
-                                                            <p class="text-muted mb-1">Price sale:</p>
-                                                            <h5 class="mb-0"> ₫</h5>
-                                                            {{-- <h5 class="mb-0">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</h5> --}}
+                                                            <p class="text-muted mb-1">Giá khuyến mãi :</p>
+                                                            <h5 class="mb-0">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</h5>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -118,18 +115,22 @@
                                                                 <i class="ri-stack-fill"></i>
                                                             </div>
                                                         </div>
-                                                        {{-- @php
+                                                        @php
                                                         $allQuantities = [];
-                                                        foreach ($data->variants as $variant) {
-                                                            if (isset($variant['quatity'])) {
-                                                                $allQuantities[] = $variant['quatity'];
+                                                            if (isset($data->stock)) {
+                                                                $allQuantities[] = $data->stock; 
                                                             }
-                                                        }
-                                                        $totalQuantity = array_sum($allQuantities);
-                                                        @endphp --}}
+                                                            foreach ($data->variants as $variant) {
+                                                                if (isset($variant['stock'])) {
+                                                                    $allQuantities[] = $variant['stock']; 
+                                                                }
+                                                            }
+                                                            $totalQuantity = array_sum($allQuantities);
+                                                         @endphp
+                                                    
                                                         <div class="flex-grow-1">
-                                                            <p class="text-muted mb-1">Inventory :</p>
-                                                            {{-- <h5 class="mb-0">{{$totalQuantity}}</h5> --}}
+                                                            <p class="text-muted mb-1">Số lượng :</p>
+                                                            <h5 class="mb-0">{{$totalQuantity}}</h5>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -144,7 +145,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="flex-grow-1">
-                                                            <p class="text-muted mb-1">Total Revenue :</p>
+                                                            <p class="text-muted mb-1">Doanh thu:</p>
                                                             <h5 class="mb-0"> ₫</h5>
                                                         </div>
                                                     </div>
@@ -152,89 +153,30 @@
                                             </div>
                                             <!-- end col -->
                                         </div>
-
                                         <div class="row">
-                                            <div class="col-xl-6">
-                                                <div class="mt-4">
-                                                    <h5 class="fs-14">Sizes :</h5>
-                                                    <div class="d-flex flex-wrap gap-2">
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Out of Stock">
-                                                            <input type="radio" class="btn-check" name="productsize-radio" id="productsize-radio1" >
-                                                            <label class="btn btn-soft-primary avatar-xs rounded-circle p-0 d-flex justify-content-center align-items-center" for="productsize-radio1">S</label>
-                                                        </div>
-
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="04 Items Available">
-                                                            <input type="radio" class="btn-check" name="productsize-radio" id="productsize-radio2">
-                                                            <label class="btn btn-soft-primary avatar-xs rounded-circle p-0 d-flex justify-content-center align-items-center" for="productsize-radio2">M</label>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="06 Items Available">
-                                                            <input type="radio" class="btn-check" name="productsize-radio" id="productsize-radio3">
-                                                            <label class="btn btn-soft-primary avatar-xs rounded-circle p-0 d-flex justify-content-center align-items-center" for="productsize-radio3">L</label>
-                                                        </div>
-
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Out of Stock">
-                                                            <input type="radio" class="btn-check" name="productsize-radio" id="productsize-radio4" >
-                                                            <label class="btn btn-soft-primary avatar-xs rounded-circle p-0 d-flex justify-content-center align-items-center" for="productsize-radio4">XL</label>
+                                            @foreach ($attribute as $item)
+                                                <div class="col-xl-6">
+                                                    <div class="mt-4">
+                                                        <h5 class="fs-14">{{$item->attribute_name}}:</h5>
+                                                        <div class="d-flex flex-wrap gap-2">
+                                                            @foreach ($item->attributeValues as $value)
+                                                                @if ($data->variants->contains('product_attribute_id', $value->id))
+                                                                    <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Out of Stock">
+                                                                        {{$value->attribute_value}}
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <!-- end col -->
+                                            @endforeach
 
-                                            <div class="col-xl-6">
-                                                <div class=" mt-4">
-                                                    <h5 class="fs-14">Colors :</h5>
-                                                    <div class="d-flex flex-wrap gap-2">
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Out of Stock">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-primary" disabled>
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="03 Items Available">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-secondary">
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="03 Items Available">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-success">
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="02 Items Available">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-info">
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="01 Items Available">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-warning">
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="04 Items Available">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-danger">
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="03 Items Available">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-light">
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="04 Items Available">
-                                                            <button type="button" class="btn avatar-xs p-0 d-flex align-items-center justify-content-center border rounded-circle fs-20 text-body">
-                                                                <i class="ri-checkbox-blank-circle-fill"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- end col -->
                                         </div>
                                         <!-- end row -->
 
                                         <div class="mt-4 text-muted">
-                                            <h5 class="fs-14">Description :</h5>
-                                            <p>Tommy Hilfiger men striped pink sweatshirt. Crafted with cotton. Material composition is 100% organic cotton. This is one of the world’s leading designer lifestyle brands and is internationally recognized for celebrating the essence of classic American cool style, featuring preppy with a twist designs.</p>
+                                            <h5 class="fs-14">Mô tả ngắn :</h5>
+                                            <p>{{$data->short_description}}</p>
                                         </div>
 
                                         <div class="row">
@@ -602,4 +544,37 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script_libray')
+    <script src="{{asset('theme/assets/libs/swiper/swiper-bundle.min.js')}}"></script>
+    <script src="{{asset('theme/assets/js/pages/ecommerce-product-details.init.js')}}"></script>
+@endsection
+@section('scripte_logic')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingValue = {{ $data->rating }};
+            renderStars(ratingValue);
+        });
+
+    function renderStars(rating) {
+        const starContainer = document.getElementById('starRating_text-muted');
+        starContainer.innerHTML = ''
+
+        const wholeStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
+
+        for (let i = 0; i < wholeStars; i++) {
+            starContainer.innerHTML += '<span class="mdi mdi-star text-warning star"></span>';
+        }
+
+        if (hasHalfStar) {
+            starContainer.innerHTML += '<span class="mdi mdi-star-half text-warning star"></span>';
+        }
+
+        for (let i = wholeStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
+            starContainer.innerHTML += '<span class="mdi mdi-star-outline star-empty"></span>';
+        }
+    }
+
+    </script>
 @endsection

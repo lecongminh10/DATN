@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -15,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 // Route::resource('permissions', PermissionController::class);
 
 // Admin
@@ -42,10 +44,16 @@ Route::group([
         Route::post('/addProduct', [ProductController::class, 'store'])->name('addPostProduct');
         Route::get('/showProduct/{id}', [ProductController::class, 'showProduct'])->name('showProduct');
         Route::get('/update-product/{id}', [ProductController::class, 'showUpdate'])->name('updateProduct');
-        Route::get('/updateProduct/{id}', [ProductController::class, 'showProduct'])->name('updatePutProduct');
+        Route::put('/updateProduct/{id}', [ProductController::class, 'update'])->name('updatePutProduct');
+        Route::get('/{id}/variants', [ProductController::class, 'getVariants'])->name('admin.products.getVariants');
+
         // Route::get('/deleteProduct/{id}', [ProductController::class, 'destroy'])->name('deleteProduct');
     });
+
+    Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
 });
+
+Route::post('/update-category-parent', [CategoryController::class, 'updateParent']);
 
 Route::get('/client', function () {
     return view('client/home');
