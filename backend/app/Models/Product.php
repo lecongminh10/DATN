@@ -70,6 +70,11 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupons_products')
+                    ->withTimestamps();
+    }
     
 
     

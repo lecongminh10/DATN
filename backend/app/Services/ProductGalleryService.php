@@ -13,4 +13,8 @@ class ProductGalleryService extends BaseService
         $this->productGalleryService = $productGalleryService;
     }
 
+    public function getGalaryByProduct($id){
+        return $this->productGalleryService->getGalaryByProduct($id);
+    }
+
 }

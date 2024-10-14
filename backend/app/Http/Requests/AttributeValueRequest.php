@@ -22,8 +22,8 @@ class AttributeValueRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_attributes' => 'required|exists:attributes,id', 
-            'attribute_value' => 'required|string|max:255', 
+            'id_attributes' => 'required|exists:attributes,id',
+            'attribute_value' => 'required|string|max:255',
         ];
     }
 
