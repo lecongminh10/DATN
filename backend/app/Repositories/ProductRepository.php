@@ -22,7 +22,7 @@ class ProductRepository extends BaseRepository
     public function getAll($search = null, $perPage = null)
     {
 
-        $query = Product::select('products.*', 'categories.name as category_name')
+        $query = Product::with('variants')->with('galleries')->select('products.*', 'categories.name as category_name')
             ->join('categories', 'categories.id', '=', 'products.category_id');
 
 

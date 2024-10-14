@@ -25,6 +25,7 @@ class AttributeRequest extends FormRequest
             'attribute_name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255', 
             'attribute_value.*' => 'string|max:255',
+            'attribute_value_id'=> 'array',
         ];
     }
 
@@ -35,6 +36,7 @@ class AttributeRequest extends FormRequest
             'attribute_name.required' => 'Tên thuộc tính là bắt buộc.',
             'attribute_name.string' => 'Tên thuộc tính phải là một chuỗi.',
             'attribute_name.max' => 'Tên thuộc tính không được vượt quá 255 ký tự.',
+            'attribute_value.*' => 'Giá trị thuộc tính là bắt buộc',
             'description.string' => 'Mô tả phải là một chuỗi.',
             'description.max' => 'Mô tả không được vượt quá 500 ký tự.',
         ];

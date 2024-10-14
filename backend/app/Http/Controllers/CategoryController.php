@@ -122,53 +122,68 @@ class CategoryController extends Controller
         return view('admin.categories.trashed', compact('trashedCategories'));
     }
     public function restore($id)
-{
-    $category = Category::onlyTrashed()->findOrFail($id);
-    $category->restore();
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
 
-    return redirect()->route('categories.trashed')->with('success', 'Category restored successfully.');
-}
-
-public function hardDelete($id)
-{
-    $category = Category::onlyTrashed()->findOrFail($id);
-    $category->forceDelete();
-
-    return redirect()->route('categories.trashed')->with('success', 'Category permanently deleted.');
-}
-public function searchTrashed(Request $request)
-{
-    $search = $request->input('search'); // Lấy từ khóa tìm kiếm
-    $trashedCategories = Category::onlyTrashed()
-        ->where('name', 'like', "%{$search}%") // Tìm kiếm theo tên
-        ->paginate(30); // Phân trang kết quả
-
-    return view('admin.categories.trashed', compact('trashedCategories', 'search'));
-}
-public function restoreMultiple(Request $request)
-{
-    $categoryIds = $request->input('categories', []);
-
-    if (empty($categoryIds)) {
-        return redirect()->route('categories.trashed')->with('error', 'No categories selected for restoration.');
+        return redirect()->route('categories.trashed')->with('success', 'Category restored successfully.');
     }
 
-    Category::onlyTrashed()->whereIn('id', $categoryIds)->restore();
+    public function hardDelete($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->forceDelete();
 
-    return redirect()->route('categories.trashed')->with('success', 'Selected categories restored successfully.');
-}
+        return redirect()->route('categories.trashed')->with('success', 'Category permanently deleted.');
+    }
+  
+    public function searchTrashed(Request $request)
+    {
+        $search = $request->input('search'); // Lấy từ khóa tìm kiếm
+        $trashedCategories = Category::onlyTrashed()
+            ->where('name', 'like', "%{$search}%") // Tìm kiếm theo tên
+            ->paginate(30); // Phân trang kết quả
 
-public function hardDeleteMultiple(Request $request)
-{
-    $categoryIds = $request->input('categories', []);
+        return view('admin.categories.trashed', compact('trashedCategories', 'search'));
+    }
+  
+    public function restoreMultiple(Request $request)
+    {
+        $categoryIds = $request->input('categories', []);
 
-    if (empty($categoryIds)) {
-        return redirect()->route('categories.trashed')->with('error', 'No categories selected for deletion.');
+        if (empty($categoryIds)) {
+            return redirect()->route('categories.trashed')->with('error', 'No categories selected for restoration.');
+        }
+
+        Category::onlyTrashed()->whereIn('id', $categoryIds)->restore();
+
+        return redirect()->route('categories.trashed')->with('success', 'Selected categories restored successfully.');
     }
 
-    // Xóa cứng các danh mục đã chọn
-    Category::onlyTrashed()->whereIn('id', $categoryIds)->forceDelete();
+    public function hardDeleteMultiple(Request $request)
+    {
+        $categoryIds = $request->input('categories', []);
 
-    return redirect()->route('categories.trashed')->with('success', 'Selected categories deleted permanently.');
-}
+        if (empty($categoryIds)) {
+            return redirect()->route('categories.trashed')->with('error', 'No categories selected for deletion.');
+        }
+
+        // Xóa cứng các danh mục đã chọn
+        Category::onlyTrashed()->whereIn('id', $categoryIds)->forceDelete();
+        return redirect()->route('categories.trashed')->with('success', 'Selected categories deleted permanently.');
+
+    }
+      public function updateParent(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:categories,id',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $category = Category::find($request->id);
+        $category->parent_id = $request->parent_id;
+        $category->save();
+
+        return response()->json(['success' => true]);
+    }
 }

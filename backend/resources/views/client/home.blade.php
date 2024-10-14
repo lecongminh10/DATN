@@ -1107,3 +1107,10 @@
     <!-- End .container -->
 </main>
 @endsection
+@section('script_logic')
+    <script>
+        if (window.location.hash === "#_=_") {
+            window.location.hash = "";
+        }
+    </script>
+@endsection
