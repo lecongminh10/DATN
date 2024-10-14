@@ -5,22 +5,13 @@
         <div class="container-fluid">
 
             <!-- start page title -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Attribute</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                                <li class="breadcrumb-item active">Edit Attribute</li>
-                            </ol>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <!-- end page title -->
+            @include('admin.layouts.component.page-header', [
+                'title' => 'Thuộc tính ',
+                'breadcrumb' => [
+                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Thuộc tính', 'url' => '#']
+                ]
+            ])
             @if (session()->has('success') && session()->get('success'))
                 <div class="alert alert-primary" role="alert">
                     <strong>Thao Tác Thành Công</strong>
@@ -43,7 +34,7 @@
                                 <div class="row g-4 align-items-center">
                                     <div class="col-sm">
                                         <div>
-                                            <h5 class="card-title mb-0">Edit Attribute</h5>
+                                            <h5 class="card-title mb-0">Cập nhật thuộc tính</h5>
                                         </div>
                                     </div>
                                     <div class="col-sm-auto">
@@ -56,24 +47,24 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label class="form-label" for="attribute-name-input">Attribute Name</label>
+                                    <label class="form-label" for="attribute-name-input">Tên </label>
                                     <input type="text" class="form-control" id="attribute-name-input"
                                         name="attribute_name"
                                         value="{{ old('attribute_name', $attribute->attribute_name) }}"
-                                        placeholder="Enter Attribute" required>
+                                        placeholder="Enter tên thuộc tính" required>
                                     @error('attribute_name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label" for="attribute-description-input">Attribute Description</label>
-                                    <textarea class="form-control" id="attribute-description-input" name="description" placeholder="Enter Attribute Description" required>{{ old('description', $attribute->description) }}</textarea>
+                                    <label class="form-label" for="attribute-description-input">Mô tả </label>
+                                    <textarea class="form-control" id="attribute-description-input" name="description" placeholder="Enter mô tả thuộc tính" required>{{ old('description', $attribute->description) }}</textarea>
                                     @error('description')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>                                
                                 <div class="mb-3">
-                                    <label class="form-label">Attribute Values</label>
+                                    <label class="form-label">Giá trị của thuộc tính</label>
                                     <div id="attribute-values">
                                         @foreach ($attribute->attributeValues as $value)
                                             <div class="input-group mb-2">
@@ -84,24 +75,23 @@
                                                     placeholder="Enter Attribute Value" required>
                                                 <button type="button" class="btn btn-outline-danger remove-attribute-value"
                                                     data-id="{{ $value->id }}"
-                                                    onclick="removeAttributeValue(this)">Remove</button>
+                                                    onclick="removeAttributeValue(this)">Xóa</button>
                                             </div>
                                             @error('attribute_value.' . $loop->index)
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         @endforeach
                                     </div>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="addAttributeValue()">Add More</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="addAttributeValue()">Thêm</button>
                                 </div>
+                            </div>
+                            <div class="text-end mb-3">
+                                <button type="submit" class="btn btn-success w-sm"><i class="ri-check-double-line me-2"></i>Cập nhật</button>
+                                <a href="{{ route('admin.attributes.index') }}" class=" btn btn-secondary w-sm"><i
+                                    class="ri-arrow-left-line"></i> Quay lại</a>
                             </div>
                         </div>
                         <!-- Nút submit -->
-                        <div class="text-end mb-3">
-                            <button type="submit" class="btn btn-success w-sm"><i class="ri-check-double-line me-2"></i>Update</button>
-                            <a href="{{ route('admin.attributes.index') }}" class=" btn btn-secondary w-sm"><i
-                                class="ri-arrow-left-line"></i> Quay lại danh
-                            sách</a>
-                        </div>
                     </div>
                 </div>
             </form>

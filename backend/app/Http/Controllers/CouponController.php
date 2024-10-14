@@ -46,13 +46,10 @@ class CouponController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CouponRequest $couponRequest, $id = null)
+    public function store(Request $couponRequest)
     {
-        $validatedData = $couponRequest->validated();
-        // dd($validatedData);
+        $validatedData = $couponRequest->all();
         try {
-            DB::beginTransaction();
-
             $couponData = [
                 'applies_to'          => $validatedData['applies_to'],
                 'code'                => $validatedData['code'],
@@ -67,12 +64,9 @@ class CouponController extends Controller
                 'is_active'           => $validatedData['is_active'] ? 1 : 0,
                 'is_stackable'        => $validatedData['is_stackable'] ? 1 : 0,
                 'eligible_users_only' => $validatedData['eligible_users_only'] ? 1 : 0,
-                'created_by'          => auth()->id(), // Lấy ID của người dùng hiện tại
+                'created_by'          => auth()->id() ?? 1, // Lấy ID của người dùng hiện tại
             ];
-            // dd($couponData);
-            $coupon = $this->couponService->saveOrUpdate($couponData, $id);
-
-            DB::commit();
+            $coupon = $this->couponService->saveOrUpdate($couponData);
             return redirect()->route('admin.coupons.index', compact('coupon'))->with('success', 'Thêm mới coupon thành công');
         } catch (\Exception $e) {
             DB::rollBack();

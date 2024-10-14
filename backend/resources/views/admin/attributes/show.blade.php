@@ -4,19 +4,13 @@
     <div class="page-content">
         <div class="container-fluid">
             <!-- start page title -->
-            <div class="row">
-                <div class="col-12 ">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Attribute</h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                                <li class="breadcrumb-item active">Attribute Information</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('admin.layouts.component.page-header', [
+                'title' => 'Thuộc tính ',
+                'breadcrumb' => [
+                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Thuộc tính', 'url' => '#']
+                ]
+            ])
             <div class="row">
                 <!-- end page title -->
                 <div class="card">
@@ -24,7 +18,7 @@
                         <div class="row g-4 align-items-center">
                             <div class="col-sm">
                                 <div>
-                                    <h5 class="card-title mb-0 "><a class="text-dark" href="{{ route('admin.attributes.index') }}">Attribute List</a></h5>
+                                    <h5 class="card-title mb-0 "><a class="text-dark" href="{{ route('admin.attributes.index') }}">Chi tiết </a></h5>
                                 </div>
                             </div>
                         </div>
@@ -49,7 +43,7 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <h6 class="form-label fw-semibold">Giá trị Thuộc tính</h6>
+                            <h6 class="form-label fw-semibold">Giá trị thuộc tính</h6>
                             <div class="d-flex flex-wrap gap-2">
                                 @if ($attribute->attributeValues->isEmpty())
                                     <span class="badge bg-warning text-dark">Không có giá trị nào cho thuộc tính này.</span>
@@ -62,8 +56,7 @@
                         </div>
                         <div class="text-end mb-3">
                             <a href="{{ route('admin.attributes.index') }}" class=" btn btn-secondary btn w-sm"><i
-                                    class="ri-arrow-left-line"></i> Quay lại danh
-                                sách</a>
+                                    class="ri-arrow-left-line"></i> Quay lại</a>
                         </div>
                     </div>
                 </div>

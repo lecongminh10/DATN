@@ -23,21 +23,13 @@
     <div class="page-content">
         <div class="container-fluid">
             <!-- start page title -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Mã Giảm Giá</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                                <li class="breadcrumb-item active">Mã Giảm Giá</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end page title -->
+            @include('admin.layouts.component.page-header', [
+                'title' => 'Khuyến mãi ',
+                'breadcrumb' => [
+                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Khuyến mãi', 'url' => '#']
+                ]
+            ])
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card" id="couponList">
@@ -93,8 +85,7 @@
                                                     <select class="form-select" aria-label=".form-select-sm example"
                                                         id="idStatus" name="status">
                                                         <option value=""
-                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Select
-                                                            Status</option>
+                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Trạng thái</option>
                                                         <option value="1"
                                                             {{ request()->get('status') == '1' ? 'selected' : '' }}>Active
                                                         </option>
@@ -107,26 +98,26 @@
                                                     <select id="appliesTo" name="applies_to" class="form-select">
                                                         <option value=""
                                                             {{ request()->get('applies_to') == '' ? 'selected' : '' }}>
-                                                            Applies To</option>
+                                                           Áp dụng </option>
                                                         <option value="product"
                                                             {{ request()->get('applies_to') == 'product' ? 'selected' : '' }}>
-                                                            Products</option>
+                                                            Sản phẩm </option>
                                                         <option value="category"
                                                             {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
-                                                            Categories</option>
+                                                            Danh mục</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select id="discountType" name="discount_type" class="form-select">
                                                         <option value=""
                                                             {{ request()->get('discount_type') == '' ? 'selected' : '' }}>
-                                                            Discount Type</option>
+                                                            Loại mã</option>
                                                         <option value="percentage"
                                                             {{ request()->get('discount_type') == 'percentage' ? 'selected' : '' }}>
-                                                            Percentage</option>
+                                                            Phần trăm</option>
                                                         <option value="fixed_amount"
                                                             {{ request()->get('discount_type') == 'fixed_amount' ? 'selected' : '' }}>
-                                                            Fixed</option>
+                                                            Số tiền cố định</option>
                                                     </select>
                                                 </div>
                                             </form>
@@ -451,7 +442,7 @@
             let appliesTo = document.getElementById('appliesTo').value;
             let discountType = document.getElementById('discountType').value;
 
-            let filterUrl = '/coupons?'; // Khai báo filterUrl
+            let filterUrl = '/admin/coupons?'; // Khai báo filterUrl
 
             if (status !== '') {
                 filterUrl += 'status=' + status + '&';
@@ -469,7 +460,7 @@
 
         function clearFilters() {
             // Chuyển hướng đến URL không có tham số bộ lọc
-            window.location.href = '/coupons';
+            window.location.href = '/admin/coupons';
         }
     </script>
     <script>
@@ -479,7 +470,7 @@
                 var couponId = $(this).data('id');
 
                 $.ajax({
-                    url: '/coupons/' + couponId,
+                    url: '/admin/coupons/' + couponId,
                     type: 'GET',
                     success: function(response) {
                         var coupon = response.coupon;

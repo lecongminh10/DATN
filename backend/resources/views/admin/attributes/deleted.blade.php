@@ -4,22 +4,13 @@
     <div class="page-content">
         <div class="container-fluid">
             <!-- start page title -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Attributes</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">App</a></li>
-                                <li class="breadcrumb-item active">Attributes</li>
-                            </ol>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <!-- end page title -->
+            @include('admin.layouts.component.page-header', [
+                'title' => 'Thuộc tính ',
+                'breadcrumb' => [
+                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Thuộc tính', 'url' => '#']
+                ]
+            ])
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -30,8 +21,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.attributes.deleted') }}">Attribute List
-                                                        SotfDelete</a></h5>
+                                                        href="{{ route('admin.attributes.deleted') }}">Danh sách đã xóa</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -77,16 +67,15 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>ID</th>
+                                                    <th>Stt</th>
                                                     <th>Tên thuộc tính</th>
                                                     <th>Người xóa</th>
                                                     <th>Ngày xóa</th>
                                                     <th>Thao tác</th>
-                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                @foreach ($data as $item)
+                                                @foreach ($data as $index=> $item)
                                                     <tr>
                                                         <th scope="row">
                                                             <div class="form-check">
@@ -94,11 +83,11 @@
                                                                     name="chk_child" value="{{ $item->id }}">
                                                             </div>
                                                         </th>
-                                                        <td>{{ $item->id }}</td>
+                                                        <td>{{ $index+1 }}</td>
                                                         <td>{{ $item->attribute_name }}</td>
                                                         <td>{{ $item->deleted_by }}</td>
-                                                        <td>{{ $item->created_at->format('d-m-Y H:i:s') }}</td>
-                                                        <td>{{ $item->deleted_at->format('d-m-Y H:i:s') }}</td>
+                                                        <td>{{ ($item->deleted_at) ? $item->deleted_at->format('d-m-Y H:i:s'):''}}</td>
+
                                                         <td>
                                                             <form
                                                                 action="{{ route('admin.attributes.restore', $item->id) }}"

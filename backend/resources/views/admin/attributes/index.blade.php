@@ -4,22 +4,13 @@
     <div class="page-content">
         <div class="container-fluid">
             <!-- start page title -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Attributes</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">App</a></li>
-                                <li class="breadcrumb-item active">Attributes</li>
-                            </ol>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <!-- end page title -->
+            @include('admin.layouts.component.page-header', [
+                'title' => 'Thuộc tính ',
+                'breadcrumb' => [
+                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Thuộc tính', 'url' => '#']
+                ]
+            ])
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -30,7 +21,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title "><a class="text-dark"
-                                                        href="{{ route('admin.attributes.index') }}">Attribute List</a></h5>
+                                                        href="{{ route('admin.attributes.index') }}">Danh sách</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -58,7 +49,7 @@
                                                     href="{{ route('admin.attributes.create') }}">
                                                     <i class="ri-add-box-fill"></i> Thêm
                                                 </a>
-                                                <a href="{{ route('admin.attributes.deleted1') }}"
+                                                <a href="{{ route('admin.attributes.attributeshortdeleted') }}"
                                                     class="btn btn-soft-danger ms-2">
                                                     <i class="ri-delete-bin-2-line"></i>Thùng rác
                                                 </a>
@@ -76,16 +67,16 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>ID</th>
-                                                    <th>Attributes</th>
-                                                    <th>Attributes Description</th>
-                                                    <th>Created_at</th>
-                                                    <th>Updated_at</th>
-                                                    <th class="text-center">Action</th>
+                                                    <th>Stt</th>
+                                                    <th>Tên </th>
+                                                    <th>Mô tả </th>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Ngày xóa</th>
+                                                    <th class="text-center"></th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                @foreach ($attributes as $item)
+                                                @foreach ($attributes as $index=> $item)
                                                     <tr>
                                                         <th scope="row">
                                                             <div class="form-check">
@@ -93,7 +84,7 @@
                                                                     name="chk_child" value="{{ $item->id }}">
                                                             </div>
                                                         </th>
-                                                        <td>{{ $item->id }}</td>
+                                                        <td>{{ $index+1 }}</td>
                                                         <td>
                                                             <a href="{{ route('admin.attributes.show', $item->id) }}"
                                                                 class="dropdown-item">
@@ -109,8 +100,8 @@
                                                                 </a>
                                                             @endforeach
                                                         </td> --}}
-                                                        <td>{{ $item->created_at->format('d-m-Y H:i:s') }}</td>
-                                                        <td>{{ $item->updated_at->format('d-m-Y H:i:s') }}</td>
+                                                        <td>{{ ( $item->created_at) ? $item->created_at->format('d-m-Y H:i:s'):''}}</td>
+                                                        <td>{{($item->updated_at)? $item->updated_at->format('d-m-Y H:i:s'):''}}</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
                                                                 <div class="dropdown d-inline-block">
@@ -123,11 +114,11 @@
                                                                         <li><a href="{{ route('admin.attributes.show', $item->id) }}"
                                                                                 class="dropdown-item"><i
                                                                                     class="ri-eye-fill align-bottom me-2 fs-16"></i>
-                                                                                View</a></li>
+                                                                                Xem</a></li>
                                                                         <li><a href="{{ route('admin.attributes.edit', $item->id) }}"
                                                                                 class="dropdown-item edit-item-btn"><i
                                                                                     class="ri-pencil-fill fs-16 align-bottom me-2"></i>
-                                                                                Edit</a></li>
+                                                                                Sửa</a></li>
                                                                         <li>
                                                                             <form
                                                                                 action="{{ route('admin.attributes.destroy', $item->id) }}"
@@ -140,7 +131,7 @@
                                                                                     class="dropdown-item remove-item-btn">
                                                                                     <i
                                                                                         class="ri-delete-bin-5-fill fs-16 align-bottom me-2"></i>
-                                                                                    Delete
+                                                                                    Xóa
                                                                                 </button>
                                                                             </form>
                                                                         </li>

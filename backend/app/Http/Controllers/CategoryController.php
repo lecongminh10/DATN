@@ -47,7 +47,7 @@ class CategoryController extends Controller
         }
         // $result = $this->categoryService->saveOrUpdate($data);
         $this->categoryService->saveOrUpdate($data);
-        return redirect()->route('categories.index');
+        return redirect()->route('admin.categories.index');
     }
 
     public function show($id)
@@ -74,7 +74,7 @@ class CategoryController extends Controller
         $data['is_active'] ??= 0;
         if ($request->hasFile('image')) {
             $relativePath = $request->file('image')->store(self::PATH_UPLOAD);
-            $data['image'] = $relativePath . '/' . str_replace('public/', '', $relativePath);
+            $data['image'] = $relativePath;
         }
         $currentCover = $model->image;
         $filename = basename($currentCover);
@@ -83,7 +83,7 @@ class CategoryController extends Controller
         if ($request->hasFile('image') && $filename && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
             Storage::delete(self::PATH_UPLOAD . '/' . $filename);
         }
-        return redirect()->route('categories.index')->with('success', 'Update successful');
+        return redirect()->route('admin.categories.index')->with('success', 'Update successful');
 
     }
 
@@ -98,19 +98,19 @@ class CategoryController extends Controller
         if ($currentCover && Storage::exists(self::PATH_UPLOAD.'/'.$filename)) {
             Storage::delete(self::PATH_UPLOAD.'/'.$filename);
         }
-        return redirect()->route('categories.index');
+        return redirect()->route('admin.categories.index');
     }
     public function deleteMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
     
         if (empty($categoryIds)) {
-            return redirect()->route('categories.index')->with('error', 'No categories selected for deletion.');
+            return redirect()->route('admin.categories.index')->with('error', 'No categories selected for deletion.');
         }
     
         Category::destroy($categoryIds);
     
-        return redirect()->route('categories.index')->with('success', 'Selected categories deleted successfully.');
+        return redirect()->route('admin.categories.index')->with('success', 'Selected categories deleted successfully.');
     }
     public function trashed()
     {
@@ -126,7 +126,7 @@ class CategoryController extends Controller
         $category = Category::onlyTrashed()->findOrFail($id);
         $category->restore();
 
-        return redirect()->route('categories.trashed')->with('success', 'Category restored successfully.');
+        return redirect()->route('admin.categories.trashed')->with('success', 'Category restored successfully.');
     }
 
     public function hardDelete($id)
@@ -134,12 +134,13 @@ class CategoryController extends Controller
         $category = Category::onlyTrashed()->findOrFail($id);
         $category->forceDelete();
 
-        return redirect()->route('categories.trashed')->with('success', 'Category permanently deleted.');
+        return redirect()->route('admin.categories.trashed')->with('success', 'Category permanently deleted.');
     }
   
     public function searchTrashed(Request $request)
     {
         $search = $request->input('search'); // Lấy từ khóa tìm kiếm
+        dd($search);
         $trashedCategories = Category::onlyTrashed()
             ->where('name', 'like', "%{$search}%") // Tìm kiếm theo tên
             ->paginate(30); // Phân trang kết quả
@@ -152,12 +153,12 @@ class CategoryController extends Controller
         $categoryIds = $request->input('categories', []);
 
         if (empty($categoryIds)) {
-            return redirect()->route('categories.trashed')->with('error', 'No categories selected for restoration.');
+            return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for restoration.');
         }
 
         Category::onlyTrashed()->whereIn('id', $categoryIds)->restore();
 
-        return redirect()->route('categories.trashed')->with('success', 'Selected categories restored successfully.');
+        return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories restored successfully.');
     }
 
     public function hardDeleteMultiple(Request $request)
@@ -165,12 +166,12 @@ class CategoryController extends Controller
         $categoryIds = $request->input('categories', []);
 
         if (empty($categoryIds)) {
-            return redirect()->route('categories.trashed')->with('error', 'No categories selected for deletion.');
+            return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for deletion.');
         }
 
         // Xóa cứng các danh mục đã chọn
         Category::onlyTrashed()->whereIn('id', $categoryIds)->forceDelete();
-        return redirect()->route('categories.trashed')->with('success', 'Selected categories deleted permanently.');
+        return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories deleted permanently.');
 
     }
       public function updateParent(Request $request)

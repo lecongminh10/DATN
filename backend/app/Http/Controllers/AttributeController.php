@@ -149,9 +149,9 @@ class AttributeController extends Controller
     {
         try {
             $this->attributeService->restore_delete($id);
-            return redirect()->route('admin.attributes.deleted')->with('success', 'Khôi phục thuộc tính thành công!');
+            return redirect()->route('admin.attributes.attributeshortdeleted')->with('success', 'Khôi phục thuộc tính thành công!');
         } catch (\Exception $e) {
-            return redirect()->route('admin.attributes.deleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
+            return redirect()->route('admin.attributes.attributeshortdeleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
         }
     }
 
@@ -203,7 +203,7 @@ class AttributeController extends Controller
             return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
         $data->forceDelete();
-        return redirect()->route('admin.attributes.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
+        return redirect()->route('admin.attributes.attributeshortdeleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 
     public function hardDeleteAttributeValue(int $id)

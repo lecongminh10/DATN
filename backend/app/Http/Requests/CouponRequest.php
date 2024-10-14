@@ -23,10 +23,28 @@ class CouponRequest extends FormRequest
     public function rules()
     {
         $id = $this->route('id'); // Lấy ID từ route
-
+        if(isset($id)){
+            return [
+                'applies_to' => 'required|string|max:20',
+                'code' => 'required|string|unique:coupons,code,' . $id,
+                'description' => 'nullable|string',
+                'discount_type' => 'required|in:percentage,fixed_amount',
+                'discount_value' => 'required|numeric|min:0',
+                'max_discount_amount' => 'nullable|numeric|min:0',
+                'min_order_value' => 'nullable|numeric|min:0',
+                'start_date' => 'nullable|date',
+                'end_date' => 'nullable|date|after_or_equal:start_date',
+                'usage_limit' => 'nullable|integer|min:0',
+                'per_user_limit' => 'nullable|integer|min:0',
+                'is_active' => 'required|in:0,1',
+                'is_stackable' => 'required|in:0,1',
+                'eligible_users_only' => 'required|in:0,1',
+                'created_by' => 'exists:users,id', // Nếu cần kiểm tra người tạo
+            ];
+        }
         return [
             'applies_to' => 'required|string|max:20',
-            'code' => 'required|string|unique:coupons,code,' . $id,
+            'code' => 'required|string|unique:coupons,code',
             'description' => 'nullable|string',
             'discount_type' => 'required|in:percentage,fixed_amount',
             'discount_value' => 'required|numeric|min:0',
@@ -39,7 +57,7 @@ class CouponRequest extends FormRequest
             'is_active' => 'required|in:0,1',
             'is_stackable' => 'required|in:0,1',
             'eligible_users_only' => 'required|in:0,1',
-            // 'created_by' => 'exists:users,id', // Nếu cần kiểm tra người tạo
+            'created_by' => 'exists:users,id', // Nếu cần kiểm tra người tạo
         ];
     }
 
