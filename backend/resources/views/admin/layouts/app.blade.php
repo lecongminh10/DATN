@@ -24,6 +24,7 @@
     <!-- custom Css-->
     <link href="{{ asset('theme/assets/css/custom.min.css')}}" rel="stylesheet" type="text/css" />
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>

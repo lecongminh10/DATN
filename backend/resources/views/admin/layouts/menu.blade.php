@@ -73,7 +73,27 @@
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarApps">
                         <ul class="nav nav-sm flex-column">
+
                             <li class="nav-item">
+                                <a href="#sidebarCalendar" class="nav-link" data-bs-toggle="collapse"
+                                    role="button" aria-expanded="false" aria-controls="sidebarCalendar"
+                                    data-key="t-calender">
+                                    Đơn hàng
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarCalendar">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('orders.listOrder') }}" class="nav-link"
+                                                data-key="t-main-calender">Danh sách</a>
+                                        </li>
+                                        {{-- <li class="nav-item">
+                                            <a href="{{ route('orders.listTrashOrder') }}" class="nav-link"
+                                                data-key="t-month-grid">Danh sách đã xóa</a>
+                                        </li> --}}
+                                    </ul>
+                                </div>
+                            </li>
+                            {{-- <li class="nav-item">
                                 <a href="#sidebarCalendar" class="nav-link" data-bs-toggle="collapse"
                                     role="button" aria-expanded="false" aria-controls="sidebarCalendar"
                                     data-key="t-calender">
@@ -89,9 +109,9 @@
                                             <a href="apps-calendar-month-grid.html" class="nav-link"
                                                 data-key="t-month-grid"> Month Grid </a>
                                         </li>
-                                    </ul>
+                                    </ul >
                                 </div>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
                                 <a href="apps-chat.html" class="nav-link" data-key="t-chat"> Chat </a>
                             </li>

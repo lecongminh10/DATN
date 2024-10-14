@@ -25,7 +25,9 @@ return new class extends Migration
         
             $table->foreign('shipping_address_id')->references('id')->on('addresses')->onDelete('cascade');
             $table->foreign('carrier_id')->references('id')->on('carriers')->onDelete('set null');
-        
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
+
             $table->softDeletes()->comment('Thời gian xóa mềm');
             $table->foreignId('deleted_by')->nullable()->constrained('users')->comment('Người thực hiện xóa mềm');
         

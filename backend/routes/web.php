@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,7 @@ Route::prefix('auth')->group(function(){
     Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
     Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-    
+
     Route::get('google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
@@ -57,9 +58,39 @@ Route::prefix('auth')->group(function(){
 
 
 Route::middleware('isAdmin')->prefix('admin')->group(function(){
-        Route::get('', function () {
-            return view('admin.dashboard');
-        })->name('admin');
+    Route::get('', function () {
+        return view('admin.dashboard');
+    })->name('admin');
+
+    Route::group(
+        [
+            'prefix' => 'orders',
+            'as' => 'orders.'
+        ],
+        function () {
+            Route::get('list-order', [OrderController::class, 'index'])->name('listOrder');
+
+            Route::get('list-trash-order', [OrderController::class, 'listTrash'])->name('listTrashOrder');
+
+            Route::get('order-detail/{id}', [OrderController::class, 'showOrder'])->name('orderDetail');
+
+            Route::get('order-edit/{code}', [OrderController::class, 'showModalEdit'])->name('orderEdit');
+            
+            Route::put('update-order/{id}', [OrderController::class, 'updateOrder'])->name('updateOrder');
+            
+            Route::delete('soft-delete/{id}', [OrderController::class, 'destroy'])->name('soft_delete');
+            
+            Route::delete('multi-soft-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_soft_delete');
+            
+            Route::put('restore/{id}', [OrderController::class, 'restore'])->name('restore');// một cái được rồi đúng khoong  ô thử lại caid
+            
+            Route::put('restore_selected', [OrderController::class, 'muitpathRestore'])->name('restore_selected');
+            
+            Route::delete('hard-delete/{id}', [OrderController::class, 'hardDelete'])->name('hard_delete');
+            
+            Route::delete('multi-hard-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete'); 
+        }
+    );
 });
 Route::prefix('/')->group(function(){
     Route::get('', function () {
