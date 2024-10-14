@@ -116,28 +116,27 @@ class UserController extends Controller
     }
 
     public function destroy($id, Request $request)
-{
-    $user = User::findOrFail($id);
+    {
+        $user = User::findOrFail($id);
 
-    if ($request->forceDelete === 'true') {
-        $user->forceDelete(); 
-    } else {
-        $user->delete(); 
+        if ($request->forceDelete === 'true') {
+            $user->forceDelete();
+        } else {
+            $user->delete();
+        }
+
+        return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
 
-    return redirect()->route('users.index')->with('success', 'User deleted successfully');
-}
 
-
-// UserController.php
-public function deleteMultiple(Request $request)
+    // UserController.php
+    public function deleteMultiple(Request $request)
     {
         $ids = json_decode($request->ids); // Lấy danh sách ID từ yêu cầu
         $forceDelete = $request->forceDelete === 'true'; // Kiểm tra có xóa vĩnh viễn không
-
         // Xóa người dùng
         foreach ($ids as $id) {
-            $user = User::find($id);
+            $user=User::withTrashed()->find($id);
             if ($forceDelete) {
                 $user->forceDelete(); // Xóa vĩnh viễn
             } else {
@@ -146,6 +145,30 @@ public function deleteMultiple(Request $request)
         }
 
         return response()->json(['success' => true, 'message' => 'Người dùng đã được xóa.']);
+    }
+
+    public function listdeleteMultiple(){
+        $user = $this->userService->getAllTrashedUsers();
+        return view('admin.users.deleted', compact('user'));
+    }
+
+    public function manage(Request $request, int $id)
+    {
+
+        $user = User::onlyTrashed()->find($id);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+        }
+
+        if ($request->input('action') === 'restore') {
+            $user->restore();
+            return response()->json(['success' => true, 'message' => 'User restored successfully.']);
+        } elseif ($request->input('action') === 'hard-delete') {
+            $user->forceDelete();
+            return response()->json(['success' => true, 'message' => 'User deleted permanently.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Invalid action.'], 400);
     }
 
 }

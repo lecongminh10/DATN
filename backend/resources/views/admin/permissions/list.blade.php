@@ -3,14 +3,20 @@
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
-            <div class="col-lg-12">
+                @include('admin.layouts.component.page-header', [
+                    'title' => 'Phân quyền  ',
+                    'breadcrumb' => [
+                        ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                        ['name' => 'Phân quyền ', 'url' => '#']
+                    ]
+                ])
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="card-title mb-0">Danh sách Quyền</h5>
-                                    {{-- <form action="{{ route('permissions.index') }}" method="GET"
+                                    {{-- <form action="{{ route('admin.permissions.index') }}" method="GET"
                                         class="d-flex align-items-center flex-grow-1">
                                         <div class="input-group me-2" style="max-width: 300px;">
                                             <input type="text" id="search" name="search" class="form-control"
@@ -22,11 +28,8 @@
                                     </form> --}}
                                     <div>
                                         <div class="d-flex flex-wrap gap-2">
-                                            <a href="{{ route('permissions.create') }}">
-                                                <button class="btn btn-success" data-bs-toggle="modal"
-                                                    data-bs-target="#showModal">
+                                            <a href="{{ route('admin.permissions.create') }}" class="btn btn-success">
                                                     <i class="ri-add-line align-bottom me-1"></i>Thêm mới
-                                                </button>
                                             </a>
                                             <button class="btn btn-danger" onClick="deleteMultiplePermissions()">
                                                 <i class="ri-delete-bin-2-line"></i> Xóa nhiều
@@ -47,12 +50,12 @@
                                                         id="checkAllPermissions">
                                                 </div>
                                             </th>
-                                            <th data-ordering="false">id.</th>
-                                            <th data-ordering="false">Permission_name</th>
-                                            <th data-ordering="false">Description</th>
-                                            <th data-ordering="false">Created_at</th>
-                                            <th data-ordering="false">Updated_at</th>
-                                            <th>Action</th>
+                                            <th data-ordering="false">Stt</th>
+                                            <th data-ordering="false">Tên</th>
+                                            <th data-ordering="false">Mô tả</th>
+                                            <th data-ordering="false">Ngày tạo</th>
+                                            <th data-ordering="false">Ngày cập nhật</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -77,30 +80,33 @@
                                                         </a>
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('permissions.show', $item->id) }}"><i
-                                                                    class="ri-eye-fill align-bottom me-2 fs-16">Xem</i></a>
+                                                                <a class="dropdown-item" href="{{ route('admin.permissions.show', $item->id) }}">
+                                                                    <i class="ri-eye-fill align-bottom me-2 fs-16"></i> Xem
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('permissions.edit', $item->id) }}"><i class="las la-braille"></i>Sửa</a>
+                                                                <a class="dropdown-item" href="{{ route('admin.permissions.edit', $item->id) }}">
+                                                                    <i class="las la-braille me-2"></i> Sửa
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <a class="dropdown-item" href="#"
-                                                                    onclick="event.preventDefault(); confirmDeletePermission('{{ $item->id }}', '{{ $item->permission_name }}');"><i class="ri-delete-bin-2-line">Xóa</i></a>
+                                                                <a class="dropdown-item text-danger" href="#"
+                                                                   onclick="event.preventDefault(); confirmDeletePermission('{{ $item->id }}', '{{ $item->permission_name }}');">
+                                                                    <i class="ri-delete-bin-2-line me-2"></i> Xóa
+                                                                </a>
                                                             </li>
-                                                        </ul>
+                                                        </ul>                                                        
                                                     </div>
                                                     <!-- Soft delete form -->
                                                     <form id="soft-delete-permission-{{ $item->id }}"
-                                                        action="{{ route('permissions.destroyPermission', $item->id) }}"
+                                                        action="{{ route('admin.permissions.destroyPermission', $item->id) }}"
                                                         method="POST" style="display: none;">
                                                         @csrf
                                                         @method('DELETE')
                                                     </form>
                                                     <!-- Hard delete form -->
                                                     <form id="hard-delete-permission-{{ $item->id }}"
-                                                        action="{{ route('permissions.destroyPermissionHard', $item->id) }}"
+                                                        action="{{ route('admin.permissions.destroyPermissionHard', $item->id) }}"
                                                         method="POST" style="display: none;">
                                                         @csrf
                                                         @method('DELETE')
@@ -143,7 +149,6 @@
                 </div>
             </div>
         </div>
-    </div>
 @endsection
 @section('scripte_logic')
     <script>
@@ -215,7 +220,7 @@
                 if (confirmation) {
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route('permissions.destroyMultiple') }}';
+                    form.action = '{{ route('admin.permissions.destroyMultiple') }}';
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';
                     csrfInput.name = '_token';
@@ -246,7 +251,7 @@
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action =
-                        '{{ route('permissions.destroyMultipleValues') }}';
+                        '{{ route('admin.permissions.destroyMultipleValues') }}';
 
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';

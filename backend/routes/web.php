@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\CarrierController;
@@ -17,7 +16,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'admin',
@@ -151,8 +149,11 @@ Route::group([
         Route::get('show/{id}',                             [UserController::class, 'show'])->name('users.show');
         Route::get('/edit/{id}',                            [UserController::class, 'edit'])->name('users.edit');
         Route::put('update/{id}',                           [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{id}/delete',                 [UserController::class, 'destroy'])->name('users.delete');
-        Route::post('/users/deleteMultiple',                [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+        Route::delete('/{id}/delete',                       [UserController::class, 'destroy'])->name('users.delete');
+        Route::get('/deleteMultiple',                       [UserController::class, 'listdeleteMultiple'])->name('users.listdeleteMultiple');
+        Route::post('/deleteMultiple',                      [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+        Route::post('/manage/{id}',                         [UserController::class, 'manage'])->name('users.manage');
+
     });
   
     Route::prefix('/permissions')->name('permissions.')->group(function () {

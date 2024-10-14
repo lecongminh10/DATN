@@ -56,7 +56,7 @@ class PermissionController extends Controller
                 'description' => $request->description[$key],
             ]);
         }
-        return redirect()->route('permissions.index')->with('success', 'Permission created successfully.');
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
     }
     public function edit($id)
     {
@@ -89,7 +89,7 @@ class PermissionController extends Controller
                 ]);
             }
         }
-        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully.');
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
     }
     public function destroyPermission($id)
     {
@@ -107,7 +107,7 @@ class PermissionController extends Controller
         if ($permission->trashed()) {
             return redirect()->route('permissions.index')->with('success', 'Permission soft deleted successfully.');
         }
-        return redirect()->route('permissions.index')->with('error', 'An error occurred while deleting the category.');
+        return redirect()->route('admin.permissions.index')->with('error', 'An error occurred while deleting the category.');
     }
     public function destroyPermissionHard($id)
     {
@@ -120,7 +120,7 @@ class PermissionController extends Controller
             return redirect()->back()->with('error', 'Permission not found.');
         }
         $permission->forceDelete();
-        return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully.');
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission deleted successfully.');
     }
     public function destroyPermissionValue($id)
     {
@@ -128,7 +128,7 @@ class PermissionController extends Controller
 
         $permissionValue->delete();
 
-        return redirect()->route('permissions.index')->with('success', 'Permission Value đã được xóa.');
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission Value đã được xóa.');
     }
     public function destroyPermissionValueHard($id)
     {
@@ -138,7 +138,7 @@ class PermissionController extends Controller
         }
         $data->forceDelete();
         if ($data->trashed()) {
-            return redirect()->route('permissions.index')->with('success', 'Permission value soft deleted successfully.');
+            return redirect()->route('admin.permissions.index')->with('success', 'Permission value soft deleted successfully.');
         }
     }
     public function destroy($id, Request $request)
@@ -151,7 +151,7 @@ class PermissionController extends Controller
             $permission->delete();
         }
 
-        return redirect()->route('permissions.index')->with('success', 'User deleted successfully');
+        return redirect()->route('admin.permissions.index')->with('success', 'User deleted successfully');
     }
 
     public function destroyMultiple(Request $request)
@@ -166,9 +166,9 @@ class PermissionController extends Controller
                 }
             }
 
-            return redirect()->route('permissions.index')->with('success', 'Permissions and their values deleted successfully.');
+            return redirect()->route('admin.permissions.index')->with('success', 'Permissions and their values deleted successfully.');
         } else {
-            return redirect()->route('permissions.index')->with('error', 'No permissions were selected to delete.');
+            return redirect()->route('admin.permissions.index')->with('error', 'No permissions were selected to delete.');
         }
     }
 
