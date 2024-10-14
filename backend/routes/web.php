@@ -144,18 +144,35 @@ Route::group([
         Route::post('/categories/trashed/restore-multiple',   [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
         Route::post('/categories/trashed/hard-delete-multiple',[CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
 
-  Route::prefix('users')->group( function () {
-      Route::get('/',                                     [UserController::class, 'index'])->name('users.index');
-      Route::get('/add',                                  [UserController::class, 'add'])->name('users.add');
-      Route::post('/store',                               [UserController::class, 'store'])->name('users.store');
-      Route::get('show/{id}',                             [UserController::class, 'show'])->name('users.show');
-      Route::get('/edit/{id}',                            [UserController::class, 'edit'])->name('users.edit');
-      Route::put('update/{id}',                           [UserController::class, 'update'])->name('users.update');
-      Route::delete('/users/{id}/delete',                 [UserController::class, 'destroy'])->name('users.delete');
-      Route::post('/users/deleteMultiple',                [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+    Route::prefix('users')->group( function () {
+        Route::get('/',                                     [UserController::class, 'index'])->name('users.index');
+        Route::get('/add',                                  [UserController::class, 'add'])->name('users.add');
+        Route::post('/store',                               [UserController::class, 'store'])->name('users.store');
+        Route::get('show/{id}',                             [UserController::class, 'show'])->name('users.show');
+        Route::get('/edit/{id}',                            [UserController::class, 'edit'])->name('users.edit');
+        Route::put('update/{id}',                           [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}/delete',                 [UserController::class, 'destroy'])->name('users.delete');
+        Route::post('/users/deleteMultiple',                [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+    });
+  
+    Route::prefix('/permissions')->name('permissions.')->group(function () {
+      Route::get('/',                                      [PermissionController::class, 'index'])->name('index');
+      Route::get('/create',                                [PermissionController::class, 'create'])->name('create');
+      Route::get('/{id}',                                  [PermissionController::class, 'show'])->name('show');
+      Route::post('/',                                     [PermissionController::class, 'store'])->name('store');
+      Route::get('/{id}/edit',                             [PermissionController::class, 'edit'])->name('edit');
+      Route::put('/{id}',                                  [PermissionController::class, 'update'])->name('update');
+      Route::delete('/{id}',                               [PermissionController::class, 'destroyPermission'])->name('destroyPermission');
+      Route::delete('/{id}/hard',                          [PermissionController::class, 'destroyPermissionHard'])->name('destroyPermissionHard');
+
+      Route::delete('/{id}/value',                         [PermissionController::class, 'destroyPermissionValue'])->name('destroyPermissionValue');
+      Route::delete('/{id}/value/hard',                    [PermissionController::class, 'destroyPermissionValueHard'])->name('destroyPermissionValueHard');
+
+      Route::post('/destroy-multiple',                     [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
+      Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
   });
   
-});
+})->middleware('isAdmin');
 
 Route::get('/client', function () {
     return view('client/home');
