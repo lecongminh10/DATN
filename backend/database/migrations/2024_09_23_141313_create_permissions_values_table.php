@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('permissions_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('permissions_id')->constrained('permissions')->comment('Khóa ngoại liên kết với bảng permissions');
+            $table->foreignId('permissions_id')->constrained('permissions')->onDelete('cascade')->comment('Khóa ngoại liên kết với bảng permissions');
             $table->string('value')->unique()->comment('Tên giá trị ');
             $table->string('description')->nullable()->comment('Mô tả Value');
         
