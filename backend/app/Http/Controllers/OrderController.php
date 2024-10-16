@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Repositories\OrderRepository;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\User;
+use App\Services\OrderLocationService;
 use App\Services\OrderService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,12 +18,15 @@ class OrderController extends Controller
 {
 
     protected $orderService;
+    protected $orderLocationService;
 
     public function __construct(
         OrderService $orderService,
+        OrderLocationService $orderLocationService,
 
     ) {
         $this->orderService = $orderService;
+        $this->orderLocationService = $orderLocationService;
     }
     /**
      * Display a listing of the resource.
@@ -132,8 +139,37 @@ class OrderController extends Controller
     {
         $data = $this->orderService->getById($id);
         $user = $data->user;
-    
-        return view('admin.orders.order-detail', compact('data', 'user'));
+        $orderLocation = $this->orderLocationService->getAll()->where('order_id', $id)->first();
+        $admin = User::join('permissions_value_users', 'users.id', '=', 'permissions_value_users.user_id')
+            ->join('permissions_values', 'permissions_value_users.permission_value_id', '=', 'permissions_values.id')
+            ->join('addresses', 'users.id', '=', 'addresses.user_id')
+            ->where('permissions_values.value', 'admin_role')
+            ->select('users.username', 'users.email', 'users.phone_number', 'addresses.address_line', 'addresses.address_line1', 'addresses.address_line2')->first();
+
+        $orderItems = $data->items()->with(['product', 'productVariant.attribute', 'productVariant.attributeValue'])->get();
+        // $productVar = ProductVariant::with(['attributes', 'attributes.attributeValues'])->find($idVar);
+        // // dd($productVar);
+
+
+        $subTotal = 0;
+        $totalDiscount = 0;
+
+        foreach ($orderItems as $value) {
+            if ($value->productVariant) {
+                $itemPrice = $value->productVariant->price_modifier * $value->quantity;
+                $subTotal += $itemPrice;
+            } else {
+                $itemPrice = ($value->product->price_regular - $value->product->price_sale) * $value->quantity;
+                $subTotal += $itemPrice;
+            }
+
+            $totalDiscount += $value->discount;
+        }
+
+        $shippingCharge = $data->shippingMethod->amount ?? 0;
+        $total = $subTotal - $totalDiscount + $shippingCharge;
+
+        return view('admin.orders.order-detail', compact('data', 'user', 'orderLocation', 'admin', 'orderItems', 'subTotal', 'totalDiscount', 'shippingCharge', 'total'));
     }
 
     public function showModalEdit($code)
@@ -360,5 +396,5 @@ class OrderController extends Controller
         return response()->json(['message' => 'Delete with success'], 200);
     }
 
-    
+
 }

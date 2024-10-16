@@ -49,12 +49,17 @@
                                     <tr>
                                         <th scope="col">Product Details</th>
                                         <th scope="col">Item Price</th>
+                                        <th scope="col">Price Sale</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Rating</th>
                                         <th scope="col" class="text-end">Total Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $grandTotal = 0;
+                                    @endphp
+                                    @foreach ($orderItems as $value)
                                     <tr>
                                         <td>
                                             <div class="d-flex">
@@ -62,95 +67,72 @@
                                                     <img src="{{ asset('theme/assets/images/products/img-8.png') }}" alt="" class="img-fluid d-block">
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <h5 class="fs-15"><a href="apps-ecommerce-product-details.html" class="link-primary">Sweatshirt for Men (Pink)</a></h5>
-                                                    <p class="text-muted mb-0">Color: <span class="fw-medium">Pink</span></p>
-                                                    <p class="text-muted mb-0">Size: <span class="fw-medium">M</span></p>
+                                                    <h5 class="fs-15"><a href="#" class="link-primary">{{ $value->product->name }}</a></h5>
+                                                    @if ($value->productVariant)
+                                                       <div>
+                                                        @foreach ($value->productVariant->attributeValue as $attributeValue)
+                                                            <p class="text-muted mb-0" >{{ $value->productVariant->attribute->attribute_name }}:
+                                                                <span class="fw-medium">{{ $attributeValue->attribute_value }}</span>
+                                                            </p>
+                                                        @endforeach
+                                                       </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>$119.99</td>
-                                        <td>02</td>
+                                        <td>
+                                            @if ($value->productVariant)
+                                                {{ $value->productVariant->price_modifier }}
+                                            @else
+                                                {{ $value->product->price_regular }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($value->productVariant)
+                                                0
+                                            @else
+                                                @if ($value->product->price_sale == null)
+                                                    0
+                                                @else
+                                                    {{ $value->product->price_sale }}
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td>{{ $value->quantity }}</td>
                                         <td>
                                             <div class="text-warning fs-15">
-                                                <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-half-fill"></i>
+                                                <div class="rating" data-rating="{{ $value->product->rating }}"></div>
                                             </div>
                                         </td>
                                         <td class="fw-medium text-end">
-                                            $239.98
+                                            @php
+                                            $itemPrice = $value->productVariant ? $value->productVariant->price_modifier * $value->quantity : ($value->product->price_regular - $value->product->price_sale) * $value->quantity;
+                                            $grandTotal += $itemPrice;;
+                                            @endphp
+                                            ${{ number_format($itemPrice, 2) }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 avatar-md bg-light rounded p-1">
-                                                    <img src="{{ asset('theme/assets/images/products/img-7.png') }}" alt="" class="img-fluid d-block">
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h5 class="fs-15"><a href="apps-ecommerce-product-details.html" class="link-primary">Noise NoiseFit Endure Smart Watch</a></h5>
-                                                    <p class="text-muted mb-0">Color: <span class="fw-medium">Black</span></p>
-                                                    <p class="text-muted mb-0">Size: <span class="fw-medium">32.5mm</span></p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>$94.99</td>
-                                        <td>01</td>
-                                        <td>
-                                            <div class="text-warning fs-15">
-                                                <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-half-fill"></i>
-                                            </div>
-                                        </td>
-                                        <td class="fw-medium text-end">
-                                            $94.99
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 avatar-md bg-light rounded p-1">
-                                                    <img src="{{ asset('theme/assets/images/products/img-3.png') }}" alt="" class="img-fluid d-block">
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h5 class="fs-15"><a href="apps-ecommerce-product-details.html" class="link-primary">350 ml Glass Grocery Container</a></h5>
-                                                    <p class="text-muted mb-0">Color: <span class="fw-medium">White</span></p>
-                                                    <p class="text-muted mb-0">Size: <span class="fw-medium">350 ml</span></p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>$24.99</td>
-                                        <td>01</td>
-                                        <td>
-                                            <div class="text-warning fs-15">
-                                                <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-half-fill"></i><i class="ri-star-line"></i><i class="ri-star-line"></i>
-                                            </div>
-                                        </td>
-                                        <td class="fw-medium text-end">
-                                            $24.99
-                                        </td>
-                                    </tr>
+                                    @endforeach
                                     <tr class="border-top border-top-dashed">
-                                        <td colspan="3"></td>
+                                        <td colspan="4"></td>
                                         <td colspan="2" class="fw-medium p-0">
                                             <table class="table table-borderless mb-0">
                                                 <tbody>
                                                     <tr>
                                                         <td>Sub Total :</td>
-                                                        <td class="text-end">$359.96</td>
+                                                        <td class="text-end">${{ number_format($subTotal, 2) }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Discount <span class="text-muted">(VELZON15)</span> : :</td>
-                                                        <td class="text-end">-$53.99</td>
+                                                        <td>Discount <span class="text-muted">(VELZON15)</span>:</td>
+                                                        <td class="text-end">-${{ number_format($totalDiscount, 2) }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Shipping Charge :</td>
-                                                        <td class="text-end">$65.00</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Estimated Tax :</td>
-                                                        <td class="text-end">$44.99</td>
+                                                        <td class="text-end">${{ number_format($shippingCharge, 2) }}</td>
                                                     </tr>
                                                     <tr class="border-top border-top-dashed">
                                                         <th scope="row">Total (USD) :</th>
-                                                        <th class="text-end">$415.96</th>
+                                                        <th class="text-end">${{ number_format($total, 2) }} </th>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -299,8 +281,8 @@
                         <div class="text-center">
                             <lord-icon src="https://cdn.lordicon.com/uetqnvvg.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:80px;height:80px"></lord-icon>
                             <h5 class="fs-16 mt-2">RQK Logistics</h5>
-                            <p class="text-muted mb-0">ID: MFDS1400457854</p>
-                            <p class="text-muted mb-0">Payment Mode : Debit Card</p>
+                            <p class="text-muted mb-0">ID: {{ $data->id }}</p>
+                            <p class="text-muted mb-0">Payment Mode : {{ $data->payment->paymentGateway->name }}</p>
                         </div>
                     </div>
                 </div>
@@ -320,7 +302,12 @@
                             <li>
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
-                                        <img src="{{ asset('theme/assets/images/users/avatar-3.jpg') }}" alt="" class="avatar-sm rounded">
+                                        {{-- @if ()
+                                            <img src="{{ asset('theme/assets/images/users/avatar-3.jpg') }}" alt="" class="avatar-sm rounded">
+                                        @else
+                                        @endif => logic hiển ảnh --}}
+                                        <img src="https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=" class="avatar-sm rounded">
+                                        
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h6 class="fs-14 mb-1"></h6>
@@ -336,15 +323,15 @@
                 <!--end card-->
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Billing Address</h5>
+                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Store Address</h5>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-                            <li class="fw-medium fs-14">Joseph Parker</li>
-                            <li>+(256) 245451 451</li>
-                            <li>2186 Joyce Street Rocky Mount</li>
-                            <li>New York - 25645</li>
-                            <li>United States</li>
+                            <li class="fw-medium fs-14">{{ $admin->username }}</li>
+                            <li>{{ $admin->phone_number }}</li>
+                            <li>{{ $admin->address_line }}</li>
+                            <li>{{ $admin->address_line1 }}</li>
+                            <li>{{ $admin->address_line2 }}</li>
                         </ul>
                     </div>
                 </div>
@@ -355,11 +342,11 @@
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-                            <li class="fw-medium fs-14">Joseph Parker</li>
-                            <li>+(256) 245451 451</li>
-                            <li>2186 Joyce Street Rocky Mount</li>
-                            <li>California - 24567</li>
-                            <li>United States</li>
+                            <li class="fw-medium fs-14">{{ $user->username }}</li>
+                            <li>{{ $user->phone_number }}</li>
+                            <li>{{ $orderLocation->address }}</li>
+                            <li>{{ $orderLocation->ward }} - {{ $orderLocation->district }}</li>
+                            <li>{{ $orderLocation->city }}</li>
                         </ul>
                     </div>
                 </div>
@@ -424,9 +411,31 @@
 @endsection
     
 @section('script_libray')
-    
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
 @endsection
     
 @section('scripte_logic')
-   
+   <script>
+     document.addEventListener('DOMContentLoaded', function() {
+        const ratings = document.querySelectorAll('.rating');
+
+        ratings.forEach(rating => {
+            const value = parseFloat(rating.getAttribute('data-rating'));
+            const maxStars = 5;
+            let starsHtml = '';
+
+            for (let i = 1; i <= maxStars; i++) {
+                if (i <= value) {
+                    starsHtml += '<i class="ri-star-fill" style="color: #ffc107;"></i>';
+                } else if (i - value < 1) {
+                    starsHtml += '<i class="ri-star-half-fill" style="color: #ffc107;"></i>';
+                } else {
+                    starsHtml += '<i class="ri-star-line" style="color: #ffc107;"></i>';
+                }
+            }
+
+            rating.innerHTML = starsHtml;
+        });
+    });
+   </script>
 @endsection

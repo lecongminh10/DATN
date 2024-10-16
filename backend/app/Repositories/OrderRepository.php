@@ -102,6 +102,12 @@ class OrderRepository extends BaseRepository
                 return false; // Không cho phép cập nhật
             }
         }
+
+        if ($order->status === Order::DANG_GIAO) {
+            if($status === Order::DA_HUY){
+                return false;
+            }
+        }
     
         // Kiểm tra nếu trạng thái mới hợp lệ và lớn hơn trạng thái hiện tại thì cho phép cập nhật
         if ($newStatusValue && $currentStatusValue && $newStatusValue > $currentStatusValue) {

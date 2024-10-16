@@ -67,7 +67,7 @@ if (!function_exists('isStatus')) {
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="restorySelected" class="btn btn-info waves-effect waves-light d-none"><i class="ri-pencil-fill fs-12"></i></button>
-                                        <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16"></i></button>
+                                        <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-12"></i></button>
                                         <a href="{{ route('orders.listOrder') }}" class="btn btn-primary"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
                                     </div>
                                 </div>
@@ -366,31 +366,26 @@ if (!function_exists('isStatus')) {
 @section('scripte_logic')
     <script>
 $(document).ready(function() {
-    // Khởi tạo Flatpickr
     $('#demo-datepicker').flatpickr({
-        dateFormat: "d-m-Y", // Định dạng ngày
+        dateFormat: "d-m-Y",
         onClose: function(selectedDates, dateStr, instance) {
-            // Gọi hàm tìm kiếm khi người dùng chọn ngày
-            SearchByDate(selectedDates[0]); // Chỉ cần chọn ngày đầu tiên
+            SearchByDate(selectedDates[0]);
         }
     });
 
-    // Hàm tìm kiếm theo ngày
     function SearchByDate(selectedDate) {
         if (selectedDate) {
-            var formattedDate = formatDate(selectedDate); // Chuyển đổi ngày sang định dạng cần thiết
+            var formattedDate = formatDate(selectedDate);
             
-            // Gửi yêu cầu AJAX để tìm kiếm theo ngày
             $.ajax({
-                url: "{{ route('orders.listTrashOrder') }}", // Thay đổi URL thành địa chỉ API của bạn
+                url: "{{ route('orders.listTrashOrder') }}",
                 type: 'GET',
                 data: {
-                    date: formattedDate // Chỉ gửi một ngày
+                    date: formattedDate
                 },
                 success: function(response) {
-                    // Xử lý dữ liệu trả về từ server
                     console.log(response);
-                    renderOrderList(response.orders); // Gọi hàm renderOrderList để cập nhật giao diện
+                    renderOrderList(response.orders);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error: " + error);
@@ -399,11 +394,10 @@ $(document).ready(function() {
         }
     }
 
-    // Hàm chuyển đổi định dạng ngày (ví dụ: 'YYYY-MM-DD')
     function formatDate(date) {
         var d = new Date(date);
         var year = d.getFullYear();
-        var month = String(d.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+        var month = String(d.getMonth() + 1).padStart(2, '0');
         var day = String(d.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
@@ -412,217 +406,183 @@ $(document).ready(function() {
 
 // Khôi phục
 $(document).ready(function() {
-    const restoreBtn = $('#restore-record'); // Nút restore trong modal
+    const restoreBtn = $('#restore-record');
 
-    // Sự kiện khi nhấn nút "Yes, Restore it"
     restoreBtn.on('click', function() {
-        // Lấy ID của đơn hàng cần khôi phục từ data-id
         const orderId = $('.edit-item-btn').data('id'); 
         
-        // Gửi yêu cầu AJAX để khôi phục đơn hàng
         $.ajax({
-            url: 'restore/' + orderId, // URL cho yêu cầu khôi phục
-            type: 'PUT', // Phương thức PUT cho việc khôi phục
+            url: 'restore/' + orderId,
+            type: 'PUT',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Token bảo mật
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             success: function(response) {
-            // Hiển thị modal thành công
-            $('#restoryModal').modal('show'); // Hiển thị modal thành công
-            $('#showResModal').modal('hide'); // Ẩn modal xác nhận xóa
+            $('#restoryModal').modal('show');
+            $('#showResModal').modal('hide');
             },
             error: function(xhr, status, error) {
-                console.error("Error: " + error); // Hiển thị lỗi
+                console.error("Error: " + error);
                 alert('Có lỗi xảy ra trong quá trình khôi phục đơn hàng!');
             }
         });
-        // Thêm sự kiện cho nút làm mới trang trong modal
         document.getElementById('reloadRestory').addEventListener('click', function() {
-            location.reload(); // Làm mới trang
+            location.reload();
         });
     });
 });
 
-// Hiển nút khôi phục nhiều
-
+// Khôi phục nhiều
 $(document).ready(function() {
-    const checkboxes = $('input[type="checkbox"]'); // Tất cả các checkbox
-    const checkAll = $('#checkAll'); // Checkbox chọn tất cả
-    const restoreSelectedButton = $('#restorySelected'); // Nút khôi phục
+    const checkboxes = $('input[type="checkbox"]');
+    const checkAll = $('#checkAll');
+    const restoreSelectedButton = $('#restorySelected');
 
-    // Thêm sự kiện 'change' cho checkbox "Chọn tất cả"
     checkAll.on('change', function() {
-        // Nếu checkbox "Chọn tất cả" được chọn, chọn tất cả các checkbox khác
         checkboxes.not(this).prop('checked', this.checked);
-        toggleRestoreButton(); // Kiểm tra và hiển thị/ẩn nút khôi phục
+        toggleRestoreButton();
     });
 
-    // Thêm sự kiện 'change' cho các checkbox khác
     checkboxes.not(checkAll).on('change', function() {
-        toggleRestoreButton(); // Kiểm tra và hiển thị/ẩn nút khôi phục
+        toggleRestoreButton();
     });
 
-    // Hàm kiểm tra và hiển thị/ẩn nút khôi phục
     function toggleRestoreButton() {
-        let checkedCount = $('input[type="checkbox"]:checked').length; // Đếm số checkbox đã chọn
+        let checkedCount = $('input[type="checkbox"]:checked').length;
         if (checkedCount >= 1) {
-            restoreSelectedButton.removeClass('d-none'); // Hiển thị nút
+            restoreSelectedButton.removeClass('d-none');
         } else {
-            restoreSelectedButton.addClass('d-none'); // Ẩn nút
+            restoreSelectedButton.addClass('d-none');
         }
     }
-
-    // Xử lý sự kiện nhấn nút khôi phục
     restoreSelectedButton.on('click', function() {
-        // Hiển thị modal xác nhận
         $('#showResManyModal').modal('show');
     });
 
-    // Xử lý sự kiện khôi phục sau khi xác nhận
     $('#restoreManyRecord').on('click', function() {
-        let selectedIds = []; // Mảng chứa ID của các đơn hàng đã chọn
+        let selectedIds = [];
         $('input[type="checkbox"]:checked').each(function() {
-            const id = $(this).val(); // Lấy giá trị của checkbox
-            if (id) { // Kiểm tra nếu giá trị không trống
-                selectedIds.push(id); // Thêm ID vào mảng
+            const id = $(this).val();
+            if (id) {
+                selectedIds.push(id);
             }
         });
 
-        // Kiểm tra xem có ID nào được chọn không
         if (selectedIds.length === 0) {
             alert('Vui lòng chọn ít nhất một đơn hàng để khôi phục.');
-            return; // Ngăn không gửi yêu cầu nếu không có ID nào được chọn
+            return;
         }
 
-        // Gửi yêu cầu khôi phục
         $.ajax({
-            url: 'restore_selected', // URL cho yêu cầu khôi phục
-            type: 'PUT', // Sử dụng phương thức PUT
+            url: 'restore_selected', 
+            type: 'PUT',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Thêm token bảo mật
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             data: {
-                ids: selectedIds // Danh sách các ID được chọn
+                ids: selectedIds
             },
             success: function(response) {
-                // Ẩn modal xác nhận
                 $('#showResManyModal').modal('hide');
-                
-                // Hiển thị modal thông báo khôi phục thành công
                 $('#restoryModal').modal('show');
             },
             error: function(xhr, status, error) {
-                console.error("Error: " + error); // Ghi lại lỗi trong console
+                console.error("Error: " + error);
                 alert('Có lỗi xảy ra trong quá trình khôi phục!');
             }
         });
     });
 
-    // Thêm sự kiện cho nút làm mới trang sau khi khôi phục thành công
     document.getElementById('reloadRestory').addEventListener('click', function() {
-        location.reload(); // Làm mới trang
+        location.reload();
     });
 });
 
 // Xóa cứng 1 
 $(document).ready(function() {
-    var orderId; // Biến để lưu ID đơn hàng
+    var orderId;
     
-    // Khi modal xóa được hiển thị
     $('#deleteOrder').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget); // Lấy nút đã kích hoạt modal
-        orderId = button.data('id'); // Lấy ID đơn hàng từ thuộc tính data-id
+        var button = $(event.relatedTarget);
+        orderId = button.data('id');
     });
 
-    // Khi người dùng nhấn nút "Yes, Delete It"
     $('#delete-record').on('click', function(e) {
-        e.preventDefault(); // Ngăn hành vi mặc định của nút
+        e.preventDefault();
 
-        // Gửi yêu cầu AJAX để xóa đơn hàng
         $.ajax({
-            url: 'hard-delete/' + orderId, // URL tương ứng với route
-            type: 'DELETE', // Phương thức DELETE
+            url: 'hard-delete/' + orderId,
+            type: 'DELETE',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Token bảo mật CSRF
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             success: function(response) {
-                // Hiển thị thông báo thành công
-                $('#deleteModal').modal('show'); // Hiển thị modal thành công
-                $('#deleteOrder').modal('hide'); // Ẩn modal xác nhận xóa
-                
-                // Tùy chọn: Làm mới trang sau khi xóa thành công
-                document.getElementById('reloadDelete').addEventListener('click', function() {
-                    location.reload(); // Làm mới trang
-                });
+                $('#deleteModal').modal('show');
+                $('#deleteOrder').modal('hide');
             },
             error: function(xhr, status, error) {
-                console.error("Error: " + error); // Hiển thị lỗi trong console
-                alert('Có lỗi xảy ra trong quá trình xóa đơn hàng!'); // Hiển thị thông báo lỗi cho người dùng
+                console.error("Error: " + error);
+                alert('Có lỗi xảy ra trong quá trình xóa đơn hàng!');
             }
+        });
+        document.getElementById('reloadDelete').addEventListener('click', function() {
+            location.reload();
         });
     });
 });
 
 // Xóa cứng nhiều
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy tất cả các checkbox
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const deleteSelectedButton = document.getElementById('deleteSelected');
 
-    // Lặp qua từng checkbox và thêm sự kiện 'change'
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
-            // Đếm số checkbox được chọn
             let checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
 
-            // Nếu có ít nhất một checkbox được chọn, hiện nút "Xóa"
             if (checkedCount >= 1) {
-                deleteSelectedButton.classList.remove('d-none'); // Hiển thị nút
+                deleteSelectedButton.classList.remove('d-none');
             } else {
-                deleteSelectedButton.classList.add('d-none'); // Ẩn nút nếu không có checkbox nào được chọn
+                deleteSelectedButton.classList.add('d-none');
             }
         });
     });
 
     // Logic xóa
-
     deleteSelectedButton.addEventListener('click', function() {
-        // Hiển thị modal xác nhận
         $('#deleteManyOrder').modal('show');
     });
 
     document.getElementById('deleteManyOrder').addEventListener('click', function() {
-    // Lấy tất cả các checkbox đã được chọn
+
     let selectedIds = [];
     $('input[type="checkbox"]:checked').each(function() {
-        const id = $(this).val(); // Lấy giá trị của checkbox
-        if (id) { // Kiểm tra nếu giá trị không trống
-            selectedIds.push(id); // Thêm ID vào mảng
+        const id = $(this).val();
+        if (id) {
+            selectedIds.push(id);
         }
     });
-    console.log(selectedIds);
+    // console.log(selectedIds);
 
-    // Gửi yêu cầu xóa mềm nhiều qua AJAX
     $.ajax({
-        url: 'multi-hard-delete', // Đảm bảo URL đúng với route đã định nghĩa
-        type: 'DELETE', // Phương thức DELETE cho yêu cầu
+        url: 'multi-hard-delete',
+        type: 'DELETE',
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Token bảo mật Laravel
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
         },
         contentType: 'application/json',
         data: JSON.stringify({
-            ids: selectedIds, // Danh sách các id được chọn
+            ids: selectedIds,
             action: 'hard_delete'
         }),
         success: function(response) {
-            // Hiển thị modal thành công
-            $('#deleteModal').modal('show'); // Hiển thị modal thành công
-            $('#deleteManyOrder').modal('hide'); // Ẩn modal xác nhận xóa
+            $('#deleteModal').modal('show');
+            $('#deleteManyOrder').modal('hide');
         }
     });
-     // Thêm sự kiện cho nút làm mới trang trong modal
+    
     document.getElementById('reloadDelete').addEventListener('click', function() {
-        location.reload(); // Làm mới trang
+        location.reload();
     });
 });
 

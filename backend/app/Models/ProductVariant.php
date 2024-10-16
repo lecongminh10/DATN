@@ -33,8 +33,17 @@ class ProductVariant extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function attributes()
+    public function attribute()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Attribute::class, 'product_attribute_id');
+    }
+
+    public function attributeValue()
+    {
+        return $this->hasMany(
+            AttributeValue::class,
+            'id_attributes',
+            'product_attribute_id',
+        );
     }
 }

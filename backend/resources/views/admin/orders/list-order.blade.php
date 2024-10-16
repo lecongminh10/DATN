@@ -450,31 +450,25 @@ if (!function_exists('isStatus')) {
 @section('scripte_logic')
     <script>
     $(document).ready(function() {
-    // Khởi tạo Flatpickr
     $('#demo-datepicker').flatpickr({
-        dateFormat: "d-m-Y", // Định dạng ngày
+        dateFormat: "d-m-Y",
         onClose: function(selectedDates, dateStr, instance) {
-            // Gọi hàm tìm kiếm khi người dùng chọn ngày
-            SearchByDate(selectedDates[0]); // Chỉ cần chọn ngày đầu tiên
+            SearchByDate(selectedDates[0]);
         }
     });
 
-    // Hàm tìm kiếm theo ngày
     function SearchByDate(selectedDate) {
         if (selectedDate) {
-            var formattedDate = formatDate(selectedDate); // Chuyển đổi ngày sang định dạng cần thiết
+            var formattedDate = formatDate(selectedDate);
             
-            // Gửi yêu cầu AJAX để tìm kiếm theo ngày
             $.ajax({
-                url: "{{ route('orders.listOrder') }}", // Thay đổi URL thành địa chỉ API của bạn
+                url: "{{ route('orders.listOrder') }}",
                 type: 'GET',
                 data: {
-                    date: formattedDate // Chỉ gửi một ngày
+                    date: formattedDate
                 },
                 success: function(response) {
-                    // Xử lý dữ liệu trả về từ server
-                    // console.log(response);
-                    renderOrderList(response.orders); // Gọi hàm renderOrderList để cập nhật giao diện
+                    renderOrderList(response.orders);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error: " + error);
@@ -483,11 +477,10 @@ if (!function_exists('isStatus')) {
         }
     }
 
-    // Hàm chuyển đổi định dạng ngày (ví dụ: 'YYYY-MM-DD')
     function formatDate(date) {
         var d = new Date(date);
         var year = d.getFullYear();
-        var month = String(d.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+        var month = String(d.getMonth() + 1).padStart(2, '0');
         var day = String(d.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
@@ -613,12 +606,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 var modalEdit = document.getElementById('showModalEdit');
 modalEdit.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget; // Button that triggered the modal
-    var idOrder = button.getAttribute('data-id'); // Extract info from data-* attributes
+    var button = event.relatedTarget;
+    var idOrder = button.getAttribute('data-id');
 
-    // Gọi API để lấy thông tin đơn hàng theo code
-    let url = "{{ route('orders.orderEdit', ':code') }}"; // Đường dẫn đến API
-    url = url.replace(':code', idOrder); // Thay thế :code bằng idOrder
+    let url = "{{ route('orders.orderEdit', ':code') }}";
+    url = url.replace(':code', idOrder);
 
     fetch(url, {
         headers: {
@@ -636,9 +628,9 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
         const statusSelect = document.querySelector('#idStatusEdit');
         statusSelect.setAttribute('data-current-status', data.status);
         
-        Array.from(statusSelect.options).forEach(option => {
-            option.selected = (option.value === data.status); // Đánh dấu là selected nếu khớp
-        });
+        // Array.from(statusSelect.options).forEach(option => {
+        //     option.selected = (option.value === data.status);
+        // });
 
         // document.querySelector('#payment').value = data.payment.paymentGateway.name;
     })
@@ -647,69 +639,31 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
     });
 });
 
-
+// Cập nhật status
 $(document).ready(function() {
-
-    var selectedStatuses = [];
-
-    // Khi modal hiển thị
     $('#showModalEdit').on('show.bs.modal', function() {
-    // Lấy trạng thái hiện tại của đơn hàng từ `data-current-status` của thẻ <select>
-    var currentStatus = document.getElementById('idStatusEdit').getAttribute('data-current-status');
-    
-    // Log giá trị hiện tại để kiểm tra
-    console.log("Current Status:", currentStatus);
-    
-    // Bỏ vô hiệu hóa tất cả các tùy chọn trước khi áp dụng các vô hiệu hóa
-    $('#idStatusEdit option').prop('disabled', false);
-
-    // Nếu trạng thái hiện tại không nằm trong `selectedStatuses`, thêm nó vào danh sách
-    if (currentStatus && !selectedStatuses.includes(currentStatus)) {
-        selectedStatuses.push(currentStatus);
-    }
-
-    // Vô hiệu hóa các tùy chọn đã chọn trước đó trong `selectedStatuses`
-    $('#idStatusEdit option').each(function() {
-        // Vô hiệu hóa nếu giá trị nằm trong mảng selectedStatuses
-        if (selectedStatuses.includes($(this).val())) {
-            $(this).prop('disabled', true); // Vô hiệu hóa lựa chọn
-        }
-    });
 });
 
-
     $('#edit-btn').on('click', function(e) {
-        e.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+        e.preventDefault();
+        var orderId = $('#idOrder').val();
+        var status = $('#idStatusEdit').val();
 
-        // Lấy giá trị từ các trường nhập liệu
-        var orderId = $('#idOrder').val(); // Lấy ID đơn hàng
-        var status = $('#idStatusEdit').val(); // Lấy trạng thái giao hàng
-
-        // Kiểm tra nếu không có trạng thái nào được chọn
         if (!status) {
             alert('Vui lòng chọn trạng thái!');
             return;
         }
 
-        // Nếu trạng thái đã được chọn trước đó, ngăn không cho gửi yêu cầu
-        if (selectedStatuses.includes(status)) {
-            alert('Trạng thái này đã được cập nhật trước đó!');
-            return;
-        }
-
-        // Gửi yêu cầu AJAX để cập nhật đơn hàng
         $.ajax({
-            url: "{{ route('orders.updateOrder', '') }}/" + orderId, // URL cho yêu cầu PUT
+            url: "{{ route('orders.updateOrder', '') }}/" + orderId,
             type: 'PUT',
             data: {
                 _token: '{{ csrf_token() }}', 
                 status: status
             },
             success: function(response) {
-                // Ẩn form cập nhật
-                $('#showModalEdit').hide(); // Giả sử form của bạn có ID là 'updateForm'
+                $('#showModalEdit').hide();
                 
-                // Hiển thị modal thành công
                var modal_body = document.getElementById("modal-body");
                 
                 $('#successModal').modal('show');
@@ -718,18 +672,6 @@ $(document).ready(function() {
                 }else{
                     modal_body.innerHTML="<p class='text-danger'>Cập nhật không thành công !</p>"
                 }
-
-                // Thêm trạng thái vào mảng selectedStatuses
-                
-                selectedStatuses.push(status);
-                // Đang bị trùng disable
-                
-                // Cập nhật lại các tùy chọn trong dropdown
-                $('#idStatusEdit option').each(function() {
-                    if (selectedStatuses.includes($(this).val())) {
-                        $(this).prop('disabled', true); // Vô hiệu hóa lựa chọn
-                    }
-                });
                 
             },
             error: function(xhr, status, error) {
@@ -738,9 +680,8 @@ $(document).ready(function() {
             }
         });
 
-        // Thêm sự kiện cho nút làm mới trang trong modal
         document.getElementById('reloadEdit').addEventListener('click', function() {
-            location.reload(); // Làm mới trang
+            location.reload();
         });
     });
 });
@@ -748,111 +689,94 @@ $(document).ready(function() {
 
 // Xóa mềm 1
 $(document).ready(function() {
-    var orderId; // Biến để lưu ID đơn hàng
+    var orderId;
     
-    // Khi modal được hiển thị, lấy ID đơn hàng từ nút xóa
     $('#deleteOrder').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Nút đã kích hoạt modal
-        orderId = button.data('id'); // Lấy ID từ thuộc tính data-id
+        var button = $(event.relatedTarget);
+        orderId = button.data('id'); 
     });
 
-    // Khi nhấn nút "Yes, Delete It"
     $('#delete-record').on('click', function(e) {
-        e.preventDefault(); // Ngăn chặn hành vi mặc định của nút
+        e.preventDefault();
 
-        // Gửi yêu cầu AJAX để thực hiện xóa mềm
+        
         $.ajax({
-            url: 'soft-delete/' + orderId, // URL với ID đơn hàng
-            type: 'POST', // Sử dụng POST với phương thức _method là DELETE
+            url: 'soft-delete/' + orderId,
+            type: 'POST',
             data: {
-                _method: 'DELETE', // Chỉ định phương thức DELETE
-                _token: '{{ csrf_token() }}', // Thêm token bảo mật
+                _method: 'DELETE',
+                _token: '{{ csrf_token() }}',
             },
             success: function(response) {
-            // Hiển thị modal thành công
-            $('#deleteModal').modal('show'); // Hiển thị modal thành công
-            $('#deleteOrder').modal('hide'); // Ẩn modal xác nhận xóa
+            $('#deleteModal').modal('show');
+            $('#deleteOrder').modal('hide');
         },
         error: function(xhr, status, error) {
-            console.error("Error: " + error); // Hiển thị lỗi
+            console.error("Error: " + error);
             alert('Có lỗi xảy ra trong quá trình xóa đơn hàng!');
         }
         });
 
-        // Thêm sự kiện cho nút làm mới trang trong modal
         document.getElementById('reloadDelete').addEventListener('click', function() {
-            location.reload(); // Làm mới trang
+            location.reload();
         });
     });
 });
 
 // Xóa mềm nhiều
-// Hiển thị nút xóa 
-// Khi DOM được tải xong
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy tất cả các checkbox
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const deleteSelectedButton = document.getElementById('deleteSelected');
     const deleteManyRecordButton = document.getElementById('deleteManyrecord');
 
-    // Lặp qua từng checkbox và thêm sự kiện 'change'
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
-            // Đếm số checkbox được chọn
             let checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
 
-            // Nếu có ít nhất một checkbox được chọn, hiện nút "Xóa"
             if (checkedCount >= 1) {
-                deleteSelectedButton.classList.remove('d-none'); // Hiển thị nút
+                deleteSelectedButton.classList.remove('d-none');
             } else {
-                deleteSelectedButton.classList.add('d-none'); // Ẩn nút nếu không có checkbox nào được chọn
+                deleteSelectedButton.classList.add('d-none');
             }
         });
     });
 
     // Khi nhấn nút "Xóa"
     deleteSelectedButton.addEventListener('click', function() {
-        // Hiển thị modal xác nhận xóa
         $('#deleteManyOrder').modal('show');
     });
 
-    // Khi nhấn nút "Yes, Delete It"
     deleteManyRecordButton.addEventListener('click', function() {
-        // Lấy tất cả các checkbox đã được chọn
         let selectedIds = [];
         $('input[type="checkbox"]:checked').each(function() {
-            selectedIds.push($(this).val()); // Thêm giá trị của checkbox (id của order) vào mảng
+            selectedIds.push($(this).val());
         });
 
-        // Gửi yêu cầu xóa mềm nhiều qua AJAX
         $.ajax({
-            url: 'multi-soft-delete', // Đảm bảo URL đúng với route đã định nghĩa
-            type: 'DELETE', // Phương thức DELETE cho yêu cầu
+            url: 'multi-soft-delete',
+            type: 'DELETE',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Token bảo mật Laravel
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             contentType: 'application/json',
             data: JSON.stringify({
-                ids: selectedIds, // Danh sách các id được chọn
+                ids: selectedIds,
                 action: 'soft_delete'
             }),
             success: function(response) {
-                // Ẩn modal xác nhận xóa
                 $('#deleteManyOrder').modal('hide');
                 
-                // Hiển thị modal thông báo xóa thành công
                 $('#deleteModal').modal('show');
             },
             error: function(xhr, status, error) {
-                console.error('Error:', error); // Ghi lại lỗi trong console
-                alert('Có lỗi xảy ra trong quá trình xóa!'); // Hiển thị thông báo lỗi cho người dùng
+                console.error('Error:', error); 
+                alert('Có lỗi xảy ra trong quá trình xóa!');
             }
         });
     });
 
-    // Thêm sự kiện cho nút làm mới trang sau khi thông báo thành công
     document.getElementById('reloadDelete').addEventListener('click', function() {
-        location.reload(); // Làm mới trang
+        location.reload();
     });
 });
 
