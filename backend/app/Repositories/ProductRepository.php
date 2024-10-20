@@ -66,6 +66,44 @@ class ProductRepository extends BaseRepository
         return $this->model->withTrashed()->findOrFail($id);
     }
 
+    public function show_soft_delete($search = null, $perPage = 10) // $perPage mặc định là 10
+    {
+        // Query to retrieve soft-deleted products with related models
+        $query = Product::onlyTrashed()
+            ->with('variants')
+            ->with('galleries')
+            ->select('products.*', 'categories.name as category_name')
+            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->latest('id');
+    
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('products.name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('products.code', 'LIKE', '%' . $search . '%')
+                    ->orWhere('products.short_description', 'LIKE', '%' . $search . '%')
+                    ->orWhere('products.content', 'LIKE', '%' . $search . '%');
+            });
+    
+            // Lọc theo tên tag
+            $query->orWhereHas('tags', function ($q) use ($search) {
+                $q->where('tags.name', 'LIKE', '%' . $search . '%');
+            });
+    
+            // Lọc theo tên danh mục (categories)
+            $query->orWhere('categories.name', 'LIKE', '%' . $search . '%');
+    
+            // Thêm điều kiện lọc theo các thuộc tính khác nếu cần
+            // $query->orWhereHas('variants', function ($q) use ($search) {
+            //     $q->where('color', 'LIKE', '%' . $search . '%')
+            //         ->orWhere('ram', 'LIKE', '%' . $search . '%');
+            // });
+        }
+    
+        // Sử dụng paginate để phân trang
+        return $query->paginate($perPage);
+    }
+    
+
 
 
     // public function getById($id)
