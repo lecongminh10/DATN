@@ -327,54 +327,47 @@ class ProductController extends Controller
                 }
             }
         }
+        if ($request->has('product_galaries')) {
+            $currentGalary = $this->productGalleryService->getGalaryByProduct($id);
+            $submittedGalleryIds = [];
         
+            foreach ($request->product_galaries as $image_gallery) {
+                $dataProductGallery = [
+                    'product_id' => $product->id,
+                    'is_main' => $image_gallery['is_main'] ?? 0,
+                ];
+                if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {
+                    $extension = $image_gallery['image_gallery']->getClientOriginalExtension();
+                    $imageName = time() . '_' . uniqid() . '.' . $extension;
+                    $relativePath = $image_gallery['image_gallery']->storeAs('public/products/gallery', $imageName);
+                    $dataProductGallery['image_gallery'] = str_replace('public/', '', $relativePath);
+                    $this->productGalleryService->saveOrUpdate($dataProductGallery);
+                }
+                if (isset($image_gallery['id'])) {
+                    $submittedGalleryIds[] = $image_gallery['id']; // Keep track of submitted IDs
+                    $this->productGalleryService->saveOrUpdate($dataProductGallery, $image_gallery['id']);
+                }
+            }
         
-        
-        
-        // if ($request->has('product_galaries')) {
-        //     $currentGalary = $this->productGalleryService->getGalaryByProduct($id);
-        //     $submittedGalleryIds = [];
-        
-        //     foreach ($request->product_galaries as $image_gallery) {
-        //         $dataProductGallery = [
-        //             'product_id' => $product->id,
-        //             'is_main' => $image_gallery['is_main'] ?? 0,
-        //         ];
-        //         if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {
-        //             $extension = $image_gallery['image_gallery']->getClientOriginalExtension();
-        //             $imageName = time() . '_' . uniqid() . '.' . $extension;
-        //             $relativePath = $image_gallery['image_gallery']->storeAs('public/products/gallery', $imageName);
-        //             $dataProductGallery['image_gallery'] = str_replace('public/', '', $relativePath);
-        //             $this->productGalleryService->saveOrUpdate($dataProductGallery);
-        //         }
-        //         if (isset($image_gallery['id'])) {
-        //             $submittedGalleryIds[] = $image_gallery['id']; // Keep track of submitted IDs
-        //             $this->productGalleryService->saveOrUpdate($dataProductGallery, $image_gallery['id']);
-        //         }
-        //     }
-        
-        //     foreach ($currentGalary as $item) {
-        //         if (!in_array($item->id, $submittedGalleryIds)) {
-        //             $imagePath = public_path('storage/' . $item->image_gallery);
-        //             if (file_exists($imagePath)) {
-        //                 unlink($imagePath);
-        //             }
-        //             $item->forceDelete();
-        //         }
-        //     }
-        // }
+            foreach ($currentGalary as $item) {
+                if (!in_array($item->id, $submittedGalleryIds)) {
+                    $imagePath = public_path('storage/' . $item->image_gallery);
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                    $item->forceDelete();
+                }
+            }
+        }
         
         
 
-        // if ($request->has('product_tags')) {
-        //     $product->tags()->sync($request->product_tags);
-        // }
+        if ($request->has('product_tags')) {
+            $product->tags()->sync($request->product_tags);
+        }
 
         return back();
     }
-    /**
-     * Remove the specified resource from storage.
-     */
 
     public function destroy(int $id)
     {
@@ -385,12 +378,26 @@ class ProductController extends Controller
         }
         $data->delete();
         if ($data->trashed()) {
-            return response()->json(['message' => 'Product soft deleted successfully'], 200);
+            return back()->with(['message'=>'Xóa thành công']);
         }
 
         return response()->json(['message' => 'Product permanently deleted and cover file removed'], 200);
     }
 
+    public function restore(int $id)
+    {
+        $product = Product::withTrashed()->find($id);
+        
+        if ($product) {
+            $product->restore();
+            
+            return back()->with(['message'=>'Khôi phục sản phẩm thành công']);
+        }
+           
+        return back()->with(['message'=>'Khôi phục sản phẩm thất bại']);
+        
+    }
+    
     public function deleteMuitpalt(Request $request)
     {
         // Xác thực yêu cầu
@@ -441,19 +448,10 @@ class ProductController extends Controller
         $data = $this->productService->getIdWithTrashed($id);
 
         if (!$data) {
-            return response()->json(['message' => 'Product not found.'], 404);
+            return back()->with(['message'=>'Lỗi khi xóa sản phẩm']);
         }
-        // Xóa cứng category
         $data->forceDelete();
-
-        // Nếu cần, có thể xóa hình ảnh liên quan
-        // $currentImage = $data->image;
-        // $filename = basename($currentImage);
-        // if ($currentImage && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
-        //     Storage::delete(self::PATH_UPLOAD . '/' . $filename);
-        // }
-
-        return response()->json(['message' => 'Delete with success'], 200);
+        return back()->with(['message'=>'Xóa sản phẩm thành công']);
     }
 
     public function showSotfDelete(Request $request)

@@ -38,17 +38,11 @@ Route::group([
         Route::get('/{id}/variants', [ProductController::class, 'getVariants'])->name('admin.products.getVariants');
 
         // Route::get('/deleteProduct/{id}', [ProductController::class, 'destroy'])->name('deleteProduct');
-          Route::delete('/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
-        Route::get('/listSotfDeleted', [ProductController::class, 'showSotfDelete'])->name('admin.products.deleted');
-        Route::patch('/restore/{id}', [ProductController::class, 'restore'])->name('admin.products.restore');
-        // Xóa cứng 
-        Route::delete('/{id}/hard-delete', [ProductController::class, 'hardDeleteProduct'])->name('admin.products.hardDelete');
-        // Xóa mềm 
-        Route::delete('/values/{id}', [ProductController::class, 'destroyValue'])->name('admin.productValues.destroy');
-        // Xóa cứng 
-        Route::delete('/values/{id}/hard-delete', [ProductController::class, 'hardDeleteProductValue'])->name('admin.productValues.hardDelete');
-        // Xóa nhiều
-        Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('admin.products.deleteMultiple');
+        Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/listSotfDeleted', [ProductController::class, 'showSotfDelete'])->name('deleted');
+        Route::put('/restore/{id}', [ProductController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/hard-delete', [ProductController::class, 'hardDelete'])->name('hardDelete');
+        Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('deleteMultiple');
     });
     //Attributes
     Route::prefix('attributes')->group(function () {
