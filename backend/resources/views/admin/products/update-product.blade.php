@@ -197,6 +197,102 @@
         .cke_notification {
             display: none;
         }
+        .coupon-list {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: absolute;
+            /* Nếu cần định vị bên dưới input */
+            background-color: white;
+            z-index: 1000;
+            /* Để đảm bảo dropdown nằm trên các phần tử khác */
+        }
+
+        .coupon-list div {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .coupon-list div:hover {
+            background-color: #f0f0f0;
+            /* Màu nền khi hover */
+        }
+
+        #couponList {
+            width: 95%;
+            padding: 5px 16px;
+            border-radius: 3px;
+
+        }
+
+        .coupon-item {
+            border: 1px solid #ddd;
+            /* Khung cho từng mục mã giảm giá */
+            padding: 15px;
+            /* Khoảng cách bên trong */
+            border-radius: 5px;
+            /* Bo góc */
+            margin-bottom: 15px;
+            /* Khoảng cách giữa các mục */
+            background-color: #f9f9f9;
+            /* Màu nền */
+            position: relative;
+            /* Để sử dụng cho vị trí tuyệt đối của các nút */
+        }
+
+        .coupon-actions {
+            position: absolute;
+            /* Đặt vị trí tuyệt đối */
+            top: 10px;
+            /* Khoảng cách từ trên xuống */
+            right: 10px;
+            /* Khoảng cách từ bên phải */
+            display: flex;
+            /* Sử dụng Flexbox để căn chỉnh */
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+        }
+
+        .coupon-checkbox {
+            margin-right: 10px;
+            /* Khoảng cách bên phải cho checkbox */
+        }
+
+        .coupon-actions label {
+            cursor: pointer;
+            /* Thay đổi con trỏ khi di chuột vào label */
+            margin-bottom: 0;
+            /* Bỏ khoảng cách dưới cho label */
+        }
+
+        .remove-icon {
+            display: inline-block;
+            /* Hiển thị dưới dạng khối inline */
+            background-color: transparent;
+            /* Nền trong suốt */
+            border: none;
+            /* Không có viền */
+            cursor: pointer;
+            /* Con trỏ khi di chuột */
+            font-size: 20px;
+            /* Kích thước biểu tượng */
+            color: #dc3545;
+            /* Màu sắc của biểu tượng */
+            transition: color 0.3s;
+            /* Hiệu ứng chuyển màu */
+        }
+
+        .remove-icon:hover {
+            color: #c82333;
+            /* Màu khi di chuột */
+        }
+
+        /* Bạn có thể thêm một số padding hoặc margin để tạo khoảng cách */
+        .remove-icon {
+            margin-left: 10px;
+            /* Khoảng cách với phần tử trước */
+        }
     </style>
 @endsection
 @section('content')
@@ -430,6 +526,11 @@
                                                         aria-controls="v-pills-profile" aria-selected="false">
                                                         Các biến thể
                                                     </a>
+                                                    <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
+                                                        href="#v-pills-coupons" role="tab"
+                                                        aria-controls="v-pills-coupons" aria-selected="false">
+                                                        Khuyến mãi
+                                                    </a>
                                                 </div>
                                             </div>
                                             <div class="col-md-10">
@@ -460,7 +561,6 @@
                                                             <table class="table table-bordered" id="attributeTable">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>Thuộc tính</th>
                                                                         <th>Giá trị</th>
                                                                         <th>Giá Gốc</th>
                                                                         <th>Giá Mới</th>
@@ -471,12 +571,119 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody id="attributeList">
+                                                                    @php
+                                                                    $i = 0;
+                                                                    @endphp
+                                                                  @if (session('product_attributes') && count(session('product_attributes')) > 0)
+                                                                    @foreach (session('product_attributes') as $attribute)
+                                                                        @php
+                                                                            ++$i;
+                                                                        @endphp
+                                                                        <tr>
+                                                                            <td>
+                                                                                @php
+                                                                                    $attributeString = '';
+                                                                                    $attributeValueString = '';
+                                                                                    foreach (
+                                                                                        $attribute
+                                                                                        as $key => $item
+                                                                                    ) {
+                                                                                        $attributeString .= "{$key}: {$item}<br>";
+                                                                                        $attributeValueString .= "{$item},";
+                                                                                    }
+                                                                                    $attributeString = rtrim(
+                                                                                        $attributeString,
+                                                                                        '<br>',
+                                                                                    );
+                                                                                    $attributeValueString = rtrim(
+                                                                                        $attributeValueString,
+                                                                                        ', ',
+                                                                                    );
+                                                                                @endphp
+                                                                                <input type="hidden"
+                                                                                    name="product_variants[{{ $i }}][attributes_values]"
+                                                                                    value="{{ $attributeValueString }}"
+                                                                                    class="product_variants">
+                                                                                {!! $attributeString !!}
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                    name="product_variants[{{ $i }}][original_price]"
+                                                                                    class="form-control original_price"
+                                                                                    id="original_price_{{ $i }}" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                    name="product_variants[{{ $i }}][price_modifier]"
+                                                                                    class="form-control price_modifier"
+                                                                                    id="price_modifier_{{ $i }}" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number"
+                                                                                    name="product_variants[{{ $i }}][stock]"
+                                                                                    class="form-control stock"
+                                                                                    min="0" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <select
+                                                                                    class="form-control status_attribute"
+                                                                                    name="product_variants[{{ $i }}][status]">
+                                                                                    <option value="none">None
+                                                                                    </option>
+                                                                                    <option value="available">Available
+                                                                                    </option>
+                                                                                    <option value="out_of_stock">Out of
+                                                                                        Stock</option>
+                                                                                    <option value="discontinued">
+                                                                                        Discontinued</option>
+                                                                                </select>
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="file"
+                                                                                    class="form-control"
+                                                                                    name="product_variants[{{ $i }}][variant_image]" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <i
+                                                                                    class="ri-delete-bin-5-fill remove-attribute-values"></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @endif
                                                                 </tbody>
                                                             </table>
 
                                                         </div>
                                                     </div>
+                                                    <div class="tab-pane fade" id="v-pills-coupons" role="tabpanel"
+                                                        aria-labelledby="coupon-tab">
+                                                        <div data-simplebar style="max-height: 220px;" class="px-3">
+                                                            <!-- Submit Button -->
+                                                            <div class="row mb-3">
+                                                                <div class="col-sm-6">
+                                                                    <div class="btn btn-primary" id="showFormCounpon">Thêm
+                                                                        mã khuyến mãi</div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <input type="text" class="form-control"
+                                                                        id="searchCoupon"
+                                                                        placeholder="Nhập mã giảm giá để tìm kiếm"
+                                                                        oninput="searchCoupons()">
+                                                                    <div id="couponList" class="coupon-list"
+                                                                        style="display: none;"></div>
+                                                                </div>
 
+                                                            </div>
+                                                            <!-- Coupon Code & Discount Type -->
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h5>Mã khuyến mãi</h5>
+                                                                </div>
+                                                                <div class="card-body" id="addCoupone">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div><!--  end col -->
                                         </div>
@@ -553,6 +760,7 @@
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
                                         <button class="btn btn-primary" type="submit" id="uploadButton">Save</button>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
                                     </div>
                                 </div>
                             </div>
@@ -659,61 +867,66 @@
         CKEDITOR.replace('editor-container');
     </script>
     <script>
-           // Log the variants data to the console and print them to the #attributeList table
-           var variant = @json($variants);
-                const variantAttributeID=[];
-                // First, print the variants to the screen in the attributeList table
-                variant.forEach((variantData) => {
-                    variantAttributeID.push(variantData.product_attribute_id);
-                    
-                    $('#attributeList').append(`
-                        <tr class="variant-row"> <!-- Add class to identify variant rows -->
-                            <input type="hidden" name="product_variants[${variantData.id}][id]" value="${variantData.id}" class="product_variants">
-                            <input type="hidden" name="product_variants[${variantData.id}][product_attribute_id]" value="${variantData.product_attribute_id}" class="product_variants">
-                            <input type="hidden" name="product_variants[${variantData.id}][variant_image]" value="${variantData.variant_image}" class="product_variants">
-                            <input type="hidden" name="product_variants[${variantData.id}][sku]" value="${variantData.sku}" class="product_variants">  
-                            <td>${variantData.attribute_name}</td>
-                            <td>${variantData.attribute_value}</td>
-                            <td>
-                                <input type="number" name="product_variants[${variantData.id}][original_price]" class="form-control original_price" id="original_price_${variantData.id}" value="${variantData.original_price}" />
-                            </td>
-                            <td>
-                                <input type="number" name="product_variants[${variantData.id}][price_modifier]" class="form-control price_modifier" id="price_modifier_${variantData.id}" value="${variantData.price_modifier}" />
-                            </td>
-                            <td>
-                                <input type="number" name="product_variants[${variantData.id}][stock]" class="form-control stock" min="0" value="${variantData.stock}" />
-                            </td>
-                            <td>
-                                <select class="form-control status_attribute" name="product_variants[${variantData.id}][status]">
-                                    <option value="none">None</option>
-                                    <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Available</option>
-                                    <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Out of Stock</option>
-                                    <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Discontinued</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="file" class="form-control" name="product_variants[${variantData.id}][variant_image]" />
-                            </td>
-                            <td class="d-inline-flex align-items-center">
-                              <i class="ri-eye-fill view-attribute-values me-2" title="View" data-bs-toggle="modal" data-bs-target="#viewImageModal" data-image-url="${variantData.variant_image}" >
-                                </i> <!-- View Icon -->
+    var variant = @json($variants);
+        const variantAttributeID = [];
 
-                                <i class="ri-delete-bin-5-fill remove-attribute-values" title="Delete"></i> <!-- Delete Icon -->
-                            </td>
+        // First, print the variants to the screen in the attributeList table
+        variant.forEach((variantData) => {
+            variantAttributeID.push(variantData.product_attribute_id);
+            
+            // Build attribute string
+            let attributeString = '';
+            let attributeValueString = '';
 
-                        </tr>
-                            `);
-                });
-                $(document).ready(function() {
-                    // Event listener for the view icon
-                    $('.view-attribute-values').on('click', function() {
-                        // Get the image URL from the data attribute
-                        var imageUrl = $(this).data('image-url');
-                        var fullImageUrl = '/storage/' + imageUrl;
-                        // Set the image source in the modal
-                        $('#variantImage').attr('src', fullImageUrl);
-                    });
-                });
+            variantData.attributes.forEach(attribute => {
+                attributeString += `${attribute.attribute_name}: ${attribute.attribute_value}<br>`;
+                attributeValueString += `${attribute.attribute_value}, `;
+            });
+            attributeValueString = attributeValueString.slice(0, -2); // Remove the trailing comma and space
+
+            $('#attributeList').append(`
+                <tr class="variant-row"> <!-- Add class to identify variant rows -->
+                    <input type="hidden" name="product_variants[${variantData.id}][id]" value="${variantData.id}" class="product_variants">
+                    <input type="hidden" name="product_variants[${variantData.id}][attributes_values]" value="${attributeValueString}" class="product_variants">
+                    <input type="hidden" name="product_variants[${variantData.id}][variant_image]" value="${variantData.variant_image}" class="product_variants">
+                    <input type="hidden" name="product_variants[${variantData.id}][sku]" value="${variantData.sku}" class="product_variants">  
+                    <td>${attributeString}</td> <!-- Here is the modified line -->
+                    <td>
+                        <input type="number" name="product_variants[${variantData.id}][original_price]" class="form-control original_price" id="original_price_${variantData.id}" value="${variantData.original_price}" />
+                    </td>
+                    <td>
+                        <input type="number" name="product_variants[${variantData.id}][price_modifier]" class="form-control price_modifier" id="price_modifier_${variantData.id}" value="${variantData.price_modifier}" />
+                    </td>
+                    <td>
+                        <input type="number" name="product_variants[${variantData.id}][stock]" class="form-control stock" min="0" value="${variantData.stock}" />
+                    </td>
+                    <td>
+                        <select class="form-control status_attribute" name="product_variants[${variantData.id}][status]">
+                            <option value="none">None</option>
+                            <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Available</option>
+                            <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Out of Stock</option>
+                            <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Discontinued</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="file" class="form-control" name="product_variants[${variantData.id}][variant_image]" />
+                    </td>
+                    <td class="d-inline-flex align-items-center">
+                    <i class="ri-eye-fill view-attribute-values me-2" title="View" data-bs-toggle="modal" data-bs-target="#viewImageModal" data-image-url="${variantData.variant_image}">
+                        </i> <!-- View Icon -->
+
+                        <i class="ri-delete-bin-5-fill remove-attribute-values" title="Delete"></i> <!-- Delete Icon -->
+                    </td>
+                </tr>
+            `);
+        });
+        $(document).ready(function() {
+            $('.view-attribute-values').on('click', function() {
+            var imageUrl = $(this).data('image-url');
+            var fullImageUrl = '/storage/' + imageUrl;
+             $('#variantImage').attr('src', fullImageUrl);
+            });
+        });
 
 
     </script>
@@ -841,64 +1054,149 @@
             });
 
             $(document).on('click', '#saveAttributes', function() {
-                const selectedValues = [];
+                const selectedAttributes = [];
+                const selectedValuesByAttribute = {};
+                $('.attribute-input-group').each(function() {
+                    const attributeName = $(this).find('input').val();
+                    const selectedOptions = $(this).find('.js-example-basic-multiple').val();
 
-                $('.js-example-basic-multiple').each(function() {
-                    const selectedOptions = $(this).val();
-                    if (selectedOptions) {
-                        selectedValues.push(...selectedOptions);
+                    if (selectedOptions && selectedOptions.length > 0) {
+                        selectedAttributes.push(attributeName);
+                        selectedValuesByAttribute[attributeName] = selectedOptions;
                     }
                 });
+                const attributeCombinations = [];
+
+                selectedAttributes.forEach(attribute => {
+                    if (selectedValuesByAttribute[attribute]) {
+                        selectedValuesByAttribute[attribute].forEach(value => {
+                            attributeCombinations.push(`${attribute},${value}`);
+                        });
+                    }
+                });
+
+                console.log(attributeCombinations);
+                const groupedValues = {};
+
+                attributeCombinations.forEach(item => {
+                    const [key, value] = item.split(',');
+                    if (!groupedValues[key]) {
+                        groupedValues[key] = [];
+                    }
+                    groupedValues[key].push(value);
+                });
+                const groupedArray = Object.keys(groupedValues).map(key => {
+                    return {
+                        key: key,
+                        values: groupedValues[key]
+                    };
+                });
+                console.log("Grouped Array:", groupedArray);
+
+                const combinations = [];
+
+                function generateCombinations(currentCombination, index) {
+                    if (index === groupedArray.length) {
+                        combinations.push({
+                            ...currentCombination
+                        });
+                        return;
+                    }
+
+                    const {
+                        key,
+                        values
+                    } = groupedArray[index];
+                    for (const value of values) {
+                        currentCombination[key] = value;
+                        generateCombinations(currentCombination, index + 1);
+                    }
+                }
+
+                generateCombinations({}, 0);
+
+                console.log("Combinations:", combinations);
                 $.ajax({
                     url: '/admin/save-attributes',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        attributes: selectedValues 
+                        attributes: combinations
                     }),
                     success: function(response) {
-                        $('#attributeModal').modal('show');
-                        $('#attributeList tr').not('.variant-row')
-                    .remove(); 
-                        response.attributes.forEach((attribute) => {
-                            $('#attributeList').append(`
+                        console.log(response.data);
+                        alert('Lưu giá trị thành công');
+
+                        // Assuming response.attributes contains the array of objects
+                        const attributes = response.data;
+                        console.log(attributes);
+
+                        let htmlContent = '';
+
+                        if (attributes.length > 0) {
+                            attributes.forEach((attribute, index) => {
+                                let attributeString = '';
+                                let attributeValueString = '';
+
+                                // Construct attribute strings
+                                for (const [key, item] of Object.entries(attribute)) {
+                                    attributeString += `${key}: ${item}<br>`;
+                                    attributeValueString += `${item},`;
+                                }
+
+                                // Remove trailing comma
+                                attributeValueString = attributeValueString.slice(0, -
+                                    1);
+
+                                // Build the HTML for the row
+                                htmlContent += `
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="product_variants[${index + 1}][attributes_values]" value="${attributeValueString}" class="product_variants">
+                                        ${attributeString}
+                                    </td>
+                                    <td>
+                                        <input type="number" name="product_variants[${index + 1}][original_price]" class="form-control original_price" id="original_price_${index + 1}" />
+                                    </td>
+                                    <td>
+                                        <input type="number" name="product_variants[${index + 1}][price_modifier]" class="form-control price_modifier" id="price_modifier_${index + 1}" />
+                                    </td>
+                                    <td>
+                                        <input type="number" name="product_variants[${index + 1}][stock]" class="form-control stock" min="0"/>
+                                    </td>
+                                    <td>
+                                        <select class="form-control status_attribute" name="product_variants[${index + 1}][status]">
+                                            <option value="none">None</option>
+                                            <option value="available">Available</option>
+                                            <option value="out_of_stock">Out of Stock</option>
+                                            <option value="discontinued">Discontinued</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="file" class="form-control" name="product_variants[${index + 1}][variant_image]" />
+                                    </td>
+                                    <td>
+                                        <i class="ri-delete-bin-5-fill remove-attribute-values"></i>
+                                    </td>
+                                </tr>
+                            `;
+                            });
+                        } else {
+                            htmlContent = `
                             <tr>
-                                <input type="hidden" name="product_variants[${attribute.id}][product_attribute_id]" value="${attribute.id}" class="product_variants">
-                                <td>${attribute.name}</td>
-                                <td>${attribute.value}</td>
-                                <td>
-                                    <input type="number" name="product_variants[${attribute.id}][original_price]" class="form-control original_price" id="original_price_${attribute.id}" />
-                                </td>
-                                <td>
-                                    <input type="number" name="product_variants[${attribute.id}][price_modifier]" class="form-control price_modifier" id="price_modifier_${attribute.id}" />
-                                </td>
-                                <td>
-                                    <input type="number" name="product_variants[${attribute.id}][stock]" class="form-control stock" min="0" />
-                                </td>
-                                <td>
-                                    <select class="form-control status_attribute" name="product_variants[${attribute.id}][status]">
-                                        <option value="none">None</option>
-                                        <option value="available" ${attribute.status === 'available' ? 'selected' : ''}>Available</option>
-                                        <option value="out_of_stock" ${attribute.status === 'out_of_stock' ? 'selected' : ''}>Out of Stock</option>
-                                        <option value="discontinued" ${attribute.status === 'discontinued' ? 'selected' : ''}>Discontinued</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="file" class="form-control" name="product_variants[${attribute.id}][variant_image]" />
-                                </td>
-                                <td>
-                                    <i class="ri-delete-bin-5-fill remove-attribute-values"></i>
-                                </td>
+                                <td colspan="7" class="text-center">Không có thuộc tính sản phẩm nào trong session.</td>
                             </tr>
-                        `);
-                        });
+                        `;
+                        }
+
+                        // Append the constructed HTML to the attributeList
+                        $('#attributeList').append(htmlContent);
                     },
                     error: function(xhr, textStatus, errorThrown) {
-                        console.error('Error saving values:', textStatus, errorThrown);
-                        alert('An error occurred while saving the values.');
+                        console.error('Lỗi khi lưu giá trị:', textStatus, errorThrown);
+                        alert('Có lỗi xảy ra khi lưu giá trị.');
                     }
                 });
-
             });
         });
         $(document).on('click', '.remove-attribute-values', function() {
@@ -1112,4 +1410,223 @@
             });
         });
     </script>
+        <script>
+            const couponData = []; // Mảng này sẽ chứa dữ liệu từ coupons.json
+            const selectedCoupons = []; // Mảng để lưu trữ các mã giảm giá đã chọn
+    
+            // Tải dữ liệu mã giảm giá từ JSON
+            document.addEventListener('DOMContentLoaded', function() {
+                $.getJSON('/storage/coupons.json')
+                    .done(function(data) {
+                        couponData.push(...data); // Lưu dữ liệu vào mảng couponData
+                    })
+                    .fail(function(jqxhr, textStatus, error) {
+                        console.error('Error loading coupons JSON file:', textStatus, error);
+                    });
+            });
+    
+            // Hàm tìm kiếm và hiển thị danh sách mã giảm giá
+            function searchCoupons() {
+                const input = document.getElementById('searchCoupon').value.toLowerCase();
+                const couponList = document.getElementById('couponList');
+    
+                // Xóa danh sách hiện tại
+                couponList.innerHTML = '';
+    
+                // Nếu không có input, ẩn danh sách
+                if (!input) {
+                    couponList.style.display = 'none';
+                    return;
+                }
+    
+                // Lọc mã giảm giá theo code hoặc mô tả
+                const filteredCoupons = couponData.filter(coupon =>
+                    coupon.code.toLowerCase().includes(input)
+                );
+    
+                // Hiển thị các mã giảm giá phù hợp
+                filteredCoupons.forEach(coupon => {
+                    const div = document.createElement('div');
+                    div.textContent = `${coupon.code} - ${coupon.description}`;
+    
+                    // Thêm sự kiện onclick để xử lý việc chọn mã giảm giá
+                    div.onclick = function() {
+                        // Kiểm tra xem mã giảm giá đã được chọn hay chưa
+                        const isSelected = selectedCoupons.some(selected => selected.id === coupon.id);
+    
+                        if (!isSelected) {
+                            // Nếu chưa chọn, thêm mã giảm giá vào danh sách đã chọn
+                            selectedCoupons.push(coupon);
+                        } else {
+                            // Nếu đã chọn, loại bỏ mã giảm giá khỏi danh sách
+                            const index = selectedCoupons.indexOf(coupon);
+                            selectedCoupons.splice(index, 1);
+                        }
+    
+                        // Cập nhật nội dung của #addCoupone
+                        updateCouponInfo();
+                        // Gán giá trị vào input tìm kiếm
+                        document.getElementById('searchCoupon').value = '';
+                        couponList.style.display = 'none'; // Ẩn danh sách sau khi chọn
+                    };
+    
+                    couponList.appendChild(div);
+                });
+    
+                // Hiện danh sách nếu có kết quả
+                couponList.style.display = filteredCoupons.length ? 'block' : 'none';
+            }
+    
+            // Hàm cập nhật thông tin mã giảm giá đã chọn
+            function updateCouponInfo() {
+                const addCouponElement = document.getElementById('addCoupone');
+                addCouponElement.innerHTML = ''; // Xóa hết dữ liệu hiện có
+    
+                selectedCoupons.forEach(coupon => {
+                    const couponInfo = `
+                 <div class="coupon-item mb-3">
+                    <p><strong>Mã:</strong> ${coupon.code}</p>
+                    <p><strong>Mô tả:</strong> ${coupon.description}</p>
+                    <p><strong>Giá trị giảm giá:</strong> ${coupon.discount_value}</p>
+                    <p><strong>Giảm giá tối đa:</strong> ${coupon.max_discount_amount}</p>
+                    <p><strong>Giá trị đơn hàng tối thiểu:</strong> ${coupon.min_order_value}</p>
+                    <p><strong>Ngày bắt đầu:</strong> ${coupon.start_date}</p>
+                    <p><strong>Ngày kết thúc:</strong> ${coupon.end_date}</p>
+                    <p><strong>Giới hạn sử dụng:</strong> ${coupon.usage_limit !== null ? coupon.usage_limit > 0 : false}</p>
+                    <p><strong>Dùng chung với mã giảm giá khác:</strong> ${coupon.is_stackable ? 'Có' : 'Không'}</p>
+                    <p><strong>Giới hạn người dùng :</strong> ${coupon.user_limit !== null ? coupon.user_limit > 0 : false}</p>
+                    <p><strong>Số lần sử dụng:</strong> ${coupon.per_user_limit !== null ? coupon.per_user_limit > 0 : false}</p>
+                    
+                    <div class="coupon-actions">
+                        <div class="form-check form-switch form-switch-${coupon.id}">
+                            <input
+                          class="form-check-input status-checkbox" type="checkbox" role="switch" name="coupon[][${coupon.code}]" value="${coupon.code}" id="couponCheckbox_${coupon.id}">
+                        </div>
+                        <a href="javascript:void(0);" onclick="removeCoupon(${coupon.id})" class="remove-icon">
+                            <i class="ri-delete-bin-5-fill"></i>
+                        </a>
+                    </div>
+                </div>
+    
+    
+            `;
+                    addCouponElement.innerHTML += couponInfo; // Thêm thông tin vào #addCoupone
+                });
+            }
+    
+            // Hàm để loại bỏ mã giảm giá đã chọn
+            function removeCoupon(couponId) {
+                const index = selectedCoupons.findIndex(coupon => coupon.id === couponId);
+                if (index !== -1) {
+                    selectedCoupons.splice(index, 1); // Loại bỏ mã giảm giá
+                    updateCouponInfo(); // Cập nhật lại thông tin hiển thị
+                }
+            }
+        </script>
+        <script>
+            document.getElementById("showFormCounpon").addEventListener("click", function() {
+                const addCouponElement = document.getElementById('addCoupone');
+                addCouponElement.innerHTML = ''; // Clear the element before adding a new form
+    
+                const form = `
+                        <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <label for="couponCode" class="form-label">Mã khuyến mãi:</label>
+                        <input type="text" class="form-control" id="couponCode" placeholder="Nhập mã khuyến mãi" required value="{{ strtoupper(\Str::random(8)) }}" name="addcoupon[code]">
+                        <input type="hidden" name="addcoupon[applies_to]" value="product">
+                    </div>
+    
+                    <div class="col-sm-6">
+                        <label for="discountType" class="form-label">Loại giảm giá:</label>
+                        <select class="form-select" id="discountType" name="addcoupon[discount_type]" required>
+                            <option value="percentage">Phần trăm (%)</option>
+                            <option value="fixed_amount">Cố định (VND)</option>
+                        </select>
+                    </div>
+                </div>
+    
+                <!-- Giá trị giảm giá & Giảm tối đa -->
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label for="discount_value" class="form-label">Discount (%)</label>
+                            <input type="number" class="form-control" id="addcoupon[discount_value]" name="addcoupon[discount_value]" placeholder="Nhập giá trị giảm giá" required>
+                        </div>
+                    </div>
+    
+                    <div class="col-sm-6">
+                        <label for="maxDiscount" class="form-label">Giảm tối đa:</label>
+                        <input type="number" class="form-control" id="maxDiscount" name="addcoupon[max_discount_amount]" placeholder="Nhập số tiền giảm tối đa" required>
+                    </div>
+                </div>
+    
+                <!-- Giá trị đơn hàng tối thiểu & Số lần sử dụng -->
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <label for="minOrderValue" class="form-label">Giá trị đơn hàng tối thiểu:</label>
+                        <input type="number" class="form-control" id="minOrderValue" name="addcoupon[min_order_value]" placeholder="Nhập giá trị đơn hàng tối thiểu" required> 
+                    </div>
+    
+                    <div class="col-sm-6">
+                        <label for="usageLimit" class="form-label">Giới hạn sử dụng:</label>
+                        <input type="number" class="form-control" id="usageLimit" name="addcoupon[usage_limit]" placeholder="Nhập số lần sử dụng tối đa" required>
+                    </div>
+                </div>
+    
+                <!-- Số lần tối đa mỗi người dùng có thể sử dụng mã -->
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <label for="perUserLimit" class="form-label">Số lần tối đa mỗi người dùng có thể sử dụng mã:</label>
+                        <input type="number" required class="form-control" id="perUserLimit" name="addcoupon[per_user_limit]" placeholder="Nhập số lần tối đa cho mỗi người dùng">
+                    </div>
+    
+                    <div class="col-sm-6">
+                        <label for="description" class="form-label">Mô tả mã giảm giá:</label>
+                        <input class="form-control" required id="description" name="addcoupon[description]" placeholder="Nhập mô tả">
+                    </div>
+                </div>
+    
+                <!-- Thời gian bắt đầu & Thời gian kết thúc -->
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <label for="startDate" class="form-label">Ngày bắt đầu:</label>
+                        <input type="datetime-local" class="form-control" id="startDate" name="addcoupon[start_date]" required>
+                    </div>
+    
+                    <div class="col-sm-6">
+                        <label for="endDate" class="form-label">Ngày kết thúc:</label>
+                        <input type="datetime-local" class="form-control" id="endDate" name="addcoupon[end_date]" required>
+                    </div>
+                </div>
+    
+                <!-- Trạng thái hoạt động -->
+                <div class="row">
+                    <div class="col-sm-4 mb-3">
+                        <label class="form-label" for="is-stackable-input">Có thể dùng chung với mã khác?</label>
+                        <div class="form-check form-switch form-switch-success">
+                            <input type="hidden" name="addcoupon[is_stackable]" value="0">
+                            <input class="form-check-input" type="checkbox" id="is-stackable-input" name="addcoupon[is_stackable]" value="1" {{ old('is_stackable') ? 'checked' : '' }} required>
+                        </div>
+                    </div>
+    
+                    <div class="col-sm-4 mb-3">
+                        <label class="form-label" for="is-active-input">Trạng thái?</label>
+                        <div class="form-check form-switch form-switch-success">
+                            <input type="hidden" name="addcoupon[is_active]" value="0">
+                            <input class="form-check-input" type="checkbox" id="is-active-input" name="addcoupon[is_active]" value="1" {{ old('is_active') ? 'checked' : '' }} required>
+                        </div>
+                    </div>
+    
+                    <div class="col-sm-4 mb-3">
+                        <label class="form-label" for="eligible-users-only-input">Chỉ dành cho một số người dùng?</label>
+                        <div class="form-check form-switch form-switch-success">
+                            <input type="hidden" name="addcoupon[eligible_users_only]" value="0">
+                            <input class="form-check-input" type="checkbox" id="eligible-users-only-input" name="addcoupon[eligible_users_only]" value="1" {{ old('eligible_users_only') ? 'checked' : '' }} required>
+                        </div>
+                    </div>
+                </div>
+            `;
+                addCouponElement.innerHTML = form;
+            });
+        </script>
 @endsection

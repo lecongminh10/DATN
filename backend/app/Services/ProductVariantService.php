@@ -30,4 +30,8 @@ class ProductVariantService extends BaseService
     public function getAttributeByProduct($id){
         return $this->productVariantService->getAttributeByProduct($id);
     }
+
+    public function getVariantByAttributes($attributes_values, $product_id){
+        return $this->productVariantService->getVariantByAttributes($attributes_values, $product_id);
+    }
 }
