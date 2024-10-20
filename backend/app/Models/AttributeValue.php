@@ -18,8 +18,12 @@ class AttributeValue extends Model
         'delete_by'
     ];
 
-    public function attribute()
+    public function productVariants()
     {
+        return $this->belongsToMany(ProductVariant::class, 'attribute_value_product_variant', 'attribute_value_id', 'product_variant_id');
+    }
+    public function attribute()
+    {     
         return $this->belongsTo(Attribute::class, 'id_attributes');
     }
 }

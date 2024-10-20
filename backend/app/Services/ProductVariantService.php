@@ -14,4 +14,24 @@ class ProductVariantService extends BaseService
         parent::__construct($productVariantService);
         $this->productVariantService = $productVariantService;
     }
+
+    public function getVariantsByProductId($productId, $perPage, $searchTerm){
+        return $this->productVariantService->getVariantsByProductId($productId, $perPage, $searchTerm );
+    }
+
+    public function getProductVariant($id){
+        return $this->productVariantService->getProductVariant($id);
+    }
+
+    public function getVariantByProduct($id){
+        return $this->productVariantService->getVariantByProduct($id);
+    }
+
+    public function getAttributeByProduct($id){
+        return $this->productVariantService->getAttributeByProduct($id);
+    }
+
+    public function getVariantByAttributes($attributes_values, $product_id){
+        return $this->productVariantService->getVariantByAttributes($attributes_values, $product_id);
+    }
 }

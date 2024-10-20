@@ -36,4 +36,8 @@ class UserService extends BaseService
     {
         return $this->userService->delete($id);
     }
+
+    public function getAllTrashedUsers(){
+        return $this->userService->getAllTrashedUsers();
+    }
 }

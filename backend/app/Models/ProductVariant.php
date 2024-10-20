@@ -14,8 +14,8 @@ class ProductVariant extends Model
 
     protected $fillable = [
         'product_id',
-        'product_attribute_id',
         'price_modifier',
+        'original_price',
         'stock',
         'sku',
         "status",
@@ -33,8 +33,8 @@ class ProductVariant extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function attributes()
+    public function attributeValues()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(AttributeValue::class, 'attribute_value_product_variant', 'product_variant_id', 'attribute_value_id');
     }
 }

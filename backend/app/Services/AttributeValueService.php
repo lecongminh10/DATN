@@ -14,4 +14,7 @@ class AttributeValueService extends BaseService
         $this->attributeValueRepository = $attributeValueRepository;
     }
 
+    public function getIdbyAttribute($code){
+        return $this->attributeValueRepository->getIdbyAttribute($code);
+    }
 }

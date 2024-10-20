@@ -22,22 +22,19 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $data = $this->categoryService->getParentOrChild();
         $search = $request->input('search');
-        $perPage = $request->input('perPage');
-        $categories = $this->categoryService->getSeachCategory($search, $perPage);
-        return response()->json([
-            'message' => 'success',
-            'categories' => $categories,
-            'data' => $data
-        ], 200);
+
+    // Gọi phương thức getParentOrChild và thực hiện paginate trên kết quả
+    $data = $this->categoryService->getParentOrChild($search)->paginate(5); // Thay đổi số lượng mục trên mỗi trang nếu cần
+
+    return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'search'));
 
     }
 
     public function create()
     {
-        // $parentCategory = $this->categoryService->getParent();
-        // return view(self::PATH_VIEW . __FUNCTION__, compact('parentCategory'));
+        $parentCategory = $this->categoryService->getParent();
+        return view(self::PATH_VIEW . __FUNCTION__, compact('parentCategory'));
     }
 
     public function store(CategoryRequest $request)
@@ -45,132 +42,149 @@ class CategoryController extends Controller
         $data = $request->except('image');
         $data['is_active'] ??= 0;
         if ($request->hasFile('image')) {
-            // $relativePath = $request->file('image')->store(self::PATH_UPLOAD);
-            // $baseUrl = env('APP_URL') . '/storage';
-            // $data['image'] = $baseUrl . '/' . str_replace('public/', '', $relativePath);
+            $relativePath = $request->file('image')->store(self::PATH_UPLOAD);
+            $data['image'] = $relativePath;
         }
-        $result = $this->categoryService->saveOrUpdate($data);
-        return response()->json([
-            'data' => $result,
-            'message' => 'Add success',
-        ], 201);
+        // $result = $this->categoryService->saveOrUpdate($data);
+        $this->categoryService->saveOrUpdate($data);
+        return redirect()->route('admin.categories.index');
     }
 
-    public function show(int $id)
+    public function show($id)
     {
+        $id = (int)$id;
         $data = $this->categoryService->getById($id);
-        return response()->json(['data' => $data], 200);
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
+
     }
 
-    public function edit(int $id)
+    public function edit( $id)
     {
+        $id = (int)$id;
         $data = $this->categoryService->getById($id);
         $parentCategory = $this->categoryService->getParent();
-        return response()->json(['data' => $data, 'parentCategory' => $parentCategory], 200);
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
     }
 
-    public function update(CategoryRequest $request, int $id)
+    public function update(CategoryRequest $request, $id)
     {
+        $id = (int)$id;
         $model = $this->categoryService->getById($id);
         $data = $request->except('image');
         $data['is_active'] ??= 0;
-        // $baseUrl = env('APP_URL') . '/storage';
-        // if ($request->hasFile('cover')) {
-        //     $relativePath = $request->file('cover')->store(self::PATH_UPLOAD);
-        //     $data['cover'] = $baseUrl . '/' . str_replace('public/', '', $relativePath);
-        // }
-        // $currentCover = $model->cover;
-        // $filename = basename($currentCover);
+        if ($request->hasFile('image')) {
+            $relativePath = $request->file('image')->store(self::PATH_UPLOAD);
+            $data['image'] = $relativePath;
+        }
+        $currentCover = $model->image;
+        $filename = basename($currentCover);
 
         $this->categoryService->saveOrUpdate($data, $id);
-        // if ($request->hasFile('cover') && $filename && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
-        //     Storage::delete(self::PATH_UPLOAD . '/' . $filename);
-        // }
-        return response()->json([
-            'data' => $data,
-            'messages' => 'Update success'
-        ], 200);
+        if ($request->hasFile('image') && $filename && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
+            Storage::delete(self::PATH_UPLOAD . '/' . $filename);
+        }
+        return redirect()->route('admin.categories.index')->with('success', 'Update successful');
+
     }
 
-    public function destroy(int $id)
+    public function destroy($id)
     {
-        $data = $this->categoryService->getById($id);
-    
-        if (!$data) {
-            return response()->json(['message' => 'Category not found'], 404);
-        }
+        $id = (int)$id;
+         $data = $this->categoryService->getById($id);
+
         $data->delete();
-        if ($data->trashed()) {
-            return response()->json(['message' => 'Category soft deleted successfully'], 200);
+        $currentCover = $data->image;
+        $filename = basename($currentCover);
+        if ($currentCover && Storage::exists(self::PATH_UPLOAD.'/'.$filename)) {
+            Storage::delete(self::PATH_UPLOAD.'/'.$filename);
         }
-
-        return response()->json(['message' => 'Category permanently deleted and cover file removed'], 200);
+        return redirect()->route('admin.categories.index');
     }
-    
-    public function deleteMuitpalt(Request $request)
+    public function deleteMultiple(Request $request)
     {
-    // Xác thực yêu cầu
-    $request->validate([
-        'ids' => 'required|array',
-        'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
-        'action' => 'required|string', // Thêm xác thực cho trường action
-    ]);
-
-    // Lấy các ID và action từ yêu cầu
-    $ids = $request->input('ids'); // Lấy mảng ID
-    $action = $request->input('action'); // Lấy giá trị của trường action
-
-        if (count($ids) > 0) {
-            foreach ($ids as $id) {
-
-                switch ($action) {
-                    case 'soft_delete':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->categoryService->isSoftDeleted($id);
-                            if(!$isSoftDeleted){
-                                $this->destroy($id); 
-                            }
-                        }
-                        return response()->json(['message' => 'Soft delete successful'], 200);
-        
-                    case 'hard_delete':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->categoryService->isSoftDeleted($id);
-                            if( $isSoftDeleted){
-                                $this->hardDelete($id);
-                            } 
-                        }
-                        return response()->json(['message' => 'Hard erase successful'], 200);
-        
-                    default:
-                        return response()->json(['message' => 'Invalid action'], 400);
-                }
-            }
-            return response()->json(['message' => 'Categories deleted successfully'],200);
-        } else {
-            return response()->json(['message' => 'Error: No IDs provided'], 500);
-        }
-    }
+        $categoryIds = $request->input('categories', []);
     
-    public function hardDelete(int $id)
+        if (empty($categoryIds)) {
+            return redirect()->route('admin.categories.index')->with('error', 'No categories selected for deletion.');
+        }
+    
+        Category::destroy($categoryIds);
+    
+        return redirect()->route('admin.categories.index')->with('success', 'Selected categories deleted successfully.');
+    }
+    public function trashed()
     {
-         $data = $this->categoryService->getIdWithTrashed($id);
+        // Sắp xếp theo thời gian xóa mới nhất
+        $trashedCategories = Category::onlyTrashed()
+            ->orderBy('deleted_at', 'desc') // Sắp xếp theo trường deleted_at giảm dần
+            ->paginate(5);
     
-        if (!$data) {
-            return response()->json(['message' => 'Category not found.'], 404);
-        }
-    
-        // Xóa cứng category
-        $data->forceDelete();
-    
-        // Nếu cần, có thể xóa hình ảnh liên quan
-        // $currentImage = $data->image;
-        // $filename = basename($currentImage);
-        // if ($currentImage && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
-        //     Storage::delete(self::PATH_UPLOAD . '/' . $filename);
-        // }
-    
-        return response()->json(['message' => 'Delete with success'], 200);
+        return view('admin.categories.trashed', compact('trashedCategories'));
+    }
+    public function restore($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
+
+        return redirect()->route('admin.categories.trashed')->with('success', 'Category restored successfully.');
     }
 
+    public function hardDelete($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->forceDelete();
+
+        return redirect()->route('admin.categories.trashed')->with('success', 'Category permanently deleted.');
+    }
+  
+    public function searchTrashed(Request $request)
+    {
+        $search = $request->input('search'); // Lấy từ khóa tìm kiếm
+        dd($search);
+        $trashedCategories = Category::onlyTrashed()
+            ->where('name', 'like', "%{$search}%") // Tìm kiếm theo tên
+            ->paginate(30); // Phân trang kết quả
+
+        return view('admin.categories.trashed', compact('trashedCategories', 'search'));
+    }
+  
+    public function restoreMultiple(Request $request)
+    {
+        $categoryIds = $request->input('categories', []);
+
+        if (empty($categoryIds)) {
+            return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for restoration.');
+        }
+
+        Category::onlyTrashed()->whereIn('id', $categoryIds)->restore();
+
+        return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories restored successfully.');
+    }
+
+    public function hardDeleteMultiple(Request $request)
+    {
+        $categoryIds = $request->input('categories', []);
+
+        if (empty($categoryIds)) {
+            return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for deletion.');
+        }
+
+        // Xóa cứng các danh mục đã chọn
+        Category::onlyTrashed()->whereIn('id', $categoryIds)->forceDelete();
+        return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories deleted permanently.');
+
+    }
+      public function updateParent(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:categories,id',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $category = Category::find($request->id);
+        $category->parent_id = $request->parent_id;
+        $category->save();
+
+        return response()->json(['success' => true]);
+    }
 }
