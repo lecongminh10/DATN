@@ -13,24 +13,28 @@ class StoreProductRequest extends FormRequest
 
     public function rules()
     {
-        return [
+        $rules = [
             'name'               => 'required|string|max:255|unique:products,name',
             'code'               => 'required|string|max:255|unique:products,code',
             'category_id'        => 'required|exists:categories,id',
-            'stock'              =>'required|integer|min:0',
-            'price_regular'      =>'required|min:0',
-            'price_sale'         =>'nullable|min:0|lt:price_regular',
-            'warranty_period'     =>'nullable|integer|min:0',
-            'content' => 'required|string|',
-            'short_description'   =>'nullable',
-            'meta_title'          =>'nullable',
-            'meta_description'    =>'nullable',
+            'stock'              => 'required|integer|min:0',
+            'price_regular'      => 'required|numeric|min:0',
+            'price_sale'         => 'nullable|numeric|min:0|lt:price_regular',
+            'warranty_period'    => 'nullable|integer|min:0',
+            'content'            => 'required|string',
+            'short_description'  => 'nullable|string',
+            'meta_title'         => 'nullable|string',
+            'meta_description'   => 'nullable|string',
             'is_active'          => 'boolean',
             'is_hot_deal'        => 'boolean',
             'is_show_home'       => 'boolean',
             'is_new'             => 'boolean',
             'is_good_deal'       => 'boolean',
+            'coupon'             => 'nullable|array', 
+            'addcoupon'          => 'nullable|array'
         ];
+
+        return $rules;
     }
 
     public function messages()

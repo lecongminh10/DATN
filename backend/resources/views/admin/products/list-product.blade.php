@@ -126,7 +126,8 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Stt</th>
+                                <th style="width:10px">Stt</th>
+                                <th>Giá trị</th>
                                 <th>Mã</th>
                                 <th>Giá gốc</th>
                                 <th>Giá khuyến mãi</th>
@@ -145,8 +146,36 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Thông báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Display the message -->
+                    @if(session('message'))
+                        <p>{{ session('message') }}</p>
+                    @else
+                        <p>No message available.</p>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 @section('scripte_logic')
+<script>
+    @if(session('message'))
+        var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+    @endif
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const viewVariantLinks = document.querySelectorAll('.view-variants');
@@ -168,6 +197,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(response => response.json())
                     .then(data => {
                         displayVariants(data);
+                        console.log(data);
+                        
                     })
                     .catch(error => console.error('Error fetching variants:', error));
             }
@@ -179,9 +210,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.data.length) {
                     let index = 1; // Đếm từ 1 cho ID
                     data.data.forEach(variant => {
+                        // Tạo chuỗi cho các giá trị thuộc tính
+                        const attributes = variant.attribute_values.map(attribute => {
+                            return `${attribute.attribute.attribute_name}: ${attribute.attribute_value}`;
+                        }).join('<br>'); // Sử dụng <br> để ngắt dòng
+
                         variantsHtml += `
                             <tr>
                                 <td>${index++}</td>
+                                <td>${attributes}</td>
                                 <td>${variant.sku}</td>
                                 <td>${variant.original_price !== null ? variant.original_price : 'N/A'}</td>
                                 <td>${variant.price_modifier}</td>
@@ -208,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     });
                 } else {
-                    variantsBody.innerHTML = '<p class="text-center " style="text-align: center; margin: 0 auto; padding: 20px 0;">No variants available for this product.</p>'; // Thông báo không có biến thể
+                    variantsBody.innerHTML = '<tr><td colspan="100%" style="text-align: center; vertical-align: middle;">No variants available for this product</td></tr>';
                 }
             }
 
