@@ -66,6 +66,22 @@ class ProductRepository extends BaseRepository
         return $this->model->withTrashed()->findOrFail($id);
     }
 
+    public function show_soft_delete($search = null, $perPage = 10) // $perPage mặc định là 10
+    {
+        $query = Product::onlyTrashed()->latest('id');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('short_description', 'LIKE', '%' . $search . '%');
+            });
+        }
+        // Sử dụng paginate để phân trang
+        $model = $query->paginate($perPage);
+
+        return $model;
+    }
+
 
 
     // public function getById($id)
