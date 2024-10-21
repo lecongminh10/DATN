@@ -24,11 +24,10 @@ class CategoryController extends Controller
     {
         $search = $request->input('search');
 
-    // Gọi phương thức getParentOrChild và thực hiện paginate trên kết quả
-    $data = $this->categoryService->getParentOrChild($search)->paginate(5); // Thay đổi số lượng mục trên mỗi trang nếu cần
+        // Gọi phương thức getParentOrChild và thực hiện paginate trên kết quả
+        $data = $this->categoryService->getParentOrChild($search)->paginate(5); // Thay đổi số lượng mục trên mỗi trang nếu cần
 
-    return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'search'));
-
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'search'));
     }
 
     public function create()
@@ -55,10 +54,9 @@ class CategoryController extends Controller
         $id = (int)$id;
         $data = $this->categoryService->getById($id);
         return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
-
     }
 
-    public function edit( $id)
+    public function edit($id)
     {
         $id = (int)$id;
         $data = $this->categoryService->getById($id);
@@ -84,32 +82,25 @@ class CategoryController extends Controller
             Storage::delete(self::PATH_UPLOAD . '/' . $filename);
         }
         return redirect()->route('admin.categories.index')->with('success', 'Update successful');
-
     }
 
     public function destroy($id)
     {
-        $id = (int)$id;
-         $data = $this->categoryService->getById($id);
+        $data = $this->categoryService->getById($id);
 
         $data->delete();
-        $currentCover = $data->image;
-        $filename = basename($currentCover);
-        if ($currentCover && Storage::exists(self::PATH_UPLOAD.'/'.$filename)) {
-            Storage::delete(self::PATH_UPLOAD.'/'.$filename);
-        }
         return redirect()->route('admin.categories.index');
     }
     public function deleteMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
-    
+
         if (empty($categoryIds)) {
             return redirect()->route('admin.categories.index')->with('error', 'No categories selected for deletion.');
         }
-    
+
         Category::destroy($categoryIds);
-    
+
         return redirect()->route('admin.categories.index')->with('success', 'Selected categories deleted successfully.');
     }
     public function trashed()
@@ -118,7 +109,7 @@ class CategoryController extends Controller
         $trashedCategories = Category::onlyTrashed()
             ->orderBy('deleted_at', 'desc') // Sắp xếp theo trường deleted_at giảm dần
             ->paginate(5);
-    
+
         return view('admin.categories.trashed', compact('trashedCategories'));
     }
     public function restore($id)
@@ -136,7 +127,7 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.categories.trashed')->with('success', 'Category permanently deleted.');
     }
-  
+
     public function searchTrashed(Request $request)
     {
         $search = $request->input('search'); // Lấy từ khóa tìm kiếm
@@ -147,7 +138,7 @@ class CategoryController extends Controller
 
         return view('admin.categories.trashed', compact('trashedCategories', 'search'));
     }
-  
+
     public function restoreMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
@@ -172,9 +163,8 @@ class CategoryController extends Controller
         // Xóa cứng các danh mục đã chọn
         Category::onlyTrashed()->whereIn('id', $categoryIds)->forceDelete();
         return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories deleted permanently.');
-
     }
-      public function updateParent(Request $request)
+    public function updateParent(Request $request)
     {
         $request->validate([
             'id' => 'required|exists:categories,id',
