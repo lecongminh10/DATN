@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory , SoftDeletes;
+    use HasFactory ,SoftDeletes;
 
     protected $table = 'categories';
 
@@ -39,5 +39,6 @@ class Category extends Model
     public function products() {
         return $this->hasMany(Product::class);
     }
+    
 
 }
