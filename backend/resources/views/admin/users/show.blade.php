@@ -10,7 +10,7 @@
                             <h4 class="fs-18 fw-semibold m-0 text-primary">Chi tiết người dùng</h4>
                         </div>
                     </div>
-                    <form action="{{ route('users.update', $user->id) }}" method="POST">
+                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -83,7 +83,7 @@
                         </div>
                         <div class="col-12">
                             <div class="text-end">
-                                <a href="{{ route('users.index') }}" class="btn btn-info">Danh sách người dùng</a>
+                                <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người dùng</a>
                             </div>
                         </div>
                     </form>

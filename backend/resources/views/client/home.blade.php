@@ -1,5 +1,6 @@
 @extends('client.layouts.app')
 @section('content')
+
 <main class="main home">
     <div class="container mb-2">
         <div class="info-boxes-container row row-joined mb-2 font2">

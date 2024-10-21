@@ -10,7 +10,7 @@
                             <h4 class="fs-18 fw-semibold m-0 text-primary">Cập nhật người dùng</h4>
                         </div>
                     </div>
-                    <form action="{{ route('users.update', $user->id) }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('admin.users.update', $user->id) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -108,7 +108,7 @@
                                         <button type="submit" class="btn btn-primary me-2">Sửa</button>
                                     </div>
                                     <div class="text-end">
-                                        <a href="{{ route('users.index') }}" class="btn btn-info">Danh sách người dùng</a>
+                                        <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người dùng</a>
                                     </div>
                                 </div>
                             </div>

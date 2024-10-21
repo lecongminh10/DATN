@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="p-4" style="min-height: 800px;">
                     <h4 class="text-primary mb-4">Thêm mới người dùng</h4>
-                    <form action="{{ route('users.store') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('admin.users.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-6">
@@ -96,7 +96,7 @@
                                         <button type="submit" class="btn btn-primary me-2">Thêm mới</button>
                                     </div>
                                     <div class="text-end">
-                                        <a href="{{ route('users.index') }}" class="btn btn-info">Danh sách người dùng</a>
+                                        <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người dùng</a>
                                     </div>
                                 </div>
                             </div>

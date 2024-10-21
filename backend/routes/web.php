@@ -17,7 +17,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'admin',
@@ -61,7 +60,7 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [AttributeController::class, 'deleteMuitpalt'])->name('admin.attributes.deleteMultiple');
     });
-        Route::get('/attribute/listsotfdeleted',            [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
+    Route::get('/attribute/listsotfdeleted',            [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
 
 
     //Carriers
@@ -98,7 +97,7 @@ Route::group([
         // Xóa nhiều
         Route::post('/couponsDelete-multiple',              [CouponController::class, 'deleteMuitpalt'])->name('coupons.deleteMultiple');
     });
-        Route::get('/listsotfdeleted',                       [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
+    Route::get('/listsotfdeleted',                       [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
 
     Route::prefix('attributes')->group(function () {
         Route::get('/',                                     [AttributeController::class, 'index'])->name('attributes.index');
@@ -119,9 +118,9 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [AttributeController::class, 'deleteMuitpalt'])->name('attributes.deleteMultiple');
     });
-        Route::get('/attributeshortdeleted',                 [AttributeController::class, 'showSotfDelete'])->name('attributes.attributeshortdeleted');
+    Route::get('/attributeshortdeleted',                 [AttributeController::class, 'showSotfDelete'])->name('attributes.attributeshortdeleted');
 
-        Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
+    Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
     Route::prefix('categories')->group(function () {
         Route::get('/',                                    [CategoryController::class, 'index'])->name('categories.index');
         Route::get('create',                               [CategoryController::class, 'create'])->name('categories.create');
@@ -137,28 +136,22 @@ Route::group([
         Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
 
         Route::post('/update-category-parent',            [CategoryController::class, 'updateParent']);
-
     });
-        Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
-        Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
-        Route::post('/categories/trashed/restore-multiple',   [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
-        Route::post('/categories/trashed/hard-delete-multiple',[CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
+    Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
+    Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
+    Route::post('/categories/trashed/restore-multiple',   [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
+    Route::post('/categories/trashed/hard-delete-multiple', [CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
 
-  Route::prefix('users')->group( function () {
-      Route::get('/',                                     [UserController::class, 'index'])->name('users.index');
-      Route::get('/add',                                  [UserController::class, 'add'])->name('users.add');
-      Route::post('/store',                               [UserController::class, 'store'])->name('users.store');
-      Route::get('show/{id}',                             [UserController::class, 'show'])->name('users.show');
-      Route::get('/edit/{id}',                            [UserController::class, 'edit'])->name('users.edit');
-      Route::put('update/{id}',                           [UserController::class, 'update'])->name('users.update');
-      Route::delete('/users/{id}/delete',                 [UserController::class, 'destroy'])->name('users.delete');
-      Route::post('/users/deleteMultiple',                [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
-  });
-  
-});
-
-Route::get('/client', function () {
-    return view('client/home');
+    Route::prefix('users')->group(function () {
+        Route::get('/',                                     [UserController::class, 'index'])->name('users.index');
+        Route::get('/add',                                  [UserController::class, 'add'])->name('users.add');
+        Route::post('/store',                               [UserController::class, 'store'])->name('users.store');
+        Route::get('show/{id}',                             [UserController::class, 'show'])->name('users.show');
+        Route::get('/edit/{id}',                            [UserController::class, 'edit'])->name('users.edit');
+        Route::put('update/{id}',                           [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}/delete',                 [UserController::class, 'destroy'])->name('users.delete');
+        Route::post('/users/deleteMultiple',                [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+    });
 });
 
 Route::prefix('auth')->group(function () {
@@ -194,4 +187,21 @@ Route::prefix('/')->group(function () {
         return view('client.home');
     })->name('client');
 
+    
 });
+
+Route::prefix('client')->group(function () {
+    Route::get('/users/index',                                      [UserController::class, 'indexClient'])->name('users.indexClient');
+
+    Route::get('showClient/{id}',                                   [UserController::class, 'showClient'])->name('users.showClient');
+    Route::put('updateClient/{id}',                                 [UserController::class, 'updateClient'])->name('users.updateClient');
+
+    Route::get('showOrder/{id}',                                   [UserController::class, 'showOrder'])->name('users.showOrder');
+
+    Route::get('showDetailOrder/{id}',                                   [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
+
+    Route::get('showLocationOrder/{id}',                                   [UserController::class, 'showLocationOrder'])->name('users.showLocationOrder');
+});
+
+
+

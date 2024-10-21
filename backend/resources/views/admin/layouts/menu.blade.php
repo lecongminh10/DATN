@@ -115,6 +115,22 @@
                                 </div>
                             </li>
                             <li class="nav-item">
+                                <a href="#sidebarUser" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarUser" data-key="t-product">
+                                    Người dùng
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarUser">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.users.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.users.store') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
                                 <a href="#sidebarCoupon" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarCoupon" data-key="t-product">
                                     Khuyến mãi

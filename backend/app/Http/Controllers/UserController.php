@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Log;
-use App\Models\PermissionValue;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\OrderLocation;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -35,6 +38,7 @@ class UserController extends Controller
             ->permissionValues;
         return view('admin.users.store', compact('permissionsValues'));
     }
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -47,10 +51,8 @@ class UserController extends Controller
         try {
             $data = $request->except('permissions');
 
-            // Tạo người dùng
             $user = $this->userService->createUser($data);
 
-            // Gán quyền cho người dùng
             if ($user && $request->has('permissions')) {
                 $user->permissionsValues()->attach($request->permissions);
             }
@@ -59,31 +61,24 @@ class UserController extends Controller
                 'user' => $user
             ]);
         } catch (\Exception $e) {
-            // Ghi log lỗi để debug hoặc hiển thị thông báo lỗi
             Log::error("Error creating user: " . $e->getMessage());
-            // dd($e->getMessage());
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi tạo người dùng.');
         }
     }
 
     public function show($id)
     {
-        // Lấy thông tin người dùng
         $user = $this->userService->getById($id);
 
-        // Lấy quyền của người dùng
         $permissions = $user->permissionsValues;
 
-        // Trả về thông tin người dùng cùng với quyền
         return view('admin.users.show', compact('user', 'permissions'));
     }
 
     public function edit($id)
     {
-        // Lấy thông tin người dùng cùng quyền của họ
         $user = User::with('permissionsValues')->findOrFail($id);
 
-        // Lấy tất cả permissionValues liên quan đến `user_management`
         $permissionsValues = Permission::with('permissionValues')
             ->where('permission_name', 'user_management')
             ->first()
@@ -104,48 +99,104 @@ class UserController extends Controller
         ]);
         $data = $request->all();
 
-        // Cập nhật người dùng
         $user = $this->userService->updateUser($id, $data);
 
-        // Cập nhật quyền cho người dùng
         if ($request->has('id_permissions')) {
-            // Xóa quyền cũ và gán quyền mới
             $user->permissionsValues()->sync($request->id_permissions);
         }
         return redirect()->route('users.index');
     }
 
     public function destroy($id, Request $request)
-{
-    $user = User::findOrFail($id);
+    {
+        $user = User::findOrFail($id);
 
-    if ($request->forceDelete === 'true') {
-        $user->forceDelete(); 
-    } else {
-        $user->delete(); 
+        if ($request->forceDelete === 'true') {
+            $user->forceDelete();
+        } else {
+            $user->delete();
+        }
+
+        return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
 
-    return redirect()->route('users.index')->with('success', 'User deleted successfully');
-}
 
-
-// UserController.php
-public function deleteMultiple(Request $request)
+    // UserController.php
+    public function deleteMultiple(Request $request)
     {
-        $ids = json_decode($request->ids); // Lấy danh sách ID từ yêu cầu
-        $forceDelete = $request->forceDelete === 'true'; // Kiểm tra có xóa vĩnh viễn không
+        $ids = json_decode($request->ids); 
+        $forceDelete = $request->forceDelete === 'true'; 
 
-        // Xóa người dùng
         foreach ($ids as $id) {
             $user = User::find($id);
             if ($forceDelete) {
-                $user->forceDelete(); // Xóa vĩnh viễn
+                $user->forceDelete(); 
             } else {
-                $user->delete(); // Xóa mềm
+                $user->delete();
             }
         }
 
         return response()->json(['success' => true, 'message' => 'Người dùng đã được xóa.']);
     }
 
+    public function indexClient()
+    {
+        $user = $this->userService->getAll();
+        return view('client.users.widget', compact('user'));
+    }
+
+    public function showClient($id)
+    {
+        $user = $this->userService->getById($id);
+
+        $address = Address::where('user_id', $id)->first();
+
+        return view('client.users.show', compact('user','address'));
+    }
+
+    public function updateClient(Request $request, $id)
+    {   
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:15|unique:users,phone_number',
+            'email' => 'required|email|max:255|unique:users,email',
+            'date_of_birth' => 'required|date',
+        ]);
+        $data = $request->all();
+
+        $user = $this->userService->updateUser($id, $data);
+
+        return redirect()->route('users.showClient', $user->id);
+    }
+
+    public function showOrder($id, Request $request)
+    {
+        $status = $request->input('status', 'all'); 
+        $query = Order::query();
+    
+        if ($status !== 'all') {
+            $query->where('status', $status); 
+        }
+    
+        $orders = $query->get(); 
+        $totalOrders = $orders->count(); 
+    
+        return view('client.users.showOrder', compact('orders', 'totalOrders', 'status'));
+    }
+
+    public function showDetailOrder($id){
+
+        $orders = Order::findOrFail($id);
+
+        $location = OrderLocation::where('order_id', $id)->first();
+
+        return view('client.users.showDetailOrder', compact('orders','location'));
+    }
+
+    public function showLocationOrder($id){
+
+        $location = OrderLocation::findOrFail($id);
+
+        return view('client.users.showLocationOrder', compact('location'));
+    }
 }

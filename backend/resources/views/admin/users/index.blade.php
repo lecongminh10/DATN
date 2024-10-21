@@ -10,7 +10,7 @@
                         <h5 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h5>
                         <div class="flex-shrink-0">
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="{{ route('users.add') }}">
+                                <a href="{{ route('admin.users.add') }}">
                                     <button class="btn btn-danger add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
                                         <i class="ri-add-line align-bottom me-1"></i>Thêm mới
                                     </button>
@@ -67,12 +67,12 @@
                                                 <div class="flex-shrink-0 ms-4">
                                                     <ul class="list-inline tasks-list-menu mb-0">
                                                         <li class="list-inline-item">
-                                                            <a href="{{route('users.show', $value->id)}}">
+                                                            <a href="{{route('admin.users.show', $value->id)}}">
                                                                 <i class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                                             </a>
                                                         </li>
                                                         <li class="list-inline-item">
-                                                            <a href="{{route('users.edit', $value->id)}}">
+                                                            <a href="{{route('admin.users.edit', $value->id)}}">
                                                                 <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                             </a>
                                                         </li>
@@ -80,7 +80,7 @@
                                                             <button class="btn btn-link text-danger p-0" title="Xóa" onclick="confirmDelete('{{ $value->id }}', '{{ $value->username }}')">
                                                                 <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                                                             </button>
-                                                            <form id="deleteForm-{{ $value->id }}" action="{{ route('users.delete', $value->id) }}" method="POST" style="display:none;">
+                                                            <form id="deleteForm-{{ $value->id }}" action="{{ route('admin.users.delete', $value->id) }}" method="POST" style="display:none;">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <input type="hidden" name="forceDelete" id="forceDeleteInput-{{ $value->id }}" value="false">
@@ -197,7 +197,7 @@
                 confirmDeleteBtn.onclick = function() {
                     // Gửi yêu cầu xóa nhiều người dùng
                     const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
-                    fetch('{{ route('users.deleteMultiple') }}', {
+                    fetch('{{ route('admin.users.deleteMultiple') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
