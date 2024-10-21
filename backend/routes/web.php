@@ -39,6 +39,11 @@ Route::group([
         Route::get('/{id}/variants', [ProductController::class, 'getVariants'])->name('admin.products.getVariants');
 
         // Route::get('/deleteProduct/{id}', [ProductController::class, 'destroy'])->name('deleteProduct');
+        Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/listSotfDeleted', [ProductController::class, 'showSotfDelete'])->name('deleted');
+        Route::put('/restore/{id}', [ProductController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/hard-delete', [ProductController::class, 'hardDelete'])->name('hardDelete');
+        Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('deleteMultiple');
     });
     //Attributes
     Route::prefix('attributes')->group(function () {
