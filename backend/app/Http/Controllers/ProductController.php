@@ -72,7 +72,7 @@ class ProductController extends Controller
     public function showProduct(int $id)
     {
         $data = $this->productService->getById($id)->load(['category','variants', 'tags', 'galleries']);
-        
+ 
         $variants = $this->productVariantService->getAttributeByProduct($id);
 
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')

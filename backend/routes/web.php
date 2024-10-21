@@ -9,6 +9,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Client\ProductController as ClientProductController ;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
@@ -19,11 +20,12 @@ use Illuminate\Support\Facades\Mail;
 
 Route::group([
     'prefix' => 'admin',
-    'as' => 'admin.'
+    'as' => 'admin.',
+    'middleware' => ['auth', 'isAdmin']
 ], function () {
     Route::get('dashboard', function () {
         return view('admin/dashboard');
-    });
+    })->name('dashboard');
     Route::group([
         'prefix' => 'products',
         'as' => 'products.',
@@ -177,7 +179,7 @@ Route::group([
         Route::post('/destroy-multiple',                     [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
         Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
     });
-})->middleware('isAdmin');
+});
 
 Route::get('/client', function () {
     return view('client/home');
@@ -185,7 +187,7 @@ Route::get('/client', function () {
 
 Route::prefix('auth')->group(function () {
     Route::get('admin/login',                             [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
-    Route::get('/login',                                  [LoginController::class, 'showFormLogin'])->name('client.login');
+    Route::get('login',                                  [LoginController::class, 'showFormLogin'])->name('client.login');
     Route::post('login',                                  [LoginController::class, 'login'])->name('auth.login');
     Route::get('logout',                                  [LoginController::class, 'logout'])->name('auth.logout');
     Route::get('register',                                [RegisterController::class, 'showFormRegister'])->name('show.register');
@@ -216,3 +218,5 @@ Route::prefix('/')->group(function () {
         return view('client.home');
     })->name('client');
 });
+
+Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
