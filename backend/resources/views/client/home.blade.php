@@ -140,107 +140,97 @@
                 <h2 class="section-title ls-n-10 m-b-4 appear-animate" data-animation-name="fadeInUpShorter">
                     Featured Products</h2>
 
-                <div class="products-slider owl-carousel owl-theme dots-top dots-small m-b-1 pb-1 appear-animate" data-animation-name="fadeInUpShorter">
-                    <div class="product-default inner-quickview inner-icon">
-                        <figure class="img-effect">
-                            <a href="demo1-product.html">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-1.jpg')}}" width="205" height="205" alt="product">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-1-2.jpg')}}" width="205" height="205" alt="product">
-                            </a>
-                            <div class="label-group">
-                                <div class="product-label label-hot">HOT</div>
-                                <div class="product-label label-sale">-20%</div>
-                            </div>
-                            <div class="btn-icon-group">
-                                <a href="demo1-product.html" class="btn-icon btn-add-cart"><i
-                                        class="fa fa-arrow-right"></i>
+                    <div class="products-slider owl-carousel owl-theme dots-top dots-small m-b-1 pb-1 appear-animate"
+                    data-animation-name="fadeInUpShorter">
+
+                    @foreach ($products as $item)
+                        <div class="product-default inner-quickview inner-icon">
+                            <figure class="img-effect">
+                                <a href="">
+                                    @foreach ($item->galleries as $value)
+                                        <img src="{{ \Storage::url('' . $value->image_gallery) }}" width="205"
+                                            height="205" alt="{{ $item->name }}" />
+                                    @endforeach
                                 </a>
-                            </div>
-                            <a href="ajax/product-quick-view.html" class="btn-quickview" title="Quick View">Quick View</a>
-                            <div class="product-countdown-container">
-                                <span class="product-countdown-title">offer ends in:</span>
-                                <div class="product-countdown countdown-compact" data-until="2021, 10, 5" data-compact="true">
+                                <div class="label-group">
+                                    <div class="product-label label-hot">HOT</div>
+                                    @if ($item->price_sale < $item->price_regular)
+                                        @php
+                                            $discountPercentage = round(
+                                                (($item->price_regular - $item->price_sale) /
+                                                    $item->price_regular) *
+                                                    100,
+                                            );
+                                        @endphp
+                                        <div class="product-label label-sale">SALE - {{ $discountPercentage }}%</div>
+                                    @endif
+                                    {{-- <div class="product-label label-sale"></div> --}}
                                 </div>
-                                <!-- End .product-countdown -->
-                            </div>
-                            <!-- End .product-countdown-container -->
-                        </figure>
-                        <div class="product-details">
-                            <div class="category-wrap">
-                                <div class="category-list">
-                                    <a href="demo1-shop.html" class="product-category">category</a>
+                                <div class="btn-icon-group">
+                                    <a href="#" title="Add To Cart"
+                                        class="btn-icon btn-add-cart product-type-simple"><i
+                                            class="icon-shopping-cart"></i></a>
                                 </div>
-                                <a href="wishlist.html" title="Add to Wishlist" class="btn-icon-wish"><i
-                                        class="icon-heart"></i></a>
-                            </div>
-                            <h3 class="product-title"> <a href="demo1-product.html">Black Grey Headset</a> </h3>
-                            <div class="ratings-container">
-                                <div class="product-ratings">
-                                    <span class="ratings" style="width:100%"></span>
-                                    <!-- End .ratings -->
-                                    <span class="tooltiptext tooltip-top"></span>
+                                <a href="" class="btn-quickview" title="Quick View">Chi tiết</a>
+                            </figure>
+                            <div class="product-details">
+                                <div class="category-wrap">
+                                    <div class="category-list">
+                                        <a href="" class="product-category">
+                                            {{ $item->category->name }}
+                                        </a>
+                                    </div>
+                                    <a href="wishlist.html" title="Add to Wishlist" class="btn-icon-wish"><i
+                                            class="icon-heart"></i></a>
                                 </div>
-                                <!-- End .product-ratings -->
+                                <h3 class="product-title"> <a href="">{{ $item->name }}</a> </h3>
+                                </h3>
+                                <div class="ratings-container">
+                                    <div class="product-ratings">
+                                        <span class="ratings" style="width:{{ $item->rating * 20 }}%"></span>
+                                        <!-- Đoạn này sẽ tính phần trăm dựa trên giá trị rating (0 - 5 sao) -->
+                                        <span class="tooltiptext tooltip-top">{{ $item->rating }} </span>
+                                        <!-- Hiển thị giá trị rating khi hover chuột -->
+                                    </div>
+                                    <!-- End .product-ratings -->
+                                </div>
+                                <!-- End .product-container -->
+                                <div class="price-box">
+                                    @if ($item->price_sale < $item->price_regular)
+                                    <span class="product-price"
+                                        style="text-decoration: line-through; font-size: 0.8em;">{{ $item->price_regular }} VNĐ</span>
+                                    <br>
+                                    <span class="product-sale-price" style="color: #08c; font-size: 1.2em;">{{ $item->price_sale }} VNĐ</span>
+                                @else
+                                    <span class="product-price" style="color: #08c;">{{ $item->price_regular }} VNĐ</span>
+                                @endif
+                                </div>
+                                <!-- End .price-box -->
                             </div>
-                            <!-- End .product-container -->
-                            <div class="price-box">
-                                <span class="product-price">$9.00</span>
-                            </div>
-                            <!-- End .price-box -->
+                            <!-- End .product-details -->
                         </div>
-                        <!-- End .product-details -->
-                    </div>
-                    <div class="product-default inner-quickview inner-icon">
+                    @endforeach
+
+
+                    {{-- <div class="product-default inner-quickview inner-icon">
                         <figure class="img-effect">
                             <a href="demo1-product.html">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-2.jpg')}}" width="205" height="205" alt="product" />
-                            </a>
-                            <div class="btn-icon-group">
-                                <a href="#" title="Add To Cart" class="btn-icon btn-add-cart product-type-simple"><i
-                                        class="icon-shopping-cart"></i></a>
-                            </div>
-                            <a href="ajax/product-quick-view.html" class="btn-quickview" title="Quick View">Quick View</a>
-                        </figure>
-                        <div class="product-details">
-                            <div class="category-wrap">
-                                <div class="category-list">
-                                    <a href="demo1-shop.html" class="product-category">category</a>
-                                </div>
-                                <a href="wishlist.html" title="Add to Wishlist" class="btn-icon-wish"><i
-                                        class="icon-heart"></i></a>
-                            </div>
-                            <h3 class="product-title"> <a href="demo1-product.html">Battery Charger</a> </h3>
-                            <div class="ratings-container">
-                                <div class="product-ratings">
-                                    <span class="ratings" style="width:100%"></span>
-                                    <!-- End .ratings -->
-                                    <span class="tooltiptext tooltip-top"></span>
-                                </div>
-                                <!-- End .product-ratings -->
-                            </div>
-                            <!-- End .product-container -->
-                            <div class="price-box">
-                                <span class="product-price">$9.00</span>
-                            </div>
-                            <!-- End .price-box -->
-                        </div>
-                        <!-- End .product-details -->
-                    </div>
-                    <div class="product-default inner-quickview inner-icon">
-                        <figure class="img-effect">
-                            <a href="demo1-product.html">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-3.jpg')}}" width="205" height="205" alt="product">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-3-2.jpg')}}" width="205" height="205" alt="product">
+                                <img src="{{ asset('themeclient/assets/images/demoes/demo1/products/product-3.jpg') }}"
+                                    width="205" height="205" alt="product">
+                                <img src="{{ asset('themeclient/assets/images/demoes/demo1/products/product-3-2.jpg') }}"
+                                    width="205" height="205" alt="product">
                             </a>
                             <div class="label-group">
                                 <div class="product-label label-hot">HOT</div>
                                 <div class="product-label label-sale">-30%</div>
                             </div>
                             <div class="btn-icon-group">
-                                <a href="#" title="Add To Cart" class="btn-icon btn-add-cart product-type-simple"><i
+                                <a href="#" title="Add To Cart"
+                                    class="btn-icon btn-add-cart product-type-simple"><i
                                         class="icon-shopping-cart"></i></a>
                             </div>
-                            <a href="ajax/product-quick-view.html" class="btn-quickview" title="Quick View">Quick View</a>
+                            <a href="ajax/product-quick-view.html" class="btn-quickview" title="Quick View">Quick
+                                View</a>
                         </figure>
                         <div class="product-details">
                             <div class="category-wrap">
@@ -270,17 +260,21 @@
                     <div class="product-default inner-quickview inner-icon">
                         <figure class="img-effect">
                             <a href="demo1-product.html">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-4.jpg')}}" width="205" height="205" alt="product">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-4-2.jpg')}}" width="205" height="205" alt="product">
+                                <img src="{{ asset('themeclient/assets/images/demoes/demo1/products/product-4.jpg') }}"
+                                    width="205" height="205" alt="product">
+                                <img src="{{ asset('themeclient/assets/images/demoes/demo1/products/product-4-2.jpg') }}"
+                                    width="205" height="205" alt="product">
                             </a>
                             <div class="label-group">
                                 <div class="product-label label-hot">HOT</div>
                             </div>
                             <div class="btn-icon-group">
-                                <a href="#" title="Add To Cart" class="btn-icon btn-add-cart product-type-simple"><i
+                                <a href="#" title="Add To Cart"
+                                    class="btn-icon btn-add-cart product-type-simple"><i
                                         class="icon-shopping-cart"></i></a>
                             </div>
-                            <a href="ajax/product-quick-view.html" class="btn-quickview" title="Quick View">Quick View</a>
+                            <a href="ajax/product-quick-view.html" class="btn-quickview" title="Quick View">Quick
+                                View</a>
                         </figure>
                         <div class="product-details">
                             <div class="category-wrap">
@@ -306,48 +300,7 @@
                             <!-- End .price-box -->
                         </div>
                         <!-- End .product-details -->
-                    </div>
-                    <div class="product-default inner-quickview inner-icon">
-                        <figure class="img-effect">
-                            <a href="demo1-product.html">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-5.jpg')}}" width="205" height="205" alt="product">
-                                <img src="{{asset('themeclient/assets/images/demoes/demo1/products/product-5-2.jpg')}}" width="205" height="205" alt="product">
-                            </a>
-                            <div class="label-group">
-                                <div class="product-label label-hot">HOT</div>
-                            </div>
-                            <div class="btn-icon-group">
-                                <a href="#" title="Add To Cart" class="btn-icon btn-add-cart product-type-simple"><i
-                                        class="icon-shopping-cart"></i></a>
-                            </div>
-                            <a href="ajax/product-quick-view.html" class="btn-quickview" title="Quick View">Quick View</a>
-                        </figure>
-                        <div class="product-details">
-                            <div class="category-wrap">
-                                <div class="category-list">
-                                    <a href="demo1-shop.html" class="product-category">category</a>
-                                </div>
-                                <a href="wishlist.html" title="Add to Wishlist" class="btn-icon-wish"><i
-                                        class="icon-heart"></i></a>
-                            </div>
-                            <h3 class="product-title"> <a href="demo1-product.html">Porto Extended Camera</a>
-                            </h3>
-                            <div class="ratings-container">
-                                <div class="product-ratings">
-                                    <span class="ratings" style="width:100%"></span>
-                                    <!-- End .ratings -->
-                                    <span class="tooltiptext tooltip-top"></span>
-                                </div>
-                                <!-- End .product-ratings -->
-                            </div>
-                            <!-- End .product-container -->
-                            <div class="price-box">
-                                <span class="product-price">$9.00</span>
-                            </div>
-                            <!-- End .price-box -->
-                        </div>
-                        <!-- End .product-details -->
-                    </div>
+                    </div> --}}
                 </div>
                 <!-- End .featured-proucts -->
 
@@ -767,7 +720,7 @@
                                 <!-- End .megamenu -->
                             </li>
                             <li>
-                                <a href="demo1-product.html" class="sf-with-ul"><i
+                                <a href="{{route('client.products')}}" class="sf-with-ul"><i
                                         class="sicon-basket"></i>Products</a>
                                 <div class="megamenu megamenu-fixed-width">
                                     <div class="row">

@@ -39,5 +39,13 @@ class Category extends Model
     public function products() {
         return $this->hasMany(Product::class);
     }
+    public function getProductsCountAttribute()
+    {
+        return $this->products()->count();
+    }
+    public function getChildrenProductsCountAttribute()
+    {
+        return $this->children()->withCount('products')->get()->sum('products_count');
+    }
 
 }
