@@ -39,6 +39,7 @@
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarDashboards">
                         {{-- <ul class="nav nav-sm flex-column">
+                        {{-- <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="dashboard-analytics.html" class="nav-link" data-key="t-analytics">
                                     Analytics </a>
@@ -64,6 +65,7 @@
                                 <a href="dashboard-job.html" class="nav-link" data-key="t-job">Job</a>
                             </li>
                         </ul> --}}
+                        </ul> 
                     </div>
                 </li> <!-- end Dashboard Menu -->
                 <li class="nav-item">
@@ -74,7 +76,7 @@
                     <div class="collapse menu-dropdown" id="sidebarApps">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="#sidebarCalendar" class="nav-link" data-bs-toggle="collapse"
+                                <a href="#sidebarCalendar1" class="nav-link" data-bs-toggle="collapse"
                                     role="button" aria-expanded="false" aria-controls="sidebarCalendar"
                                     data-key="t-calender">
                                     Quản lý categories
@@ -925,6 +927,7 @@
         </div>
         <!-- Sidebar -->
     </div>
+</div>
 </div>
     <div class="sidebar-background"></div>
 </div>

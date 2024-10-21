@@ -56,20 +56,30 @@ class CategoryController extends Controller
         if ($request->hasFile('image')) {
             $relativePath = $request->file('image')->store(self::PATH_UPLOAD);
             $data['image'] = $relativePath;
+            $relativePath = $request->file('image')->store(self::PATH_UPLOAD);
+            $data['image'] = $relativePath;
         }
+        // $result = $this->categoryService->saveOrUpdate($data);
+        $this->categoryService->saveOrUpdate($data);
+        return redirect()->route('categories.index');
         // $result = $this->categoryService->saveOrUpdate($data);
         $this->categoryService->saveOrUpdate($data);
         return redirect()->route('categories.index');
     }
 
     public function show($id)
+    public function show($id)
     {
+        $id = (int)$id;
         $id = (int)$id;
         $data = $this->categoryService->getById($id);
         return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
 
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
+
     }
 
+    public function edit( $id)
     public function edit( $id)
     {
         $id = (int)$id; // Chuyển đổi ID thành số nguyên
@@ -79,6 +89,7 @@ class CategoryController extends Controller
         return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'parentCategories'));
     }
 
+    public function update(CategoryRequest $request, $id)
     public function update(CategoryRequest $request, $id)
     {
         $id = (int)$id; // Chuyển đổi ID thành số nguyên
@@ -110,6 +121,7 @@ class CategoryController extends Controller
 
     }
 
+    public function destroy($id)
     public function destroy($id)
     {
         $id = (int)$id;

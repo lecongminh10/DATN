@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\AttributeRequest; // Xác thực cho thuộc tính
-use App\Models\Attribute;
+use App\Http\Requests\AttributeRequest;
 use App\Models\AttributeValue;
 use App\Services\AttributeService;
 use App\Services\AttributeValueService;
-use Illuminate\Http\JsonResponse;
+use Attribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 
 class AttributeController extends Controller
 {
@@ -27,47 +24,34 @@ class AttributeController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $perPage = $request->input('perPage');
-        $attributes =$this->attributeService->getAllAttribute($search , $perPage);
-        return response()->json([
-            'message' => 'success',
-            'attributes' => $attributes,
-        ], 200);
+        $perPage = $request->input('perPage', 10);
+        $attributes = $this->attributeService->getAllAttribute($search, $perPage);
+        return view('admin.attributes.index', compact('attributes'));
     }
 
-    public function show(int $id): JsonResponse
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        try {
-            // Tìm thuộc tính theo ID và bao gồm giá trị thuộc tính
-            $attribute = Attribute::with('attributeValues')->findOrFail($id);
-
-            return response()->json([
-                'attribute' => $attribute,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Đã xảy ra lỗi khi xóa thuộc tính',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        return view('admin.attributes.create');
     }
 
-    // CRUD cho Attributes
-
-    public function store(AttributeRequest $request): JsonResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(AttributeRequest $attributeRequest)
     {
-        // Lấy dữ liệu đã được xác thực từ request
-        $validatedData = $request->validated();
+        $validatedData = $attributeRequest->validated();
 
         try {
+            DB::beginTransaction();
             // Tạo thuộc tính
             $attribute = $this->attributeService->saveOrUpdate([
                 'attribute_name' => $validatedData['attribute_name'],
                 'description' => $validatedData['description'],
             ]);
-
-            // Kiểm tra xem 'attribute_value' có tồn tại
-            if (!empty($validatedData['attribute_value'])) {
+            if (!empty($validatedData['attribute_value']) && is_array($validatedData['attribute_value'])) {
                 foreach ($validatedData['attribute_value'] as $value) {
                     if (!empty($value)) {
                         $this->attributeValueService->saveOrUpdate([
@@ -77,38 +61,66 @@ class AttributeController extends Controller
                     }
                 }
             }
-
-            return response()->json([
-                'attribute' => $attribute,
-                'message' => 'Thêm mới Attribute và AttributeValue thành công'
-            ], 201);
+            DB::commit();
+            return redirect()->route('admin.attributes.index')->with('success', 'Thêm mới Attribute và Attribute Values thành công');
         } catch (\Exception $e) {
-            // Nếu có lỗi, rollback
             DB::rollBack();
-            return response()->json([
-                'error' => 'Đã xảy ra lỗi khi thêm thuộc tính',
-                'message' => $e->getMessage()
-            ], 500);
+            return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi thêm thuộc tính: ' . $e->getMessage()]);
         }
     }
-
-    public function update(AttributeRequest $request, $id): JsonResponse
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        // Lấy dữ liệu đã được xác thực từ request
-        $validatedData = $request->validated();
+        $attribute = $this->attributeService->getById($id);
 
+        if (!$attribute) {
+            return redirect()->route('admin.attributes.index')->withErrors(['error' => 'Thuộc tính không tồn tại']);
+        }
+
+        return view('admin.attributes.show', compact('attribute'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $attribute = $this->attributeService->getById($id);
+        return view('admin.attributes.edit', compact('attribute'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(AttributeRequest $attributeRequest, string $id)
+    {
+
+        $validatedData = $attributeRequest->validated();
 
         try {
-            // Cập nhật thuộc tính
-            $attribute = $this->attributeService->saveOrUpdate($validatedData, $id);
+            DB::beginTransaction();
+            $attribute = $this->attributeService->getById($id);
 
-            // Xóa các giá trị thuộc tính cũ
-            $attribute->attributeValues()->delete();
+            if (!$attribute) {
+                return redirect()->back()->withErrors(['error' => 'Thuộc tính không tồn tại']);
+            }
 
-            // Thêm giá trị thuộc tính mới
-            if (!empty($validatedData['attribute_value'])) {
-                foreach ($validatedData['attribute_value'] as $value) {
-                    if (!empty($value)) {
+            $attribute->update([
+                'attribute_name' => $validatedData['attribute_name'],
+                'description' => $validatedData['description'],
+            ]);
+            // Thêm các giá trị thuộc tính mới
+            foreach ($validatedData['attribute_value'] as $index => $value) {
+                if (!empty($value)) {
+                    $attributeValueId = $validatedData['attribute_value_id'][$index] ?? null;
+                    if ($attributeValueId) {
+                        $this->attributeValueService->saveOrUpdate([
+                            'id_attributes' => $attribute->id,
+                            'attribute_value' => $value,
+                        ], $attributeValueId);
+                    } else {
                         $this->attributeValueService->saveOrUpdate([
                             'id_attributes' => $attribute->id,
                             'attribute_value' => $value,
@@ -116,35 +128,50 @@ class AttributeController extends Controller
                     }
                 }
             }
+            DB::commit();
 
-            return response()->json([
-                'attribute' => $attribute,
-                'message' => 'Cập nhật thành công thuộc tính và giá trị thuộc tính.'
-            ], 200);
+            return redirect()->route('admin.attributes.index')->with('success', 'Cập nhật thành công');
         } catch (\Exception $e) {
-            // Nếu có lỗi, rollback
             DB::rollBack();
-            return response()->json([
-                'error' => 'Đã xảy ra lỗi khi cập nhật thuộc tính',
-                'message' => $e->getMessage()
-            ], 500);
+            return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi cập nhật thuộc tính: ' . $e->getMessage()]);
         }
     }
 
+    public function showSotfDelete(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = $request->input('perPage', 10);
+        $data = $this->attributeService->show_soft_delete($search , $perPage);
+        return view('admin.attributes.deleted', compact('data'));
+    }
+
+    public function restore($id)
+    {
+        try {
+            $this->attributeService->restore_delete($id);
+            return redirect()->route('admin.attributes.deleted')->with('success', 'Khôi phục thuộc tính thành công!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.attributes.deleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(int $id)
     {
         $data = $this->attributeService->getById($id);
-        if(!$data){
+
+        if (!$data) {
             return abort(404);
         }
         $data->delete();
-        if($data->trashed()){
-            return response()->json(['message' => 'Attribute soft deleted successfully'], 200); 
+        if ($data->trashed()) {
+            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
         }
 
-        return response()->json(['message' => 'Attribute permanently deleted and cover file removed'], 200);
+        return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
-
     public function destroyValue(int $id)
     {
         try {
@@ -154,7 +181,7 @@ class AttributeController extends Controller
             }
             $data->delete();
             if ($data->trashed()) {
-                return response()->json(['message' => 'Attribute Values soft deleted successfully'], 200);
+                return response()->json(['message' => 'Giá trị thuộc tính đã được xóa thành công'], 200);
             }
             return response()->json([
                 'message' => 'Xóa thành công giá trị thuộc tính'
@@ -169,16 +196,18 @@ class AttributeController extends Controller
         }
     }
 
-    public function hardDeleteAttribute(int $id){
-        $data= $this->attributeService->getIdWithTrashed($id);
+    public function hardDeleteAttribute(int $id)
+    {
+        $data = $this->attributeService->getIdWithTrashed($id);
         if (!$data) {
-            return response()->json(['message' => 'Attribute not found.'], 404);
+            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
         $data->forceDelete();
-        return response()->json(['message' => 'Delete with success'], 200);
+        return redirect()->route('admin.attributes.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 
-    public function hardDeleteAttributeValue(int $id){
+    public function hardDeleteAttributeValue(int $id)
+    {
         $data = $this->attributeValueService->getIdWithTrashed($id);
         if (!$data) {
             return response()->json(['message' => 'Attribute Value not found.'], 404);
@@ -189,14 +218,14 @@ class AttributeController extends Controller
 
     public function deleteMuitpalt(Request $request)
     {
-    $request->validate([
-        'ids' => 'required|array',
-        'ids.*' => 'integer', 
-        'action' => 'required|string',
-    ]);
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer',
+            'action' => 'required|string',
+        ]);
 
-    $ids = $request->input('ids');
-    $action = $request->input('action'); 
+        $ids = $request->input('ids');
+        $action = $request->input('action');
 
         if (count($ids) > 0) {
             foreach ($ids as $id) {
@@ -205,45 +234,88 @@ class AttributeController extends Controller
                     case 'soft_delete_attribute':
                         foreach ($ids as $id) {
                             $isSoftDeleted = $this->attributeService->isSoftDeleted($id);
-                            if(!$isSoftDeleted){
-                                $this->destroy($id); 
+                            if (!$isSoftDeleted) {
+                                $this->destroy($id);
                             }
                         }
                         return response()->json(['message' => 'Soft delete successful'], 200);
-                     
+
                     case 'hard_delete_attribute':
                         foreach ($ids as $id) {
                             $isSoftDeleted = $this->attributeService->isSoftDeleted($id);
-                            if( $isSoftDeleted){
+                            if ($isSoftDeleted) {
                                 $this->hardDeleteAttribute($id);
-                            } 
+                            }
                         }
                         return response()->json(['message' => 'Hard erase successful'], 200);
 
                     case 'soft_delete_attribute_values':
                         foreach ($ids as $id) {
                             $isSoftDeleted = $this->attributeValueService->isSoftDeleted($id);
-                            if(!$isSoftDeleted){
-                                    $this->destroyValue($id); 
-                                }
+                            if (!$isSoftDeleted) {
+                                $this->destroyValue($id);
                             }
-                            return response()->json(['message' => 'Soft delete successful'], 200);
+                        }
+                        return response()->json(['message' => 'Soft delete successful'], 200);
 
                     case 'hard_delete_attribute_value':
                         foreach ($ids as $id) {
                             $isSoftDeleted = $this->attributeValueService->isSoftDeleted($id);
-                            if($isSoftDeleted){
+                            if ($isSoftDeleted) {
                                 $this->hardDeleteAttributeValue($id);
-                            } 
+                            }
                         }
                         return response()->json(['message' => 'Hard erase successful'], 200);
                     default:
                         return response()->json(['message' => 'Invalid action'], 400);
                 }
             }
-            return response()->json(['message' => 'Categories deleted successfully'],200);
+            return response()->json(['message' => 'Categories deleted successfully'], 200);
         } else {
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
     }
+   
+    // Lưu dữ liệu để thêm product(attribute ->variant)
+    public function saveAttributes(Request $request)
+    {
+        // Lấy các giá trị thuộc tính được gửi từ request
+        $selectedValues = $request->input('attributes', []); // Mặc định là mảng rỗng nếu không có giá trị
+    
+        $attributesData = []; // Mảng để lưu dữ liệu thuộc tính
+    
+        // Lặp qua từng giá trị thuộc tính được chọn
+        foreach ($selectedValues as $value) {
+            // Tìm kiếm giá trị thuộc tính trong cơ sở dữ liệu
+            $attributeValue = AttributeValue::where('attribute_value', $value)->first();
+    
+            // Nếu tìm thấy giá trị thuộc tính
+            if ($attributeValue) {
+                // Lấy thông tin của thuộc tính tương ứng
+                $attribute = $attributeValue->attribute; // Lấy thông tin thuộc tính liên quan
+    
+                // Tạo mảng dữ liệu cho thuộc tính
+                $attributesData[] = [
+                    'id' => $attributeValue->id,
+                    'name' => $attribute->attribute_name,
+                    'value' => $attributeValue->attribute_value,
+                    'price_modifier' => $attributeValue->price_modifier ?? 0, // Giả sử bạn có thuộc tính price_modifier trong bảng attributes_values
+                    'stock' => $attributeValue->stock ?? 0, // Giả sử bạn có thuộc tính stock trong bảng attributes_values
+                    'status' => $attributeValue->status ?? '', // Giả sử bạn có thuộc tính status trong bảng attributes_values
+                    'variant_image' => $attributeValue->variant_image ?? '', // Giả sử bạn có thuộc tính variant_image trong bảng attributes_values
+                ];
+            }
+        }
+    
+        // Lưu mảng ID vào session
+        session(['product_attribute_ids' => array_column($attributesData, 'id')]);
+    
+        // Trả về phản hồi JSON
+        return response()->json([
+            'message' => 'Giá trị đã được lưu thành công!',
+            'attributes' => $attributesData // Trả về danh sách thuộc tính
+        ]);
+    }
+    
+
 }

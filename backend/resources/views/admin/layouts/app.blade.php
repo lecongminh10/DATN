@@ -9,15 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Theme/sbrand" name="author" />
+    
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('theme/assets/images/favicon.ico')}}">
 
-    <!-- jsvectormap css -->
-    <link href="{{ asset('theme/assets/libs/jsvectormap/css/jsvectormap.min.css')}}" rel="stylesheet" type="text/css" />
-
-    <!--Swiper slider css-->
-    <link href="{{ asset('theme/assets/libs/swiper/swiper-bundle.min.css')}}" rel="stylesheet" type="text/css" />
-
+    @yield('libray_css')
     <!-- Layout config Js -->
     <script src="{{ asset('theme/assets/js/layout.js')}}"></script>
     <!-- Bootstrap Css -->

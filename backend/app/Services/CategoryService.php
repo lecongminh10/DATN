@@ -17,20 +17,20 @@ class CategoryService extends BaseService
     }
 
     public function getParentOrChild($search = null, $parentId = null)
-{
-    $query = Category::query();
+    {
+        $query = Category::query();
 
-    if ($search) {
-        $query->where('name', 'like', "%{$search}%");
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($parentId) {
+            $query->where('parent_id', $parentId); // Giả sử bạn có trường parent_id
+        }
+        $query->orderBy('created_at', 'desc');
+
+        return $query;
     }
-
-    if ($parentId) {
-        $query->where('parent_id', $parentId); // Giả sử bạn có trường parent_id
-    }
-    $query->orderBy('created_at', 'desc');
-
-    return $query;
-}
     public function getParent()
     {
         return $this->categoryService->getParent();
@@ -46,7 +46,7 @@ class CategoryService extends BaseService
         return $this->categoryService->getAll($search, $perPage);
     }
     public function getChildCategories($parentId)
-{
-    return Category::where('parent_id', $parentId)->get();
-}
+    {
+        return Category::where('parent_id', $parentId)->get();
+    }
 }
