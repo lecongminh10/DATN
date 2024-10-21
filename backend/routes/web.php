@@ -9,6 +9,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Client\ProductController as ClientProductController ;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
@@ -216,3 +217,5 @@ Route::prefix('/')->group(function () {
         return view('client.home');
     })->name('client');
 });
+
+Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
