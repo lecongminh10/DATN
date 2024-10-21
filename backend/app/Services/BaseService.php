@@ -9,59 +9,70 @@ use Illuminate\Support\Facades\DB;
 
 class BaseService
 {
-    protected $repository;
+    protected $service;
 
-    public function __construct(BaseRepository $repository )
+    public function __construct(BaseRepository $service)
     {
-        $this ->repository = $repository;
+        $this->service = $service;
     }
 
-    public function getAll(){
+    public function getAll()
+    {
 
-        return $this ->repository ->getAll();
+        return $this->service->getAll();
     }
 
-    public function getById($id){
+    public function getById($id)
+    {
 
-        return $this ->repository ->getById($id);
+        return $this->service->getById($id);
     }
 
     public function paginate($perPage = 10)
     {
-        return $this->repository->paginate($perPage);
+        return $this->service->paginate($perPage);
     }
 
-    public function saveOrUpdate(array $input , int $id = null){
-        try{
+    public function saveOrUpdate(array $input, int $id = null)
+    {
+        try {
             DB::beginTransaction();
-            if(isset($id)){
+            if (isset($id)) {
                 $input['id'] = $id;
-                
             }
-            $result = $this->repository->saveOrUpdateItem($input , $id);
+            $result = $this->service->saveOrUpdateItem($input, $id);
             DB::commit();
-            if($result){
+            if ($result) {
                 return $result;
-            }else{
+            } else {
                 throw new Exception("Cant save or update information");
             }
-        }catch(Extension $e){
+        } catch (Extension $e) {
             DB::rollBack();
             throw $e;
         }
     }
 
-    public function delete(int $id){
-        try{
+    public function delete(int $id)
+    {
+        try {
             DB::beginTransaction();
-            $result = $this->repository->delete($id);
+            $result = $this->service->delete($id);
             DB::commit();
             return $result;
-
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function getIdWithTrashed(int $id)
+    {
+        return $this->service->getByIdWithTrashed($id);
+    }
+
+    public function isSoftDeleted(int $id)
+    {
+        return $this->service->isSoftDeleted($id);
     }
 }

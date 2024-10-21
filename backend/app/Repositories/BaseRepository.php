@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class  BaseRepository
 {
    protected $model;
+   protected $repository;
 
    public function __construct(Model $model)
    {
@@ -26,6 +27,7 @@ class  BaseRepository
    {
       return $this->model->findOrFail($id);
    }
+   
    public function paginate($perPage = 10)
    {
       return $this->model->paginate($perPage);
@@ -40,7 +42,7 @@ class  BaseRepository
             $result = $this->model->findOrFail($id);
             if ($result) {
                 $result->delete();
-            } 
+            }
          }
          DB::commit();
 
@@ -75,5 +77,15 @@ class  BaseRepository
          DB::rollBack();
          throw $e;
       }
+   }
+
+   public function getByIdWithTrashed(int $id)
+   {
+       return $this->model->withTrashed()->findOrFail($id);
+   }
+
+   public function isSoftDeleted(int $id){
+      $repository = $this->model->withTrashed()->findOrFail($id);
+      return $repository ? $repository->trashed() :false;
    }
 }
