@@ -17,7 +17,7 @@ class UserRepository extends BaseRepository
 
     public function getAllUser()
     {
-        return User::all();
+        return User::with('permissionsValues')->get();
     }
 
     public function create(array $data)
@@ -58,6 +58,11 @@ class UserRepository extends BaseRepository
     {
         $user = User::findOrFail($id);
         $user->delete();
+    }
+
+    public function getAllTrashedUsers()
+    {
+        return User::onlyTrashed()->with('permissionsValues')->get();
     }
 
    

@@ -15,38 +15,38 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'category_id',
-        'code',
-        'name',
-        'short_description',
-        'content',
-        'price_regular',
-        'price_sale',
-        'stock',
-        'rating',
-        'warranty_period',
-        'view',
-        'buycount',
-        'wishlistscount',
-        'is_active',
-        'is_hot_deal',
-        'is_show_home',
-        'is_new',
-        'is_good_deal',
-        'slug',
-        'meta_title',
-        'meta_description',
-        'deleted_at',
-        'deleted_by'
+              'category_id',
+              'code',
+              'name',
+              'short_description',
+              'content',
+              'price_regular',
+              'price_sale',
+              'stock',
+              'rating',
+              'warranty_period',
+              'view',
+              'buycount',
+              'wishlistscount',
+              'is_active',
+              'is_hot_deal',
+              'is_show_home',
+              'is_new',
+              'is_good_deal',
+              'slug',
+              'meta_title',
+              'meta_description',
+              'deleted_at',
+              'deleted_by'
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
-        'is_hot_deal' => 'boolean',
-        'is_show_home' => 'boolean',
-        'is_new' => 'boolean',
-        'is_good_deal' => 'boolean',
-        'deleted_at' => 'boolean',
+              'is_active' => 'boolean',
+              'is_hot_deal' => 'boolean',
+              'is_show_home' => 'boolean',
+              'is_new' => 'boolean',
+              'is_good_deal' => 'boolean',
+              'deleted_at' => 'boolean',
     ];
 
     public function category()
@@ -74,9 +74,12 @@ class Product extends Model
         return $this->galleries()->where('is_main', operator: true)->first();
     }
 
-    
-
-    
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupons_products')
+                    ->withTimestamps();
+    }
+   
 }
 
 

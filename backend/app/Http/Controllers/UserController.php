@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\PermissionsValueUser;
-use App\Services\PermissionsValueUserService;
+use App\Models\Address;
+use App\Models\Permission;
+use Illuminate\Support\Facades\Log;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\OrderLocation;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     protected $userService;
-    protected $permissionsValueUser;
     protected $userRepository;
 
     public function __construct(UserService $userService)
@@ -22,115 +26,193 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = $this->userService->getAll();
-        return response()->json($users, 200);
+        $user = $this->userService->getAll();
+        return view('admin.users.index', compact('user'));
     }
 
+    public function add()
+    {
+        $permissionsValues = Permission::with('permissionValues')
+            ->where('permission_name', 'user_management')
+            ->first()
+            ->permissionValues;
+        return view('admin.users.store', compact('permissionsValues'));
+    }
+    
     public function store(Request $request)
     {
-        $data = $request->except('id_permissions');
-        $user = $this->userService->createUser($data);
-        $user->permissionsValues()->attach($request->id_permissions);
-        return response()->json($user, 201);
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'password' => 'required',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|email|max:255|unique:users,email',
+            'date_of_birth' => 'required|date',
+        ]);
+        try {
+            $data = $request->except('permissions');
+
+            $user = $this->userService->createUser($data);
+
+            if ($user && $request->has('permissions')) {
+                $user->permissionsValues()->attach($request->permissions);
+            }
+
+            return redirect()->route('users.index')->with([
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error creating user: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi tạo người dùng.');
+        }
     }
 
     public function show($id)
     {
-        // Lấy thông tin người dùng
         $user = $this->userService->getById($id);
 
-        // Lấy quyền của người dùng
-        // $permissions = $user->permissionsValues;
+        $permissions = $user->permissionsValues;
 
-        // Trả về thông tin người dùng cùng với quyền
-        return response()->json([
-            'user' => $user,
-            // 'permissions' => $permissions
-        ], 200);
+        return view('admin.users.show', compact('user', 'permissions'));
     }
+
+    public function edit($id)
+    {
+        $user = User::with('permissionsValues')->findOrFail($id);
+
+        $permissionsValues = Permission::with('permissionValues')
+            ->where('permission_name', 'user_management')
+            ->first()
+            ->permissionValues;
+
+        return view('admin.users.update', compact('user', 'permissionsValues'));
+    }
+
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'password' => 'required',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|email|max:255|unique:users,email',
+            'date_of_birth' => 'required|date',
+        ]);
         $data = $request->all();
 
-        // Cập nhật người dùng
         $user = $this->userService->updateUser($id, $data);
 
-        // Cập nhật quyền cho người dùng
         if ($request->has('id_permissions')) {
-            // Xóa quyền cũ và gán quyền mới
             $user->permissionsValues()->sync($request->id_permissions);
         }
-
-        return response()->json($user, 200);
+        return redirect()->route('users.index');
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        // Tìm người dùng theo ID
-        $user = $this->userService->getById($id);
+        $user = User::findOrFail($id);
 
-        // Kiểm tra nếu người dùng tồn tại
-        if (!$user) {
-            return response()->json(['message' => 'User không tìm thấy'], 404);
-        }
-
-        // Thực hiện xóa mềm
-        $user->delete();
-
-        return response()->json(['message' => 'User đã được xóa mềm'], 200);
-    }
-
-    public function hardDelete($id)
-    {
-        $user = $this->userService->getIdWithTrashed($id);
-        if (!$user) {
-            return response()->json(['message' => 'User không tìm thấy'], 404);
-        }
-        $user->forceDelete();
-
-        return response()->json(['message' => 'User đã được xóa'], 200);
-    }
-
-    public function deleteMuitpalt(Request $request){
-        $request->validate([
-            'ids' => 'required|array',
-            'ids.*' => 'integer', // Đảm bảo tất cả các ID là kiểu số nguyên
-            'action' => 'required|string', // Thêm xác thực cho trường action
-        ]);
-        // Lấy các ID và action từ yêu cầu
-        $ids = $request->input('ids'); // Lấy mảng ID
-        $action = $request->input('action'); // Lấy giá trị của trường action
-
-        if (count($ids) > 0) {
-            foreach ($ids as $id) {
-
-                switch ($action) {
-                    case 'soft_delete':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->userService->isSoftDeleted($id);
-                            if(!$isSoftDeleted){
-                                $this->destroy($id); 
-                            }
-                        }
-                        return response()->json(['message' => 'Soft delete successful'], 200);
-        
-                    case 'hard_delete':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->userService->isSoftDeleted($id);
-                            if($isSoftDeleted){
-                                $this->hardDelete($id); 
-                            }
-                        }
-                        return response()->json(['message' => 'Hard erase successful'], 200);
-        
-                    default:
-                        return response()->json(['message' => 'Invalid action'], 400);
-                }
-            }
-            return response()->json(['message' => 'Categories deleted successfully'],200);
+        if ($request->forceDelete === 'true') {
+            $user->forceDelete();
         } else {
-            return response()->json(['message' => 'Error: No IDs provided'], 500);
+            $user->delete();
         }
+
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully');
     }
+
+
+    // UserController.php
+    public function deleteMultiple(Request $request)
+    {
+        $ids = json_decode($request->ids); // Lấy danh sách ID từ yêu cầu
+        $forceDelete = $request->forceDelete === 'true'; // Kiểm tra có xóa vĩnh viễn không
+        // Xóa người dùng
+      
+        foreach ($ids as $id) {
+            $user=User::withTrashed()->find($id);
+            if ($forceDelete) {
+                $user->forceDelete(); 
+            } else {
+                $user->delete();
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Người dùng đã được xóa.']);
+    }
+
+    public function indexClient()
+    {
+        return view('client.users.index');
+    }
+
+    public function showClient($id)
+    {
+        $user = $this->userService->getById($id);
+        $address = Address::where('user_id', $id)->first();
+        return view('client.users.show', compact('user','address'));
+    }
+
+    public function updateClient(Request $request, $id)
+    {   
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:15|unique:users,phone_number',
+            'email' => 'required|email|max:255|unique:users,email',
+            'date_of_birth' => 'required|date',
+        ]);
+        $data = $request->all();
+
+        $user = $this->userService->updateUser($id, $data);
+
+        return redirect()->route('users.showClient', $user->id);
+    }
+
+    public function showOrder(Request $request)
+    {
+        $id = Auth::user()->id;
+        $status = $request->input('status', 'all'); 
+        $query = Order::query();
+    
+        if ($status !== 'all') {
+            $query->where('status', $status); 
+        }
+        $orders = $query->get(); 
+        $totalOrders = $orders->count(); 
+    
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status'));
+    }
+
+    public function showDetailOrder($id){
+
+        $orders = Order::findOrFail($id);
+        $locations = OrderLocation::where('order_id', $id)->get();
+
+        return view('client.users.show_detail_order', compact('orders','locations'));
+    }
+
+  
+    public function listdeleteMultiple(){
+        $user = $this->userService->getAllTrashedUsers();
+        return view('admin.users.deleted', compact('user'));
+    }
+
+    public function manage(Request $request, int $id)
+    {
+
+        $user = User::onlyTrashed()->find($id);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+        }
+
+        if ($request->input('action') === 'restore') {
+            $user->restore();
+            return response()->json(['success' => true, 'message' => 'User restored successfully.']);
+        } elseif ($request->input('action') === 'hard-delete') {
+            $user->forceDelete();
+            return response()->json(['success' => true, 'message' => 'User deleted permanently.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Invalid action.'], 400);
+    }
+
 }

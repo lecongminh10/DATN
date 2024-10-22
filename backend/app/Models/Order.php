@@ -10,20 +10,20 @@ class Order extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "orders";
+    protected $table = 'orders';
 
     protected $fillable = [
-        'user_id',
-        'code',
-        'total_price',
-        'shipping_address_id',
-        'payment_id',
-        'note',
-        'status',
-        'carrier_id',
-        'tracking_number',
-        'deleted_at',
-        'deleted_by'
+          'user_id',
+          'code',
+          'total_price',
+          'shipping_address_id',
+          'payment_id',
+          'note',
+          'status',
+          'carrier_id',
+          'tracking_number',
+          'deleted_at',
+          'deleted_by'
     ];
 
     public const CHO_XAC_NHAN = 'Chờ xác nhận';

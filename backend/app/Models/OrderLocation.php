@@ -13,15 +13,17 @@ class OrderLocation extends Model
     protected $table = 'order_locations';
 
     protected $fillable = [
-        'order_id',
-        'address',
-        'city',
-        'district',
-        'ward',
-        'latitude',
-        'longitude',
-        'deleted_at',
-        'deleted_by'
+         'order_id', 
+        'address', 
+        'city', 
+        'district', 
+        'ward', 
+        'latitude', 
+        'longitude', 
+        'deleted_at', 
+        'deleted_by', 
+        'created_at', 
+        'updated_at'
     ];
 
     protected $casts = [
@@ -33,3 +35,4 @@ class OrderLocation extends Model
         return $this->belongsTo(Order::class);
     }
 }
+
