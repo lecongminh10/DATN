@@ -114,9 +114,10 @@
                     <h6 class="pt-1 line-height-1">Call us now<a href="tel:#" class="d-block text-dark ls-10 pt-1">+123 5678 890</a></h6>
                 </div>
                 <!-- End .header-contact -->
-
-                <a href="{{route('client.login')}}" class="header-icon header-icon-user"><i class="icon-user-2"></i></a>
-
+                <a href="{{ Auth::check() ? route('users.indexClient') : route('client.login') }}" class="header-icon header-icon-user">
+                    <i class="icon-user-2"></i>
+                </a>
+                
                 <a href="wishlist.html" class="header-icon"><i class="icon-wishlist-2"></i></a>
 
                 <div class="dropdown cart-dropdown">

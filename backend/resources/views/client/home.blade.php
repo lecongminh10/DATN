@@ -108,10 +108,18 @@
                         <div class="product-default inner-quickview inner-icon">
                             <figure class="img-effect">
                                 <a href="{{route('client.showProduct',$item->id)}}">
-                                    @foreach ($item->galleries as $value)
-                                        <img src="{{ \Storage::url('' . $value->image_gallery) }}" width="205"
-                                            height="205" alt="{{ $item->name }}" />
-                                    @endforeach
+                                    @php
+                                    $mainImage = $item->galleries->where('is_main', true)->first();
+                                    $otherImages = $item->galleries->where('is_main', false)->take(1);
+                                @endphp
+                                
+                                @if ($mainImage)
+                                    <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
+                                @endif
+                                
+                                @foreach ($otherImages as $value)
+                                    <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
+                                @endforeach
                                 </a>
                                 <div class="label-group">
                                     <div class="product-label label-hot">HOT</div>
