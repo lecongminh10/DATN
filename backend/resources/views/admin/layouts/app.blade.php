@@ -88,7 +88,7 @@
 
 
     @yield('script_libray')
-    @yield('scripte_logic')
+    @yield('script_logic')
     <!-- App js -->
     <script src="{{ asset('theme/assets/js/app.js')}}"></script>
 </body>

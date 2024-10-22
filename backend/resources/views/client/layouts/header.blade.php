@@ -39,7 +39,7 @@
                             <li><a href="demo1-contact.html">Contact Us</a></li>
                             <li><a href="wishlist.html">My Wishlist</a></li>
                             <li><a href="#">Site Map</a></li>
-                            <li><a href="cart.html">Cart</a></li>
+                            <li><a href="{{ route('shopping-cart') }}">Cart</a></li>
                             <li><a href="#" class="login-link">Log In</a></li>
                         </ul>
                     </div>
@@ -75,7 +75,7 @@
             <!-- End .header-left -->
 
             <div class="header-right w-lg-max pl-2">
-                <div class="header-search header-icon header-search-inline header-search-category w-lg-max">
+                <div class="header-search header-icon header-search-inline header-search-category w-lg-max" >
                     <a href="#" class="search-toggle" role="button"><i class="icon-search-3"></i></a>
                     <form action="#" method="get">
                         <div class="header-search-wrapper">
@@ -210,9 +210,9 @@
                             <!-- End .dropdown-cart-total -->
 
                             <div class="dropdown-cart-action">
-                                <a href="cart.html" class="btn btn-gray btn-block view-cart">View
+                                <a href="{{ route('shopping-cart') }}" class="btn btn-gray btn-block view-cart">View
                                     Cart</a>
-                                <a href="checkout.html" class="btn btn-dark btn-block">Checkout</a>
+                                <a href="#" class="btn btn-dark btn-block">Checkout</a>
                             </div>
                             <!-- End .dropdown-cart-total -->
                         </div>

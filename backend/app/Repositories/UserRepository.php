@@ -30,6 +30,23 @@ class UserRepository extends BaseRepository
         return User::findOrFail($id);
     }
 
+    public function getAdminWithAddresses()
+    {
+        // Tìm admin đầu tiên và eager load địa chỉ
+        $admin = User::with('addresses')
+            ->whereHas('permissionsValues', function ($query) {
+                $query->where('value', User::TYPE_ADMIN);
+            })
+            ->first(); // Lấy admin đầu tiên
+
+        // Kiểm tra xem admin có tồn tại không
+        if ($admin) {
+            return $admin; // Trả về admin (có cả địa chỉ)
+        }
+
+        return null; // Trả về null nếu không tìm thấy admin
+    }
+
     public function update($id, array $data)
     {
         $user = User::findOrFail($id);

@@ -14,4 +14,8 @@ class ProductVariantService extends BaseService
         parent::__construct($productVariantService);
         $this->productVariantService = $productVariantService;
     }
+
+    public function getAttributeNameValue($idVariant) {
+        return $this->getAttributeNameValue($idVariant);
+    }
 }

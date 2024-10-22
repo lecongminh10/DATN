@@ -447,7 +447,7 @@ if (!function_exists('isStatus')) {
     
 @endsection
     
-@section('scripte_logic')
+@section('script_logic')
     <script>
     $(document).ready(function() {
     $('#demo-datepicker').flatpickr({

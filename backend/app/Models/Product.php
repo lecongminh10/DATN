@@ -70,6 +70,10 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function getMainImage(){
+        return $this->galleries()->where('is_main', operator: true)->first();
+    }
+
     
 
     

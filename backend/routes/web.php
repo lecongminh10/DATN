@@ -96,4 +96,17 @@ Route::prefix('/')->group(function(){
     Route::get('', function () {
         return view('client.home');
     })->name('client');
+
+    Route::get('shopping-cart', [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
+
+    Route::get('checkout', [OrderController::class, 'showCheckOut'])->name('checkout');
+    
+    Route::post('addresses', [OrderController::class, 'updateOrInsertAddress'])->name('addresses');
+    
+    Route::post('add-order', [OrderController::class, 'addOrder'])->name('addOrder');
+
+    Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
+    
+    Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
+
 });

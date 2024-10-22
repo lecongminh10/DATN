@@ -66,4 +66,9 @@ class User extends Authenticatable
                     ->whereIn('value', [self::TYPE_ADMIN, self::TYPE_SUBADMIN])
                     ->exists();
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'id');
+    }
 }

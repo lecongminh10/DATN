@@ -326,12 +326,20 @@
                         <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Store Address</h5>
                     </div>
                     <div class="card-body">
-                        <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
+                        {{-- <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
                             <li class="fw-medium fs-14">{{ $admin->username }}</li>
                             <li>{{ $admin->phone_number }}</li>
                             <li>{{ $admin->address_line }}</li>
-                            <li>{{ $admin->address_line1 }}</li>
                             <li>{{ $admin->address_line2 }}</li>
+                            <li>{{ $admin->address_line1 }}</li>
+                        </ul> --}}
+
+                        <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
+                            <li class="fw-medium fs-14">Admin</li>
+                            <li>09864736527</li>
+                            <li>753 Đường Võ Chí Công</li>
+                            <li>Phường Xuân La</li>
+                            <li>Quận Tây Hồ, Hà Nội</li>
                         </ul>
                     </div>
                 </div>

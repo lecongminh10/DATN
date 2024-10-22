@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
+use App\Models\Cart;
 use App\Models\Order;
-use App\Repositories\OrderRepository;
+use App\Models\OrderItem;
+use App\Models\OrderLocation;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use App\Services\OrderLocationService;
 use App\Services\OrderService;
+use App\Repositories\OrderRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
@@ -139,12 +145,18 @@ class OrderController extends Controller
     {
         $data = $this->orderService->getById($id);
         $user = $data->user;
+        // $admin = User::join('permissions_value_users', 'users.id', '=', 'permissions_value_users.user_id')
+        // ->join('permissions_values', 'permissions_value_users.permission_value_id', '=', 'permissions_values.id')
+        // ->join('addresses', 'users.id', '=', 'addresses.user_id')
+        // ->where('permissions_values.value', 'admin_role')
+        // ->select('users.username', 'users.email', 'users.phone_number', 'addresses.address_line', 'addresses.address_line1', 'addresses.address_line2')
+        // ->first();
+        // dd($admin);
+
+        // $users = User::with('addresses')->first();
+        // dd($user);
+
         $orderLocation = $this->orderLocationService->getAll()->where('order_id', $id)->first();
-        $admin = User::join('permissions_value_users', 'users.id', '=', 'permissions_value_users.user_id')
-            ->join('permissions_values', 'permissions_value_users.permission_value_id', '=', 'permissions_values.id')
-            ->join('addresses', 'users.id', '=', 'addresses.user_id')
-            ->where('permissions_values.value', 'admin_role')
-            ->select('users.username', 'users.email', 'users.phone_number', 'addresses.address_line', 'addresses.address_line1', 'addresses.address_line2')->first();
 
         $orderItems = $data->items()->with(['product', 'productVariant.attribute', 'productVariant.attributeValue'])->get();
         // $productVar = ProductVariant::with(['attributes', 'attributes.attributeValues'])->find($idVar);
@@ -169,7 +181,9 @@ class OrderController extends Controller
         $shippingCharge = $data->shippingMethod->amount ?? 0;
         $total = $subTotal - $totalDiscount + $shippingCharge;
 
-        return view('admin.orders.order-detail', compact('data', 'user', 'orderLocation', 'admin', 'orderItems', 'subTotal', 'totalDiscount', 'shippingCharge', 'total'));
+        $paymentGatewayName = $data->payment->paymentGateway->name ?? 'No Payment Gateway';
+
+        return view('admin.orders.order-detail', compact('data', 'user', 'orderLocation', 'orderItems', 'subTotal', 'totalDiscount', 'shippingCharge', 'total', 'paymentGatewayName'));
     }
 
     public function showModalEdit($code)
@@ -184,97 +198,177 @@ class OrderController extends Controller
         return response()->json($order); // Trả về thông tin đơn hàng dưới dạng JSON
     }
 
-
+//đoạn hiện trang này ở đâu áTrang nào nhỉ
     /**
      * Store a newly created resource in storage.
      */
 
-    // public function showAdd()
-    // {
-    //     $category = $this->categoryService->getAll();
-    //     return view('admin.products.add-product')->with([
-    //         'categories' => $category
-    //     ]);
-    // }
-
-    public function store(Request $request)
+    public function showShoppingCart()
     {
-        // // $baseUrl = env('APP_URL') . '/storage'; => sau mở lại
-        // $dataProduct = $request->except(['product_variants', 'product_galaries']);
+        $userId = auth()->id();
+        $carts = Cart::with(['product', 'productVariant', 'attributeValues.attribute'])
+            ->where('user_id', $userId)
+            ->get();
 
-        // // Gán giá trị mặc định cho các trường boolean nếu không có
-        // $dataProduct['is_active'] ??= 0;
-        // $dataProduct['is_hot_deal'] ??= 0;
-        // $dataProduct['is_show_home'] ??= 0;
-        // $dataProduct['is_new'] ??= 0;
-        // $dataProduct['is_good_deal'] ??= 0;
-
-        // // Xử lý slug(tạo slug)
-        // if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
-        //     $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
-        // }
-
-        // Xử lý images
-        // if (isset($dataProduct['images']) && $dataProduct['images'] instanceof UploadedFile) {
-        //     $relativePathProduct = $dataProduct['images']->store(self::PATH_UPLOAD);
-        //     $dataProduct['images'] = $baseUrl . '/' . str_replace('public/', '', $relativePathProduct);
-        // }
-
-        // $product = $this->productService->saveOrUpdate($dataProduct);
-
-        // if ($request->has('product_variants')) {
-        //     $dataProductVariants = [];
-        //     foreach ($request->product_variants as $item) {
-
-        //         $dataProductVariants = [
-        //             'product_id' => $product->id,
-        //             'product_attribute_id' => $item['product_attribute_id'],
-        //             'price_modifier' => $item['price_modifier'],
-        //             'stock' => $item['stock'] ?? 0,
-        //             'sku' => $item['sku'] ?? null,
-        //             "status" => $item["status"] ?? 0,
-        //         ];
-        //         $this->productVariantService->saveOrUpdate($dataProductVariants);
-        //     }
-        // }
-
-        // if ($request->has('product_galaries')) {
-        //     foreach ($request->product_galaries as $image_gallery) {
-        //         // Kiểm tra nếu image_gallery là một file tải lên hợp lệ
-        //         if (isset($image_gallery['image_gallery'])) {
-
-        //             // if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) => thay vào if
-        //             // $relativePath = $image_gallery['image_gallery']->store(self::PATH_UPLOAD);
-        //             // $dataProductGallery = $baseUrl . '/' . str_replace('public/', '', $relativePath); => khi muốn lưu và folder
-
-        //             $dataProductGallery = $image_gallery['image_gallery'];
-        //             $this->productGalleryService->saveOrUpdate([
-        //                 'product_id' => $product->id,
-        //                 'image_gallery' => $dataProductGallery,
-        //                 'is_main' => $image_gallery['is_main'] ?? 0,  // Thiết lập giá trị is_main
-        //             ]);
-        //         }
-        //     }
-        // }
-
-        // if ($request->has('product_tags')) {
-        //     foreach ($request->product_tags as $tag_id) {
-        //         $product->tags()->attach($tag_id);
-        //     }
-        // }
-
-        // return response()->json([
-        //     'message' => 'Success',
-        //     'product' => $product
-        // ], 201);
+        return view('client.orders.shoppingcart', compact('carts'));
     }
+
+    public function showCheckOut()
+    {
+        $userId = auth()->id();
+        $cartCheckout = Cart::with(['product', 'productVariant', 'attributeValues.attribute'])
+            ->where('user_id', $userId)
+            ->get();
+
+        $address = Address::select('address_line', 'address_line1', 'address_line2')
+            ->where('user_id', $userId)
+            ->first();
+
+        return view('client.orders.checkout', compact('cartCheckout', 'address'));
+    }
+
+    public function removeFromCart($id)
+    {
+        $cartItem = Cart::find($id);
+
+        if ($cartItem) {
+            $cartItem->delete(); // Xóa sản phẩm khỏi giỏ hàng
+            return response()->json(['message' => 'Product removed successfully']);
+        }
+
+        return response()->json(['message' => 'Product not found'], 404);
+    }
+
+    public function updateCart(Request $req)
+    {
+        $userId = auth()->id(); // Lấy ID của người dùng hiện tại
+        $cartItems = $req->input('cartItems'); // Nhận dữ liệu từ request
+
+        foreach ($cartItems as $item) {
+            $cart = Cart::where('user_id', $userId)
+                ->where('id', $item['id'])
+                ->first();
+
+            if ($cart) {
+                $cart->quantity = $item['quantity']; // Cập nhật số lượng
+                $cart->total_price = $item['quantity'] * ($cart->productVariant ? $cart->productVariant->price_modifier : $cart->product->price_regular);
+                $cart->save(); // Lưu lại thay đổi
+            }
+        }
+
+        return response()->json(['message' => 'Cart updated successfully']);
+    }
+    public function updateOrInsertAddress(Request $request)
+    {
+        // Xác thực dữ liệu
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'phone' => 'required|string|max:15', // Hoặc một quy tắc khác phù hợp với số điện thoại
+            'newAddress' => 'required|string|max:255',
+            // Thêm các quy tắc xác thực khác nếu cần
+        ]);
+
+        // Lưu thông tin người dùng
+        $user = User::updateOrCreate(
+            ['id' => auth()->id()], // Tìm kiếm người dùng theo ID
+            ['username' => $request->username, 'phone_number' => $request->phone]
+        );
+
+        // Lưu địa chỉ
+        $address = new Address();
+        $address->address_line = $request->newAddress;
+        $address->user_id = $user->id; // Liên kết địa chỉ với người dùng
+        $address->save();
+
+        return response()->json(['success' => true, 'message' => 'Thêm địa chỉ thành công!']);
+    }
+
+    public function addOrder(Request $request)
+    {
+        // Validate request data
+        // $request->validate([
+        //     'address' => 'required|string|max:255',
+        //     'ward' => 'required|string|max:255',
+        //     'district' => 'required|string|max:255',
+        //     'city' => 'required|string|max:255',
+        //     'phone_number' => 'required|string|max:15',
+        //     'email' => 'required|email|max:255',
+        //     'note' => 'nullable|string|max:500',
+        //     'radio-ship' => 'required', // Shipping method
+        // ]);
+
+        // Tính toán tổng giá trị đơn hàng từ giỏ hàng
+        $subTotal = 0;
+        if ($request->has('order_item')) {
+            foreach ($request->order_item as $item) {
+                $subTotal += $item['price'] * $item['quantity'];
+            }
+        }
+
+        if($request->has('radio_pay')){
+            $radio_pay = $request->radio_pay;
+            if($radio_pay=='cash'){
+                $dataOrder['payment_id']=6;
+            }
+        }
+
+        // Lấy giá trị phí vận chuyển
+        $shippingCost = floatval($request->input('radio-ship')); // Đảm bảo giá trị là số
+
+        // Tính tổng giá trị đơn hàng
+        $totalPrice = $subTotal + $shippingCost;
+
+        // Tạo đơn hàng
+        $dataOrder = [
+            'user_id' => Auth::id(),
+            'code' => 'ORDER-' . strtoupper(uniqid()),
+            'total_price' => $totalPrice, // Đặt giá trị tổng đã tính toán ở đây
+            'note' => $request->note,
+            'status' => Order::CHO_XAC_NHAN,
+        ];
+
+        
+        // Lưu đơn hàng
+        $order = $this->orderService->saveOrUpdate($dataOrder);
+
+        // Tiếp tục với địa chỉ và các sản phẩm...
+        $dataOrderLocation = [
+            'order_id' => $order->id,
+            'address' => $request->address,
+            'city' => $request->city,
+            'district' => $request->district,
+            'ward' => $request->ward,
+            'latitude' => null,
+            'longitude' => null,
+        ];
+
+        if ($request->has('order_item')) {
+            foreach ($request->order_item as $value) {
+                $dataItem = [
+                    'order_id' => $order->id,
+                    'product_id' => $value['product_id'],
+                    'variant_id' => $value['product_variant_id'],
+                    'quantity' => $value['quantity'],
+                    'price' => $value['price'],
+                    'discount' => $value['discount'] ?? null,
+                ];
+                OrderItem::create($dataItem);
+                $idCard = $value['id_cart'];
+                $this->removeFromCart($idCard);
+            }
+        }
+
+        $this->orderLocationService->saveOrUpdate($dataOrderLocation);
+        return redirect()->route('client')->with('message', 'Đơn hàng đã được đặt thành công!');
+    }
+
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        //xóa cart ở đâu
     }
 
     /**
@@ -292,7 +386,7 @@ class OrderController extends Controller
         $status = $req->input('status');
         $response = $this->orderService->checkStatus($status, $id);
 
-        return response()->json(['status'=>$response]);
+        return response()->json(['status' => $response]);
     }
 
     /**
@@ -329,9 +423,9 @@ class OrderController extends Controller
     public function muitpathRestore(Request $request)
     {
         $ids = $request->input('ids');
-        if(count($ids) > 0) {
-            foreach($ids as $id) {
-                if($id > 0) {
+        if (count($ids) > 0) {
+            foreach ($ids as $id) {
+                if ($id > 0) {
                     $this->restore($id); // Giả sử phương thức restore sẽ thực hiện khôi phục
                 }
             }
