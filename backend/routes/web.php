@@ -17,7 +17,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\PermissionController;
 
 use Illuminate\Support\Facades\Mail;
 
@@ -185,9 +184,7 @@ Route::group([
     });
 });
 
-Route::get('/client', function () {
-    return view('client/home');
-});
+
 
 Route::prefix('auth')->group(function () {
     Route::get('admin/login',                             [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
@@ -217,9 +214,7 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('/')->group(function () {
-    Route::get('', function () {
-        return view('client.home');
-    })->name('client');
+    Route::get('',[HomeController::class, 'index'])->name('client');
   //profile
     Route::get('/user',                                      [UserController::class, 'indexClient'])->name('users.indexClient');
     Route::get('profile/{id}',                                   [UserController::class, 'showClient'])->name('users.showClient');

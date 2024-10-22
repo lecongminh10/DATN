@@ -107,7 +107,7 @@
                     @foreach ($products as $item)
                         <div class="product-default inner-quickview inner-icon">
                             <figure class="img-effect">
-                                <a href="">
+                                <a href="{{route('client.showProduct',$item->id)}}">
                                     @foreach ($item->galleries as $value)
                                         <img src="{{ \Storage::url('' . $value->image_gallery) }}" width="205"
                                             height="205" alt="{{ $item->name }}" />
@@ -132,12 +132,12 @@
                                         class="btn-icon btn-add-cart product-type-simple"><i
                                             class="icon-shopping-cart"></i></a>
                                 </div>
-                                <a href="" class="btn-quickview" title="Quick View">Chi tiết</a>
+                                <a href="{{route('client.showProduct',$item->id)}}" class="btn-quickview" title="Quick View">Chi tiết</a>
                             </figure>
                             <div class="product-details">
                                 <div class="category-wrap">
                                     <div class="category-list">
-                                        <a href="" class="product-category">
+                                        <a href="{{route('client.showProduct',$item->id)}}" class="product-category">
                                             {{ $item->category->name }}
                                         </a>
                                     </div>
@@ -159,12 +159,18 @@
                                 <div class="price-box">
                                     @if ($item->price_sale < $item->price_regular)
                                     <span class="product-price"
-                                        style="text-decoration: line-through; font-size: 0.8em;">{{ $item->price_regular }} VNĐ</span>
+                                          style="text-decoration: line-through; font-size: 0.8em;">
+                                        {{ number_format($item->price_regular, 0, ',', '.') }} VNĐ
+                                    </span>
                                     <br>
-                                    <span class="product-sale-price" style="color: #08c; font-size: 1.2em;">{{ $item->price_sale }} VNĐ</span>
+                                    <span class="product-sale-price" style="color: #08c; font-size: 1.2em;">
+                                        {{ number_format($item->price_sale, 0, ',', '.') }} VNĐ
+                                    </span>
                                 @else
-                                    <span class="product-price" style="color: #08c;">{{ $item->price_regular }} VNĐ</span>
-                                @endif
+                                    <span class="product-price" style="color: #08c;">
+                                        {{ number_format($item->price_regular, 0, ',', '.') }} VNĐ
+                                    </span>
+                                @endif                                
                                 </div>
                                 <!-- End .price-box -->
                             </div>
