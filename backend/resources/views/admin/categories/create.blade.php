@@ -66,7 +66,11 @@
 
                                 <div class="col-lg-12">
                                     <div class="text-end">
+<<<<<<< HEAD
                                         <button class="btn btn-primary">Create Category</button>
+=======
+                                        <button class="btn btn-primary" >Create Category</button>
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
                                     </div>
                                 </div>
                             </div><!--end row-->
@@ -77,4 +81,10 @@
         </div><!--end row-->
     </div>
 </div>
+<<<<<<< HEAD
 @endsection
+=======
+
+@endsection
+
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd

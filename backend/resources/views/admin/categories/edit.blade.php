@@ -6,7 +6,11 @@
 
 @section('content')
 <div class="page-content">
+<<<<<<< HEAD
 <div class="container">
+=======
+  <div class="container">
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
     <!-- start page title -->
     <div class="row">
         <div class="col-12">

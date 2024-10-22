@@ -115,7 +115,7 @@
                 </div>
                 <!-- End .header-contact -->
 
-                <a href="login.html" class="header-icon header-icon-user"><i class="icon-user-2"></i></a>
+                <a href="{{route('client.login')}}" class="header-icon header-icon-user"><i class="icon-user-2"></i></a>
 
                 <a href="wishlist.html" class="header-icon"><i class="icon-wishlist-2"></i></a>
 

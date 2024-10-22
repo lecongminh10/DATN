@@ -72,5 +72,8 @@
         </div><!--end col-->
     </div><!--end row-->
 </div>
+<<<<<<< HEAD
 </div>
+=======
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
 @endsection

@@ -30,6 +30,7 @@
                             </div>
                             <div class="col-sm d-flex justify-content-end">
                                 <form action="{{ route('categories.index') }}" method="GET" class="d-flex" id="search-form">
+<<<<<<< HEAD
                                     <select name="parent_id" class="form-control me-2" style="max-width: 150px;" onchange="this.form.submit()">
                                         <option value="">-- Select Parent Category --</option>
                                         @foreach ($parentCategories as $parent)
@@ -38,6 +39,8 @@
                                             </option>
                                         @endforeach
                                     </select>
+=======
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
                                     <input type="text" class="form-control me-2" name="search" placeholder="Search..." value="{{ request('search') }}" id="search-input" style="max-width: 150px;">
                                     <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Tìm kiếm</button>
                                 </form>
@@ -70,8 +73,14 @@
                                                 <label class="form-check-label" for="cardtableCheck{{ $item->id }}"></label>
                                             </div>
                                         </td>
+<<<<<<< HEAD
                                         <td>{{ $item->id }}</td>
                                         <td>
+=======
+                                        <td>{{ $item->id}}</td>
+                                        <td>
+                                            <!-- Hiển thị danh mục con với định dạng -->
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
                                             @if($item->parent_id)
                                                 <span class="text-secondary">--- {{ $item->name }}</span>
                                             @else
@@ -84,7 +93,11 @@
                                                 <img src="{{ Storage::url($item->image) }}" style="width: 100%; height: 100%; object-fit: cover;" alt="">
                                             </div>
                                         </td>
+<<<<<<< HEAD
                                         <td>{{ $item->parent ? $item->parent->name : 'None' }}</td>
+=======
+                                        <td>{{ $item->parent ? $item->parent->name : 'None' }}</td> <!-- Hiển thị tên danh mục cha -->
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
                                         <td>
                                             {!! $item->is_active ? '<span class="badge bg-success"> Hoạt động </span>' : '<span class="badge bg-danger"> Không hoạt động </span>' !!}
                                         </td>
@@ -97,10 +110,17 @@
                                                     <li><a href="{{ route('categories.show', $item->id) }}" class="dropdown-item">View</a></li>
                                                     <li><a class="dropdown-item" href="{{ route('categories.edit', $item->id) }}">Edit</a></li>
                                                     <li>
+<<<<<<< HEAD
                                                         <form class="dropdown-item" action="{{ route('categories.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button class="dropdown-item" type="submit">Delete</button>
+=======
+                                                        <form action="{{ route('categories.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="dropdown-item">Delete</button>
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
                                                         </form>
                                                     </li>
                                                 </ul>
@@ -111,6 +131,10 @@
                                 </tbody>
                             </table>
                         </form>
+<<<<<<< HEAD
+=======
+                        <!-- Phân trang -->
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
                         <div class="d-flex justify-content-center mt-3">
                             {{ $data->links('vendor.pagination.bootstrap-5') }}
                         </div>
@@ -154,8 +178,15 @@
     });
 </script>
 @endsection
+<<<<<<< HEAD
 
 @section('script_library')
         <!-- prismjs plugin -->
         <script src="{{ asset('theme/assets/libs/prismjs/prism.js') }}"></script>
+=======
+@section('script_libray')
+        <!-- prismjs plugin -->
+        <script src="{{asset('theme/assets/libs/prismjs/prism.js')}}"></script>
+
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
 @endsection

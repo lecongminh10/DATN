@@ -3,6 +3,10 @@
 namespace App\Services;
 
 use App\Models\Category;
+<<<<<<< HEAD
+=======
+use App\Repositories\CatalogueRepository;
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
 use App\Repositories\CategoryRepository;
 
 class CategoryService extends BaseService
@@ -16,10 +20,26 @@ class CategoryService extends BaseService
     }
 
     public function getParentOrChild($search = null, $parentId = null)
+<<<<<<< HEAD
 {
     $query = Category::query();
     if ($search) {
         $query->where('name', 'like', "%{$search}%");
+=======
+    {
+        $query = Category::query();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($parentId) {
+            $query->where('parent_id', $parentId); // Giả sử bạn có trường parent_id
+        }
+        $query->orderBy('created_at', 'desc');
+
+        return $query;
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
     }
     if ($parentId) {
         $query->where('parent_id', $parentId); // Giả sử bạn có trường parent_id
@@ -43,6 +63,7 @@ class CategoryService extends BaseService
         return $this->categoryService->getAll($search, $perPage);
     }
     public function getChildCategories($parentId)
+<<<<<<< HEAD
 {
     return Category::where('parent_id', $parentId)->get();
 }
@@ -59,4 +80,9 @@ public function findById($id)
 {
     return Category::findOrFail($id);
 }
+=======
+    {
+        return Category::where('parent_id', $parentId)->get();
+    }
+>>>>>>> 4607b755be06a9326f90309a9787aec11106cddd
 }
