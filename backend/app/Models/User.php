@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\PermissionValue;
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,8 +19,8 @@ class User extends Authenticatable
     const TYPE_CLIENT = 'client_role';
 
     const PERMISSION_ADMIN = 1;
-    const PERMISSION_CLIENT =2;
-    
+    const PERMISSION_CLIENT = 2;
+
     protected $table = 'users';
 
     protected $fillable = [
@@ -57,13 +57,30 @@ class User extends Authenticatable
     public function permissionsValues()
     {
         return $this->belongsToMany(PermissionValue::class, 'permissions_value_users', 'user_id', 'permission_value_id')
-                    ->withTimestamps();
+            ->withTimestamps();
+    }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'user_coupons')
+            ->withPivot('times_used', 'deleted_by')
+            ->withTimestamps();
     }
 
     public function isAdmin()
     {
         return $this->permissionsValues()
-                    ->whereIn('value', [self::TYPE_ADMIN, self::TYPE_SUBADMIN])
-                    ->exists();
+            ->whereIn('value', [self::TYPE_ADMIN, self::TYPE_SUBADMIN])
+            ->exists();
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'user_id', 'id')->withTimestamps(); 
+    }
+
+    public function addresses()
+    {
+        return $this->belongsToMany(Address::class, 'user_id', 'id')->withTimestamps(); 
     }
 }

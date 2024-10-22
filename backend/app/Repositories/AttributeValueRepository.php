@@ -18,4 +18,8 @@ class AttributeValueRepository extends BaseRepository
     {
         return $this->model->where('id_attributes', $attributeId)->get();
     }
+
+    public function getIdbyAttribute($code){
+       return AttributeValue::where('attribute_value', $code)->firstOrFail();
+    }
 }

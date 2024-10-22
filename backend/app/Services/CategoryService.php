@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Repositories\CatalogueRepository;
 use App\Repositories\CategoryRepository;
 
@@ -15,10 +16,16 @@ class CategoryService extends BaseService
         $this->categoryService = $categoryService;
     }
 
-    public function getParentOrChild()
-    {
-        return $this->categoryService->getParentOrChild();
+    public function getParentOrChild($search = null)
+{
+    $query = Category::query(); // Tạo một truy vấn mới
+
+    if ($search) {
+        $query->where('name', 'like', '%' . $search . '%'); // Tìm kiếm theo tên
     }
+
+    return $query->orderBy('created_at', 'desc'); // Trả về truy vấn mà không thực hiện truy vấn
+}
     public function getParent()
     {
         return $this->categoryService->getParent();

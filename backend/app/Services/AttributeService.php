@@ -21,4 +21,13 @@ class AttributeService extends BaseService
         return $this->attributeRepository->getAll($search, $perPage);
     }
 
+    public function show_soft_delete($search , $perPage)
+    {
+        return $this->attributeRepository->show_soft_delete($search , $perPage);
+    }
+    public function restore_delete($id)
+    {
+        return $this->attributeRepository->restore_delete($id);
+    }
+    
 }

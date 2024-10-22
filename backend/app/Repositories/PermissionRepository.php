@@ -8,9 +8,9 @@
         parent::__construct($permissionRepository);
         $this ->permissionRepository = $permissionRepository;
     }
-    public function getSearch($search = null, $perPage = null)
+    public function getSearch($search = null)
 {
-    $query = Permission::with('permissionValues'); // Lấy cả permission_value liên quan
+    $query = Permission::with('permissionValues');
 
     if ($search) {
         $query->where(function ($q) use ($search) {
@@ -18,8 +18,7 @@
                 ->orWhere('description', 'LIKE', '%' . $search . '%');
         });
     }
-
-    return $query->paginate($perPage);
+    return $query;
 }
  }
 

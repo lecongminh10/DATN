@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\ProductRepository;
 
+
 class ProductService extends BaseService
 {
     protected $productService;
@@ -49,6 +50,11 @@ class ProductService extends BaseService
             ->get();
     }
 
+
+    public function show_soft_delete($search , $perPage)
+    {
+        return $this->productService->show_soft_delete($search , $perPage);
+    }
 
 
     // public function deleteProduct(Product $product)
