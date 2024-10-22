@@ -18,17 +18,18 @@
                                 <h4 class="fs-18 fw-semibold m-0 text-primary">Chi tiết người dùng</h4>
                             </div>
                         </div>
-                        <form action="{{ route('users.update', $user->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="firstNameinput" class="form-label">Tên</label>
-                                        <ul class="list-group">
-                                            <li class="list-group-item">{{ $user->username }}</li>
-                                        </ul>
-                                    </div>
+
+                    </div>
+                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="firstNameinput" class="form-label">Tên</label>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">{{ $user->username }}</li>
+                                    </ul>
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">

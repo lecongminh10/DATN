@@ -6,9 +6,10 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="text-primary mb-4">Thêm mới người dùng</h4>
+
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('users.store') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('admin.users.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-6">

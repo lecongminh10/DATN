@@ -222,6 +222,7 @@
                     // Gửi yêu cầu xóa nhiều người dùng
                     const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
                     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    
                     fetch('/admin/users/deleteMultiple', {
                         method: 'POST',
                         headers: {

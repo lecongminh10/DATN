@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use App\Repositories\ProductRepository;
 
 
@@ -22,6 +23,33 @@ class ProductService extends BaseService
     {
         return $this->productService->getAll($search, $perPage);
     }
+    public function getFeaturedProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->orderByDesc('view')
+            ->take(10)
+            ->get();
+    }
+    public function getTopProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->orderByDesc('view')
+            ->get();
+    }
+    public function getAllProducts($count)
+    {
+        return Product::with(['galleries', 'category'])->paginate($count);
+    }
+
+    public function getSaleProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
+            ->orderBy('discount_percentage', 'desc')
+            ->take(4)
+            ->get();
+    }
+
 
     public function show_soft_delete($search , $perPage)
     {
