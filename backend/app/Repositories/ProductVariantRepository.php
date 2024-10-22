@@ -71,6 +71,7 @@ class ProductVariantRepository extends BaseRepository
                 ->select('a.id as attribute_id', 'a.attribute_name' , 'av.id as attribute_value_id'  ,'av.attribute_value')
                 ->get();
     }
+  
     public function getVariantByAttributes($attributes_values, $product_id)
     {
         $attributes = explode(',', $attributes_values);

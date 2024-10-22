@@ -37,10 +37,12 @@
     <link rel="stylesheet" href="{{asset('themeclient/assets/css/bootstrap.min.css')}}">
 
     <!-- Main CSS File -->
+    <link rel="stylesheet" href="{{asset('themeclient/assets/css/style.min.css')}}">
     <link rel="stylesheet" href="{{asset('themeclient/assets/css/demo1.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('themeclient/assets/vendor/fontawesome-free/css/all.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('themeclient/assets/vendor/simple-line-icons/css/simple-line-icons.min.css')}}">
     @yield('style_css')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>

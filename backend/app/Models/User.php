@@ -83,4 +83,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Address::class, 'user_id', 'id')->withTimestamps(); 
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'id');
+    }
 }
