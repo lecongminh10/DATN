@@ -18,7 +18,7 @@
                                 <h4 class="fs-18 fw-semibold m-0 text-primary">Cập nhật người dùng</h4>
                             </div>
                         </div>
-                        <form action="{{ route('users.update', $user->id) }}" method="post" enctype="multipart/form-data">
+                        <form action="{{ route('admin.users.update', $user->id) }}" method="post" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row">
@@ -109,6 +109,7 @@
                                             <span class="text-danger">Quyền không được để trống.</span>
                                         @enderror
                                     </div>
+
                                 </div>
                                 <div class="col-12 mt-4">
                                     <div class="d-flex justify-content">
