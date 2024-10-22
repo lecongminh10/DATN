@@ -28,7 +28,9 @@
     <link href="{{ asset('theme/assets/css/app.min.css')}}" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="{{ asset('theme/assets/css/custom.min.css')}}" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+    @yield('libray_css')
+    @yield('style_css')
 </head>
 
 <body>
@@ -89,7 +91,7 @@
     <script src="{{ asset('theme/assets/js/pages/plugins/lord-icon-2.1.0.js')}}"></script>
     <script src="{{ asset('theme/assets/js/plugins.js')}}"></script>
 
-    <!-- apexcharts -->
+    {{-- <!-- apexcharts -->
     <script src="{{ asset('theme/assets/libs/apexcharts/apexcharts.min.js')}}"></script>
 
     <!-- Vector map-->
@@ -100,7 +102,7 @@
     <script src="{{ asset('theme/assets/libs/swiper/swiper-bundle.min.js')}}"></script>
 
     <!-- Dashboard init -->
-    <script src="{{ asset('theme/assets/js/pages/dashboard-ecommerce.init.js')}}"></script>
+    <script src="{{ asset('theme/assets/js/pages/dashboard-ecommerce.init.js')}}"></script> --}}
 
     @yield('script_libray')
     @yield('scripte_logic')
