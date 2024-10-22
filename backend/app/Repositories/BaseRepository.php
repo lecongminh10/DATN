@@ -27,6 +27,7 @@ class  BaseRepository
    {
       return $this->model->findOrFail($id);
    }
+   
    public function paginate($perPage = 10)
    {
       return $this->model->paginate($perPage);

@@ -276,46 +276,23 @@ class AttributeController extends Controller
         }
     }
    
-    // Lưu dữ liệu để thêm product(attribute ->variant)
     public function saveAttributes(Request $request)
     {
-        // Lấy các giá trị thuộc tính được gửi từ request
-        $selectedValues = $request->input('attributes', []); // Mặc định là mảng rỗng nếu không có giá trị
-    
-        $attributesData = []; // Mảng để lưu dữ liệu thuộc tính
-    
-        // Lặp qua từng giá trị thuộc tính được chọn
-        foreach ($selectedValues as $value) {
-            // Tìm kiếm giá trị thuộc tính trong cơ sở dữ liệu
-            $attributeValue = AttributeValue::where('attribute_value', $value)->first();
-    
-            // Nếu tìm thấy giá trị thuộc tính
-            if ($attributeValue) {
-                // Lấy thông tin của thuộc tính tương ứng
-                $attribute = $attributeValue->attribute; // Lấy thông tin thuộc tính liên quan
-    
-                // Tạo mảng dữ liệu cho thuộc tính
-                $attributesData[] = [
-                    'id' => $attributeValue->id,
-                    'name' => $attribute->attribute_name,
-                    'value' => $attributeValue->attribute_value,
-                    'price_modifier' => $attributeValue->price_modifier ?? 0, // Giả sử bạn có thuộc tính price_modifier trong bảng attributes_values
-                    'stock' => $attributeValue->stock ?? 0, // Giả sử bạn có thuộc tính stock trong bảng attributes_values
-                    'status' => $attributeValue->status ?? '', // Giả sử bạn có thuộc tính status trong bảng attributes_values
-                    'variant_image' => $attributeValue->variant_image ?? '', // Giả sử bạn có thuộc tính variant_image trong bảng attributes_values
-                ];
-            }
+        session()->forget('product_attributes');
+        $selectedValues = $request->input('attributes', []); 
+
+        if (empty($selectedValues)) {
+            return response()->json(['message' => 'Không có dữ liệu thuộc tính để lưu.'], 400);
         }
-    
-        // Lưu mảng ID vào session
-        session(['product_attribute_ids' => array_column($attributesData, 'id')]);
-    
-        // Trả về phản hồi JSON
+
+        session(['product_attributes' => $selectedValues]);
+
         return response()->json([
-            'message' => 'Giá trị đã được lưu thành công!',
-            'attributes' => $attributesData // Trả về danh sách thuộc tính
+            'message' => 'Các thuộc tính đã được lưu thành công!',
+            'data' => $selectedValues
         ]);
     }
+    
     
 
 }

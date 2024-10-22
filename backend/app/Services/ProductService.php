@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 
+
 class ProductService extends BaseService
 {
     protected $productService;
@@ -20,6 +21,11 @@ class ProductService extends BaseService
     public function getSeachProduct($search, $perPage)
     {
         return $this->productService->getAll($search, $perPage);
+    }
+
+    public function show_soft_delete($search , $perPage)
+    {
+        return $this->productService->show_soft_delete($search , $perPage);
     }
 
 

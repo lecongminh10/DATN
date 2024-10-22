@@ -72,7 +72,7 @@
                                                     <th>Mô tả </th>
                                                     <th>Ngày tạo</th>
                                                     <th>Ngày xóa</th>
-                                                    <th class="text-center"></th>
+                                                    <th class="text-center">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">

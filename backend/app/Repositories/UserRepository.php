@@ -43,5 +43,10 @@ class UserRepository extends BaseRepository
         $user->delete();
     }
 
+    public function getAllTrashedUsers()
+    {
+        return User::onlyTrashed()->with('permissionsValues')->get();
+    }
+
    
 }
