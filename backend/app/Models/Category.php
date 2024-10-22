@@ -40,6 +40,15 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
   
+    public function getProductsCountAttribute()
+    {
+        return $this->products()->count();
+    }
+    public function getChildrenProductsCountAttribute()
+    {
+        return $this->children()->withCount('products')->get()->sum('products_count');
+    }
+  
     public function coupons()
     {
         return $this->belongsToMany(Coupon::class, 'coupons_categories')

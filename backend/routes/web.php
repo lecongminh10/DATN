@@ -16,7 +16,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\PermissionController;
+
 use Illuminate\Support\Facades\Mail;
+
 
 Route::group([
     'prefix' => 'admin',
@@ -205,7 +209,6 @@ Route::prefix('auth')->group(function () {
 
     Route::get('facebook',                                [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
     Route::get('facebook/callback',                       [SocialiteController::class, 'handleFacebookCallback']);
-
     Route::get('github',                                  [SocialiteController::class, 'redirectToGitHub'])->name('auth.github');
     Route::get('github/callback',                         [SocialiteController::class, 'handleGitHubCallback']);
 
@@ -217,17 +220,18 @@ Route::prefix('/')->group(function () {
     Route::get('', function () {
         return view('client.home');
     })->name('client');
+  //profile
     Route::get('/user',                                      [UserController::class, 'indexClient'])->name('users.indexClient');
-
     Route::get('profile/{id}',                                   [UserController::class, 'showClient'])->name('users.showClient');
     Route::put('update-profile/{id}',                                 [UserController::class, 'updateClient'])->name('users.updateClient');
-
     Route::get('show-order',                                   [UserController::class, 'showOrder'])->name('users.showOrder');
-
     Route::get('show-order-detail/{id}',                                   [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
+  
+  //product
+    Route::get('/products', [HomeController::class, 'showProducts'])->name('client.products');
+    Route::get('/products/sort', [HomeController::class, 'sortProducts'])->name('client.products.sort');
+    Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
+    Route::get('/products/category/{id}', [HomeController::class, 'getByCategory'])->name('client.products.Category');
+    Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
 });
 
-
-
-
-Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
