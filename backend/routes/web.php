@@ -217,23 +217,17 @@ Route::prefix('/')->group(function () {
     Route::get('', function () {
         return view('client.home');
     })->name('client');
- 
-});
+    Route::get('/user',                                      [UserController::class, 'indexClient'])->name('users.indexClient');
 
-Route::prefix('client')->group(function () {
-    Route::get('/users/index',                                      [UserController::class, 'indexClient'])->name('users.indexClient');
+    Route::get('profile/{id}',                                   [UserController::class, 'showClient'])->name('users.showClient');
+    Route::put('update-profile/{id}',                                 [UserController::class, 'updateClient'])->name('users.updateClient');
 
-    Route::get('showClient/{id}',                                   [UserController::class, 'showClient'])->name('users.showClient');
-    Route::put('updateClient/{id}',                                 [UserController::class, 'updateClient'])->name('users.updateClient');
+    Route::get('show-order',                                   [UserController::class, 'showOrder'])->name('users.showOrder');
 
-    Route::get('showOrder/{id}',                                   [UserController::class, 'showOrder'])->name('users.showOrder');
-
-    Route::get('showDetailOrder/{id}',                                   [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
-
-    Route::get('showLocationOrder/{id}',                                   [UserController::class, 'showLocationOrder'])->name('users.showLocationOrder');
+    Route::get('show-order-detail/{id}',                                   [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
 });
 
 
-});
+
 
 Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');

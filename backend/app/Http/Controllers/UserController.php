@@ -142,16 +142,13 @@ class UserController extends Controller
 
     public function indexClient()
     {
-        $user = $this->userService->getAll();
-        return view('client.users.widget', compact('user'));
+        return view('client.users.index');
     }
 
     public function showClient($id)
     {
         $user = $this->userService->getById($id);
-
         $address = Address::where('user_id', $id)->first();
-
         return view('client.users.show', compact('user','address'));
     }
 
@@ -170,36 +167,29 @@ class UserController extends Controller
         return redirect()->route('users.showClient', $user->id);
     }
 
-    public function showOrder($id, Request $request)
+    public function showOrder(Request $request)
     {
+        $id = Auth::user()->id;
         $status = $request->input('status', 'all'); 
         $query = Order::query();
     
         if ($status !== 'all') {
             $query->where('status', $status); 
         }
-    
         $orders = $query->get(); 
         $totalOrders = $orders->count(); 
     
-        return view('client.users.showOrder', compact('orders', 'totalOrders', 'status'));
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status'));
     }
 
     public function showDetailOrder($id){
 
         $orders = Order::findOrFail($id);
+        $locations = OrderLocation::where('order_id', $id)->get();
 
-        $location = OrderLocation::where('order_id', $id)->first();
-
-        return view('client.users.showDetailOrder', compact('orders','location'));
+        return view('client.users.show_detail_order', compact('orders','locations'));
     }
 
-    public function showLocationOrder($id){
-
-        $location = OrderLocation::findOrFail($id);
-
-        return view('client.users.showLocationOrder', compact('location'));
-    }
   
     public function listdeleteMultiple(){
         $user = $this->userService->getAllTrashedUsers();
