@@ -328,37 +328,31 @@
 
                             function createPagination(links) {
                                 return `
-                    <nav aria-label="Page navigation" id="pagespostion">
-                        <ul class="pagination justify-content-center">
-                            ${links.map(link => {
-                                let label = link.label;
-                                if (label.includes('Previous')) {
-                                    label = '<i class="las la-chevron-left"></i>'; // Icon trái
-                                } else if (label.includes('Next')) {
-                                    label = '<i class="las la-chevron-right"></i>'; // Icon phải
-                                }
+                                    <nav aria-label="Page navigation" id="pagespostion">
+                                        <ul class="pagination justify-content-center">
+                                            ${links.map(link => {
+                                                let label = link.label;
+                                                if (label.includes('Previous')) {
+                                                    label = '<i class="las la-chevron-left"></i>'; // Icon trái
+                                                } else if (label.includes('Next')) {
+                                                    label = '<i class="las la-chevron-right"></i>'; // Icon phải
+                                                }
 
-                                return ` <
-                                    li class =
-                                    "page-item ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}" >
-                                    <
-                                    button class = "page-link page-btn"
-                                data - page =
-                                    "${link.url ? new URL(link.url).searchParams.get('page') : ''}"
-                                $ {
-                                    !link.url ? 'disabled' : ''
-                                } >
-                                $ {
-                                    label
-                                } <
-                                /button> < /
-                                li >
-                                    `;
-                            }).join('')}
-                        </ul>
-                    </nav>
-                `;
+                                                return `
+                                                    <li class="page-item ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}">
+                                                        <button class="page-link page-btn" 
+                                                                data-page="${link.url ? new URL(link.url).searchParams.get('page') : ''}" 
+                                                                ${!link.url ? 'disabled' : ''}>
+                                                            ${label}
+                                                        </button>
+                                                    </li>
+                                                `;
+                                            }).join('')}
+                                        </ul>
+                                    </nav>
+                                `;
                             }
+
 
                             // Gán sự kiện click cho nút tìm kiếm
                             searchBtn.addEventListener('click', function() {

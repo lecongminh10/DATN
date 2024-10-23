@@ -17,6 +17,15 @@ class Address extends Model
         'address_line',
         'address_line1',
         'address_line2',
+        'deleted_at',
+        'deleted_by'
+    ];
+    protected $casts = [
+        'deleted_at' => 'boolean'
+    ];
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id');
         'deleted_by',
         'deleted_at',
         'created_at',

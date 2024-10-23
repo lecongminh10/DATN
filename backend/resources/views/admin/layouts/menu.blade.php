@@ -47,6 +47,21 @@
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarApps">
                         <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="#sidebarCalendar" class="nav-link" data-bs-toggle="collapse"
+                                    role="button" aria-expanded="false" aria-controls="sidebarCalendar"
+                                    data-key="t-calender">
+                                    Đơn hàng
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarCalendar">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('orders.listOrder') }}" class="nav-link"
+                                                data-key="t-main-calender">Danh sách</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                             <!-- Quản lý danh mục -->
                             <li class="nav-item">
                                 <a href="#sidebarCategory" class="nav-link" data-bs-toggle="collapse" role="button"

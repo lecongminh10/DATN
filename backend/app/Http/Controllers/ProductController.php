@@ -71,18 +71,17 @@ class ProductController extends Controller
 
     public function showProduct(int $id)
     {
-        $data = $this->productService->getById($id)->load(['category','variants', 'tags', 'galleries']);
- 
-        $variants = $this->productVariantService->getAttributeByProduct($id);
-
-        $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
-        ->select('id', 'attribute_name')
-        ->get();
-        return view('admin.products.show-product')->with([
-            'data'           => $data ,
-            'attribute'      =>$attributesWithValues,
-            'variants'       =>$variants
-        ]);
+        Artisan::call('generate:attributes-json');
+        Artisan::call('generate:tags-json');
+        $product = $this->productService->getById($id)->load(['category', 'tags', 'galleries']);
+        if (!$product) {
+            return redirect()->route('admin.products.index')->with('error', 'Product not found');
+        }
+        $categories = Category::with('children')->whereNull('parent_id')->get();
+        $selectedTags = $product->tags->pluck('id')->toArray();
+        $variants = $this->productVariantService->getProductVariant($id);
+        return view('admin.products.show-product' ,compact('product','categories','selectedTags','variants'));
+        
     }
 
 
