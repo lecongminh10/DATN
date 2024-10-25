@@ -68,13 +68,13 @@ if (!function_exists('isStatus')) {
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16"></i></button>
-                                        <a href="{{ route('orders.listTrashOrder') }}" class="btn btn-danger"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
+                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-danger"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body border border-dashed border-end-0 border-start-0">
-                            <form action="{{ route('orders.listOrder') }}" method="GET">
+                            <form action="{{ route('admin.orders.listOrder') }}" method="GET">
                                 @csrf
                                 <div class="row g-3">
                                     <!-- Search -->
@@ -213,7 +213,7 @@ if (!function_exists('isStatus')) {
                                                 <td>
                                                     <ul class="list-inline hstack gap-2 mb-0">
                                                         <li class="list-inline-item">
-                                                            <a href="{{ route('orders.orderDetail', $order->id )}}" class="text-primary d-inline-block">
+                                                            <a href="{{ route('admin.orders.orderDetail', $order->id )}}" class="text-primary d-inline-block">
                                                                 <i class="ri-eye-fill fs-16"></i>
                                                             </a>
                                                         </li>
@@ -447,7 +447,7 @@ if (!function_exists('isStatus')) {
     
 @endsection
     
-@section('script_logic')
+@section('scripte_logic')
     <script>
     $(document).ready(function() {
     $('#demo-datepicker').flatpickr({
@@ -462,7 +462,7 @@ if (!function_exists('isStatus')) {
             var formattedDate = formatDate(selectedDate);
             
             $.ajax({
-                url: "{{ route('orders.listOrder') }}",
+                url: "{{ route('admin.orders.listOrder') }}",
                 type: 'GET',
                 data: {
                     date: formattedDate
@@ -609,7 +609,7 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
     var button = event.relatedTarget;
     var idOrder = button.getAttribute('data-id');
 
-    let url = "{{ route('orders.orderEdit', ':code') }}";
+    let url = "{{ route('admin.orders.orderEdit', ':code') }}";
     url = url.replace(':code', idOrder);
 
     fetch(url, {
@@ -655,7 +655,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: "{{ route('orders.updateOrder', '') }}/" + orderId,
+            url: "{{ route('admin.orders.updateOrder', '') }}/" + orderId,
             type: 'PUT',
             data: {
                 _token: '{{ csrf_token() }}', 

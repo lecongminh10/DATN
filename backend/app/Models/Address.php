@@ -26,14 +26,5 @@ class Address extends Model
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
-        'deleted_by',
-        'deleted_at',
-        'created_at',
-        'updated_at',
-    ];
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'user_id', 'id')->withTimestamps(); 
     }
 }

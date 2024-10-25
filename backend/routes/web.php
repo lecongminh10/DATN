@@ -17,7 +17,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Client\HomeController;
 
 use Illuminate\Support\Facades\Mail;
@@ -252,6 +251,11 @@ Route::prefix('/')->group(function () {
     Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
   
   //Oder
+    Route::get('wishlist', [OrderController::class, 'wishList'])->name('wishList');
+    Route::post('add-wishlist', [OrderController::class, 'addWishList'])->name('addWishList');
+    Route::delete('wishlist/{id}', [OrderController::class, 'destroyWishlist'])->name('wishlistDelete');
+
+    Route::post('add-cart', [OrderController::class, 'addToCart'])->name('addCart');
     Route::get('shopping-cart', [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
     Route::get('checkout', [OrderController::class, 'showCheckOut'])->name('checkout');
     Route::post('addresses', [OrderController::class, 'updateOrInsertAddress'])->name('addresses');

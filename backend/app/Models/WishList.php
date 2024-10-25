@@ -4,19 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-// use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cart extends Model
+class WishList extends Model
 {
-    use HasFactory; //SoftDeletes
+    use HasFactory;
 
-    protected $table = 'carts';
+    protected $table = 'wishlists';
     protected $fillable = [
         'user_id',
         'product_id',
         'product_variants_id',
-        'quantity',
-        'total_price',
         'deleted_at',
         'deleted_by'
     ];
@@ -24,7 +21,6 @@ class Cart extends Model
     protected $casts = [
         'deleted_at' => 'boolean'
     ];
-
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
@@ -42,11 +38,12 @@ class Cart extends Model
     {
         return $this->hasManyThrough(
             AttributeValue::class,
-            AttributeValueProductVariant::class,
-            'product_variant_id', // Khóa ngoại trong bảng trung gian
-            'id',                 // Khóa ngoại trong bảng attributes_values
-            'product_variants_id',// Khóa ngoại trong bảng giỏ hàng
-            'attribute_value_id'  // Khóa ngoại trong bảng trung gian attribute_value_product_variant
+            ProductVariant::class,
+            'id',
+            'id_attributes',
+            'product_variants_id',
+            'product_attribute_id'
         );
     }
+
 }

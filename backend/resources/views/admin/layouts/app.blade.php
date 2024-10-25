@@ -89,7 +89,7 @@
     <script src="{{ asset('theme/assets/js/plugins.js')}}"></script>
     
     @yield('script_libray')
-    @yield('script_logic')
+    @yield('scripte_logic')
     <!-- App js -->
     <script src="{{ asset('theme/assets/js/app.js')}}"></script>
 </body>

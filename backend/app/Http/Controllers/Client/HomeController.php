@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Category;
 use App\Services\TagService;
@@ -10,6 +11,7 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Address;
 use App\Services\AttributeValueService;
 use App\Services\ProductGalleryService;
 use App\Services\ProductVariantService;
@@ -44,8 +46,16 @@ class HomeController extends Controller
     }
     public function index()
     {
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
         $products = $this->productService->getFeaturedProducts();
-        return view('client.home', compact('products'));
+       
+        return view('client.home', compact('products', 'carts', 'cartCount'));
     }
 
     public function showProducts(Request  $request)

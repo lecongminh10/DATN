@@ -68,13 +68,13 @@ if (!function_exists('isStatus')) {
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="restorySelected" class="btn btn-info waves-effect waves-light d-none"><i class="ri-pencil-fill fs-12"></i></button>
                                         <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-12"></i></button>
-                                        <a href="{{ route('orders.listOrder') }}" class="btn btn-primary"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
+                                        <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body border border-dashed border-end-0 border-start-0">
-                            <form id="filterForm" action="{{ route('orders.listTrashOrder') }}" method="GET">
+                            <form id="filterForm" action="{{ route('admin.orders.listTrashOrder') }}" method="GET">
                                 @csrf
                                 <div class="row g-3">
                                     <!-- Search -->
@@ -378,7 +378,7 @@ $(document).ready(function() {
             var formattedDate = formatDate(selectedDate);
             
             $.ajax({
-                url: "{{ route('orders.listTrashOrder') }}",
+                url: "{{ route('admin.orders.listTrashOrder') }}",
                 type: 'GET',
                 data: {
                     date: formattedDate

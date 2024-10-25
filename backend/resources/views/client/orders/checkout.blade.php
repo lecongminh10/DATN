@@ -61,7 +61,7 @@
 }
 .text-end{
     text-align: center;
-    width: 70px;
+    width: 120px;
 }
 .product-quantity{
     width: 70px;
@@ -76,7 +76,7 @@
 }
 
 .namePro{
-    width: 190px;
+    width: 170px;
 }
 
 /* Modal */
@@ -226,7 +226,7 @@ select.form-control {
             <nav class="main-nav w-100">
                 <ul class="menu">
                     <li>
-                        <a href="demo4.html">Home</a>
+                        <a href="{{ route('client') }}">Home</a>
                     </li>
                     <li>
                         <a href="category.html">Categories</a>
@@ -648,18 +648,42 @@ select.form-control {
                                         </div>
                                         <div class="text-end">
                                             <span class="text-muted">Đơn giá</span>
-                                            <div class="fw-bold">${{ number_format($item->total_price, 2) }}</div>
+                                            <div class="fw-bold">
+                                                @if ($item->product && is_null($item->productVariant)) 
+                                                    @if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) 
+                                                        {{ number_format($item->product->price_sale, 0, ',', '.') }} ₫
+                                                    @else
+                                                        {{ number_format($item->product->price_regular, 0, ',', '.') }} ₫
+                                                    @endif
+                                                @elseif ($item->product && $item->productVariant) 
+                                                    {{ number_format($item->productVariant->price_modifier, 0, ',', '.') }} ₫
+                                                @endif
+                                        </div>
                                         </div>
                                         <div class="product-quantity">
                                             <span class="text-muted">Số lượng</span>
                                             <div class="fw-bold">{{ $item->quantity }}</div>
                                         </div>
                                         @php
-                                            $total =  $item->total_price * $item->quantity 
+
+                                            if ($item->product && is_null($item->productVariant)) {
+                                                // Kiểm tra sản phẩm thường
+                                                if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
+                                                    // Nếu có giá sale, sử dụng giá sale
+                                                    $total = $item->product->price_sale * $item->quantity; 
+                                                } else {
+                                                    // Nếu không có giá sale, sử dụng giá thường
+                                                    $total = $item->product->price_regular * $item->quantity; 
+                                                }
+                                            } elseif ($item->product && $item->productVariant) {
+                                                // Nếu là sản phẩm biến thể, sử dụng giá biến thể
+                                                $total = $item->productVariant->price_modifier * $item->quantity; 
+                                            }
+
                                         @endphp
                                         <div class="product-total">
                                             <span class="text-muted">Thành tiền</span>
-                                            <div class="fw-bold">${{ number_format($total, 2) }}</div>
+                                            <div class="fw-bold">{{ number_format($total, 0, ',', '.') }} ₫</div>
                                         </div>
                                     </div>
                                 </div>
@@ -708,9 +732,13 @@ select.form-control {
                                     </h3>
                                 </td>
 
+                                @php
+                                    $sub = $value->total_price ; // Ko nhân vs số lượng nữa
+                                @endphp
+
                                 <td class="price-col">
                                     <span>
-                                        ${{ $value->total_price }}
+                                        {{ number_format($sub, 0, ',', '.') }} ₫
                                     </span>
                                 </td>
                             </tr>
@@ -736,8 +764,7 @@ select.form-control {
                                     <h4>Tổng phụ</h4>
                                 </td>
                                 <td class="price-col">
-                                    
-                                    <span>${{ number_format($subTotal, 2) }}</span>
+                                    <span>{{ number_format($subTotal, 0, ',', '.') }} ₫</span>
                                 </td>
                             </tr>
                             <tr>
@@ -746,16 +773,16 @@ select.form-control {
                                     
                                     <div class="form-group form-group-custom-control">
                                         <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" name="radio-ship" value="30.00" checked onchange="updateTotal()">
-                                            <label class="custom-control-label">Giao hàng nhanh (30.00)</label>
+                                            <input type="radio" class="custom-control-input" name="radio-ship" value="30.000" checked onchange="updateTotal()">
+                                            <label class="custom-control-label">Giao hàng nhanh (30.000 ₫)</label>
                                             {{-- 30K --}}
                                         </div><!-- End .custom-checkbox -->
                                     </div><!-- End .form-group -->
 
                                     <div class="form-group form-group-custom-control mb-0">
                                         <div class="custom-control custom-radio mb-0">
-                                            <input type="radio" class="custom-control-input" name="radio-ship" value="15.00" onchange="updateTotal()">
-                                            <label class="custom-control-label">Giao hàng tiết kiệm (15.00)</label>
+                                            <input type="radio" class="custom-control-input" name="radio-ship" value="15.000" onchange="updateTotal()">
+                                            <label class="custom-control-label">Giao hàng tiết kiệm (15.000 ₫)</label>
                                             {{-- 15K --}}
                                         </div><!-- End .custom-checkbox -->
                                     </div><!-- End .form-group -->
@@ -814,8 +841,8 @@ select.form-control {
                                     <h4>Tổng </h4>
                                 </td>
                                 <td>
-                                    <b class="total-price"><span id="totalPriceDisplay" name="price">${{ number_format($subTotal, 2) }}</span></b>
-                                    <input type="hidden" name="price" id="totalAmountInput" value="{{ $subTotal }}">
+                                    <b class="total-price"><span id="totalPriceDisplay" name="price">{{ number_format($subTotal, 0, ',', '.') }} ₫</span></b>
+                                    <input type="hidden" name="price" id="totalAmountInput" value="{{ number_format($subTotal, 0, ',', '.') }} ₫">
                                 </td>
                             </tr>
                         </tfoot>
@@ -830,7 +857,7 @@ select.form-control {
                         </div>
                     </div> --}}
 
-                    <input type="hidden" name="price" id="totalAmountInput" value="{{ $subTotal }}">
+                    <input type="hidden" name="price" id="totalAmountInput" value="{{ number_format($subTotal, 0, ',', '.') }} ₫">
                     <button type="submit" class="btn btn-dark btn-place-order" form="checkout-form">
                         Đặt hàng
                     </button>
@@ -856,7 +883,7 @@ select.form-control {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 @endsection
     
-@section('script_logic')
+@section('scripte_logic')
 <script>
 // Chọn checkbox
 function selectPayment(selectedCheckbox) {
@@ -873,24 +900,26 @@ function selectPayment(selectedCheckbox) {
 }
 // Cập nhật giá tiền khi chọn radio
 function updateTotal() {
-        // Lấy giá trị subtotal từ server
-        const subtotal = parseFloat('{{ $subTotal }}');
+    // Lấy giá trị subtotal từ server
+    const subtotal = parseFloat('{{ $subTotal }}');
 
-        // Lấy giá trị của phí vận chuyển được chọn
-        const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked').value);
+    // Lấy giá trị của phí vận chuyển được chọn và chuyển sang dạng số
+    const shippingCost = parseFloat(
+        document.querySelector('input[name="radio-ship"]:checked').value.replace(/\./g, '')
+    );
 
-        // Tính toán tổng tiền
-        const total = subtotal + shippingCost;
+    // Tính toán tổng tiền
+    const total = subtotal + shippingCost;
 
-        // Cập nhật hiển thị tổng tiền
-        document.getElementById('totalPriceDisplay').textContent = `$${total.toFixed(2)}`;
-        document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị hidden input
-    }
+    // Cập nhật hiển thị tổng tiền với định dạng tiền Việt Nam
+    document.getElementById('totalPriceDisplay').textContent = `${total.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} ₫`;
+    document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị hidden input
+}
 
-    // Gọi hàm updateTotal() khi trang được tải
-    document.addEventListener('DOMContentLoaded', function () {
-        updateTotal();
-    });
+// Gọi hàm updateTotal() khi trang được tải
+document.addEventListener('DOMContentLoaded', function () {
+    updateTotal();
+});
 // End
 
 // Hiện modal cập nhật địa chỉ

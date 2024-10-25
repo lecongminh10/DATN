@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
+use App\Models\Cart;
 use App\Services\AttributeService;
 use App\Services\AttributeValueService;
 use App\Services\CategoryService;
@@ -49,7 +50,14 @@ class ProductController extends Controller
     {
         $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries']);
         // dd($data);
-        $variants = $this->productVariantService->getAttributeByProduct($id);
+        $variants = $this->productVariantService->getProductVariant($id);
+
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+        $cartCount = $carts->sum('quantity');
 
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
             ->select('id', 'attribute_name')
@@ -57,7 +65,9 @@ class ProductController extends Controller
         return view('client.product')->with([
             'data'           => $data,
             'attribute'      => $attributesWithValues,
-            'variants'       => $variants
+            'variants'       => $variants,
+            'carts'          => $carts,
+            'cartCount'      => $cartCount
         ]);
     }
 }

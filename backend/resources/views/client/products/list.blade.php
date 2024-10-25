@@ -382,7 +382,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
         <!-- End .row -->
     </div>
 @endsection
-@section('script_logic')
+@section('scripte_logic')
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>

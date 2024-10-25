@@ -14,7 +14,7 @@
             <nav class="main-nav w-100">
                 <ul class="menu">
                     <li>
-                        <a href="demo4.html">Home</a>
+                        <a href="{{ route('client') }}">Home</a>
                     </li>
                     <li>
                         <a href="category.html">Categories</a>
@@ -186,7 +186,7 @@
             </li>
         </ul>
 
-        {{ Auth::check() ? Auth::user()->username : null }}
+        {{-- {{ Auth::check() ? Auth::user()->username : null }} --}}
         <div class="row">
             <div class="col-lg-8">
                 <div class="cart-table-container">
@@ -203,96 +203,110 @@
                         <tbody>
                             <?php 
                                 $totalAmount = 0; 
-                                $totalQuantity = 0; 
+                                $totalQuantity = null; 
                             ?>
-                            @foreach ($carts as $value)
-                            <tr class="product-row">
-                                <td>
-                                    <figure class="product-image-container">
-                                        <a href="#" class="product-image">
-                                            @php
-                                                // $variant= $value->productVariant;
-                                                // if($variant->variant_image!==null){
-                                                    // $url = $value->productVariant->variant_image;
-                                                // }
-                                                // $url="https://phuongnamtech.vn/wp-content/uploads/2024/09/anh-gai-xinh-539xokV.jpg"
-                                            @endphp
-                                            <img src="" alt="{{ $value->product->name }}">
-                                            {{-- <img src="{{Storage::url($url)}}" alt="{{ $value->product->name }}"> --}}
+                            @if ($carts->isEmpty())
+                                <tr class="product-row">
+                                    <td colspan="5" class="text-center">
+                                        <span>Giỏ hàng của bạn đang trống. 
+                                            <br> Hãy chọn thêm sản phẩm để mua nhé </span>
+                                    </td>
+                                </tr>
+                            @else
+                                @foreach ($carts as $value)
+                                    <tr class="product-row">
+                                        <td>
+                                            <figure class="product-image-container">
+                                                <a href="#" class="product-image">
+                                                    @php
+                                                        // $variant= $value->productVariant;
+                                                        // if($variant->variant_image!==null){
+                                                            // $url = $value->productVariant->variant_image;
+                                                        // }
+                                                        // $url="https://phuongnamtech.vn/wp-content/uploads/2024/09/anh-gai-xinh-539xokV.jpg"
+                                                    @endphp
+                                                    <img src="" alt="{{ $value->product->name }}">
+                                                    {{-- <img src="{{Storage::url($url)}}" alt="{{ $value->product->name }}"> --}}
 
-                                        </a>
+                                                </a>
 
-                                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $value->id }}" onclick="removeFromCart(this)"></a>
-                                    </figure>
-                                </td>
-                                <td class="product-col">
-                                    <h5 class="product-title">
-                                        <a href="#">
-                                            @if ($value->product->type === 'product_variant')
-                                            {{-- In tên của biến thể sản phẩm --}}
-                                            {{ $value->productVariant->name }}
-                                        
-                                            {{-- Lấy các thuộc tính của biến thể sản phẩm --}}
-                                                {{-- @php
-                                                    $attributes = $value->productVariant->getAttributeNameValue($value->productVariant->id);
-                                                @endphp
-
-                                                {{-- Hiển thị attribute_name và attribute_value 
-                                                @foreach ($attributes as $attribute)
-                                                    <p>{{ $attribute->attribute_name }}: {{ $attribute->attribute_value }}</p>
-                                                @endforeach --}}
+                                                <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $value->id }}" onclick="removeFromCart(this)"></a>
+                                            </figure>
+                                        </td>
+                                        <td class="product-col">
+                                            <h5 class="product-title">
+                                                <a href="#">
+                                                    @if ($value->product->type === 'product_variant')
+                                                    {{-- In tên của biến thể sản phẩm --}}
+                                                    {{ $value->productVariant->name }}
                                                 
-                                            @else
-                                                {{-- Nếu không phải là biến thể, in tên sản phẩm chính --}}
-                                                {{ $value->product->name }}
+                                                    {{-- Lấy các thuộc tính của biến thể sản phẩm --}}
+                                                        {{-- @php
+                                                            $attributes = $value->productVariant->getAttributeNameValue($value->productVariant->id);
+                                                        @endphp
+
+                                                        {{-- Hiển thị attribute_name và attribute_value 
+                                                        @foreach ($attributes as $attribute)
+                                                            <p>{{ $attribute->attribute_name }}: {{ $attribute->attribute_value }}</p>
+                                                        @endforeach --}}
+                                                        
+                                                    @else
+                                                        {{-- Nếu không phải là biến thể, in tên sản phẩm chính --}}
+                                                        {{ $value->product->name }}
+                                                    @endif
+                                                </a>
+                                                <span>
+                                                
+                                                </span>
+                                            </h5>
+                                        </td>
+                                        <td>
+                                            @if ($value->product && is_null($value->productVariant)) 
+                                                @if (!is_null($value->product->price_sale) && $value->product->price_sale > 0) 
+                                                    {{ number_format($value->product->price_sale, 0, ',', '.') }} ₫
+                                                @else
+                                                    {{ number_format($value->product->price_regular, 0, ',', '.') }} ₫
+                                                @endif
+                                            @elseif ($value->product && $value->productVariant) 
+                                                {{ number_format($value->productVariant->price_modifier, 0, ',', '.') }} ₫
                                             @endif
-                                        </a>
-                                        <span>
-                                           
-                                        </span>
-                                    </h5>
-                                </td>
-                                <td>
+                                        </td>
+                                        <td>
+                                            <div class="product-single-qty">
+                                                <input class="horizontal-quantity form-control" 
+                                                        type="number"
+                                                        min="1" 
+                                                        data-price="{{ $value->product ? ($value->productVariant ? $value->productVariant->price_modifier : ($value->product->price_sale ?? $value->product->price_regular)) : 0 }}"
+                                                        value="{{ $value->quantity }}"
+                                                        onchange="updateSubtotal(this)">
+                                            </div>
+                                        </td>
+                                        <?php 
+                                            $price = 0;
+                                            $subTotal = 0;
+                                            if ($value->product && is_null($value->productVariant)) {
+                                                // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
+                                                if (!is_null($value->product->price_sale) && $value->product->price_sale > 0) {
+                                                    $price = $value->product->price_sale; // Lấy giá sale nếu có
+                                                } else {
+                                                    $price = $value->product->price_regular; // Nếu không có giá sale, lấy giá thường
+                                                }
+                                                $subTotal = $price * $value->quantity; 
+                                            } elseif ($value->product && $value->productVariant) {
+                                                // Nếu có sản phẩm và có biến thể, lấy giá biến thể
+                                                $price = $value->productVariant->price_modifier;
+                                                $subTotal = $price * $value->quantity; 
+                                            } else {
+                                                $subTotal = 0;
+                                            }
+                                            $totalAmount += $subTotal;
+                                            $totalQuantity += $value->quantity;
 
-                                    $@if ($value->product && is_null($value->productVariant)) 
-                                        {{ number_format($value->product->price_regular, 2) }}
-                                    @elseif ($value->product && $value->productVariant) 
-                                        {{ number_format($value->productVariant->price_modifier, 2) }}
-                                    @else 
-                                    Không có giá
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="product-single-qty">
-                                        <input class="horizontal-quantity form-control" 
-                                                type="number"
-                                                min="1" 
-                                                data-price="{{ $value->product ? ($value->productVariant ? $value->productVariant->price_modifier : $value->product->price_regular) : 0 }}"
-                                                value="{{ $value->quantity }}"
-                                                onchange="updateSubtotal(this)">
-                                    </div>
-                                </td>
-                                <?php 
-                                    $price = 0;
-                                    $subTotal = 0;
-                                    if($value->product && is_null($value->productVariant)) {
-                                        $price = $value->product->price_regular;
-                                        $subTotal = $price * $value->quantity; 
-                                    }
-                                    elseif($value->product && $value->productVariant) {
-                                        $price = $value->productVariant->price_modifier;
-                                        $subTotal = $price * $value->quantity; 
-                                    }
-                                    else{
-                                        $subTotal = 0;
-                                    }
-                                    $totalAmount += $subTotal;
-                                    $totalQuantity += $value->quantity;
-
-                                ?>
-                                <td class="text-right"><span class="subtotal-price">${{ number_format($subTotal, 2) }}</span></td>
-                            </tr>
-                            @endforeach
+                                        ?>
+                                        <td class="text-right"><span class="subtotal-price">{{ number_format($subTotal, 0, ',', '.') }} ₫</span></td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         </tbody>
 
 
@@ -325,7 +339,7 @@
                             </tr>
                             <tr>
                                 <td>Tổng phụ</td>
-                                <td>${{ number_format($totalAmount, 2) }}</td>
+                                <td>{{ number_format($totalAmount, 0, ',', '.') }} ₫</td>
                             </tr>
 
                         </tbody>
@@ -335,7 +349,7 @@
                                 <td>Tổng cộng</td>
                                 <td>
                                     <?php $toTal = $totalAmount;?>
-                                    <span id="totalAmountDisplay">${{ number_format($toTal, 2) }}
+                                    <span id="totalAmountDisplay">{{ number_format($toTal, 0, ',', '.') }} ₫
                                 </td>
                             </tr>
                         </tfoot>
@@ -360,7 +374,7 @@
      
 @endsection
     
-@section('script_logic')
+@section('scripte_logic')
 <script>
 function updateSubtotal(inputElement) {
     // Lấy giá trị giá sản phẩm từ data-price
@@ -372,7 +386,7 @@ function updateSubtotal(inputElement) {
 
     // Cập nhật giá trị subtotal trong ô tương ứng
     const subTotalElement = inputElement.closest('tr').querySelector('.subtotal-price');
-    subTotalElement.textContent = `$${subTotal.toFixed(2)}`; // Cập nhật subtotal
+    subTotalElement.textContent = `${subTotal.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} ₫`;; // Cập nhật subtotal
 }
 
 // Xóa khỏi giỏ hàng

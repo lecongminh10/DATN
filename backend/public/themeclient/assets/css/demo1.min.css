@@ -14632,7 +14632,7 @@ body {
     font-size: 17px;
 }
 .dropdown-arrow .badge-circle {
-    top: -5px;
+    top: 4px;
     left: 23px;
     z-index: 1;
 }

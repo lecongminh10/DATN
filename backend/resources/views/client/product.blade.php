@@ -1,4 +1,53 @@
 @extends('client.layouts.app')
+@section('style_css')
+    <style>
+        /* .icon-wishlist-2 {
+            color: #ccc; 
+        }
+
+        .icon-wishlist-filled {
+            color: red; 
+        } */
+
+        /* .wishlist-modal {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        .wishlist-modal.show {
+            opacity: 1;
+            bottom: 40px;
+        } */
+
+        .cart-modal {
+        position: fixed;
+        right: 20px;
+        top: 80px;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        .cart-modal.show {
+            opacity: 1;
+            bottom: 100px;
+        }
+    </style>
+@endsection
 @section('content')
     @php
         $allImages = [];
@@ -26,6 +75,7 @@
             }
         }
 
+
     @endphp
     <header class="header">
         <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': false}">
@@ -33,7 +83,7 @@
                 <nav class="main-nav w-100">
                     <ul class="menu">
                         <li>
-                            <a href="demo4.html">Home</a>
+                            <a href="{{ route('client') }}">Home</a>
                         </li>
                         <li>
                             <a href="category.html">Categories</a>
@@ -90,7 +140,7 @@
                             </div>
                             <!-- End .megamenu -->
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="product.html">Products</a>
                             <div class="megamenu megamenu-fixed-width">
                                 <div class="row">
@@ -208,20 +258,20 @@
             </nav>
 
             <div class="product-single-container product-single-default">
-                <div class="cart-message d-none">
+                {{-- <div class="cart-message d-none">
                     <strong class="single-cart-notice">“Men Black Sports Shoes”</strong>
                     <span>has been added to your cart.</span>
-                </div>
+                </div> --}}
 
                 <div class="row">
                     <div class="col-lg-5 col-md-6 product-single-gallery">
                         <div class="product-slider-container">
                             <div class="label-group">
-                                <div class="product-label label-hot">HOT</div>
+                                {{-- <div class="product-label label-hot">HOT</div> --}}
 
-                                <div class="product-label label-sale">
+                                {{-- <div class="product-label label-sale">
                                     -16%
-                                </div>
+                                </div> --}}
                             </div>
 
                             <div class="product-single-carousel owl-carousel owl-theme show-nav-hover">
@@ -300,8 +350,13 @@
                         <hr class="short-divider">
 
                         <div class="price-box">
-                            <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
-                            <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
+                            @if ($data->price_sale == null)
+                                <span class="new-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
+                            
+                            @else
+                                <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
+                                <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
+                            @endif
                         </div>
                         <!-- End .price-box -->
 
@@ -358,10 +413,14 @@
                             </div>
                             <!-- End .product-single-qty -->
 
-                            <a href="javascript:;" class="btn btn-dark add-cart mr-2" title="Add to Cart">Add to
-                                Cart</a>
+                            <a href="javascript:;" class="btn btn-dark add-cart mr-2" 
+                            data-product-id="{{ $data->id }}" 
+                            data-product-variant-id="{{ $data->product_variant_id }}"
+                            data-quantity="1" 
+                            id="cart-toggle" 
+                            title="Add to Cart">Add to Cart</a>
 
-                            <a href="cart.html" class="btn btn-gray view-cart d-none">View cart</a>
+                            <a href="{{ route('shopping-cart') }}" class="btn btn-gray view-cart d-none">View cart</a>
                         </div>
                         <!-- End .product-action -->
 
@@ -384,9 +443,13 @@
                             </div>
                             <!-- End .social-icons -->
 
-                            <a href="wishlist.html" class="btn-icon-wish add-wishlist" title="Add to Wishlist"><i
-                                    class="icon-wishlist-2"></i><span>Add to
-                                    Wishlist</span></a>
+                            <a href="javascript:void(0);" class="btn-icon-wish add-wishlist" title="Add to Wishlist" 
+                                data-product-id="{{ $data->id }}" 
+                                data-product-variant-id="{{ $data->product_variant_id }}"
+                                id="wishlist-toggle">
+                                <i class="icon-wishlist-2" id="wishlist-icon"></i>
+                                <span id="wishlist-text">Add to Wishlist</span>
+                            </a>
                         </div>
                         <!-- End .product single-share -->
                     </div>
@@ -435,7 +498,7 @@
                         <div class="product-size-content">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <img src="assets/images/products/single/body-shape.png" alt="body shape"
+                                    <img src="{{ asset('themeclient/assets/images/products/single/body-shape.png') }}" alt="body shape"
                                         width="217" height="398">
                                 </div>
                                 <!-- End .col-md-4 -->
@@ -642,9 +705,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-1.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-1.jpg') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-1-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-1-2.jpg') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -689,9 +752,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-3.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-3.jpg') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-3-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-3-2.jpg') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -736,9 +799,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-7.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-7.jpg') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-7-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-7-2.jpg') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -783,9 +846,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-6.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-6.jpg') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-6-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-6-2.jpg') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -830,9 +893,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-4.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-4.jpg') }}') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-4-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-4-2.jpg') }}') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -886,9 +949,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-1.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-1.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-1-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-1-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -918,9 +981,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-2.jpg') }}') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-2-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-2-2.jpg') }}') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -949,9 +1012,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-3.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-3.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-3-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-3-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -983,9 +1046,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-4.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-4.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-4-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-4-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1015,9 +1078,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-5.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-5.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-5-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-5-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1046,9 +1109,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-6.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-6.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-6-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-6-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1080,9 +1143,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-7.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-7.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-7-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-7-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1111,9 +1174,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-8.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-8.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-8-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-8-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1143,9 +1206,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-9.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-9.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-9-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-9-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1177,9 +1240,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-10.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-10.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-10-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-10-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1208,9 +1271,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-11.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-11.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-11-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-11-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1239,9 +1302,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-12.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-12.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-12-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-12-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1273,9 +1336,29 @@
         <!-- End .container -->
     </main>
     <!-- End .main -->
+
+    {{-- <!-- Modal thông báo thêm vào wishlist -->
+    <div id="wishlist-add-modal" class="wishlist-modal" style="display: none;">
+        <div class="modal-content">
+            <p>Sản phẩm đã được thêm vào danh sách yêu thích!</p>
+        </div>
+    </div>
+
+    <!-- Modal thông báo xóa khỏi wishlist -->
+    <div id="wishlist-remove-modal" class="wishlist-modal" style="display: none;">
+        <div class="modal-content">
+            <p>Sản phẩm đã bị xóa khỏi danh sách yêu thích!</p>
+        </div>
+    </div> --}}
+    <!-- Modal thông báo thêm vào giỏ hàng -->
+    <div id="cart-add-modal" class="cart-modal" style="display: none;">
+        <div class="modal-content">
+            <p>Sản phẩm đã được thêm vào giỏ hàng!</p>
+        </div>
+    </div>
 @endsection
 
-@section('script_logic')
+@section('scripte_logic')
     <script>
         (function() {
             var js =
@@ -1314,5 +1397,95 @@
             }
         })();
     </script>
+    
+    <script>
+
+        // Thêm cart
+        document.addEventListener('DOMContentLoaded', function() {
+        const cartToggle = document.getElementById('cart-toggle');
+
+        cartToggle.addEventListener('click', function() {
+            const productId = cartToggle.getAttribute('data-product-id');
+            const productVariantId = cartToggle.getAttribute('data-product-variant-id');
+            const quantity = cartToggle.getAttribute('data-quantity');
+
+            // Gọi AJAX để thêm sản phẩm vào giỏ hàng
+            $.ajax({
+                type: "POST",
+                url: "{{ route('addCart') }}", // Thay bằng route tương ứng
+                data: {
+                    product_id: productId,
+                    product_variants_id: productVariantId,
+                    quantity: quantity,
+                    _token: '{{ csrf_token() }}' // CSRF token
+                },
+                success: function(response) {
+                    // Hiển thị thông báo thêm vào giỏ hàng thành công hoặc xử lý UI nếu cần
+                    showCartModal(); // Gọi hàm hiển thị modal (tương tự như wishlist)
+                    // location.reload();
+                },
+                error: function(xhr) {
+                    if (xhr.status === 401) {
+                        // alert('You need to be logged in to add items to your cart.'); // Bỏ thông báo nếu không cần thiết
+                    } else {
+                        // alert('An error occurred. Please try again.'); // Bỏ thông báo nếu không cần thiết
+                    }
+                }
+            });
+        });
+
+        function showCartModal() {
+            // Hiển thị modal thông báo thêm vào giỏ hàng thành công
+            const cartModal = document.getElementById('cart-add-modal');
+            cartModal.classList.add('show');
+            setTimeout(function() {
+                cartModal.classList.remove('show');
+            }, 3000); // Modal sẽ tự động ẩn sau 3 giây
+        }
+    });
+
+
+        // Thêm wishlist
+        document.addEventListener('DOMContentLoaded', function() {
+        const wishlistToggle = document.getElementById('wishlist-toggle');
+        const wishlistIcon = document.getElementById('wishlist-icon');
+        const wishlistAddModal = document.getElementById('wishlist-add-modal');
+        const wishlistRemoveModal = document.getElementById('wishlist-remove-modal');
+
+        wishlistToggle.addEventListener('click', function() {
+            const productId = wishlistToggle.getAttribute('data-product-id');
+            const productVariantId = wishlistToggle.getAttribute('data-product-variant-id');
+
+            // Gọi AJAX để thêm hoặc xóa sản phẩm khỏi wishlist
+            $.ajax({
+                type: "POST",
+                url: "{{ route('addWishList') }}",
+                data: {
+                    product_id: productId,
+                    product_variants_id: productVariantId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.in_wishlist) {
+                        wishlistIcon.style.color = 'red'; // Đổi màu trái tim thành đỏ
+                        showModal(wishlistAddModal); // Hiển thị modal thêm
+                    } else {
+                        wishlistIcon.style.color = ''; // Đặt lại màu trái tim
+                        showModal(wishlistRemoveModal); // Hiển thị modal xóa
+                    }
+                }
+            });
+        });
+
+        function showModal(modal) {
+            modal.classList.add('show');
+            setTimeout(function() {
+                modal.classList.remove('show');
+            }, 3000); // Modal sẽ tự ẩn sau 3 giây
+        }
+    });
+
+    </script>
+
     </body>
 @endsection
