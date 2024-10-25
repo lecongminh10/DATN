@@ -1087,7 +1087,7 @@
                 success: function(response) {
                     // Xử lý thành công, có thể hiện thông báo hoặc cập nhật giỏ hàng
                     // alert(response.message);
-                    location.reload();
+                    // location.reload();
                 },
                 error: function(xhr) {
                     // Xử lý lỗi

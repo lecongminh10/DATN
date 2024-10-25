@@ -232,7 +232,14 @@ class OrderController extends Controller
             ->where('user_id', $userId)
             ->first();
 
-        return view('client.orders.checkout', compact('cartCheckout', 'address', 'carts'));
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+    
+        $cartCount = $carts->sum('quantity');
+
+        return view('client.orders.checkout', compact('cartCheckout', 'address', 'carts', 'cartCount'));
     }
 
     public function removeFromCart($id)

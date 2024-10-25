@@ -163,7 +163,6 @@
                                                 $price = $item->productVariant->price_modifier;
                                                 $sub = $price * $item->quantity; 
                                             }
-
                                             $subTotal += $sub; // Cộng dồn vào tổng phụ
                                         @endphp
                                         <span class="cart-product-info">
@@ -175,7 +174,7 @@
                         
                                     <figure class="product-image-container">
                                         <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
-                                            <img src="" width="80" height="80" alt="{{ $item->name }}" />
+                                            <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
                                         </a>
                         
                                         <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>

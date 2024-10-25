@@ -637,7 +637,8 @@ select.form-control {
                             
                             <div class="product-container">
                                 <div class="product-image">
-                                    <img src="" alt="{{ $item->product->name }}" class="img-thumbnail" >
+                                    {{-- <img src="" alt="{{ $item->product->name }}" class="img-thumbnail" > --}}
+                                    <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="100" height="100" alt="{{ $item->product->getMainImage()->image_gallery }}" />
                                 </div>
                                 <div class="product-info">
                                     <div class="d-flex justify-content-between mt-1">
