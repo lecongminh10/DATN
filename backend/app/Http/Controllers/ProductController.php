@@ -69,7 +69,7 @@ class ProductController extends Controller
     public function showProduct(int $id)
     {
         $data = $this->productService->getById($id)->load(['category','variants', 'tags', 'galleries']);
-        
+
         $variants = $this->productVariantService->getAttributeByProduct($id);
 
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
@@ -102,7 +102,7 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        
+
         $dataProduct = $request->validated();
         unset($dataProduct['product_variants'], $dataProduct['product_galaries']);
 
@@ -142,9 +142,9 @@ class ProductController extends Controller
             foreach ($request->product_galaries as $image_gallery) {
                 $dataProductGallery = [
                     'product_id' => $product->id,
-                    'is_main' => $image_gallery['is_main'] ?? 0, 
+                    'is_main' => $image_gallery['is_main'] ?? 0,
                 ];
-                if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {  
+                if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {
                     $extension = $image_gallery['image_gallery']->getClientOriginalExtension();
                     $imageName = time() . '_' . uniqid() . '.' . $extension;
                     $relativePath = $image_gallery['image_gallery']->storeAs('public/products/gallery', $imageName);
@@ -174,7 +174,7 @@ class ProductController extends Controller
         $variants = $this->productVariantService->getProductVariant($id);
         return view('admin.products.update-product', compact('product','categories','selectedTags','variants'));
     }
-    
+
 
     /**
      * Update the specified resource in storage.
@@ -204,7 +204,7 @@ class ProductController extends Controller
         if ($request->has('product_variants')) {
             $currentVariant = $this->productVariantService->getVariantByProduct($id);
             $submittedVariantIds = [];
-        
+
             foreach ($request->product_variants as $item) {
                 $dataProductVariant = [
                     'product_id' => $product->id,
@@ -233,18 +233,18 @@ class ProductController extends Controller
                 if (!in_array($variant->id, $submittedVariantIds)) {
                     $variantImagePath = public_path('storage/' . $variant->variant_image);
                     if (file_exists($variantImagePath)) {
-                        unlink($variantImagePath); 
+                        unlink($variantImagePath);
                     }
                     $variant->forceDelete();
                 }
             }
         }
-        
+
 
         if ($request->has('product_galaries')) {
             $currentGalary = $this->productGalleryService->getGalaryByProduct($id);
             $submittedGalleryIds = [];
-        
+
             foreach ($request->product_galaries as $image_gallery) {
                 $dataProductGallery = [
                     'product_id' => $product->id,
@@ -262,7 +262,7 @@ class ProductController extends Controller
                     $this->productGalleryService->saveOrUpdate($dataProductGallery, $image_gallery['id']);
                 }
             }
-        
+
             foreach ($currentGalary as $item) {
                 if (!in_array($item->id, $submittedGalleryIds)) {
                     $imagePath = public_path('storage/' . $item->image_gallery);
@@ -273,8 +273,8 @@ class ProductController extends Controller
                 }
             }
         }
-        
-        
+
+
 
         if ($request->has('product_tags')) {
             $product->tags()->sync($request->product_tags);
@@ -375,5 +375,4 @@ class ProductController extends Controller
 
         return response()->json($variants);
     }
-
 }

@@ -13,7 +13,7 @@
 
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('permissions.update', $permission->id) }}" method="POST">
+                        <form action="{{ route('admin.permissions.update', $permission->id) }}" method="POST">
                             @csrf
                             @method('PUT')
                             @if ($errors->any())
@@ -41,11 +41,11 @@
                                         <div class="col-md-5">
                                             <label for="value" class="form-label">Permission Value</label>
                                             <input type="text" class="form-control" name="value[]"
-                                                value="{{ $item->value }}" required>
+                                                value="{{ $item->value ?? '' }}" required>
                                         </div>
                                         <div class="col-md-5">
                                             <label for="description" class="form-label">Description</label>
-                                            <textarea class="form-control" name="description[]" rows="3">{{ $item->description }}</textarea>
+                                            <textarea class="form-control" name="description[]" rows="3">{{ $item->description ?? '' }}</textarea>
                                         </div>
                                         <div class="col-md-2 d-flex align-items-end">
                                             <!-- Nút xóa -->
@@ -60,8 +60,8 @@
                                 </div>
                             </div>
                             <div class="col-6 mb-3">
-                                <button type="submit" class="btn btn-primary">Thêm mới</button>
-                                <a href="{{ route('permissions.index') }}">Quay lại</a>
+                                <button type="submit" class="btn btn-primary">Sửa</button>
+                                <a href="{{ route('admin.permissions.index') }}">Quay lại</a>
                             </div>
                         </form>
                     </div>
@@ -74,15 +74,17 @@
             // Template for a new row of permission values
             var newPermissionValue = `
                 <div class="row mb-3 permission-value-item">
-                    <div class="col-md-6">
-                        <label for="value" class="form-label">Permission Value</label>
-                        <input type="text" class="form-control" name="value[]">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" name="description[]" rows="3"></textarea>
-                    </div>
-                </div>`;
+                                        <div class="col-md-5">
+                                            <label for="value" class="form-label">Permission Value</label>
+                                            <input type="text" class="form-control" name="value[]">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="description" class="form-label">Description</label>
+                                            <textarea class="form-control" name="description[]" rows="3"></textarea>
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end">
+                                        </div>
+                                    </div>`;
 
             // Append the new row to the container
             document.getElementById('permission-values-container').insertAdjacentHTML('beforeend',

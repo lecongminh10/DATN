@@ -48,8 +48,8 @@
                             </div> <!-- end card -->
                         </div>
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('permissions.index') }}" class="btn btn-secondary"><i class="las la-backward"></i>Quay lại</a>
-                            <a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-warning">Chỉnh sửa</a>
+                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary"><i class="las la-backward"></i>Quay lại</a>
+                            <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-warning">Chỉnh sửa</a>
                         </div> <!-- end col -->
                     </div>
                 </div>

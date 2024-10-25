@@ -1,5 +1,4 @@
 @extends('admin.layouts.app')
-
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -22,7 +21,7 @@
                                     </form> --}}
                                     <div>
                                         <div class="d-flex flex-wrap gap-2">
-                                            <a href="{{ route('permissions.create') }}">
+                                            <a href="{{ route('admin.permissions.create') }}">
                                                 <button class="btn btn-success" data-bs-toggle="modal"
                                                     data-bs-target="#showModal">
                                                     <i class="ri-add-line align-bottom me-1"></i>Thêm mới
@@ -78,29 +77,29 @@
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ route('permissions.show', $item->id) }}"><i
-                                                                    class="ri-eye-fill align-bottom me-2 fs-16">Xem</i></a>
+                                                                    href="{{ route('admin.permissions.show', $item->id) }}"><i
+                                                                    class="ri-eye-fill align-bottom me-2 fs-16"></i></a>
                                                             </li>
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ route('permissions.edit', $item->id) }}"><i class="las la-braille"></i>Sửa</a>
+                                                                    href="{{ route('admin.permissions.edit', $item->id) }}"><i class="ri-ball-pen-line"></i></a>
                                                             </li>
                                                             <li>
                                                                 <a class="dropdown-item" href="#"
-                                                                    onclick="event.preventDefault(); confirmDeletePermission('{{ $item->id }}', '{{ $item->permission_name }}');"><i class="ri-delete-bin-2-line">Xóa</i></a>
+                                                                    onclick="event.preventDefault(); confirmDeletePermission('{{ $item->id }}', '{{ $item->permission_name }}');"><i class="ri-delete-bin-2-line"></i></a>
                                                             </li>
                                                         </ul>
                                                     </div>
                                                     <!-- Soft delete form -->
                                                     <form id="soft-delete-permission-{{ $item->id }}"
-                                                        action="{{ route('permissions.destroyPermission', $item->id) }}"
+                                                        action="{{ route('admin.permissions.destroyPermission', $item->id) }}"
                                                         method="POST" style="display: none;">
                                                         @csrf
                                                         @method('DELETE')
                                                     </form>
                                                     <!-- Hard delete form -->
                                                     <form id="hard-delete-permission-{{ $item->id }}"
-                                                        action="{{ route('permissions.destroyPermissionHard', $item->id) }}"
+                                                        action="{{ route('admin.permissions.destroyPermissionHard', $item->id) }}"
                                                         method="POST" style="display: none;">
                                                         @csrf
                                                         @method('DELETE')
@@ -215,7 +214,7 @@
                 if (confirmation) {
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route('permissions.destroyMultiple') }}';
+                    form.action = '{{ route('admin.permissions.destroyMultiple') }}';
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';
                     csrfInput.name = '_token';
@@ -246,7 +245,7 @@
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action =
-                        '{{ route('permissions.destroyMultipleValues') }}';
+                        '{{ route('admin.permissions.destroyMultipleValues') }}';
 
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';

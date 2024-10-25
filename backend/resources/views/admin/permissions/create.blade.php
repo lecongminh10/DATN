@@ -11,7 +11,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <form action="{{ route('permissions.store') }}" method="POST">
+                        <form action="{{ route('admin.permissions.store') }}" method="POST">
                             @csrf
                             @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -52,7 +52,7 @@
                             </div>
                             <div class="col-6 mb-3">
                                 <button type="submit" class="btn btn-primary">Thêm mới</button>
-                                <a href="{{route('permissions.index')}}">Quay lại</a>
+                                <a href="{{route('admin.permissions.index')}}">Quay lại</a>
                             </div>
                         </form>
                     </div>

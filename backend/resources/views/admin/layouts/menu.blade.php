@@ -69,7 +69,7 @@
                             <li class="nav-item">
                                 <a href="#sidebarProduct" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarProduct" data-key="t-product">
-                                    Sản phẩm 
+                                    Sản phẩm
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarProduct">
                                     <ul class="nav nav-sm flex-column">
@@ -101,7 +101,7 @@
                             <li class="nav-item">
                                 <a href="#sidebarCarrier" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarCarrier" data-key="t-product">
-                                    Vận chuyển 
+                                    Vận chuyển
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarCarrier">
                                     <ul class="nav nav-sm flex-column">
@@ -126,6 +126,51 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.coupons.create') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#sidebarPermission" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarPermission" data-key="t-product">
+                                    Quyền
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarPermission">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.permissions.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.permissions.create') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#sidebarUser" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarUser" data-key="t-product">
+                                    Người dùng
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarUser">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.users.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.users.add') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#sidebarstatistical" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarstatistical" data-key="t-product">
+                                    Thống kê
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarstatistical">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.statistical.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
                                         </li>
                                     </ul>
                                 </div>
