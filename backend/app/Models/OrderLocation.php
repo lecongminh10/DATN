@@ -13,7 +13,7 @@ class OrderLocation extends Model
     protected $table = 'order_locations';
 
     protected $fillable = [
-        'order_id', 
+         'order_id', 
         'address', 
         'city', 
         'district', 
@@ -26,8 +26,13 @@ class OrderLocation extends Model
         'updated_at'
     ];
 
-    public function orders()
+    protected $casts = [
+        'deleted_at' => 'boolean',
+    ];
+
+    public function order()
     {
-        return $this->belongsToMany(Order::class, 'order_id', 'id')->withTimestamps(); 
+        return $this->belongsTo(Order::class);
     }
 }
+

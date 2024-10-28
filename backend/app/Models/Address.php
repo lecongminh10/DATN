@@ -13,18 +13,31 @@ class Address extends Model
     protected $table = 'addresses';
 
     protected $fillable = [
+        'recipient_name',
         'user_id',
-        'address_line',
-        'address_line1',
-        'address_line2',
-        'deleted_by',
-        'deleted_at',
-        'created_at',
-        'updated_at',
+        'specific_address',
+        'ward',
+        'district',
+        'city',
+        'active'
+    ];
+    protected $casts = [
+        'deleted_at' => 'boolean'
     ];
 
-    public function users()
+        /**
+     * Kiểm tra nếu user_id có địa chỉ active
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public static function hasActiveAddress($userId)
     {
-        return $this->belongsToMany(User::class, 'user_id', 'id')->withTimestamps(); 
+        return self::where('user_id', $userId)->where('active', true)->exists();
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

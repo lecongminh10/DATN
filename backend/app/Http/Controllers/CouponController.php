@@ -254,4 +254,35 @@ class CouponController extends Controller
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
     }
+    public function applyDiscount(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|max:255',
+        ]);
+        $couponCode = $request->code;
+
+        $coupon = Coupon::where('code', $couponCode)->first();
+
+        if (!$coupon) {
+            return response()->json(['message' => 'Mã giảm giá không hợp lệ.'], 400);
+        }
+        if ($coupon->start_date && $coupon->start_date > now()) {
+            return response()->json(['message' => 'Mã giảm giá chưa bắt đầu.'], 400);
+        }
+
+        if ($coupon->end_date && $coupon->end_date < now()) {
+            return response()->json(['message' => 'Mã giảm giá đã hết hạn.'], 400);
+        }
+
+        if ($coupon->usage_limit && $coupon->usage_limit <= 0) {
+            return response()->json(['message' => 'Mã giảm giá đã đạt giới hạn sử dụng.'], 400);
+        }
+        if($coupon->is_active==false){
+            return response()->json(['message' => 'Mã giảm giá không hoạt động.'], 400);
+        }
+        return response()->json([
+            'message' => 'Mã giảm giá đã được áp dụng!',
+            'data' => $coupon,
+        ]);
+    }
 }

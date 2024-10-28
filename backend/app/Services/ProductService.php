@@ -36,9 +36,12 @@ class ProductService extends BaseService
             ->orderByDesc('view')
             ->get();
     }
-    public function getAllProducts($count)
+    public function getAllProducts($count , $minprice=null, $maxprice=null)
     {
-        return Product::with(['galleries', 'category'])->paginate($count);
+        return Product::with(['galleries', 'category'])
+        ->orwhereBetween('price_regular', [$minprice, $maxprice])
+        ->orWhereBetween('price_sale', [$minprice, $maxprice])
+        ->paginate($count);
     }
 
     public function getSaleProducts()

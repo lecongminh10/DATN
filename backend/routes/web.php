@@ -16,10 +16,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Client\HomeController;
 
 use Illuminate\Support\Facades\Mail;
-
 
 Route::group([
     'prefix' => 'admin',
@@ -182,6 +182,27 @@ Route::group([
         Route::post('/destroy-multiple',                     [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
         Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
     });
+    
+    //Oder
+   Route::group(
+        [
+            'prefix' => 'orders',
+            'as' => 'orders.'
+        ],
+        function () {
+            Route::get('list-order', [OrderController::class, 'index'])->name('listOrder');
+            Route::get('list-trash-order', [OrderController::class, 'listTrash'])->name('listTrashOrder');
+            Route::get('order-detail/{id}', [OrderController::class, 'showOrder'])->name('orderDetail');
+            Route::get('order-edit/{code}', [OrderController::class, 'showModalEdit'])->name('orderEdit');
+            Route::put('update-order/{id}', [OrderController::class, 'updateOrder'])->name('updateOrder');
+            Route::delete('soft-delete/{id}', [OrderController::class, 'destroy'])->name('soft_delete');
+            Route::delete('multi-soft-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_soft_delete');
+            Route::put('restore/{id}', [OrderController::class, 'restore'])->name('restore');// một cái được rồi đúng khoong  ô thử lại caid
+            Route::put('restore_selected', [OrderController::class, 'muitpathRestore'])->name('restore_selected');
+            Route::delete('hard-delete/{id}', [OrderController::class, 'hardDelete'])->name('hard_delete');
+            Route::delete('multi-hard-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete'); 
+        }
+    );
 });
 
 
@@ -228,5 +249,18 @@ Route::prefix('/')->group(function () {
     Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
     Route::get('/products/category/{id}', [HomeController::class, 'getByCategory'])->name('client.products.Category');
     Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
+  
+  //Oder
+    Route::get('shopping-cart', [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
+    Route::get('checkout', [OrderController::class, 'showCheckOut'])->name('checkout');
+    Route::post('addresses', [UserController::class, 'updateOrInsertAddress'])->name('addresses');
+    Route::post('/addresses/set-default/{id}', [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
+    Route::post('/update-address', [UserController::class, 'updateAddress'])->name('update.address');
+    Route::post('add-order', [OrderController::class, 'addOrder'])->name('addOrder');
+    Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
+    Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
+  
+    //Counpon 
+    Route::post('/apply-discount', [CouponController::class, 'applyDiscount']);
 });
 
