@@ -42,11 +42,11 @@ class Cart extends Model
     {
         return $this->hasManyThrough(
             AttributeValue::class,
-            ProductVariant::class,
-            'id', // Khóa ngoại trong bảng 'orders'
-            'id_attributes', // Khóa ngoại trong bảng 'attributes_values'
-            'product_variants_id', // Khóa chính trong bảng 'orders'
-            'product_attribute_id' // Khóa chính trong bảng 'product_variants'
+            AttributeValueProductVariant::class,
+            'product_variant_id', // Khóa ngoại trong bảng trung gian
+            'id',                 // Khóa ngoại trong bảng attributes_values
+            'product_variants_id',// Khóa ngoại trong bảng giỏ hàng
+            'attribute_value_id'  // Khóa ngoại trong bảng trung gian attribute_value_product_variant
         );
     }
 }

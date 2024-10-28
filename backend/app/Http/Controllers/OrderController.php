@@ -7,6 +7,8 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderLocation;
+use App\Models\Payment;
+use App\Models\PaymentGateways;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
@@ -206,25 +208,19 @@ class OrderController extends Controller
     public function showShoppingCart()
     {
         $userId = auth()->id();
-        $carts = Cart::with(['product', 'productVariant', 'attributeValues.attribute'])
-            ->where('user_id', $userId)
-            ->get();
-
+        $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+        ->where('user_id', $userId)
+        ->get();
         return view('client.orders.shoppingcart', compact('carts'));
     }
 
     public function showCheckOut()
     {
-        $userId = auth()->id();
-        $cartCheckout = Cart::with(['product', 'productVariant', 'attributeValues.attribute'])
-            ->where('user_id', $userId)
-            ->get();
-
-        $address = Address::select('address_line', 'address_line1', 'address_line2')
-            ->where('user_id', $userId)
-            ->first();
-
-        return view('client.orders.checkout', compact('cartCheckout', 'address'));
+        $user =Auth::user();
+        $cartCheckout =Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+                ->where('user_id', $user->id)
+                ->get();
+        return view('client.orders.checkout', compact('cartCheckout'));
     }
 
     public function removeFromCart($id)
@@ -258,30 +254,7 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Cart updated successfully']);
     }
-    public function updateOrInsertAddress(Request $request)
-    {
-        // Xác thực dữ liệu
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'phone' => 'required|string|max:15', // Hoặc một quy tắc khác phù hợp với số điện thoại
-            'newAddress' => 'required|string|max:255',
-            // Thêm các quy tắc xác thực khác nếu cần
-        ]);
-
-        // Lưu thông tin người dùng
-        $user = User::updateOrCreate(
-            ['id' => auth()->id()], // Tìm kiếm người dùng theo ID
-            ['username' => $request->username, 'phone_number' => $request->phone]
-        );
-
-        // Lưu địa chỉ
-        $address = new Address();
-        $address->address_line = $request->newAddress;
-        $address->user_id = $user->id; // Liên kết địa chỉ với người dùng
-        $address->save();
-
-        return response()->json(['success' => true, 'message' => 'Thêm địa chỉ thành công!']);
-    }
+    
 
     public function addOrder(Request $request)
     {
@@ -296,52 +269,66 @@ class OrderController extends Controller
         //     'note' => 'nullable|string|max:500',
         //     'radio-ship' => 'required', // Shipping method
         // ]);
-
-        // Tính toán tổng giá trị đơn hàng từ giỏ hàng
-        $subTotal = 0;
+       $subTotal = 0;
         if ($request->has('order_item')) {
             foreach ($request->order_item as $item) {
-                $subTotal += $item['price'] * $item['quantity'];
+                $productId = $item['product_id'];
+                $productVariantId = $item['product_variant_id'] ?? null;
+                $product = Product::find($productId);
+
+                $price = 0;
+
+                if ($productVariantId) {
+                    $variant = ProductVariant::find($productVariantId);
+
+                    if ($variant) {
+                        if ($variant->price_modifier) {
+                            $price = $variant->price_modifier;
+                        } else {
+                            $price = $variant->original_price;
+                        }
+                    }
+                } else {
+                    if ($product->price_sale) {
+                        $price = $product->price_sale;
+                    } else {
+                        $price = $product->price_regular;
+                    }
+                }
+                $quantity = $item['quantity'] ?? 1; 
+                $subTotal += $price * $quantity;
             }
         }
-
-        if($request->has('radio_pay')){
-            $radio_pay = $request->radio_pay;
-            if($radio_pay=='cash'){
-                $dataOrder['payment_id']=6;
-            }
-        }
-
-        // Lấy giá trị phí vận chuyển
+        $dataOrder=[];
         $shippingCost = floatval($request->input('radio-ship')); // Đảm bảo giá trị là số
-
-        // Tính tổng giá trị đơn hàng
+       
         $totalPrice = $subTotal + $shippingCost;
-
-        // Tạo đơn hàng
         $dataOrder = [
             'user_id' => Auth::id(),
             'code' => 'ORDER-' . strtoupper(uniqid()),
-            'total_price' => $totalPrice, // Đặt giá trị tổng đã tính toán ở đây
+            'total_price' => $totalPrice,
+            'shipping_address_id'=>$request->shipping_address_id,
             'note' => $request->note,
             'status' => Order::CHO_XAC_NHAN,
         ];
-
-        
-        // Lưu đơn hàng
+        if($request->has('radio_pay')){
+            $radio_pay = $request->radio_pay;
+            $payment =PaymentGateways::where('name',$radio_pay)->first();
+            if($payment->name=='cash'){
+                $dataOrder['payment_id']= $payment->id;
+            }
+        }
         $order = $this->orderService->saveOrUpdate($dataOrder);
 
-        // Tiếp tục với địa chỉ và các sản phẩm...
         $dataOrderLocation = [
             'order_id' => $order->id,
             'address' => $request->address,
-            'city' => $request->city,
-            'district' => $request->district,
-            'ward' => $request->ward,
+            'city' => 'Hà Nội ',
+            'district' => 'Bắc từ Liêm' ,
+            'ward' =>'Trường CD FPT PolyTechnic',
             'latitude' => null,
             'longitude' => null,
         ];
-
         if ($request->has('order_item')) {
             foreach ($request->order_item as $value) {
                 $dataItem = [

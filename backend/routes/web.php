@@ -17,7 +17,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Client\HomeController;
 
 use Illuminate\Support\Facades\Mail;
@@ -254,10 +253,14 @@ Route::prefix('/')->group(function () {
   //Oder
     Route::get('shopping-cart', [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
     Route::get('checkout', [OrderController::class, 'showCheckOut'])->name('checkout');
-    Route::post('addresses', [OrderController::class, 'updateOrInsertAddress'])->name('addresses');
+    Route::post('addresses', [UserController::class, 'updateOrInsertAddress'])->name('addresses');
+    Route::post('/addresses/set-default/{id}', [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
+    Route::post('/update-address', [UserController::class, 'updateAddress'])->name('update.address');
     Route::post('add-order', [OrderController::class, 'addOrder'])->name('addOrder');
     Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
   
+    //Counpon 
+    Route::post('/apply-discount', [CouponController::class, 'applyDiscount']);
 });
 

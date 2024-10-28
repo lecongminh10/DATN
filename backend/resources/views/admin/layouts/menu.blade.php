@@ -56,7 +56,7 @@
                                 <div class="collapse menu-dropdown" id="sidebarCalendar">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('orders.listOrder') }}" class="nav-link"
+                                            <a href="{{ route('admin.orders.listOrder') }}" class="nav-link"
                                                 data-key="t-main-calender">Danh sách</a>
                                         </li>
                                     </ul>

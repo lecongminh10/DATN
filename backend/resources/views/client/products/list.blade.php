@@ -216,7 +216,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                                         @foreach ($category->children as $subcategory)
                                                             <li>
                                                                 <a
-                                                                    href="{{ route('products.byCategory', ['category' => $subcategory->id]) }}">
+                                                                    href="{{ route('client.products.Category',$subcategory->id) }}">
                                                                     {{ $subcategory->name }}
                                                                     <span
                                                                         class="products-count">({{ $subcategory->products_count }})</span>

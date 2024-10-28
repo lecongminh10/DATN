@@ -51,7 +51,9 @@ class HomeController extends Controller
     public function showProducts(Request  $request)
     {
         $count = $request->input('count', 12);
-        $products = $this->productService->getAllProducts($count);
+        $minprice = $request ->input('min');
+        $maxprice = $request->input('max');
+        $products = $this->productService->getAllProducts($count , $minprice , $maxprice);
         $sale = $this->productService->getSaleProducts();
         $categories = $this->categoryService->getAll();
         return view('client.products.list', compact('products', 'sale', 'categories'));

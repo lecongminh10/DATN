@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderLocation;
+use App\Services\AddressServices;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ class UserController extends Controller
     protected $userService;
     protected $userRepository;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService , AddressServices $addressServices)
     {
         $this->userService = $userService;
     }
@@ -215,4 +216,85 @@ class UserController extends Controller
         return response()->json(['success' => false, 'message' => 'Invalid action.'], 400);
     }
 
+    public function updateOrInsertAddress(Request $request)
+    {
+        Log::info('Request received for creating address:', $request->all());
+        // Lấy user hiện tại (giả định đã đăng nhập)
+        $userId = Auth::id();
+
+        // Xác thực dữ liệu đầu vào
+        $validatedData = $request->validate([
+            'specific_address' => 'required|string|max:255',
+            'ward' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'username' => 'nullable|string|unique:users,username,' . $userId,
+            'phone_number' => 'nullable|string|unique:users,phone_number,' . $userId,
+        ]);
+        if(isset($validatedData['username']) || isset($validatedData['phone_number'])){
+            $data=[
+               'username'=> $validatedData['username'],
+               'phone_number'=> $validatedData['phone_number'],
+            ];
+            $this->userService->saveOrUpdate( $data, $userId);
+        }
+        
+        $is_active= Address::hasActiveAddress($userId);
+        // Tạo địa chỉ mới cho user
+        $address = Address::create([
+            'user_id' => $userId,
+            'specific_address' => $validatedData['specific_address'],
+            'ward' => $validatedData['ward'],
+            'district' => $validatedData['district'],
+            'city' => $validatedData['city'],
+            'active'=> $is_active ? false :true
+        ]);
+
+        // Trả về phản hồi thành công dưới dạng JSON
+        return response()->json([
+            'success' => true,
+            'message' => 'Thêm địa chỉ mới thành công!',
+            'address' => $address
+        ]);
+    }
+    public function setDefaultAddress(Request $request, $id)
+    {
+        $userId = Auth::id();
+        Address::where('user_id', $userId)->update(['active' => false]);
+        $address = Address::where('user_id', $userId)->where('id', $id)->first();
+        if ($address) {
+            $address->active = true;
+            $address->save();
+
+            return response()->json(['success' => true, 'message' => 'Cập nhật địa chỉ mặc định thành công!']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Không tìm thấy địa chỉ!'], 404);
+    }
+
+    public function updateAddress(Request $request){
+        $request->validate([
+            'id_address' => 'required|exists:addresses,id',
+            'name' => 'required|string|max:255',
+            'phone' => 'required|digits_between:10,15',
+            'city' => 'required|string',
+            'district' => 'required|string',
+            'ward' => 'required|string',
+            'address' => 'required|string',
+        ]);
+    
+        $dataUser=[
+            'username'=>$request->name,
+            'phone_number'=>$request->phone
+        ];
+        $this->userService->saveOrUpdate( $dataUser, Auth::id());
+        $address = Address::find($request->id_address);
+        $address->city = $request->city;
+        $address->district = $request->district;
+        $address->ward = $request->ward;
+        $address->specific_address = $request->address;
+        $address->save();
+
+        return response()->json(['success' => 'Địa chỉ đã được cập nhật thành công!']);
+    }
 }
