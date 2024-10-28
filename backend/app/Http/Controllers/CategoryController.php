@@ -23,17 +23,22 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-
-        // Gọi phương thức getParentOrChild và thực hiện paginate trên kết quả
-        $data = $this->categoryService->getParentOrChild($search)->paginate(5); // Thay đổi số lượng mục trên mỗi trang nếu cần
-
-        return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'search'));
+        $parentId = $request->input('parent_id'); // Lấy ID danh mục cha từ request
+        // Lấy danh mục theo điều kiện lọc
+        $data = $this->categoryService->getParentOrChild($search, $parentId)->paginate(5);
+        // Lấy danh mục con cho mọi danh mục trong data
+        foreach ($data as $item) {
+            $item->children = $this->categoryService->getChildCategories($item->id);
+        }
+        // Lấy danh mục cha để hiển thị trong dropdown (hoặc select)
+        $parentCategories = $this->categoryService->getParent();
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'search', 'parentCategories', 'parentId'));
     }
 
     public function create()
     {
-        $parentCategory = $this->categoryService->getParent();
-        return view(self::PATH_VIEW . __FUNCTION__, compact('parentCategory'));
+        $parentCategories = $this->categoryService->getParent();
+        return view(self::PATH_VIEW . __FUNCTION__, compact('parentCategories'));
     }
 
     public function store(CategoryRequest $request)
@@ -60,8 +65,8 @@ class CategoryController extends Controller
     {
         $id = (int)$id;
         $data = $this->categoryService->getById($id);
-        $parentCategory = $this->categoryService->getParent();
-        return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
+        $parentCategories = $this->categoryService->getParent();
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'parentCategories'));
     }
 
     public function update(CategoryRequest $request, $id)
@@ -86,21 +91,18 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
+        $id = (int)$id;
         $data = $this->categoryService->getById($id);
-
         $data->delete();
         return redirect()->route('admin.categories.index');
     }
     public function deleteMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
-
         if (empty($categoryIds)) {
             return redirect()->route('admin.categories.index')->with('error', 'No categories selected for deletion.');
         }
-
         Category::destroy($categoryIds);
-
         return redirect()->route('admin.categories.index')->with('success', 'Selected categories deleted successfully.');
     }
     public function trashed()
@@ -109,14 +111,12 @@ class CategoryController extends Controller
         $trashedCategories = Category::onlyTrashed()
             ->orderBy('deleted_at', 'desc') // Sắp xếp theo trường deleted_at giảm dần
             ->paginate(5);
-
         return view('admin.categories.trashed', compact('trashedCategories'));
     }
     public function restore($id)
     {
         $category = Category::onlyTrashed()->findOrFail($id);
         $category->restore();
-
         return redirect()->route('admin.categories.trashed')->with('success', 'Category restored successfully.');
     }
 
@@ -124,42 +124,35 @@ class CategoryController extends Controller
     {
         $category = Category::onlyTrashed()->findOrFail($id);
         $category->forceDelete();
-
         return redirect()->route('admin.categories.trashed')->with('success', 'Category permanently deleted.');
     }
 
     public function searchTrashed(Request $request)
     {
         $search = $request->input('search'); // Lấy từ khóa tìm kiếm
-        dd($search);
         $trashedCategories = Category::onlyTrashed()
             ->where('name', 'like', "%{$search}%") // Tìm kiếm theo tên
             ->paginate(30); // Phân trang kết quả
-
         return view('admin.categories.trashed', compact('trashedCategories', 'search'));
     }
 
     public function restoreMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
-
         if (empty($categoryIds)) {
             return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for restoration.');
         }
 
         Category::onlyTrashed()->whereIn('id', $categoryIds)->restore();
-
         return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories restored successfully.');
     }
 
     public function hardDeleteMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
-
         if (empty($categoryIds)) {
             return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for deletion.');
         }
-
         // Xóa cứng các danh mục đã chọn
         Category::onlyTrashed()->whereIn('id', $categoryIds)->forceDelete();
         return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories deleted permanently.');
@@ -176,5 +169,15 @@ class CategoryController extends Controller
         $category->save();
 
         return response()->json(['success' => true]);
+    }
+    public function getCategoriesForMenu()
+    {
+        // Lấy tất cả danh mục cha
+        $parentCategories = $this->categoryService->getParent();
+        // Lấy danh mục con cho từng danh mục cha
+        foreach ($parentCategories as $parent) {
+            $parent->children = $this->categoryService->getChildCategories($parent->id);
+        }
+        return $parentCategories; // Trả về danh mục cha với danh mục con
     }
 }

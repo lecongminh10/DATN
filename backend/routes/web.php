@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Client\ProductController as ClientProductController ;
+use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
@@ -131,16 +132,13 @@ Route::group([
         Route::get('/',                                    [CategoryController::class, 'index'])->name('categories.index');
         Route::get('create',                               [CategoryController::class, 'create'])->name('categories.create');
         Route::post('/',                                   [CategoryController::class, 'store'])->name('categories.store');
-        // Route::get('/{category}',                       [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/categories/{category}',               [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/{category}',                          [CategoryController::class, 'edit'])->name('categories.edit');
         Route::put('/{category}',                          [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/{category}',                       [CategoryController::class, 'destroy'])->name('categories.destroy');
         Route::delete('/categories/delete-multiple',       [CategoryController::class, 'deleteMultiple'])->name('categories.delete-multiple');
-        // Route::delete('/{category}/hard-delete',        [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
         Route::patch('/categories/{id}/restore',           [CategoryController::class, 'restore'])->name('categories.restore');
         Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
-
         Route::post('/update-category-parent',            [CategoryController::class, 'updateParent']);
     });
     Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
@@ -220,3 +218,8 @@ Route::prefix('/')->group(function () {
 });
 
 Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
+Route::get('/home', [ClientCategoryController::class, 'index'])->name('home');
+
+Route::get('/', function () {
+    return view('admin.dashboard');
+});
