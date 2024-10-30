@@ -7,10 +7,13 @@
             <div class="card" id="tasksList">
                 <div class="card-header border-0">
                     <div class="d-flex align-items-center">
-                        <h5 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h5>
+                        <h5 class="card-title mb-0 flex-grow-1">Danh sách cổng thanh toán</h5>
                         <div class="flex-shrink-0">
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="{{ route('admin.users.add') }}">
+                                <div class="">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm ...">
+                                </div>
+                                <a href="{{ route('admin.paymentgateways.add') }}">
                                     <button class="btn btn-danger add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
                                         <i class="ri-add-line align-bottom me-1"></i>Thêm mới
                                     </button>
@@ -21,10 +24,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Thêm ô tìm kiếm -->
-                    <div class="mt-3">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm người dùng...">
-                    </div>
+                    
                 </div>
 
                 <div class="card-body">
@@ -38,17 +38,14 @@
                                         </div>
                                     </th>
                                     <th class="sort" data-sort="id">ID</th>
-                                    <th class="sort" data-sort="permission">Quyền</th>
-                                    <th class="sort" data-sort="username">Tên</th>
-                                    <th class="sort" data-sort="email">Email</th>
-                                    <th class="sort" data-sort="status">Status</th>
-                                    <th class="sort" data-sort="gender">Giới Tính</th>
-                                    <th class="sort" data-sort="date_of_birth">Ngày Sinh</th>
-                                    <th class="sort" data-sort="phone_number">Số Điện Thoại</th>
+                                    <th class="sort" data-sort="name">Tên</th>
+                                    <th class="sort" data-sort="api_key">Khóa API</th>
+                                    <th class="sort" data-sort="secret_key">Khóa bí mật</th>
+                                    <th class="sort" data-sort="gateway_type">Loại cổng thanh toán</th>
                                 </tr>
                             </thead>
                             <tbody class="list form-check-all" id="userTableBody">
-                                @foreach ($user as $key => $value)
+                                @foreach ($paymentGateway as $key => $value)
                                     <tr>
                                         <th scope="row">
                                             <div class="form-check">
@@ -56,31 +53,27 @@
                                             </div>
                                         </th>
                                         <td class="id"><a href="apps-tasks-details.html" class="fw-medium link-primary">{{ $value->id }}</a></td>
-                                        <td class="project_name">
-                                            @foreach ($value->permissionsValues as $permission)
-                                                <span>{{ $permission->value }}</span>
-                                            @endforeach 
-                                        </td>
+                                        <td class="project_name">{{ $value->name}}</td>
                                         <td>
                                             <div class="d-flex">
-                                                <div class="flex-grow-1 tasks_name">{{ $value->username }}</div>
+                                                <div class="flex-grow-1 tasks_name">{{ $value->api_key}}</div>
                                                 <div class="flex-shrink-0 ms-4">
                                                     <ul class="list-inline tasks-list-menu mb-0">
                                                         <li class="list-inline-item">
-                                                            <a href="{{route('admin.users.show', $value->id)}}">
+                                                            <a href="{{route('admin.paymentgateways.show', $value->id)}}">
                                                                 <i class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                                             </a>
                                                         </li>
                                                         <li class="list-inline-item">
-                                                            <a href="{{route('admin.users.edit', $value->id)}}">
+                                                            <a href="{{route('admin.paymentgateways.edit', $value->id)}}">
                                                                 <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                             </a>
                                                         </li>
                                                         <li class="list-inline-item">
-                                                            <button class="btn btn-link text-danger p-0" title="Xóa" onclick="confirmDelete('{{ $value->id }}', '{{ $value->username }}')">
+                                                            <button class="btn btn-link text-danger p-0" title="Xóa" onclick="confirmDelete('{{ $value->id }}', '{{ $value->name}}')">
                                                                 <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
                                                             </button>
-                                                            <form id="deleteForm-{{ $value->id }}" action="{{ route('admin.users.delete', $value->id) }}" method="POST" style="display:none;">
+                                                            <form id="deleteForm-{{ $value->id }}" action="{{ route('admin.paymentgateways.delete', $value->id) }}" method="POST" style="display:none;">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <input type="hidden" name="forceDelete" id="forceDeleteInput-{{ $value->id }}" value="false">
@@ -90,13 +83,8 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="client_name">{{ $value->email }}</td>
-                                        <td class="client_name">{{ $value->status }}</td>
-                                        <td class="assignedto">{{ $value->gender }}</td>
-                                        <td class="due_date">{{ $value->date_of_birth }}</td>
-                                        <td class="status">
-                                            <span class="badge bg-secondary-subtle text-secondary text-uppercase">{{ $value->phone_number }}</span>
-                                        </td>
+                                        <td class="client_name">{{ $value->secret_key }}</td>
+                                        <td class="client_name">{{ $value->gateway_type}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -129,8 +117,8 @@
                         <div class="modal-body p-5 text-center">
                             <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
                             <div class="mt-4 text-center">
-                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?</h4>
-                                <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
+                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa thanh toán này?</h4>
+                                <p class="text-muted fs-14 mb-4" id="modalName"></p>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
                                     <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
@@ -146,7 +134,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -178,19 +165,19 @@
                     .map(checkbox => checkbox.value);
 
                 if (selectedIds.length === 0) {
-                    alert('Vui lòng chọn ít nhất một người dùng để xóa.');
+                    alert('Vui lòng chọn ít nhất một cổng thanh toán để xóa.');
                     return;
                 }
 
-                document.getElementById('modalUsername').innerText = `Người dùng: ${selectedIds.length} người`;
-                document.getElementById('modalTitle').innerText = 'Bạn có chắc chắn muốn xóa những người dùng này?';
+                document.getElementById('modalName').innerText = `tên: ${selectedIds.length}`;
+                document.getElementById('modalTitle').innerText = 'Bạn có chắc chắn muốn xóa những cổng thanh toán này?';
 
                 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
                 const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
                 confirmDeleteBtn.onclick = function() {
                     const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
-                    fetch('{{ route('admin.users.deleteMultiple') }}', {
+                    fetch('{{ route('admin.paymentgateways.deleteMultiple') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -206,7 +193,7 @@
                         if (data.success) {
                             location.reload();
                         } else {
-                            alert('Có lỗi xảy ra khi xóa người dùng.');
+                            alert('Có lỗi xảy ra khi xóa cổng thanh toán.');
                         }
                     })
                     .catch(error => {
@@ -224,11 +211,11 @@
                 let noResults = true;
 
                 rows.forEach(row => {
-                    const username = row.querySelector('.tasks_name').innerText.toLowerCase();
-                    const email = row.querySelector('.client_name').innerText.toLowerCase();
-                    const phoneNumber = row.querySelector('.status').innerText.toLowerCase();
+                    const name = row.querySelector('.tasks_name').innerText.toLowerCase();
+                    const api_key = row.querySelector('.client_name').innerText.toLowerCase();
+                    const secret_key = row.querySelector('.status').innerText.toLowerCase();
                     
-                    if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(filter)) {
+                    if (name.includes(filter) || api_key.includes(filter) || secret_key.includes(filter)) {
                         row.style.display = '';
                         noResults = false;
                     } else {
@@ -241,16 +228,16 @@
             });
         });
 
-        function confirmDelete(userId, username) {
-            document.getElementById('modalUsername').innerText = `Người dùng: ${username}`;
+        function confirmDelete(paymentgatewayId, name ) {
+            document.getElementById('modalName').innerText = `tên: ${name}`;
             const deleteBtn = document.getElementById('confirmDeleteBtn');
             const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
             deleteBtn.onclick = function() {
-                const forceDeleteInput = document.getElementById(`forceDeleteInput-${userId}`);
+                const forceDeleteInput = document.getElementById(`forceDeleteInput-${paymentgatewayId}`);
                 forceDeleteInput.value = forceDeleteCheckbox.checked ? 'true' : 'false';
 
-                document.getElementById(`deleteForm-${userId}`).submit();
+                document.getElementById(`deleteForm-${paymentgatewayId}`).submit();
             };
 
             var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
