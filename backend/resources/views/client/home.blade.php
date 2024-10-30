@@ -122,33 +122,34 @@
                                 @endforeach
                                     </a>
                                 <div class="label-group">
-                                    {{-- @if (isset($item->product) && $item->product->is_hot_deal == 0)
-                                        <div class="product-label label-hot">HOT</div>
-                                    @endif --}}
-                                    <div class="product-label label-hot">HOT</div>
+                                    @if ($item->is_hot_deal == 1)
+                                        <div class="product-label label-hot">HOT</div> 
+                                    @endif
+                                    {{-- <div class="product-label label-hot">HOT</div> --}}
 
                                     @php
                                         // Xác định giá sản phẩm
                                         if (isset($item->productVariant)) {
-                                            // Nếu có product_variant, lấy giá từ biến thể
+                                            // Nếu có product_variant, lấy giá từ biến thể  
                                             $price = $item->productVariant->price_modifier;
                                         } else {
                                             // Nếu không có product_variant, kiểm tra giá sale của sản phẩm
-                                            $price = $item->price_sale < $item->price_regular && $item->price_sale == null
+                                            $price = ($item->price_sale !== null && $item->price_sale < $item->price_regular)
                                                 ? $item->price_sale // Lấy giá sale nếu có
                                                 : $item->price_regular; // Nếu không có giá sale, lấy giá thường
                                         }
 
-                                        // Tính toán phần trăm giảm giá nếu có giá sale
-                                        if ($item->price_sale < $item->price_regular && $item->price_sale > 0) {
+                                        // Tính toán phần trăm giảm giá nếu có giá sale hợp lệ
+                                        $discountPercentage = null;
+                                        if ($item->price_sale !== null && $item->price_sale < $item->price_regular) {
                                             $discountPercentage = round(
                                                 (($item->price_regular - $item->price_sale) / $item->price_regular) * 100
                                             );
                                         }
                                     @endphp
 
-                                    @if (isset($discountPercentage))
-                                        <div class="product-label label-sale"> - {{ $discountPercentage }}%</div>
+                                    @if ($discountPercentage !== null)
+                                        <div class="product-label label-sale">- {{ $discountPercentage }}%</div>
                                     @endif
 
                                     {{-- <div class="product-label label-sale"></div> --}}
@@ -158,7 +159,7 @@
                                         class="btn-icon btn-add-cart product-type-simple"><i
                                             class="icon-shopping-cart"></i></a>
                                 </div>
-                                {{-- <a href="{{route('client.showProduct', $item->id)}}" class="btn-quickview" title="Quick View">Chi tiết</a> --}}
+                                <a href="{{route('client.showProduct', $item->id)}}"  title="Quick View"><button class="btn-quickview" style="cursor: pointer;">Chi tiết</button></a>
                             </figure>
                             <div class="product-details">
                                 <div class="category-wrap">

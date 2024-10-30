@@ -533,8 +533,8 @@ class OrderController extends Controller
 
         // Lấy giá của sản phẩm (hoặc giá của biến thể nếu có)
         $price = $productVariantId 
-            ? ProductVariant::find($productVariantId)->price 
-            : Product::find($productId)->price;
+            ? ProductVariant::find($productVariantId)->price_modifier 
+            : (Product::find($productId)->price_sale ?? Product::find($productId)->price_regular);
 
         if ($cartItem) {
             // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng và tổng giá

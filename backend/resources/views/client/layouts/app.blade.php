@@ -251,7 +251,7 @@
         const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
 
         // Gửi yêu cầu xóa sản phẩm
-        fetch(`remove/${cartId}`, {
+        fetch(`/remove/${cartId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

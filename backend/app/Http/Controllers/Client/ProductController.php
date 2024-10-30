@@ -49,22 +49,24 @@ class ProductController extends Controller
     public function showProduct(int $id)
     {
         $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries']);
-        // dd($data);
+        // Lấy biến thể sản phẩm
         $variants = $this->productVariantService->getProductVariant($id);
-
+        // dd($variants);
+        
         $userId = auth()->id();
         $carts  = collect();
         if($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $cartCount = $carts->sum('quantity');
-
+        
+        // Lấy các thuộc tính và giá trị
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
             ->select('id', 'attribute_name')
             ->get();
-        return view('client.product')->with([
+        return view('client.product-detail')->with([
             'data'           => $data,
-            'attribute'      => $attributesWithValues,
+            'attributes'     => $attributesWithValues,
             'variants'       => $variants,
             'carts'          => $carts,
             'cartCount'      => $cartCount

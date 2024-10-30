@@ -24,15 +24,20 @@
         }
 
         .toast-message {
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background-color: #28a745; /* Màu xanh lá cây */
-        color: white;
-        padding: 15px;
-        border-radius: 5px;
-        z-index: 1000;
-        transition: opacity 0.5s ease, transform 0.5s ease;
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background-color: #28a745; /* Màu xanh lá cây */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .product-image img{
+            width: 100px;
+            height: 80px;
         }
     </style>
 @endsection
@@ -228,15 +233,16 @@
                         <tr class="product-row">
                             <td>
                                 <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        @php
+                                    <a href="{{ route('client.showProduct', $value->product->id) }}" class="product-image">
+                                        {{-- @php
                                             if ($value->productVariant && !empty($value->productVariant->variant_image)) {
                                                 $url = $value->productVariant->variant_image; 
                                             } else {
                                                 $mainImage = $value->product->getMainImage(); 
                                                 $url = $mainImage ? $mainImage->image_gallery : 'default-image-path.jpg';
                                             }
-                                        @endphp
+                                        @endphp --}}
+                                        <img src="{{Storage::url($value->product->getMainImage()->image_gallery)}}" alt="{{ $value->product->getMainImage()->image_gallery }}" />
                                     </a>
 
                                     <a href="javascript:void(0);" class="btn-remove icon-cancel" 
@@ -269,8 +275,8 @@
                                 
                             </td>
                             <td class="">
-                                <a href="{{ route('client.showProduct', $value->product->id) }}" class="btn btn-quickview mt-1 mt-md-0"
-                                    title="">Xem</a>
+                                <a href="{{ route('client.showProduct', $value->product->id) }}" 
+                                    title=""><button class="btn btn-quickview mt-1 mt-md-0">Xem</button></a>
                                 <button 
                                     class="btn btn-dark btn-add-cart product-type-simple btn-shop" 
                                     data-product-id="{{ $value->product->id }}" 

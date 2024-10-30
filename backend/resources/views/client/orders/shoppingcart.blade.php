@@ -2,6 +2,12 @@
 
 @section('style_css')
 
+<style>
+    .product-image img{
+        width: 100%;
+        height: 80px;
+    }
+</style>
 @endsection
 
 
@@ -217,7 +223,7 @@
                                     <tr class="product-row">
                                         <td>
                                             <figure class="product-image-container">
-                                                <a href="#" class="product-image">
+                                                <a href="{{ route('client.showProduct', $value->product->id) }}" class="product-image">
                                                     @php
                                                         // $variant= $value->productVariant;
                                                         // if($variant->variant_image!==null){
@@ -225,12 +231,14 @@
                                                         // }
                                                         // $url="https://phuongnamtech.vn/wp-content/uploads/2024/09/anh-gai-xinh-539xokV.jpg"
                                                     @endphp
-                                                    <img src="" alt="{{ $value->product->name }}">
+                                                    {{-- <img src="" alt="{{ $value->product->name }}"> --}}
                                                     {{-- <img src="{{Storage::url($url)}}" alt="{{ $value->product->name }}"> --}}
-
+                                                    {{-- <a href="{{ route('client.showProduct', $value->product->id ) }}" class="product-image"> --}}
+                                                        <img src="{{Storage::url($value->product->getMainImage()->image_gallery)}}" width="90" height="90" alt="{{ $value->product->getMainImage()->image_gallery }}" />
+                                                    {{-- </a> --}}
                                                 </a>
 
-                                                <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $value->id }}" onclick="removeFromCart(this)"></a>
+                                                <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $value->id }}" onclick="removeCart(this)"></a>
                                             </figure>
                                         </td>
                                         <td class="product-col">
@@ -390,7 +398,7 @@ function updateSubtotal(inputElement) {
 }
 
 // Xóa khỏi giỏ hàng
-function removeFromCart(element) {
+function removeCart(element) {
     const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
 
     // Gửi yêu cầu xóa sản phẩm
