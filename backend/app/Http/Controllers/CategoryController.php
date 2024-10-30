@@ -23,12 +23,34 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $parentId = $request->input('parent_id');
+ 
+        $data = $this->categoryService->getCategoriesWithChildren($search, $parentId , $perPage = 5);
 
-        // Gọi phương thức getParentOrChild và thực hiện paginate trên kết quả
-        $data = $this->categoryService->getParentOrChild($search)->paginate(5); // Thay đổi số lượng mục trên mỗi trang nếu cần
-
-        return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'search'));
+        $categories = $this->buildCategoryTree($data);
+        $parentCategories = $this->categoryService->getParent();
+    
+        return view(self::PATH_VIEW . __FUNCTION__, compact('categories', 'search', 'parentCategories', 'parentId'));
     }
+
+
+   private function buildCategoryTree($categories, $parentId = null)
+    {
+        $branch = [];
+
+        foreach ($categories as $category) {
+            if ($category->parent_id == $parentId) {
+                $children = $this->buildCategoryTree($categories, $category->id);
+                if ($children) {
+                    $category->children = $children;
+                }
+                $branch[] = $category;
+            }
+        }
+
+        return $branch;
+    }
+
 
     public function create()
     {
