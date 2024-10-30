@@ -12,8 +12,6 @@
     
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('theme/assets/images/favicon.ico')}}">
-
-    @yield('libray_css')
     <!-- Layout config Js -->
     <script src="{{ asset('theme/assets/js/layout.js')}}"></script>
     <!-- Bootstrap Css -->

@@ -15,6 +15,7 @@ use App\Services\TagService;
 use App\Services\AttributeService;
 use App\Services\AttributeValueService;
 use App\Models\Attribute;
+use App\Services\CouponService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ class ProductController extends Controller
     protected $attributeValueService;
     protected $categoryService;
 
+    protected $couponService;
     // const PATH_UPLOAD = 'public/products'; => sau mở lại
 
     public function __construct(
@@ -41,7 +43,7 @@ class ProductController extends Controller
         CategoryService $categoryService,
         AttributeService $attributeService,
         AttributeValueService $attributeValueService,
-
+        CouponService $couponService,
 
     ) {
         $this->productService = $productService;
@@ -51,6 +53,7 @@ class ProductController extends Controller
         $this->categoryService = $categoryService;
         $this->attributeService = $attributeService;
         $this->attributeValueService = $attributeValueService;
+        $this->couponService = $couponService;
     }
     /**
      * Display a listing of the resource.
@@ -69,7 +72,7 @@ class ProductController extends Controller
     public function showProduct(int $id)
     {
         $data = $this->productService->getById($id)->load(['category','variants', 'tags', 'galleries']);
-        
+ 
         $variants = $this->productVariantService->getAttributeByProduct($id);
 
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
@@ -87,6 +90,8 @@ class ProductController extends Controller
     {
         Artisan::call('generate:attributes-json');
         Artisan::call('generate:tags-json');
+        Artisan::call('generate:coupons-json');
+        session()->forget('product_attributes');
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $tags = $this->tagService->getAll();
         $attribute = $this->attributeService->getAll();
@@ -102,9 +107,8 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        
         $dataProduct = $request->validated();
-        unset($dataProduct['product_variants'], $dataProduct['product_galaries']);
+        unset($dataProduct['product_variants'], $dataProduct['product_galaries'] , $dataProduct['coupon'] , $dataProduct['addcoupon']);
 
         $dataProduct['is_active'] ??= 0;
         $dataProduct['is_hot_deal'] ??= 0;
@@ -121,7 +125,6 @@ class ProductController extends Controller
             foreach ($request->product_variants as $item) {
                 $dataProductVariants = [
                     'product_id' => $product->id,
-                    'product_attribute_id' => $item['product_attribute_id'],
                     'price_modifier' => $item['price_modifier'],
                     'original_price' =>$item['original_price'],
                     'stock' => $item['stock'] ?? 0,
@@ -134,7 +137,21 @@ class ProductController extends Controller
                     $imagePath = $item['variant_image']->storeAs('public/products/variant_images', $imageName);
                     $dataProductVariants['variant_image'] = str_replace('public/', '', $imagePath);
                 }
-                $this->productVariantService->saveOrUpdate($dataProductVariants);
+                $productVariant=$this->productVariantService->saveOrUpdate($dataProductVariants);
+                $attributes = explode(',', $item['attributes_values']);
+                $attributeValueIds = [];
+                if(count($attributes)>0){
+                    foreach($attributes as $value){
+                      $id = $this->attributeValueService->getIdbyAttribute($value)->id;
+                        if ($id) { 
+                            $attributeValueIds[] = $id; 
+                        }
+                    }
+                }
+                if (!empty($attributeValueIds)) {
+                    $productVariant->attributeValues()->attach($attributeValueIds);
+                }
+
             }
         }
 
@@ -158,6 +175,42 @@ class ProductController extends Controller
                 $product->tags()->attach($tag_id);
             }
         }
+        if($request->has('coupon')){
+            $coupons = $request->coupon;
+            foreach($coupons as $coupon){
+                if($coupon>0){
+                    foreach($coupon  as $value){
+                        $setCoupon= $this->couponService->findByCode($value);
+                        if($setCoupon){
+                            $product->coupons()->attach($setCoupon->id);
+                        }
+                    }
+                }
+            }
+        }
+        if($request->has('addcoupon')){
+            $coupon = $request->addcoupon;
+            $couponData = [
+                'applies_to'          => $coupon['applies_to'],
+                'code'                => $coupon['code'],
+                'description'         => $coupon['description'] ?? null,
+                'discount_type'       => $coupon['discount_type'],
+                'discount_value'      => $coupon['discount_value'],
+                'max_discount_amount' => $coupon['max_discount_amount'] ?? null,
+                'min_order_value'     => $coupon['min_order_value'] ?? null,
+                'start_date'          => $coupon['start_date'] ?? null,
+                'end_date'            => $coupon['end_date'] ?? null,
+                'usage_limit'         => $coupon['usage_limit'] ?? null,
+                'is_active'           => $coupon['is_active'] ? 1 : 0,
+                'is_stackable'        => $coupon['is_stackable'] ? 1 : 0,
+                'eligible_users_only' => $coupon['eligible_users_only'] ? 1 : 0,
+                'created_by'          => auth()->id() ?? 1, // Lấy ID của người dùng hiện tại
+            ];
+            $setCoupon = $this->couponService->saveOrUpdate($couponData);
+            if($setCoupon){
+                $product->coupons()->attach($setCoupon->id);
+            }
+        }
         return redirect()->route('admin.products.listProduct')->with(['message'=>'Thêm sản phẩm thành công ']);
     }
 
@@ -172,6 +225,7 @@ class ProductController extends Controller
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $selectedTags = $product->tags->pluck('id')->toArray();
         $variants = $this->productVariantService->getProductVariant($id);
+        session()->forget('product_attributes');
         return view('admin.products.update-product', compact('product','categories','selectedTags','variants'));
     }
     
@@ -179,7 +233,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $product = $this->productService->getById($id);
         if (!$product) {
@@ -202,45 +256,77 @@ class ProductController extends Controller
 
         $product = $this->productService->saveOrUpdate($dataProduct, $product->id);
         if ($request->has('product_variants')) {
-            $currentVariant = $this->productVariantService->getVariantByProduct($id);
+            $currentVariants = $this->productVariantService->getVariantByProduct($id); 
             $submittedVariantIds = [];
-        
             foreach ($request->product_variants as $item) {
-                $dataProductVariant = [
-                    'product_id' => $product->id,
-                    'product_attribute_id' => $item['product_attribute_id'],
+                $dataProductVariants = [
+                    'product_id' => $id,
                     'price_modifier' => $item['price_modifier'],
                     'original_price' => $item['original_price'],
                     'stock' => $item['stock'] ?? 0,
                     'status' => $item['status'] ?? '',
                     'sku' => $item['sku'] ?? substr(bin2hex(random_bytes(5)), 0, 10),
                 ];
-
                 if (isset($item['variant_image']) && $item['variant_image'] instanceof UploadedFile) {
                     $extension = $item['variant_image']->getClientOriginalExtension();
                     $imageName = time() . '_' . uniqid() . '.' . $extension;
                     $imagePath = $item['variant_image']->storeAs('public/products/variant_images', $imageName);
-                    $dataProductVariant['variant_image'] = str_replace('public/', '', $imagePath);
+                    $dataProductVariants['variant_image'] = str_replace('public/', '', $imagePath);
                 }
+        
                 if (isset($item['id'])) {
                     $submittedVariantIds[] = $item['id'];
-                    $this->productVariantService->saveOrUpdate($dataProductVariant, $item['id']);
-                } else {
-                    $this->productVariantService->saveOrUpdate($dataProductVariant);
+                    $productVariant = $this->productVariantService->saveOrUpdate($dataProductVariants, $item['id']);
+                } 
+                else {
+                    $existingVariant = $this->productVariantService->getVariantByAttributes($item['attributes_values'], $product->id);
+                    $existingVariantData=[];
+                    if ($existingVariant) {
+                        $existingVariantData['stock'] = $existingVariant->stock + $item['stock'] ?? 0;
+                        $productVariant = $this->productVariantService->saveOrUpdate($existingVariantData, $existingVariant->id);
+                    } else {
+                        $productVariant = $this->productVariantService->saveOrUpdate($dataProductVariants);
+                    }
+                }
+
+                $attributes = explode(',', $item['attributes_values']);
+                $attributeValueIds = [];
+                if (!empty($attributes)) {
+                    foreach ($attributes as $value) {
+                        $value = trim($value);
+                        $attributeValue = $this->attributeValueService->getIdByAttribute($value);
+                        if ($attributeValue) {
+                            $attributeValueIds[] = $attributeValue->id;
+                        }
+                    }
+                }   
+                if (!empty($attributeValueIds)) {
+                    $productVariant->attributeValues()->sync($attributeValueIds);
                 }
             }
-            foreach ($currentVariant as $variant) {
+
+            foreach ($currentVariants as $variant) {
                 if (!in_array($variant->id, $submittedVariantIds)) {
                     $variantImagePath = public_path('storage/' . $variant->variant_image);
-                    if (file_exists($variantImagePath)) {
-                        unlink($variantImagePath); 
+                    if (file_exists($variantImagePath) && ($variant->variant_image)) {
+                        unlink($variantImagePath);
                     }
                     $variant->forceDelete();
                 }
             }
         }
-        
-
+        if(empty($request->has('product_variants'))){
+            $currentVariants = $this->productVariantService->getVariantByProduct($id); 
+            if($currentVariants){
+                foreach($currentVariants as $variant){
+                    $variantImagePath = public_path('storage/' . $variant->variant_image);
+                    if (file_exists($variantImagePath) && ($variant->variant_image)) {
+                        unlink($variantImagePath);
+                    }
+                    $variant->forceDelete();
+                }
+            }
+        }
         if ($request->has('product_galaries')) {
             $currentGalary = $this->productGalleryService->getGalaryByProduct($id);
             $submittedGalleryIds = [];
@@ -282,9 +368,6 @@ class ProductController extends Controller
 
         return back();
     }
-    /**
-     * Remove the specified resource from storage.
-     */
 
     public function destroy(int $id)
     {
@@ -295,12 +378,26 @@ class ProductController extends Controller
         }
         $data->delete();
         if ($data->trashed()) {
-            return response()->json(['message' => 'Product soft deleted successfully'], 200);
+            return back()->with(['message'=>'Xóa thành công']);
         }
 
         return response()->json(['message' => 'Product permanently deleted and cover file removed'], 200);
     }
 
+    public function restore(int $id)
+    {
+        $product = Product::withTrashed()->find($id);
+        
+        if ($product) {
+            $product->restore();
+            
+            return back()->with(['message'=>'Khôi phục sản phẩm thành công']);
+        }
+           
+        return back()->with(['message'=>'Khôi phục sản phẩm thất bại']);
+        
+    }
+    
     public function deleteMuitpalt(Request $request)
     {
         // Xác thực yêu cầu
@@ -351,21 +448,19 @@ class ProductController extends Controller
         $data = $this->productService->getIdWithTrashed($id);
 
         if (!$data) {
-            return response()->json(['message' => 'Product not found.'], 404);
+            return back()->with(['message'=>'Lỗi khi xóa sản phẩm']);
         }
-        // Xóa cứng category
         $data->forceDelete();
-
-        // Nếu cần, có thể xóa hình ảnh liên quan
-        // $currentImage = $data->image;
-        // $filename = basename($currentImage);
-        // if ($currentImage && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
-        //     Storage::delete(self::PATH_UPLOAD . '/' . $filename);
-        // }
-
-        return response()->json(['message' => 'Delete with success'], 200);
+        return back()->with(['message'=>'Xóa sản phẩm thành công']);
     }
 
+    public function showSotfDelete(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = $request->input('perPage', 10);
+        $data = $this->productService->show_soft_delete($search , $perPage);
+        return view('admin.products.deleted', compact('data'));
+    }
     public function getVariants(Request $request ,int $id)
     {
         $perPage = $request->get('per_page', 10); // Số mục mỗi trang
@@ -375,5 +470,4 @@ class ProductController extends Controller
 
         return response()->json($variants);
     }
-
 }

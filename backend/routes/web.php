@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\CarrierController;
@@ -10,6 +9,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Client\ProductController as ClientProductController ;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
@@ -22,11 +22,12 @@ use Illuminate\Support\Facades\Mail;
 
 Route::group([
     'prefix' => 'admin',
-    'as' => 'admin.'
+    'as' => 'admin.',
+    'middleware' => ['auth', 'isAdmin']
 ], function () {
     Route::get('dashboard', function () {
         return view('admin/dashboard');
-    });
+    })->name('dashboard');
     Route::group([
         'prefix' => 'products',
         'as' => 'products.',
@@ -41,6 +42,11 @@ Route::group([
         Route::get('/{id}/variants', [ProductController::class, 'getVariants'])->name('admin.products.getVariants');
 
         // Route::get('/deleteProduct/{id}', [ProductController::class, 'destroy'])->name('deleteProduct');
+        Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/listSotfDeleted', [ProductController::class, 'showSotfDelete'])->name('deleted');
+        Route::put('/restore/{id}', [ProductController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/hard-delete', [ProductController::class, 'hardDelete'])->name('hardDelete');
+        Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('deleteMultiple');
     });
     //Attributes
     Route::prefix('attributes')->group(function () {
@@ -144,6 +150,7 @@ Route::group([
     Route::post('/categories/trashed/restore-multiple',   [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
     Route::post('/categories/trashed/hard-delete-multiple', [CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
 
+    //Users
     Route::prefix('users')->group(function () {
         Route::get('/',                                     [UserController::class, 'index'])->name('users.index');
         Route::get('/add',                                  [UserController::class, 'add'])->name('users.add');
@@ -151,8 +158,10 @@ Route::group([
         Route::get('show/{id}',                             [UserController::class, 'show'])->name('users.show');
         Route::get('/edit/{id}',                            [UserController::class, 'edit'])->name('users.edit');
         Route::put('update/{id}',                           [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{id}/delete',                 [UserController::class, 'destroy'])->name('users.delete');
-        Route::post('/users/deleteMultiple',                [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+        Route::delete('/{id}/delete',                       [UserController::class, 'destroy'])->name('users.delete');
+        Route::get('/deleteMultiple',                       [UserController::class, 'listdeleteMultiple'])->name('users.listdeleteMultiple');
+        Route::post('/deleteMultiple',                      [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
+        Route::post('/manage/{id}',                         [UserController::class, 'manage'])->name('users.manage');
     });
 
     //payment
@@ -178,11 +187,33 @@ Route::group([
         Route::delete('/users/{id}/delete',                 [PaymentGatewayController::class, 'destroy'])->name('paymentgateways.delete');
         Route::post('/users/deleteMultiple',                [PaymentGatewayController::class, 'deleteMultiple'])->name('paymentgateways.deleteMultiple');
     });
+
+    //Permissions
+    Route::prefix('/permissions')->name('permissions.')->group(function () {
+        Route::get('/',                                      [PermissionController::class, 'index'])->name('index');
+        Route::get('/create',                                [PermissionController::class, 'create'])->name('create');
+        Route::get('/{id}',                                  [PermissionController::class, 'show'])->name('show');
+        Route::post('/',                                     [PermissionController::class, 'store'])->name('store');
+        Route::get('/{id}/edit',                             [PermissionController::class, 'edit'])->name('edit');
+        Route::put('/{id}',                                  [PermissionController::class, 'update'])->name('update');
+        Route::delete('/{id}',                               [PermissionController::class, 'destroyPermission'])->name('destroyPermission');
+        Route::delete('/{id}/hard',                          [PermissionController::class, 'destroyPermissionHard'])->name('destroyPermissionHard');
+
+        Route::delete('/{id}/value',                         [PermissionController::class, 'destroyPermissionValue'])->name('destroyPermissionValue');
+        Route::delete('/{id}/value/hard',                    [PermissionController::class, 'destroyPermissionValueHard'])->name('destroyPermissionValueHard');
+
+        Route::post('/destroy-multiple',                     [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
+        Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
+    });
+});
+
+Route::get('/client', function () {
+    return view('client/home');
 });
 
 Route::prefix('auth')->group(function () {
     Route::get('admin/login',                             [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
-    Route::get('/login',                                  [LoginController::class, 'showFormLogin'])->name('client.login');
+    Route::get('login',                                  [LoginController::class, 'showFormLogin'])->name('client.login');
     Route::post('login',                                  [LoginController::class, 'login'])->name('auth.login');
     Route::get('logout',                                  [LoginController::class, 'logout'])->name('auth.logout');
     Route::get('register',                                [RegisterController::class, 'showFormRegister'])->name('show.register');
@@ -212,8 +243,7 @@ Route::prefix('/')->group(function () {
     Route::get('', function () {
         return view('client.home');
     })->name('client');
-
-    
+ 
 });
 
 Route::prefix('client')->group(function () {
@@ -229,5 +259,4 @@ Route::prefix('client')->group(function () {
     Route::get('showLocationOrder/{id}',                                   [UserController::class, 'showLocationOrder'])->name('users.showLocationOrder');
 });
 
-
-
+Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
