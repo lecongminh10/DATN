@@ -343,26 +343,35 @@
                                     </div>
                                 </td>
                                 <?php 
-                                $price = 0;
-                                $subTotal = 0;
-                                
-                                // Check if the product exists and if there's no product variant
-                                if ($value->product && is_null($value->productVariant)) {
-                                    $price = $value->product->price_regular; // Use regular price
-                                    $subTotal = $price * $value->quantity; 
-                                }
-                                // Check if both product and product variant exist
-                                elseif ($value->product && $value->productVariant) {
-                                    $price = $value->productVariant->price_modifier ?? $value->productVariant->original_price; // Use price modifier if exists, else original price
-                                    $subTotal = $price * $value->quantity; 
-                                } else {
-                                    $subTotal = 0; // Default to 0 if no product or variant
-                                }
-                                
-                                $totalAmount += $subTotal; // Accumulate total amount
-                                $totalQuantity += $value->quantity; // Accumulate total quantity
-                                ?>
-                                
+                                    $price = 0;
+                                    $subTotal = 0;
+                                    if ($value->product) {
+                                        if ($value->productVariant) {
+                                            // Use price modifier if it exists, otherwise use original price
+                                            if (!empty($value->productVariant->price_modifier) && $value->productVariant->price_modifier !== null) {
+                                                $price = $value->productVariant->price_modifier; // Use price modifier
+                                            } else {
+                                                $price = $value->productVariant->original_price; // Use original price
+                                            }
+                                        } else {
+                                            if(!empty($value->product->price_sale) && $value->product->price_sale!==null)
+                                            {
+                                                $price = $value->product->price_sale; 
+                                            }
+                                            else {
+                                                $price = $value->product->price_regular; 
+                                            }
+                                        }
+
+                                        $subTotal = $price * $value->quantity; 
+                                    } else {
+                                        $subTotal = 0; // Default to 0 if no product
+                                    }
+
+                                    // Accumulate total amount and quantity
+                                    $totalAmount += $subTotal; // Accumulate total amount
+                                    $totalQuantity += $value->quantity; // Accumulate total quantity
+                                    ?>                          
                                 <td class="text-right">
                                     <span class="subtotal-price">{{ number_format($subTotal, 0, ',', '.') }} đ</span>
                                 </td>
@@ -410,7 +419,7 @@
                         </div>
                     </div>
                     <div class="checkout-methods">
-                        <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Đến giỏ hàng
+                        <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Thanh toán 
                             <i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div><!-- End .cart-summary -->

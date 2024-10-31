@@ -115,16 +115,16 @@ class PayMentController extends Controller
             'longitude' => null,
         ];
         $this->orderLocationService->saveOrUpdate($dataOrderLocation);
-        
+
     }
 
     private function createOrder($data)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-        $vnp_TmnCode = "8TKOSK63"; 
-        $vnp_HashSecret = "KWVSKMORO004EISIYKM91EVS2X5GSLH0"; 
-        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        $vnp_TmnCode = env('VNP_TMN_CODE'); 
+        $vnp_HashSecret = env('VNP_HASH_SECRET');
+        $vnp_Url = env('VNP_URL');
         $vnp_Returnurl = route('vnpay.return');
 
         $startTime = date("YmdHis");

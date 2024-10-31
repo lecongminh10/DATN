@@ -123,8 +123,10 @@
                 <div class="dropdown cart-dropdown">
                     <a href="#" title="Cart" class="dropdown-toggle dropdown-arrow cart-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                         <i class="minicart-icon"></i>
-                        @if($cartCount > 0)
-                            <span class="cart-count badge-circle">{{ $cartCount }}</span> <!-- Hiển thị số sản phẩm nếu có -->
+                        @if(isset($cartCount))
+                           @if ($cartCount >0)
+                           <span class="cart-count badge-circle">{{ $cartCount }}</span> <!-- Hiển thị số sản phẩm nếu có -->
+                           @endif
                         @endif
                     </a>
 
@@ -142,45 +144,47 @@
                                     $subTotal = 0; // Khởi tạo tổng phụ
                                 @endphp
                         
-                                @foreach ($carts as $item)
-                                <div class="product">
-                                    <div class="product-details">
-                                        <h4 class="product-title">
-                                            <a href="{{ route('client.showProduct', $item->product->id ) }}">{{ $item->product->name }}</a>
-                                        </h4>
-                                        @php
-                                            
-                                            if ($item->product && is_null($item->productVariant)) {
-                                                // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
-                                                if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
-                                                    $price = $item->product->price_sale; // Lấy giá sale nếu có
-                                                } else {
-                                                    $price = $item->product->price_regular; // Nếu không có giá sale, lấy giá thường
-                                                }
-                                                $sub = $price * $item->quantity; 
-                                            } elseif ($item->product && $item->productVariant) {
-                                                // Nếu có sản phẩm và có biến thể, lấy giá biến thể
-                                                $price = $item->productVariant->price_modifier;
-                                                $sub = $price * $item->quantity; 
-                                            }
-                                            $subTotal += $sub; // Cộng dồn vào tổng phụ
-                                        @endphp
-                                        <span class="cart-product-info">
-                                            {{-- <input type="hidden" name="" value="{{ number_format($item->total_price, 0, ',', '.') }}"> --}}
-                                            <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format($sub, 0, ',', '.') }}₫
-                                        </span>
-                                    </div>
-                                    <!-- End .product-details -->
-                        
-                                    <figure class="product-image-container">
-                                        <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
-                                            <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
-                                        </a>
-                        
-                                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>
-                                    </figure>
-                                </div>
-                                @endforeach
+                               @if (isset($carts))
+                               @foreach ($carts as $item)
+                               <div class="product">
+                                   <div class="product-details">
+                                       <h4 class="product-title">
+                                           <a href="{{ route('client.showProduct', $item->product->id ) }}">{{ $item->product->name }}</a>
+                                       </h4>
+                                       @php
+                                           
+                                           if ($item->product && is_null($item->productVariant)) {
+                                               // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
+                                               if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
+                                                   $price = $item->product->price_sale; // Lấy giá sale nếu có
+                                               } else {
+                                                   $price = $item->product->price_regular; // Nếu không có giá sale, lấy giá thường
+                                               }
+                                               $sub = $price * $item->quantity; 
+                                           } elseif ($item->product && $item->productVariant) {
+                                               // Nếu có sản phẩm và có biến thể, lấy giá biến thể
+                                               $price = $item->productVariant->price_modifier;
+                                               $sub = $price * $item->quantity; 
+                                           }
+                                           $subTotal += $sub; // Cộng dồn vào tổng phụ
+                                       @endphp
+                                       <span class="cart-product-info">
+                                           {{-- <input type="hidden" name="" value="{{ number_format($item->total_price, 0, ',', '.') }}"> --}}
+                                           <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format($sub, 0, ',', '.') }}₫
+                                       </span>
+                                   </div>
+                                   <!-- End .product-details -->
+                       
+                                   <figure class="product-image-container">
+                                       <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
+                                           <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
+                                       </a>
+                       
+                                       <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>
+                                   </figure>
+                               </div>
+                               @endforeach
+                               @endif
                                 <!-- End .product -->
                             </div>
                             <!-- End .cart-product -->

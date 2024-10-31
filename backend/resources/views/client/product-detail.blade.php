@@ -463,6 +463,7 @@
                                         <li>
                                             <a href="javascript:;" 
                                             class="d-flex align-items-center justify-content-center attribute-link" 
+                                            style="min-height: 30px ; min-width:70px" 
                                             data-attribute-name="{{ $attributeName }}" 
                                             data-attribute-value="{{ $value }}">
                                                 {{ $value }}

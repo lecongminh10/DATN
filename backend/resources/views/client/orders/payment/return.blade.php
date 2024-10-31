@@ -29,9 +29,9 @@
 
 <body>
     <?php
-    $vnp_TmnCode = "8TKOSK63"; 
-    $vnp_HashSecret = "KWVSKMORO004EISIYKM91EVS2X5GSLH0"; 
-    $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+     $vnp_TmnCode = env('VNP_TMN_CODE'); 
+     $vnp_HashSecret = env('VNP_HASH_SECRET');
+     $vnp_Url = env('VNP_URL');
     $vnp_Returnurl = "http://localhost/vnpay_php/vnpay_return.php";
     $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
     $apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
@@ -166,18 +166,24 @@
                                                                 <span class="fw-medium">{{ $value->product->name }}</span>
                                                                 @php
                                                                     $variant = $value->productVariant;
-                                                                    $attributes = $variant->attributeValues;
                                                                 @endphp
-                                                                @if($attributes->isNotEmpty())
+                                                                @if ($variant) <!-- Check if $variant is not null -->
+                                                                    @php
+                                                                        $attributes = $variant->attributeValues;
+                                                                    @endphp
+                                                                    @if ($attributes->isNotEmpty())
                                                                         @foreach ($attributes as $attribute)
-                                                                        <p class="text-muted mb-0 " style=" font-size: 12px; padding-left: 10px;">
-                                                                            {{ $attribute->attribute->attribute_name }}: {{ $attribute->attribute_value }} @if (!$loop->last), @endif
-                                                                        </p>
+                                                                            <p class="text-muted mb-0 " style="font-size: 12px; padding-left: 10px;">
+                                                                                {{ $attribute->attribute->attribute_name }}: {{ $attribute->attribute_value }} @if (!$loop->last), @endif
+                                                                            </p>
                                                                         @endforeach
+                                                                    @else
+                                                                        <p class="text-muted mb-0">No attributes available</p>
+                                                                    @endif
                                                                 @else
-                                                                    <p class="text-muted mb-0">No attributes available</p>
+                                                                    <p class="text-muted mb-0">No variant available</p> <!-- Message for no variant -->
                                                                 @endif
-                                                            </td>
+                                                            </td>                                                            
                                                             @if ($variant)
                                                                 @php
                                                                     // Determine the price based on variant price modifier or original price

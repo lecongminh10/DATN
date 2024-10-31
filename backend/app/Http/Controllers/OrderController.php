@@ -229,10 +229,6 @@ class OrderController extends Controller
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
-        $address = Address::select('address_line', 'address_line1', 'address_line2')
-            ->where('user_id', $userId)
-            ->first();
-
         $carts  = collect();
         if($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
@@ -240,13 +236,10 @@ class OrderController extends Controller
     
         $cartCount = $carts->sum('quantity');
 
-        return view('client.orders.checkout', compact('cartCheckout', 'address', 'carts', 'cartCount'));
-      
-//         $user =Auth::user();
-//         $cartCheckout =Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-//                 ->where('user_id', $user->id)
-//                 ->get();
-//         return view('client.orders.checkout', compact('cartCheckout'));
+        $cartCheckout =Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+                ->where('user_id', $userId)
+                ->get();
+        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount'));
     }
 
     public function removeFromCart($id)
@@ -462,7 +455,7 @@ class OrderController extends Controller
         }
 
         // Trả về phản hồi JSON
-        // return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
+        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
     }
 
     public function wishList() {

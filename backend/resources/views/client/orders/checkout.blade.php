@@ -870,7 +870,7 @@
     </script>
 @endsection
 
-@section('script_logic')
+@section('scripte_logic')
     <script>
         // Chọn checkbox
         function selectPayment(selectedCheckbox) {
@@ -954,15 +954,7 @@
 
             // Nút thêm địa chỉ mới
             btnAddAddress.addEventListener('click', function() {
-                // Hiển thị form thêm địa chỉ và ẩn form cập nhật
-                addAddressForm.style.display = 'block';
-                updateAddressForm.style.display = 'none';
-                document.getElementById('addAddressModalLabel').innerText = "Thêm địa chỉ mới";
-
-                // Cập nhật trạng thái nút
-                btnAdd.textContent = 'Thêm địa chỉ';
-                btnBack.style.display = 'inline-block';
-                btnHuy.style.display = 'none';
+                $('#editAddressModal').modal('show');
             });
 
             // Nút trở lại
