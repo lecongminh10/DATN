@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Order;
 use App\Repositories\OrderRepository;
 
 class OrderService extends BaseService
@@ -28,4 +29,8 @@ class OrderService extends BaseService
         return $this->orderService->checkStatus($input , $id);
     }
 
+    public function getbyCode(string $code)
+    {
+       return  Order::where('code',$code)->first();
+    }
 }

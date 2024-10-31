@@ -12,6 +12,18 @@ class Payment extends Model
 
     protected $table = 'payments';
 
+    public const VNPay='VNPay';
+    
+    public const Cash='Cash';
+
+    public const Pending='pending';
+
+    public const Completed ='completed';
+
+    public const Failed ='failed';
+
+    public const Refunded ='refunded';
+    
     protected $fillable = [
         'order_id',
         'payment_gateway_id',

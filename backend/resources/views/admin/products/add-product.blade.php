@@ -334,15 +334,15 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Mô tả ngắn</label>
+                                                    <label for="description" class="form-label">Mô tả ngắn  <span class="text-danger">*</span></label>
                                                     <textarea class="form-control" value="{{old('short_description')}}" name="short_description" id="short_description"></textarea>
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="meta_title" class="form-label">SEO tiêu đề</label>
+                                                    <label for="meta_title" class="form-label">SEO tiêu đề  <span class="text-danger">*</span></label>
                                                     <textarea class="form-control" name="meta_title" id="meta_title" value="{{old('meta_title')}}"></textarea>
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="meta_description" class="form-label">SEO mô tả</label>
+                                                    <label for="meta_description" class="form-label">SEO mô tả  <span class="text-danger">*</span></label>
                                                     <textarea class="form-control" name="meta_description" id="meta_description" value="{{old('meta_description')}}"></textarea>
                                                 </div>
                                                 <div class="col-md-8">
@@ -381,7 +381,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_sale" class="form-label">Giá khuyến mãi</label>
+                                                        <label for="price_sale" class="form-label">Giá khuyến mãi <span class="text-danger">*</span></label>
                                                         <input type="number"
                                                             class="form-control @error('price_sale') is-invalid @enderror" value="{{old('price_sale')}}"
                                                             name="price_sale" id="price_sale" onchange="getPrices()">
@@ -393,14 +393,14 @@
                                                     </div>
                                                     <div class="mt-3">
                                                         <label for="product_tags"
-                                                            class="form-label text-muted">Thẻ</label>
+                                                            class="form-label text-muted">Thẻ <span class="text-danger">*</span></label>
                                                         <select class="form-control" name="product_tags[]"
                                                             id="choices-multiple-remove-button"
                                                             placeholder="This is a placeholder" multiple>
                                                         </select>
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_sale" class="form-label">Thời gian bảo hành
+                                                        <label for="price_sale" class="form-label">Thời gian bảo hành <span class="text-danger">*</span>
                                                         </label>
                                                         <input type="number" class="form-control" name="warranty_period" value="{{old('warranty_period')}}"
                                                             id="warranty_period">
@@ -416,7 +416,7 @@
                                                             ];
                                                         @endphp
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Trạng thái</h4>
+                                                            <h4 class="card-title mb-0 flex-grow-1">Trạng thái <span class="text-danger">*</span></h4>
                                                         </div>
                                                         <div class="card">
                                                             <div class="card-body">
@@ -454,7 +454,8 @@
                                                             @enderror
                                                         </div>
                                                         <div class="card-body">
-                                                            <div class="list-group col nested-list nested-sortable"
+                                                            <div data-simplebar style="max-height: 525px;">
+                                                                <div class="list-group col nested-list nested-sortable"
                                                                 id="nested-sortable">
                                                                 @foreach ($categories as $category)
                                                                     @include(
@@ -462,6 +463,7 @@
                                                                         ['category' => $category]
                                                                     )
                                                                 @endforeach
+                                                            </div>
                                                             </div>
                                                         </div><!-- end card-body -->
                                                     </div><!-- end card -->

@@ -22,6 +22,9 @@
     <!-- custom Css-->
     <link href="{{asset('theme/assets/css/custom.min.css')}}" rel="stylesheet" type="text/css" />
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
 </head>
 
 <body>
@@ -65,6 +68,7 @@
     <script src="{{asset('theme/assets/js/pages/particles.app.js')}}"></script>
     <!-- password-addon init -->
     <script src="{{asset('theme/assets/js/pages/password-addon.init.js')}}"></script>
+    @yield('script_logic')
 </body>
 
 </html>

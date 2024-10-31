@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\PermissionValue;
 use App\Models\Order;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use App\Models\PermissionValue;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -76,11 +77,15 @@ class User extends Authenticatable
 
     public function orders()
     {
-        return $this->belongsToMany(Order::class, 'user_id', 'id')->withTimestamps(); 
+        return $this->belongsToMany(Order::class, 'user_id', 'id')->withTimestamps();
     }
 
     public function addresses()
     {
-        return $this->hasOne(Address::class, 'user_id', 'id')->withTimestamps(); 
+        return $this->hasMany(Address::class);
+    }
+    public function reviews()
+    {
+        return DB::table('users_reviews')->where('user_id', $this->id)->get();
     }
 }

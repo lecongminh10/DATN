@@ -54,14 +54,20 @@ class HomeController extends Controller
 
         $cartCount = $carts->sum('quantity');
         $products = $this->productService->getFeaturedProducts();
-       
-        return view('client.home', compact('products', 'carts', 'cartCount'));
+        $topRatedProducts = $this->productService->topRatedProducts();
+        $bestSellingProducts = $this->productService->bestSellingProducts();
+        $latestProducts = $this->productService->latestProducts();
+        $categories = $this->getCategoriesForMenu();
+        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts'));
+
     }
 
     public function showProducts(Request  $request)
     {
         $count = $request->input('count', 12);
-        $products = $this->productService->getAllProducts($count);
+        $minprice = $request ->input('min');
+        $maxprice = $request->input('max');
+        $products = $this->productService->getAllProducts($count , $minprice , $maxprice);
         $sale = $this->productService->getSaleProducts();
         $categories = $this->categoryService->getAll();
         return view('client.products.list', compact('products', 'sale', 'categories'));
@@ -118,5 +124,17 @@ class HomeController extends Controller
             ->paginate(10);
 
         return view('client.products.list', compact('products', 'categories', 'minPrice', 'maxPrice'));
+    }
+
+    public function getCategoriesForMenu()
+    {
+        // Lấy tất cả danh mục cha
+        $parentCategories = $this->categoryService->getParent()->take(9);
+        // Lấy danh mục con cho từng danh mục cha
+        foreach ($parentCategories as $parent) {
+            // Lấy danh mục con bằng cách sử dụng parent_id của danh mục cha
+            $parent->children = $this->categoryService->getChildCategories($parent->id);
+        }
+        return $parentCategories; // Trả về danh mục cha với danh mục con
     }
 }

@@ -41,6 +41,8 @@ class UpdateProductRequest extends FormRequest
             'is_show_home'       => 'boolean',
             'is_new'             => 'boolean',
             'is_good_deal'       => 'boolean',
+            'coupon'             => 'nullable|array', 
+            'addcoupon'          => 'nullable|array'
         ];
     }
 

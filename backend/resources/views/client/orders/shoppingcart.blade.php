@@ -1,23 +1,81 @@
 @extends('client.layouts.app')
 
 @section('style_css')
+    <style>
+        .product-details {
+            padding: 10px; /* Khoảng cách bên trong */
+            margin-bottom: 15px; /* Khoảng cách giữa các sản phẩm */
+            border-radius: 5px; /* Góc bo tròn */
+        }
 
-<style>
-    .product-image img{
-        width: 100%;
-        height: 80px;
-    }
-</style>
+        .product-name {
+            font-weight: bold; /* Làm đậm tên sản phẩm */
+            font-size: 1em; /* Kích thước chữ lớn hơn */
+            color: #333; /* Màu chữ */
+        }
+
+        .attribute-list {
+            margin-top: 10px; /* Khoảng cách giữa tên sản phẩm và thuộc tính */
+            padding-left: 15px; /* Khoảng cách bên trái cho thuộc tính */
+        }
+        .attribute-list p {
+            margin-bottom: 0px !important;
+        }
+        .attribute-item {
+            font-size: 0.9em; /* Kích thước chữ nhỏ hơn cho thuộc tính */
+            color: #555; /* Màu chữ nhạt hơn */
+        }
+        .attribute-item strong {
+            color: #000; /* Màu chữ cho tên thuộc tính */
+        }
+        .product-price {
+            text-align: right; /* Aligns prices to the right */
+        }
+
+        .price-sale {
+            color: #0088cc; /* Bootstrap Danger color for sale prices */
+            font-weight: bold; /* Makes sale price bold */
+            font-size: 11px !important; /* Slightly larger font for emphasis */
+        }
+
+        .price-original {
+            color: #999; /* Light gray color for original prices */
+            text-decoration: line-through; /* Adds a strikethrough effect */
+            font-size: 10px !important; /* Regular size for original prices */
+            margin-left: 10px; /* Adds space between sale and original prices */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .product-price {
+                text-align: left; /* Align left on smaller screens */
+            }
+        }
+        .product-title .product-details{
+                padding-left: 10px;
+            }
+        .product-title .attribute-item {
+                font-size: 12px !important;
+                margin-bottom: 5px !important;
+            }
+        .product-title .text-muted{
+                font-size: 12px !important;
+            }
+        .product-title .attribute-item strong {
+                color: rgba(0, 0, 0, 0.6);
+                font-weight: 300;
+                font-size: 12px !important;
+            }
+
+
+    </style>
 @endsection
-
-
 @section('content')
-
 
 <header class="header home">
     <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
         <div class="container">
-            <nav class="main-nav w-100">
+            {{-- <nav class="main-nav w-100">
                 <ul class="menu">
                     <li>
                         <a href="{{ route('client') }}">Home</a>
@@ -173,7 +231,7 @@
                             target="_blank">Buy Porto!</a></li>
                     <li class="float-right"><a href="#" class="pl-5">Special Offer!</a></li>
                 </ul>
-            </nav>
+            </nav> --}}
         </div><!-- End .container -->
     </div><!-- End .header-bottom -->
 </header>
@@ -191,19 +249,17 @@
                 <a href="#">Order Complete</a>
             </li>
         </ul>
-
-        {{-- {{ Auth::check() ? Auth::user()->username : null }} --}}
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-9">
                 <div class="cart-table-container">
                     <table class="table table-cart">
                         <thead>
                             <tr>
                                 <th class="thumbnail-col"></th>
-                                <th class="product-col">Product</th>
-                                <th class="price-col">Price</th>
-                                <th class="qty-col">Quantity</th>
-                                <th class="text-right">Subtotal</th>
+                                <th>Tên sản phẩm </th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Tổng giá</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -211,113 +267,109 @@
                                 $totalAmount = 0; 
                                 $totalQuantity = null; 
                             ?>
-                            @if ($carts->isEmpty())
-                                <tr class="product-row">
-                                    <td colspan="5" class="text-center">
-                                        <span>Giỏ hàng của bạn đang trống. 
-                                            <br> Hãy chọn thêm sản phẩm để mua nhé </span>
-                                    </td>
-                                </tr>
-                            @else
-                                @foreach ($carts as $value)
-                                    <tr class="product-row">
-                                        <td>
-                                            <figure class="product-image-container">
-                                                <a href="{{ route('client.showProduct', $value->product->id) }}" class="product-image">
-                                                    @php
-                                                        // $variant= $value->productVariant;
-                                                        // if($variant->variant_image!==null){
-                                                            // $url = $value->productVariant->variant_image;
-                                                        // }
-                                                        // $url="https://phuongnamtech.vn/wp-content/uploads/2024/09/anh-gai-xinh-539xokV.jpg"
-                                                    @endphp
-                                                    {{-- <img src="" alt="{{ $value->product->name }}"> --}}
-                                                    {{-- <img src="{{Storage::url($url)}}" alt="{{ $value->product->name }}"> --}}
-                                                    {{-- <a href="{{ route('client.showProduct', $value->product->id ) }}" class="product-image"> --}}
-                                                        <img src="{{Storage::url($value->product->getMainImage()->image_gallery)}}" width="90" height="90" alt="{{ $value->product->getMainImage()->image_gallery }}" />
-                                                    {{-- </a> --}}
-                                                </a>
-
-                                                <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $value->id }}" onclick="removeCart(this)"></a>
-                                            </figure>
-                                        </td>
-                                        <td class="product-col">
-                                            <h5 class="product-title">
-                                                <a href="#">
-                                                    @if ($value->product->type === 'product_variant')
-                                                    {{-- In tên của biến thể sản phẩm --}}
-                                                    {{ $value->productVariant->name }}
-                                                
-                                                    {{-- Lấy các thuộc tính của biến thể sản phẩm --}}
-                                                        {{-- @php
-                                                            $attributes = $value->productVariant->getAttributeNameValue($value->productVariant->id);
-                                                        @endphp
-
-                                                        {{-- Hiển thị attribute_name và attribute_value 
-                                                        @foreach ($attributes as $attribute)
-                                                            <p>{{ $attribute->attribute_name }}: {{ $attribute->attribute_value }}</p>
-                                                        @endforeach --}}
-                                                        
-                                                    @else
-                                                        {{-- Nếu không phải là biến thể, in tên sản phẩm chính --}}
-                                                        {{ $value->product->name }}
-                                                    @endif
-                                                </a>
-                                                <span>
-                                                
-                                                </span>
-                                            </h5>
-                                        </td>
-                                        <td>
-                                            @if ($value->product && is_null($value->productVariant)) 
-                                                @if (!is_null($value->product->price_sale) && $value->product->price_sale > 0) 
-                                                    {{ number_format($value->product->price_sale, 0, ',', '.') }} ₫
-                                                @else
-                                                    {{ number_format($value->product->price_regular, 0, ',', '.') }} ₫
-                                                @endif
-                                            @elseif ($value->product && $value->productVariant) 
-                                                {{ number_format($value->productVariant->price_modifier, 0, ',', '.') }} ₫
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="product-single-qty">
-                                                <input class="horizontal-quantity form-control" 
-                                                        type="number"
-                                                        min="1" 
-                                                        data-price="{{ $value->product ? ($value->productVariant ? $value->productVariant->price_modifier : ($value->product->price_sale ?? $value->product->price_regular)) : 0 }}"
-                                                        value="{{ $value->quantity }}"
-                                                        onchange="updateSubtotal(this)">
-                                            </div>
-                                        </td>
-                                        <?php 
-                                            $price = 0;
-                                            $subTotal = 0;
-                                            if ($value->product && is_null($value->productVariant)) {
-                                                // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
-                                                if (!is_null($value->product->price_sale) && $value->product->price_sale > 0) {
-                                                    $price = $value->product->price_sale; // Lấy giá sale nếu có
+                            @foreach ($carts as $value)
+                            <tr class="product-row">
+                                <td>
+                                    <figure class="product-image-container">
+                                        <a href="{{route('client.showProduct',$value->product->id)}}" class="product-image">
+                                            @php
+                                                if ($value->productVariant && !empty($value->productVariant->variant_image)) {
+                                                    $url = $value->productVariant->variant_image; 
                                                 } else {
-                                                    $price = $value->product->price_regular; // Nếu không có giá sale, lấy giá thường
+                                                    $mainImage = $value->product->getMainImage(); 
+                                                    $url = $mainImage ? $mainImage->image_gallery : 'default-image-path.jpg';
                                                 }
-                                                $subTotal = $price * $value->quantity; 
-                                            } elseif ($value->product && $value->productVariant) {
-                                                // Nếu có sản phẩm và có biến thể, lấy giá biến thể
-                                                $price = $value->productVariant->price_modifier;
-                                                $subTotal = $price * $value->quantity; 
-                                            } else {
-                                                $subTotal = 0;
-                                            }
-                                            $totalAmount += $subTotal;
-                                            $totalQuantity += $value->quantity;
-
-                                        ?>
-                                        <td class="text-right"><span class="subtotal-price">{{ number_format($subTotal, 0, ',', '.') }} ₫</span></td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-
-
+                                            @endphp
+                                            <img src="{{ Storage::url($url) }}" alt="{{ $value->product->name }}">
+                                        </a>
+                        
+                                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $value->id }}" onclick="removeFromCart(this)"></a>
+                                    </figure>
+                                </td>
+                                <td class="product-col">
+                                    <h5 class="product-title">
+                                        <a href="{{route('client.showProduct',$value->product->id)}}">
+                                            @if ($value->productVariant)
+                                                <div class="product-details">
+                                                    <span class="product-name py-2">{{ $value->product->name }}</span>
+                                                    <div class="text-muted">Loại: </div>
+                                                    <div class="attribute-list">
+                                                        @if ($value->productVariant->attributeValues)
+                                                            @foreach ($value->productVariant->attributeValues as $attributeValue)
+                                                                <p class="attribute-item">
+                                                                    <strong>{{ $attributeValue->attribute->attribute_name }}:</strong> 
+                                                                    <span>{{ $attributeValue->attribute_value }}</span>
+                                                                </p>
+                                                            @endforeach
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <span class="product-name">{{ $value->product->name }}</span>
+                                            @endif
+                                        </a>
+                                    </h5>
+                                </td>
+                                <td class="product-price">
+                                    @if ($value->productVariant)
+                                        @if (!empty($value->productVariant->price_modifier) && $value->productVariant->price_modifier!==null)
+                                            <span class="">{{ number_format($value->productVariant->price_modifier, 0, ',', '.') }} đ</span>
+                                            <del class="">{{ number_format($value->productVariant->original_price, 0, ',', '.') }} đ</del>
+                                        @else
+                                            <span class="">{{ number_format($value->productVariant->original_price, 0, ',', '.') }} đ</span>
+                                        @endif
+                                    @else
+                                        @if (!empty($value->product->price_sale) && $value->product->price_sale!==null)
+                                            <span class="">{{ number_format($value->product->price_sale, 0, ',', '.') }} đ</span>
+                                            <del class="">{{ number_format($value->product->price_regular, 0, ',', '.') }} đ</del>
+                                        @else
+                                            <span class="">{{ number_format($value->product->price_regular, 0, ',', '.') }} đ</span>
+                                        @endif
+                                    @endif
+                                </td>                
+                                <td>
+                                    <div class="product-single-qty">
+                                        <input class="horizontal-quantity form-control" 
+                                                type="number"
+                                                min="1" 
+                                                data-price="{{ $value->productVariant ? 
+                                                                (!empty($value->productVariant->price_modifier) ? 
+                                                                    $value->productVariant->price_modifier : 
+                                                                    $value->productVariant->original_price) : 
+                                                                ($value->product ? ($value->product->price_sale ?: $value->product->price_regular) : 0) }}"
+                                                value="{{ $value->quantity }}"
+                                                onchange="updateSubtotal(this)">
+                                 
+                                    </div>
+                                </td>
+                                <?php 
+                                $price = 0;
+                                $subTotal = 0;
+                                
+                                // Check if the product exists and if there's no product variant
+                                if ($value->product && is_null($value->productVariant)) {
+                                    $price = $value->product->price_regular; // Use regular price
+                                    $subTotal = $price * $value->quantity; 
+                                }
+                                // Check if both product and product variant exist
+                                elseif ($value->product && $value->productVariant) {
+                                    $price = $value->productVariant->price_modifier ?? $value->productVariant->original_price; // Use price modifier if exists, else original price
+                                    $subTotal = $price * $value->quantity; 
+                                } else {
+                                    $subTotal = 0; // Default to 0 if no product or variant
+                                }
+                                
+                                $totalAmount += $subTotal; // Accumulate total amount
+                                $totalQuantity += $value->quantity; // Accumulate total quantity
+                                ?>
+                                
+                                <td class="text-right">
+                                    <span class="subtotal-price">{{ number_format($subTotal, 0, ',', '.') }} đ</span>
+                                </td>
+                                
+                            </tr>
+                            @endforeach
+                        </tbody>                        
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="clearfix">
@@ -339,40 +391,27 @@
                 </div><!-- End .cart-table-container -->
             </div><!-- End .col-lg-8 -->
 
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <div class="cart-summary">
-                    <h3>TỔNG GIỎ HÀNG</h3>
-
-                    <table class="table table-totals">
-                        <tbody>
-                            <tr style="border: none">
-                                <td>Số lượng</td>
-                                <td>× {{ $totalQuantity }}</td>
-                            </tr>
-                            <tr>
-                                <td>Tổng phụ</td>
-                                <td>{{ number_format($totalAmount, 0, ',', '.') }} ₫</td>
-                            </tr>
-
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <td>Tổng cộng</td>
-                                <td>
-                                    <?php $toTal = $totalAmount;?>
-                                    <span id="totalAmountDisplay">{{ number_format($toTal, 0, ',', '.') }} ₫
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-
+                    <h3>Tổng giỏ hàng</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <p>Số lượng</p>
+                            <p>Tổng giá</p>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <p>× {{ $totalQuantity }}</p>
+                            <p>{{ number_format($totalAmount, 0, ',', '.') }} đ</p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <td >Tổng cộng</td>
+                            <?php $toTal = $totalAmount;?>
+                            <span id="totalAmountDisplay" class="mx-3" style="padding-left:30px">{{ number_format($toTal, 0, ',', '.') }} đ</span>
+                        </div>
+                    </div>
                     <div class="checkout-methods">
-                        @if ($carts && count($carts) > 0)
-                            <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Thanh toán <i class="fa fa-arrow-right"></i></a>
-                        @else
-                            {{-- {{ "Không có sản phẩm trong giỏ hàng" }} --}}
-                        @endif
+                        <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Đến giỏ hàng
+                            <i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div><!-- End .cart-summary -->
             </div><!-- End .col-lg-4 -->
@@ -393,17 +432,17 @@
 <script>
 // Cập nhật số lượng + giá tiền
 function updateSubtotal(inputElement) {
-    // Lấy giá trị giá sản phẩm từ data-price
     const price = parseFloat(inputElement.getAttribute('data-price')) || 0;
-    // Lấy số lượng mới từ input
     const quantity = parseInt(inputElement.value);
-    // Tính toán subtotal mới
     const subTotal = price * quantity;
+    function formatCurrency(amount) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' đ'; 
+    }
 
-    // Cập nhật giá trị subtotal trong ô tương ứng
     const subTotalElement = inputElement.closest('tr').querySelector('.subtotal-price');
-    subTotalElement.textContent = `${subTotal.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} ₫`;; // Cập nhật subtotal
+    subTotalElement.textContent = formatCurrency(subTotal); 
 }
+
 
 // Xóa khỏi giỏ hàng
 function removeCart(element) {

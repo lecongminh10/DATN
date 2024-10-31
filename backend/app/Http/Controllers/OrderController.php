@@ -7,6 +7,8 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderLocation;
+use App\Models\Payment;
+use App\Models\PaymentGateways;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
@@ -206,7 +208,6 @@ class OrderController extends Controller
     public function showShoppingCart()
     {
         $userId = auth()->id();
-
         $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
         ->where('user_id', $userId)
         ->get();
@@ -240,6 +241,12 @@ class OrderController extends Controller
         $cartCount = $carts->sum('quantity');
 
         return view('client.orders.checkout', compact('cartCheckout', 'address', 'carts', 'cartCount'));
+      
+//         $user =Auth::user();
+//         $cartCheckout =Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+//                 ->where('user_id', $user->id)
+//                 ->get();
+//         return view('client.orders.checkout', compact('cartCheckout'));
     }
 
     public function removeFromCart($id)
@@ -283,114 +290,7 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Cart updated successfully']);
     }
-    public function updateOrInsertAddress(Request $request)
-    {
-        // Xác thực dữ liệu
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'phone' => 'required|string|max:15', // Hoặc một quy tắc khác phù hợp với số điện thoại
-            'newAddress' => 'required|string|max:255',
-            // Thêm các quy tắc xác thực khác nếu cần
-        ]);
-
-        // Lưu thông tin người dùng
-        $user = User::updateOrCreate(
-            ['id' => auth()->id()], // Tìm kiếm người dùng theo ID
-            ['username' => $request->username, 'phone_number' => $request->phone]
-        );
-
-        // Lưu địa chỉ
-        $address = new Address();
-        $address->address_line = $request->newAddress;
-        $address->user_id = $user->id; // Liên kết địa chỉ với người dùng
-        $address->save();
-
-        return response()->json(['success' => true, 'message' => 'Thêm địa chỉ thành công!']);
-    }
-
-    public function addOrder(Request $request)
-    {
-        // Validate request data
-        // $request->validate([
-        //     'address' => 'required|string|max:255',
-        //     'ward' => 'required|string|max:255',
-        //     'district' => 'required|string|max:255',
-        //     'city' => 'required|string|max:255',
-        //     'phone_number' => 'required|string|max:15',
-        //     'email' => 'required|email|max:255',
-        //     'note' => 'nullable|string|max:500',
-        //     'radio-ship' => 'required', // Shipping method
-        // ]);
-
-        // Tính toán tổng giá trị đơn hàng từ giỏ hàng
-        $subTotal = 0;
-        if ($request->has('order_item')) {
-            foreach ($request->order_item as $item) {
-                $subTotal += $item['price'] * $item['quantity'];
-            }
-        }
-
-        if($request->has('radio_pay')){
-            $radio_pay = $request->radio_pay;
-            if($radio_pay=='cash'){
-                $dataOrder['payment_id']=6;
-            }
-        }
-
-        // Lấy giá trị phí vận chuyển
-        $shippingCost = floatval($request->input('radio-ship')); // Đảm bảo giá trị là số
-
-        // Tính tổng giá trị đơn hàng
-        $totalPrice = $subTotal + $shippingCost;
-
-        // Tạo đơn hàng
-        $dataOrder = [
-            'user_id' => Auth::id(),
-            'code' => 'ORDER-' . strtoupper(uniqid()),
-            'total_price' => $totalPrice, // Đặt giá trị tổng đã tính toán ở đây
-            'note' => $request->note,
-            'status' => Order::CHO_XAC_NHAN,
-        ];
-
-        
-        // Lưu đơn hàng
-        $order = $this->orderService->saveOrUpdate($dataOrder);
-
-        // Tiếp tục với địa chỉ và các sản phẩm...
-        $dataOrderLocation = [
-            'order_id' => $order->id,
-            'address' => $request->address,
-            'city' => $request->city,
-            'district' => $request->district,
-            'ward' => $request->ward,
-            'latitude' => null,
-            'longitude' => null,
-        ];
-
-        if ($request->has('order_item')) {
-            foreach ($request->order_item as $value) {
-                $dataItem = [
-                    'order_id' => $order->id,
-                    'product_id' => $value['product_id'],
-                    'variant_id' => $value['product_variant_id'],
-                    'quantity' => $value['quantity'],
-                    'price' => $value['price'],
-                    'discount' => $value['discount'] ?? null,
-                ];
-                OrderItem::create($dataItem);
-                $idCard = $value['id_cart'];
-                $this->removeFromCart($idCard);
-            }
-        }
-
-        $this->orderLocationService->saveOrUpdate($dataOrderLocation);
-        return redirect()->route('client')->with('message', 'Đơn hàng đã được đặt thành công!');
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         //xóa cart ở đâu
@@ -636,7 +536,5 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Wishlist item deleted successfully'], 200);
     }
-
-
 
 }
