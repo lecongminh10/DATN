@@ -1,25 +1,26 @@
 <?php
 
-use App\Http\Controllers\AttributeController;
-use App\Http\Controllers\AttributeValueController;
-use App\Http\Controllers\CarrierController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\Client\ProductController as ClientProductController ;
-use App\Http\Controllers\Auth\ConfirmPasswordController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\PayMentController;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StatsController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\CarrierController;
+use App\Http\Controllers\PayMentController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AttributeValueController;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+
 
 Route::group([
     'prefix' => 'admin',
@@ -182,7 +183,7 @@ Route::group([
         Route::post('/destroy-multiple',                     [PermissionController::class, 'destroyMultiple'])->name('destroyMultiple');
         Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
     });
-    
+
     //Oder
    Route::group(
         [
@@ -200,7 +201,18 @@ Route::group([
             Route::put('restore/{id}', [OrderController::class, 'restore'])->name('restore');// một cái được rồi đúng khoong  ô thử lại caid
             Route::put('restore_selected', [OrderController::class, 'muitpathRestore'])->name('restore_selected');
             Route::delete('hard-delete/{id}', [OrderController::class, 'hardDelete'])->name('hard_delete');
-            Route::delete('multi-hard-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete'); 
+            Route::delete('multi-hard-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete');
+        }
+    );
+    // statistic
+    Route::group(
+        [
+            'prefix' => 'statistics',
+            'as' => 'statistics.'
+        ],
+        function () {
+            Route::get('/', [StatsController::class, 'index'])->name('index');
+
         }
     );
 });
@@ -242,14 +254,14 @@ Route::prefix('/')->group(function () {
     Route::put('update-profile/{id}',                                 [UserController::class, 'updateClient'])->name('users.updateClient');
     Route::get('show-order',                                   [UserController::class, 'showOrder'])->name('users.showOrder');
     Route::get('show-order-detail/{id}',                                   [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
-  
+
   //product
     Route::get('/products', [HomeController::class, 'showProducts'])->name('client.products');
     Route::get('/products/sort', [HomeController::class, 'sortProducts'])->name('client.products.sort');
     Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
     Route::get('/products/category/{id}', [HomeController::class, 'getByCategory'])->name('client.products.Category');
     Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
-  
+
   //Oder
     Route::get('shopping-cart', [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
     Route::get('checkout', [OrderController::class, 'showCheckOut'])->name('checkout');
@@ -259,8 +271,8 @@ Route::prefix('/')->group(function () {
     Route::post('add-order', [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán 
     Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
-  
-    //Counpon 
+
+    //Counpon
     Route::post('/apply-discount', [CouponController::class, 'applyDiscount']);
 
     // //PayMent

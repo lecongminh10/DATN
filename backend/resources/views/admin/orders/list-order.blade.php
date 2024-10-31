@@ -3,7 +3,7 @@
 @section('libray_css')
     <!-- Sweet Alert css-->
     <link href="{{ asset('theme/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
-    
+
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -12,7 +12,7 @@
 
 @section('content')
 
-<?php 
+<?php
 if (!function_exists('isStatus')) {
     function isStatus($status)
     {
@@ -68,13 +68,13 @@ if (!function_exists('isStatus')) {
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16"></i></button>
-                                        <a href="{{ route('orders.listTrashOrder') }}" class="btn btn-danger"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
+                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-danger"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body border border-dashed border-end-0 border-start-0">
-                            <form action="{{ route('orders.listOrder') }}" method="GET">
+                            <form action="{{ route('admin.orders.listOrder') }}" method="GET">
                                 @csrf
                                 <div class="row g-3">
                                     <!-- Search -->
@@ -126,7 +126,7 @@ if (!function_exists('isStatus')) {
                                     </div>
                                 </div>
                             </form>
-                            
+
                         </div>
                         <div class="card-body pt-0">
                             <div>
@@ -213,7 +213,7 @@ if (!function_exists('isStatus')) {
                                                 <td>
                                                     <ul class="list-inline hstack gap-2 mb-0">
                                                         <li class="list-inline-item">
-                                                            <a href="{{ route('orders.orderDetail', $order->id )}}" class="text-primary d-inline-block">
+                                                            <a href="{{ route('admin.orders.orderDetail', $order->id )}}" class="text-primary d-inline-block">
                                                                 <i class="ri-eye-fill fs-16"></i>
                                                             </a>
                                                         </li>
@@ -241,7 +241,7 @@ if (!function_exists('isStatus')) {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="d-flex justify-content-end">
                                     <div class="pagination-wrap hstack gap-2">
                                         <a class="page-item pagination-prev {{ $orders->onFirstPage() ? 'disabled' : '' }}" href="{{ $orders->previousPageUrl() }}">
@@ -300,7 +300,7 @@ if (!function_exists('isStatus')) {
                                                             <option value="Stripe">Stripe</option>
                                                             <option value="Paypal">Paypal</option>
                                                         </select>
-                                                    </div> 
+                                                    </div>
                                                 </div> --}}
 
                                                 <div>
@@ -380,7 +380,7 @@ if (!function_exists('isStatus')) {
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body" id="modal-body">
-                                           
+
                                         </div>
                                         <div class="modal-footer">
                                             {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button> --}}
@@ -410,7 +410,7 @@ if (!function_exists('isStatus')) {
                                 </div>
                             </div>
                             {{-- end modal--}}
-                            
+
                         </div>
                     </div>
 
@@ -424,9 +424,9 @@ if (!function_exists('isStatus')) {
     </div>
 
     @endsection
-    
 
-    
+
+
 @section('script_libray')
     <!-- list.js min js -->
      <script src="{{ asset('theme/assets/libs/list.js/list.min.js') }}"></script>
@@ -435,18 +435,18 @@ if (!function_exists('isStatus')) {
     <script src="{{ asset('theme/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
 
     <!-- ecommerce-order init js -->
-    <script src="{{ asset('theme/assets/js/pages/ecommerce-order.init.js') }}"></script>    
+    <script src="{{ asset('theme/assets/js/pages/ecommerce-order.init.js') }}"></script>
 
     <!-- Sweet Alerts js -->
     <script src="{{ asset('theme/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    
+
 @endsection
-    
+
 @section('script_logic')
     <script>
     $(document).ready(function() {
@@ -460,9 +460,9 @@ if (!function_exists('isStatus')) {
     function SearchByDate(selectedDate) {
         if (selectedDate) {
             var formattedDate = formatDate(selectedDate);
-            
+
             $.ajax({
-                url: "{{ route('orders.listOrder') }}",
+                url: "{{ route('admin.orders.listOrder') }}",
                 type: 'GET',
                 data: {
                     date: formattedDate
@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td class="transport">${order.tracking_number}</td>
                     <td class="status">${getStatusHtml(order.status)}</td>
                     <td class="created_at">${formatDate(order.created_at)}</td>
-                    
+
                     <td>
                         <ul class="list-inline hstack gap-2 mb-0">
                             <li class="list-inline-item">
@@ -609,7 +609,7 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
     var button = event.relatedTarget;
     var idOrder = button.getAttribute('data-id');
 
-    let url = "{{ route('orders.orderEdit', ':code') }}";
+    let url = "{{ route('admin.orders.orderEdit', ':code') }}";
     url = url.replace(':code', idOrder);
 
     fetch(url, {
@@ -624,10 +624,10 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
         document.querySelector('#idOrder').value = data.id;
         document.querySelector('#idCode').value = data.code;
         document.querySelector('#customerName').value = data.user.email;
-        document.querySelector('#date').value = new Date(data.created_at).toLocaleDateString('en-GB');  
+        document.querySelector('#date').value = new Date(data.created_at).toLocaleDateString('en-GB');
         const statusSelect = document.querySelector('#idStatusEdit');
         statusSelect.setAttribute('data-current-status', data.status);
-        
+
         // Array.from(statusSelect.options).forEach(option => {
         //     option.selected = (option.value === data.status);
         // });
@@ -655,24 +655,24 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: "{{ route('orders.updateOrder', '') }}/" + orderId,
+            url: "{{ route('admin.orders.updateOrder', '') }}/" + orderId,
             type: 'PUT',
             data: {
-                _token: '{{ csrf_token() }}', 
+                _token: '{{ csrf_token() }}',
                 status: status
             },
             success: function(response) {
                 $('#showModalEdit').hide();
-                
+
                var modal_body = document.getElementById("modal-body");
-                
+
                 $('#successModal').modal('show');
                 if(response.status){
                     modal_body.innerHTML="Cập nhật trạng thái thành công"
                 }else{
                     modal_body.innerHTML="<p class='text-danger'>Cập nhật không thành công !</p>"
                 }
-                
+
             },
             error: function(xhr, status, error) {
                 console.error("Error: " + error);
@@ -690,16 +690,16 @@ $(document).ready(function() {
 // Xóa mềm 1
 $(document).ready(function() {
     var orderId;
-    
+
     $('#deleteOrder').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
-        orderId = button.data('id'); 
+        orderId = button.data('id');
     });
 
     $('#delete-record').on('click', function(e) {
         e.preventDefault();
 
-        
+
         $.ajax({
             url: 'soft-delete/' + orderId,
             type: 'POST',
@@ -765,11 +765,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }),
             success: function(response) {
                 $('#deleteManyOrder').modal('hide');
-                
+
                 $('#deleteModal').modal('show');
             },
             error: function(xhr, status, error) {
-                console.error('Error:', error); 
+                console.error('Error:', error);
                 alert('Có lỗi xảy ra trong quá trình xóa!');
             }
         });
