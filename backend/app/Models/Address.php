@@ -25,7 +25,7 @@ class Address extends Model
         'deleted_at' => 'boolean'
     ];
 
-        /**
+     /**
      * Kiểm tra nếu user_id có địa chỉ active
      *
      * @param int $userId

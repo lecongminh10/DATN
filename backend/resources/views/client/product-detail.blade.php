@@ -1,4 +1,91 @@
 @extends('client.layouts.app')
+@section('style_css')
+    <style>
+        /* .icon-wishlist-2 {
+            color: #ccc; 
+        }
+
+        .icon-wishlist-filled {
+            color: red; 
+        } */
+
+        /* .wishlist-modal {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        .wishlist-modal.show {
+            opacity: 1;
+            bottom: 40px;
+        } */
+
+        .cart-modal {
+        position: fixed;
+        right: 20px;
+        top: 80px;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        .cart-modal.show {
+            opacity: 1;
+            bottom: 100px;
+        }
+
+        .attribute-link {
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        text-align: center;
+        min-width: 60px;
+        }
+
+        .attribute-link.active {
+            background-color: #007bff; /* Màu nền khi active */
+            color: #fff; /* Màu chữ khi active */
+            border-color: #007bff;
+        }
+
+        .product-single-filter {
+            margin-bottom: 10px;
+        }
+
+        .config-size-list {
+            display: flex;
+            gap: 10px;
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        #new-price-variant{
+            color: #222529;
+            font-size: 2.4rem;
+            letter-spacing: -0.02em;
+            vertical-align: middle;
+            line-height: 0.8;
+            margin-left: 3px;
+        }
+
+    </style>
+@endsection
 @section('content')
     @php
         $allImages = [];
@@ -26,14 +113,15 @@
             }
         }
 
+
     @endphp
     <header class="header">
-        <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': false}">
+        <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
             <div class="container">
                 <nav class="main-nav w-100">
                     <ul class="menu">
                         <li>
-                            <a href="demo4.html">Home</a>
+                            <a href="{{ route('client') }}">Home</a>
                         </li>
                         <li>
                             <a href="category.html">Categories</a>
@@ -73,7 +161,7 @@
                                     <div class="col-lg-4 p-0">
                                         <div class="menu-banner">
                                             <figure>
-                                                <img src="assets/images/menu-banner.jpg" width="192" height="313"
+                                                <img src="{{ asset('themeclient/assets/images/menu-banner.jpg') }}" width="192" height="313"
                                                     alt="Menu banner">
                                             </figure>
                                             <div class="banner-content">
@@ -90,7 +178,7 @@
                             </div>
                             <!-- End .megamenu -->
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="product.html">Products</a>
                             <div class="megamenu megamenu-fixed-width">
                                 <div class="row">
@@ -127,7 +215,7 @@
                                     <div class="col-lg-4 p-0">
                                         <div class="menu-banner menu-banner-2">
                                             <figure>
-                                                <img src="assets/images/menu-banner-1.jpg" width="182" height="317"
+                                                <img src="{{ asset('themeclient/assets/images/menu-banner-1.jpg') }}" width="182" height="317"
                                                     alt="Menu banner" class="product-promo">
                                             </figure>
                                             <i>OFF</i>
@@ -208,20 +296,20 @@
             </nav>
 
             <div class="product-single-container product-single-default">
-                <div class="cart-message d-none">
+                {{-- <div class="cart-message d-none">
                     <strong class="single-cart-notice">“Men Black Sports Shoes”</strong>
                     <span>has been added to your cart.</span>
-                </div>
+                </div> --}}
 
                 <div class="row">
                     <div class="col-lg-5 col-md-6 product-single-gallery">
                         <div class="product-slider-container">
                             <div class="label-group">
-                                <div class="product-label label-hot">HOT</div>
+                                {{-- <div class="product-label label-hot">HOT</div> --}}
 
-                                <div class="product-label label-sale">
+                                {{-- <div class="product-label label-sale">
                                     -16%
-                                </div>
+                                </div> --}}
                             </div>
 
                             <div class="product-single-carousel owl-carousel owl-theme show-nav-hover">
@@ -261,10 +349,11 @@
                                     <span class="product-popup">
                                         <span class="box-content">
                                             <img alt="product" width="150" height="150"
-                                                src="assets/images/products/product-3.jpg" style="padding-top: 0px;">
+                                                src="assets/images/products/product-3.jpg"
+                                                style="padding-top: 0px;">
 
                                             <span>Circled Ultimate 3D Speaker</span>
-                                        </span>
+                                    </span>
                                     </span>
                                 </a>
                             </div>
@@ -276,10 +365,11 @@
                                     <span class="product-popup">
                                         <span class="box-content">
                                             <img alt="product" width="150" height="150"
-                                                src="assets/images/products/product-4.jpg" style="padding-top: 0px;">
+                                                src="assets/images/products/product-4.jpg"
+                                                style="padding-top: 0px;">
 
                                             <span>Blue Backpack for the Young</span>
-                                        </span>
+                                    </span>
                                     </span>
                                 </a>
                             </div>
@@ -293,15 +383,20 @@
                             </div>
                             <!-- End .product-ratings -->
 
-                            <a href="#" class="rating-link">( 6 Reviews )</a>
+                            {{-- <a href="#" class="rating-link">( 6 Reviews )</a> --}}
                         </div>
                         <!-- End .ratings-container -->
 
                         <hr class="short-divider">
 
                         <div class="price-box">
-                            <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
-                            <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
+                            @if ($data->price_sale == null)
+                                <span class="new-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
+                            
+                            @else
+                                <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
+                                <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
+                            @endif
                         </div>
                         <!-- End .price-box -->
 
@@ -313,80 +408,116 @@
                         <!-- End .product-desc -->
 
                         <ul class="single-info-list">
-
+                            <!---->
                             <li>
-                                SKU: <strong> {{ $data->code }}</strong>
+                                SKU:
+                                <strong> {{ $data->code }}</strong>
                             </li>
 
                             <li>
-                                CATEGORY: <strong><a href="#"
-                                        class="product-category">{{ $data->category->name }}</a></strong>
+                                CATEGORY:
+                                <strong>
+                                    <a href="#" class="product-category">{{ $data->category->name }}</a>
+                                </strong>
                             </li>
 
                             <li>
-                                TAGs: <strong><a href="#" class="product-category">CLOTHES</a></strong>,
-                                <strong><a href="#" class="product-category">SWEATER</a></strong>
+                                TAGs:<strong>
+                                    @foreach($data->tags as $tag)
+                                        <a href="#" class="product-category">{{ $tag->name }}</a>@if(!$loop->last), @endif
+                                    @endforeach
+                                  </strong>
                             </li>
-                            @foreach ($attribute as $item)
-                                <div class="product-filters-container">
-                                    <div class="product-single-filter">
-                                        <label class="fw-bold">{{ $item->attribute_name }}:</label>
-                                        <ul class="config-size-list config-color-list config-filter-list list-unstyled">
-                                            @foreach ($item->attributeValues as $value)
-                                                @if ($data->variants->contains('product_attribute_id', $value->id))
-                                                    <li class="mb-1"> 
-                                                        <a href="javascript:;"
-                                                            class="d-flex align-items-center justify-content-center">
-                                                            <div data-bs-toggle="tooltip" data-bs-trigger="hover"
-                                                                data-bs-placement="top" title="Out of Stock">
-                                                                {{ $value->attribute_value }}
-                                                            </div>
-                                                        </a>
-                                                    </li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            @endforeach
-
                         </ul>
 
+                        @php
+                            // Mảng để nhóm các thuộc tính và giá trị của chúng từ tất cả các biến thể
+                            $attributesGrouped = [];
+                        
+                            // Duyệt qua từng biến thể
+                            if (count($variants) > 0) {
+                                foreach ($variants as $variant) {
+                                    if(count($variant['attributes']) > 0){
+                                        foreach ($variant['attributes'] as $attribute) {
+                                            // Nhóm các giá trị thuộc tính theo tên thuộc tính
+                                            if (!isset($attributesGrouped[$attribute['attribute_name']])) {
+                                                $attributesGrouped[$attribute['attribute_name']] = [];
+                                            }
+                                            
+                                            // Thêm giá trị vào mảng nếu chưa tồn tại để tránh trùng lặp
+                                            if (!in_array($attribute['attribute_value'], $attributesGrouped[$attribute['attribute_name']])) {
+                                                $attributesGrouped[$attribute['attribute_name']][] = $attribute['attribute_value'];
+                                            }
+                                        }
+                                    }
+                            }
+                            }
+                        @endphp
+                        
+                        @if (count($attributesGrouped) > 0)
+                            @foreach ($attributesGrouped as $attributeName => $values)      
+                            <div class="product-single-filter">
+                                <label>{{ $attributeName }}:</label>
+                                    <ul class="config-size-list">
+                                    @foreach ($values as $value)
+                                        <li>
+                                            <a href="javascript:;" 
+                                            class="d-flex align-items-center justify-content-center attribute-link" 
+                                            data-attribute-name="{{ $attributeName }}" 
+                                            data-attribute-value="{{ $value }}">
+                                                {{ $value }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>  
+                            @endforeach
+                        @endif
+
+                            {{-- <div class="product-single-filter">
+                                <label></label>
+                                <a class="font1 text-uppercase clear-btn" href="#">Clear</a>
+                            </div> --}}
+                            <!---->
+
                         <div class="product-action">
-                            <div class="product-single-qty">
-                                <input class="horizontal-quantity form-control" type="text">
+                            
+
+                            <div class="price-box product-filtered-price"  style="display: flex;">
+                                
                             </div>
+
+                            <div class="product-single-qty">
+                                <input class="horizontal-quantity form-control" onchange="updateQuantity()" id="quantity-product" type="text">
+                            </div>  
                             <!-- End .product-single-qty -->
 
-                            <a href="javascript:;" class="btn btn-dark add-cart mr-2" title="Add to Cart">Add to
-                                Cart</a>
+                            <a href="javascript:;" data-quantity-product="1" onchange="updateQuantity()" data-product-id="{{ $data->id }}" data-variant-id="" id="product-variant-id" class="btn btn-dark add-cart mr-2" title="Add to Cart">Thêm vào giỏ hàng</a>
 
-                            <a href="cart.html" class="btn btn-gray view-cart d-none">View cart</a>
+
+                            <a href="{{ route('shopping-cart') }}" class="btn btn-gray view-cart d-none">Xem giỏ hàng</a>
                         </div>
                         <!-- End .product-action -->
 
                         <hr class="divider mb-0 mt-0">
 
-                        <div class="product-single-share mb-3">
+                        <div class="product-single-share mb-2">
                             <label class="sr-only">Share:</label>
 
                             <div class="social-icons mr-2">
-                                <a href="#" class="social-icon social-facebook icon-facebook" target="_blank"
-                                    title="Facebook"></a>
-                                <a href="#" class="social-icon social-twitter icon-twitter" target="_blank"
-                                    title="Twitter"></a>
-                                <a href="#" class="social-icon social-linkedin fab fa-linkedin-in" target="_blank"
-                                    title="Linkedin"></a>
-                                <a href="#" class="social-icon social-gplus fab fa-google-plus-g" target="_blank"
-                                    title="Google +"></a>
-                                <a href="#" class="social-icon social-mail icon-mail-alt" target="_blank"
-                                    title="Mail"></a>
+                                <a href="#" class="social-icon social-facebook icon-facebook" target="_blank" title="Facebook"></a>
+                                <a href="#" class="social-icon social-twitter icon-twitter" target="_blank" title="Twitter"></a>
+                                <a href="#" class="social-icon social-linkedin fab fa-linkedin-in" target="_blank" title="Linkedin"></a>
+                                <a href="#" class="social-icon social-gplus fab fa-google-plus-g" target="_blank" title="Google +"></a>
+                                <a href="#" class="social-icon social-mail icon-mail-alt" target="_blank" title="Mail"></a>
                             </div>
                             <!-- End .social-icons -->
 
-                            <a href="wishlist.html" class="btn-icon-wish add-wishlist" title="Add to Wishlist"><i
-                                    class="icon-wishlist-2"></i><span>Add to
-                                    Wishlist</span></a>
+                            <a href="javascript:;" data-product-id="{{ $data->id }}" data-variant-id="" id="wishlist-variant-id" class="btn-icon-wish add-wishlist" title="Add to Wishlist">
+                                <i id="wishlist-icon" class="icon-wishlist-2"></i>
+                                <span>Thêm yêu thích</span>
+                            </a>                            
+            
                         </div>
                         <!-- End .product single-share -->
                     </div>
@@ -424,7 +555,7 @@
                     <div class="tab-pane fade show active" id="product-desc-content" role="tabpanel"
                         aria-labelledby="product-tab-desc">
                         <div class="product-desc-content">
-                            <p>{{ $data->content }}</p>
+                            <p>{{ strip_tags(html_entity_decode($data->content)) }}</p>
                         </div>
                         <!-- End .product-desc-content -->
                     </div>
@@ -435,7 +566,7 @@
                         <div class="product-size-content">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <img src="assets/images/products/single/body-shape.png" alt="body shape"
+                                    <img src="{{ asset('themeclient/assets/images/products/single/body-shape.png') }}" alt="body shape"
                                         width="217" height="398">
                                 </div>
                                 <!-- End .col-md-4 -->
@@ -533,7 +664,7 @@
                             <div class="comment-list">
                                 <div class="comments">
                                     <figure class="img-thumbnail">
-                                        <img src="assets/images/blog/author.jpg" alt="author" width="80"
+                                        <img src="{{ asset('themeclient/assets/images/blog/author.jpg') }}" alt="author" width="80"
                                             height="80">
                                     </figure>
 
@@ -642,10 +773,8 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-1.jpg" width="280" height="280"
-                                    alt="product">
-                                <img src="assets/images/products/product-1-2.jpg" width="280" height="280"
-                                    alt="product">
+                                <img src="{{ asset('themeclient/assets/images/products/product-1.jpg') }}" width="280" height="280" alt="product">
+                                <img src="{{ asset('themeclient/assets/images/products/product-1-2.jpg') }}" width="280" height="280" alt="product">
                             </a>
                             <div class="label-group">
                                 <div class="product-label label-hot">HOT</div>
@@ -689,9 +818,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-3.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-3.jpg') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-3-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-3-2.jpg') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -736,9 +865,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-7.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-7.jpg') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-7-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-7-2.jpg') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -783,9 +912,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-6.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-6.jpg') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-6-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-6-2.jpg') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -830,9 +959,9 @@
                     <div class="product-default">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/product-4.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-4.jpg') }}') }}" width="280" height="280"
                                     alt="product">
-                                <img src="assets/images/products/product-4-2.jpg" width="280" height="280"
+                                <img src="{{ asset('themeclient/assets/images/products/product-4-2.jpg') }}') }}" width="280" height="280"
                                     alt="product">
                             </a>
                             <div class="label-group">
@@ -886,9 +1015,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-1.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-1.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-1-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-1-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -918,9 +1047,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-2.jpg') }}') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-2-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-2-2.jpg') }}') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -949,9 +1078,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-3.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-3.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-3-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-3-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -983,9 +1112,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-4.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-4.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-4-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-4-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1015,9 +1144,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-5.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-5.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-5-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-5-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1046,9 +1175,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-6.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-6.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-6-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-6-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1080,9 +1209,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-7.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-7.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-7-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-7-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1111,9 +1240,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-8.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-8.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-8-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-8-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1143,9 +1272,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-9.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-9.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-9-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-9-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1177,9 +1306,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-10.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-10.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-10-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-10-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1208,9 +1337,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-11.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-11.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-11-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-11-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1239,9 +1368,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="assets/images/products/small/product-12.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-12.jpg') }}" width="74" height="74"
                                     alt="product">
-                                <img src="assets/images/products/small/product-12-2.jpg" width="74" height="74"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-12-2.jpg') }}" width="74" height="74"
                                     alt="product">
                             </a>
                         </figure>
@@ -1273,46 +1402,261 @@
         <!-- End .container -->
     </main>
     <!-- End .main -->
+
+    {{-- <!-- Modal thông báo thêm vào wishlist -->
+    <div id="wishlist-add-modal" class="wishlist-modal" style="display: none;">
+        <div class="modal-content">
+            <p>Sản phẩm đã được thêm vào danh sách yêu thích!</p>
+        </div>
+    </div>
+
+    <!-- Modal thông báo xóa khỏi wishlist -->
+    <div id="wishlist-remove-modal" class="wishlist-modal" style="display: none;">
+        <div class="modal-content">
+            <p>Sản phẩm đã bị xóa khỏi danh sách yêu thích!</p>
+        </div>
+    </div> --}}
+    <!-- Modal thông báo thêm vào giỏ hàng -->
+    {{-- <div id="cart-add-modal" class="cart-modal" style="display: none;">
+        <div class="modal-content">
+            <p>Sản phẩm đã được thêm vào giỏ hàng!</p>
+        </div>
+    </div> --}}
 @endsection
 
-@section('script_logic')
-    <script>
-        (function() {
-            var js =
-                "window['__CF$cv$params']={r:'820525e73bc48b57',t:'MTY5OTAyMDA3NC4zNDIwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/61b90d1d/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";
-            var _0xh = document.createElement('iframe');
-            _0xh.height = 1;
-            _0xh.width = 1;
-            _0xh.style.position = 'absolute';
-            _0xh.style.top = 0;
-            _0xh.style.left = 0;
-            _0xh.style.border = 'none';
-            _0xh.style.visibility = 'hidden';
-            document.body.appendChild(_0xh);
+@section('scripte_logic')
+<script>
+    (function() {
+        var js =
+            "window['__CF$cv$params']={r:'820525e73bc48b57',t:'MTY5OTAyMDA3NC4zNDIwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/61b90d1d/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";
+        var _0xh = document.createElement('iframe');
+        _0xh.height = 1;
+        _0xh.width = 1;
+        _0xh.style.position = 'absolute';
+        _0xh.style.top = 0;
+        _0xh.style.left = 0;
+        _0xh.style.border = 'none';
+        _0xh.style.visibility = 'hidden';
+        document.body.appendChild(_0xh);
 
-            function handler() {
-                var _0xi = _0xh.contentDocument || _0xh.contentWindow.document;
-                if (_0xi) {
-                    var _0xj = _0xi.createElement('script');
-                    _0xj.innerHTML = js;
-                    _0xi.getElementsByTagName('head')[0].appendChild(_0xj);
+        function handler() {
+            var _0xi = _0xh.contentDocument || _0xh.contentWindow.document;
+            if (_0xi) {
+                var _0xj = _0xi.createElement('script');
+                _0xj.innerHTML = js;
+                _0xi.getElementsByTagName('head')[0].appendChild(_0xj);
+            }
+        }
+        if (document.readyState !== 'loading') {
+            handler();
+        } else if (window.addEventListener) {
+            document.addEventListener('DOMContentLoaded', handler);
+        } else {
+            var prev = document.onreadystatechange || function() {};
+            document.onreadystatechange = function(e) {
+                prev(e);
+                if (document.readyState !== 'loading') {
+                    document.onreadystatechange = prev;
+                    handler();
+                }
+            };
+        }
+    })();
+</script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Lắng nghe sự kiện thay đổi trên các input để thực hiện thêm các hành động
+    const attributeInputs = document.querySelectorAll('.attribute-input');
+    
+    attributeInputs.forEach(input => {
+        input.addEventListener('change', function () {
+            // Có thể thực hiện các hành động khi một thuộc tính được chọn, ví dụ:
+            console.log(`Selected ${this.name}: ${this.value}`);
+        });
+    });
+});
+
+// Đổi giá variant 
+
+// Biến để lưu trữ giá của từng biến thể
+const variants = @json($variants);
+
+document.addEventListener('DOMContentLoaded', function () {
+    const priceBox = document.querySelector('.product-filtered-price');
+    let selectedAttributes = {};
+
+    document.querySelectorAll('.attribute-link').forEach(link => {
+        link.addEventListener('click', function () {
+            const filterContainer = this.closest('.product-single-filter');
+            const attributeName = this.dataset.attributeName;
+            const attributeValue = this.dataset.attributeValue;
+
+            // Kiểm tra nếu thuộc tính hiện tại đã được chọn
+            const isAlreadyActive = this.classList.contains('active');
+
+            // Bỏ chọn các lựa chọn khác trong cùng một nhóm thuộc tính
+            filterContainer.querySelectorAll('.attribute-link').forEach(otherLink => {
+                otherLink.classList.remove('active');
+            });
+
+            if (isAlreadyActive) {
+                // Nếu đã chọn, bỏ chọn và xóa khỏi selectedAttributes
+                delete selectedAttributes[attributeName];
+            } else {
+                // Chọn thuộc tính được nhấn và cập nhật vào selectedAttributes
+                this.classList.add('active');
+                selectedAttributes[attributeName] = attributeValue;
+            }
+
+            // Tìm biến thể khớp với thuộc tính đã chọn
+            const matchedVariant = variants.find(variant =>
+                variant.attributes.every(attr =>
+                    selectedAttributes[attr.attribute_name] === attr.attribute_value
+                )
+            );
+
+            // Cập nhật hiển thị giá
+            if (matchedVariant) {
+                // Kiểm tra nếu phần tử có tồn tại
+                let variantInput = document.getElementById("product-variant-id");
+                let variantWishlist = document.getElementById("wishlist-variant-id");
+                // if (variantInput && variantWishlist ) {
+                    variantInput.setAttribute("data-variant-id", matchedVariant.id);
+                    variantWishlist.setAttribute("data-variant-id", matchedVariant.id);
+                    console.log("Product Variant ID:", matchedVariant.id);  // Log the variant ID
+                    // console.log(variantWishlist);
+                    // console.log(variantInput);
+
+
+                // } else {
+                //     console.log("Element with ID 'product_variant_id' does not exist.");
+                // }
+                priceBox.innerHTML = `
+                    <del class="old-price" id="old-price-variant">${matchedVariant.original_price ? parseInt(matchedVariant.original_price).toLocaleString('vi-VN') + " VNĐ" : ''}</del>
+                    <p class="new-price" id="new-price-variant">${parseInt(matchedVariant.price_modifier).toLocaleString('vi-VN')} VNĐ</p>
+                `;
+                // console.log(matchedVariant.price_modifier);
+            } else {
+                // Đặt lại hiển thị giá nếu không có biến thể nào khớp
+                priceBox.innerHTML = `
+                    <p class="new-price" id="new-price-variant">Chọn các thuộc tính để xem giá</p>
+                `;
+            }
+
+            console.log(matchedVariant.id);
+        });
+    });
+});
+
+
+function updateQuantity() {
+    let quantity = document.getElementById("quantity-product").value;
+    let variantInput = document.getElementById("product-variant-id");
+
+    // Check if quantity is a valid number
+    if (quantity && !isNaN(quantity)) {
+        variantInput.setAttribute("data-quantity-product", quantity);
+        console.log("Quantity set to:", quantity); // Log for verification
+    } else {
+        console.log("Invalid quantity value");
+    }
+}
+
+
+// Thêm giỏ hàng
+document.addEventListener('DOMContentLoaded', function() {
+    const productVariant = document.getElementById('product-variant-id');
+
+    productVariant.addEventListener('click', function() {
+        const productId = productVariant.getAttribute('data-product-id');
+        const productVariantId = productVariant.getAttribute('data-variant-id');
+        const quantity = productVariant.getAttribute('data-quantity-product');
+
+        // Gọi AJAX để thêm sản phẩm vào giỏ hàng
+        $.ajax({
+            type: "POST",
+            url: "{{ route('addCart') }}", // Thay bằng route tương ứng
+            data: {
+                product_id: productId,
+                product_variants_id: productVariantId,
+                quantity: quantity,
+                _token: '{{ csrf_token() }}' // CSRF token
+            },
+            success: function(response) {
+                // Hiển thị thông báo thêm vào giỏ hàng thành công hoặc xử lý UI nếu cần
+                showCartModal(); // Gọi hàm hiển thị modal (tương tự như wishlist)
+                // location.reload();
+            },
+            error: function(xhr) {
+                if (xhr.status === 401) {
+                    // alert('You need to be logged in to add items to your cart.'); // Bỏ thông báo nếu không cần thiết
+                } else {
+                    // alert('An error occurred. Please try again.'); // Bỏ thông báo nếu không cần thiết
                 }
             }
-            if (document.readyState !== 'loading') {
-                handler();
-            } else if (window.addEventListener) {
-                document.addEventListener('DOMContentLoaded', handler);
-            } else {
-                var prev = document.onreadystatechange || function() {};
-                document.onreadystatechange = function(e) {
-                    prev(e);
-                    if (document.readyState !== 'loading') {
-                        document.onreadystatechange = prev;
-                        handler();
-                    }
-                };
+        });
+    });
+
+    // function showCartModal() {
+    //     // Hiển thị modal thông báo thêm vào giỏ hàng thành công
+    //     const cartModal = document.getElementById('cart-add-modal');
+    //     cartModal.classList.add('show');
+    //     setTimeout(function() {
+    //         cartModal.classList.remove('show');
+    //     }, 3000); // Modal sẽ tự động ẩn sau 3 giây
+    // }
+});
+
+
+ // Thêm wishlist
+ document.addEventListener('DOMContentLoaded', function() {
+    const productVariant = document.getElementById('wishlist-variant-id');
+    const wishlistIcon = document.getElementById('wishlist-icon');
+    const wishlistAddModal = document.getElementById('wishlist-add-modal');
+    const wishlistRemoveModal = document.getElementById('wishlist-remove-modal');
+
+    productVariant.addEventListener('click', function() {
+        const productId = productVariant.getAttribute('data-product-id');
+        const productVariantId = productVariant.getAttribute('data-variant-id'); // Get variant ID if available
+
+        console.log(productVariant);
+        // console.log(productId);
+
+        // AJAX request to add or remove product from wishlist
+        $.ajax({
+            type: "POST",
+            url: "{{ route('addWishList') }}",
+            data: {
+                product_id: productId,
+                product_variants_id: productVariantId || null, // Pass variant ID if available, else null
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.in_wishlist) {
+                    wishlistIcon.style.color = 'red'; // Set heart icon color to red for added
+                    showModal(wishlistAddModal); // Show "added to wishlist" modal
+                } else {
+                    wishlistIcon.style.color = ''; // Reset heart icon color for removed
+                    showModal(wishlistRemoveModal); // Show "removed from wishlist" modal
+                }
+            },
+            error: function() {
+                console.error("Error updating wishlist.");
             }
-        })();
-    </script>
-    </body>
+        });
+    });
+
+    // function showModal(modal) {
+    //     modal.classList.add('show');
+    //     setTimeout(function() {
+    //         modal.classList.remove('show');
+    //     }, 3000); // Auto-hide modal after 3 seconds
+    // }
+});
+
+</script>
+
+
 @endsection

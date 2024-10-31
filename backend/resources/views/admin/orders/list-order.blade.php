@@ -446,7 +446,6 @@ if (!function_exists('isStatus')) {
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 @endsection
-
 @section('script_logic')
     <script>
     $(document).ready(function() {

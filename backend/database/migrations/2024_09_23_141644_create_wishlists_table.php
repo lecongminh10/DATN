@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('wishlists', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->comment('Khóa ngoại liên kết đến bảng Users');
-            $table->unsignedBigInteger('product_variants_id')->comment('Khóa ngoại liên kết đến bảng ProductVariants');
+            $table->unsignedBigInteger('product_id')->comment('Khóa ngoại liên kết đến bảng Products');
+            $table->unsignedBigInteger('product_variants_id')->nullable()->comment('Khóa ngoại liên kết đến bảng ProductVariants');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('product_variants_id')->references('id')->on('product_variants')->onDelete('cascade');
 
             $table->softDeletes()->comment('Thời gian xóa mềm');

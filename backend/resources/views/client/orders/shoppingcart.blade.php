@@ -25,7 +25,6 @@
             font-size: 0.9em; /* Kích thước chữ nhỏ hơn cho thuộc tính */
             color: #555; /* Màu chữ nhạt hơn */
         }
-
         .attribute-item strong {
             color: #000; /* Màu chữ cho tên thuộc tính */
         }
@@ -71,10 +70,7 @@
 
     </style>
 @endsection
-
-
 @section('content')
-
 
 <header class="header home">
     <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
@@ -82,7 +78,7 @@
             {{-- <nav class="main-nav w-100">
                 <ul class="menu">
                     <li>
-                        <a href="demo4.html">Home</a>
+                        <a href="{{ route('client') }}">Home</a>
                     </li>
                     <li>
                         <a href="category.html">Categories</a>
@@ -253,7 +249,6 @@
                 <a href="#">Order Complete</a>
             </li>
         </ul>
-
         <div class="row">
             <div class="col-lg-9">
                 <div class="cart-table-container">
@@ -270,7 +265,7 @@
                         <tbody>
                             <?php 
                                 $totalAmount = 0; 
-                                $totalQuantity = 0; 
+                                $totalQuantity = null; 
                             ?>
                             @foreach ($carts as $value)
                             <tr class="product-row">
@@ -381,9 +376,13 @@
                                     
 
                                     <div class="float-right">
-                                        <button type="submit" class="btn btn-shop btn-update-cart">
-                                            Cập nhật giỏ hàng
-                                        </button>
+                                        @if ($carts && count($carts) > 0)
+                                            <button type="submit" class="btn btn-shop btn-update-cart">
+                                                Cập nhật giỏ hàng
+                                            </button>
+                                        @else
+                                            {{-- {{ "Không có sản phẩm trong giỏ hàng" }} --}}
+                                        @endif
                                     </div><!-- End .float-right -->
                                 </td>
                             </tr>
@@ -429,8 +428,9 @@
      
 @endsection
     
-@section('script_logic')
+@section('scripte_logic')
 <script>
+// Cập nhật số lượng + giá tiền
 function updateSubtotal(inputElement) {
     const price = parseFloat(inputElement.getAttribute('data-price')) || 0;
     const quantity = parseInt(inputElement.value);
@@ -445,7 +445,7 @@ function updateSubtotal(inputElement) {
 
 
 // Xóa khỏi giỏ hàng
-function removeFromCart(element) {
+function removeCart(element) {
     const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
 
     // Gửi yêu cầu xóa sản phẩm

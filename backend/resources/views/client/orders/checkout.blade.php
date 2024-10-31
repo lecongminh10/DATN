@@ -746,7 +746,6 @@
                                                     <input type="hidden" name="order_item[{{ $key }}][id_cart]" value="{{ $value->id }}">
                                                 </h3>
                                             </td>
-                            
                                             <td class="price-col">
                                                 <span>
                                                     @if ($value->productVariant)
@@ -834,7 +833,6 @@
                                 </tfoot>
                             </table>
                             
-
                             {{-- <div class="payment-methods">
                                     <h4 class="">Payment methods</h4>
                                     <div class="info-box with-icon p-0">

@@ -11,6 +11,10 @@ use App\Http\Controllers\PayMentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -35,20 +39,20 @@ Route::group([
         'as' => 'products.',
     ], function () {
         // CRUD products (list, add, update, detail, delete)=> resful API
-        Route::get('/listProduct', [ProductController::class, 'index'])->name('listProduct');
-        Route::get('/addProduct', [ProductController::class, 'showAdd'])->name('addProduct');
-        Route::post('/addProduct', [ProductController::class, 'store'])->name('addPostProduct');
-        Route::get('/showProduct/{id}', [ProductController::class, 'showProduct'])->name('showProduct');
-        Route::get('/update-product/{id}', [ProductController::class, 'showUpdate'])->name('updateProduct');
-        Route::put('/updateProduct/{id}', [ProductController::class, 'update'])->name('updatePutProduct');
-        Route::get('/{id}/variants', [ProductController::class, 'getVariants'])->name('admin.products.getVariants');
+        Route::get('/listProduct',                           [ProductController::class, 'index'])->name('listProduct');
+        Route::get('/addProduct',                            [ProductController::class, 'showAdd'])->name('addProduct');
+        Route::post('/addProduct',                           [ProductController::class, 'store'])->name('addPostProduct');
+        Route::get('/showProduct/{id}',                      [ProductController::class, 'showProduct'])->name('showProduct');
+        Route::get('/update-product/{id}',                   [ProductController::class, 'showUpdate'])->name('updateProduct');
+        Route::put('/updateProduct/{id}',                    [ProductController::class, 'update'])->name('updatePutProduct');
+        Route::get('/{id}/variants',                         [ProductController::class, 'getVariants'])->name('admin.products.getVariants');
 
         // Route::get('/deleteProduct/{id}', [ProductController::class, 'destroy'])->name('deleteProduct');
-        Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
-        Route::get('/listSotfDeleted', [ProductController::class, 'showSotfDelete'])->name('deleted');
-        Route::put('/restore/{id}', [ProductController::class, 'restore'])->name('restore');
-        Route::delete('/{id}/hard-delete', [ProductController::class, 'hardDelete'])->name('hardDelete');
-        Route::post('/delete-multiple', [ProductController::class, 'deleteMuitpalt'])->name('deleteMultiple');
+        Route::delete('/{id}',                              [ProductController::class, 'destroy'])->name('destroy');
+        Route::get('/listSotfDeleted',                      [ProductController::class, 'showSotfDelete'])->name('deleted');
+        Route::put('/restore/{id}',                         [ProductController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/hard-delete',                  [ProductController::class, 'hardDelete'])->name('hardDelete');
+        Route::post('/delete-multiple',                     [ProductController::class, 'deleteMuitpalt'])->name('deleteMultiple');
     });
     //Attributes
     Route::prefix('attributes')->group(function () {
@@ -70,7 +74,7 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [AttributeController::class, 'deleteMuitpalt'])->name('admin.attributes.deleteMultiple');
     });
-    Route::get('/attribute/listsotfdeleted',            [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
+    Route::get('/attribute/listsotfdeleted',                [AttributeController::class, 'showSotfDelete'])->name('admin.attributes.deleted1');
 
 
     //Carriers
@@ -191,17 +195,17 @@ Route::group([
             'as' => 'orders.'
         ],
         function () {
-            Route::get('list-order', [OrderController::class, 'index'])->name('listOrder');
-            Route::get('list-trash-order', [OrderController::class, 'listTrash'])->name('listTrashOrder');
-            Route::get('order-detail/{id}', [OrderController::class, 'showOrder'])->name('orderDetail');
-            Route::get('order-edit/{code}', [OrderController::class, 'showModalEdit'])->name('orderEdit');
-            Route::put('update-order/{id}', [OrderController::class, 'updateOrder'])->name('updateOrder');
-            Route::delete('soft-delete/{id}', [OrderController::class, 'destroy'])->name('soft_delete');
-            Route::delete('multi-soft-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_soft_delete');
-            Route::put('restore/{id}', [OrderController::class, 'restore'])->name('restore');// một cái được rồi đúng khoong  ô thử lại caid
-            Route::put('restore_selected', [OrderController::class, 'muitpathRestore'])->name('restore_selected');
-            Route::delete('hard-delete/{id}', [OrderController::class, 'hardDelete'])->name('hard_delete');
-            Route::delete('multi-hard-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete');
+            Route::get('list-order',                       [OrderController::class, 'index'])->name('listOrder');
+            Route::get('list-trash-order',                 [OrderController::class, 'listTrash'])->name('listTrashOrder');
+            Route::get('order-detail/{id}',                [OrderController::class, 'showOrder'])->name('orderDetail');
+            Route::get('order-edit/{code}',                [OrderController::class, 'showModalEdit'])->name('orderEdit');
+            Route::put('update-order/{id}',                [OrderController::class, 'updateOrder'])->name('updateOrder');
+            Route::delete('soft-delete/{id}',              [OrderController::class, 'destroy'])->name('soft_delete');
+            Route::delete('multi-soft-delete',             [OrderController::class, 'deleteMuitpalt'])->name('multi_soft_delete');
+            Route::put('restore/{id}',                     [OrderController::class, 'restore'])->name('restore');// một cái được rồi đúng khoong  ô thử lại caid
+            Route::put('restore_selected',                 [OrderController::class, 'muitpathRestore'])->name('restore_selected');
+            Route::delete('hard-delete/{id}',              [OrderController::class, 'hardDelete'])->name('hard_delete');
+            Route::delete('multi-hard-delete',             [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete');
         }
     );
     // statistic
@@ -249,35 +253,40 @@ Route::prefix('auth')->group(function () {
 Route::prefix('/')->group(function () {
     Route::get('',[HomeController::class, 'index'])->name('client');
   //profile
-    Route::get('/user',                                      [UserController::class, 'indexClient'])->name('users.indexClient');
-    Route::get('profile/{id}',                                   [UserController::class, 'showClient'])->name('users.showClient');
-    Route::put('update-profile/{id}',                                 [UserController::class, 'updateClient'])->name('users.updateClient');
-    Route::get('show-order',                                   [UserController::class, 'showOrder'])->name('users.showOrder');
-    Route::get('show-order-detail/{id}',                                   [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
+    Route::get('/user',                                     [UserController::class, 'indexClient'])->name('users.indexClient');
+    Route::get('profile/{id}',                              [UserController::class, 'showClient'])->name('users.showClient');
+    Route::put('update-profile/{id}',                       [UserController::class, 'updateClient'])->name('users.updateClient');
+    Route::get('show-order',                                [UserController::class, 'showOrder'])->name('users.showOrder');
+    Route::get('show-order-detail/{id}',                    [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
 
   //product
-    Route::get('/products', [HomeController::class, 'showProducts'])->name('client.products');
-    Route::get('/products/sort', [HomeController::class, 'sortProducts'])->name('client.products.sort');
-    Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
-    Route::get('/products/category/{id}', [HomeController::class, 'getByCategory'])->name('client.products.Category');
-    Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
+    Route::get('/products',                                 [HomeController::class, 'showProducts'])->name('client.products');
+    Route::get('/products/sort',                            [HomeController::class, 'sortProducts'])->name('client.products.sort');
+    Route::get('/product/{id}',                             [ClientProductController::class, 'showProduct'])->name('client.showProduct');
+    Route::get('/products/category/{id}',                   [HomeController::class, 'getByCategory'])->name('client.products.Category');
+    Route::get('/products/filter-by-price',                 [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
 
   //Oder
-    Route::get('shopping-cart', [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
-    Route::get('checkout', [OrderController::class, 'showCheckOut'])->name('checkout');
-    Route::post('addresses', [UserController::class, 'updateOrInsertAddress'])->name('addresses');
-    Route::post('/addresses/set-default/{id}', [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
-    Route::post('/update-address', [UserController::class, 'updateAddress'])->name('update.address');
-    Route::post('add-order', [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán 
-    Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
-    Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
+    Route::get('wishlist',                                  [OrderController::class, 'wishList'])->name('wishList');
+    Route::post('add-wishlist',                             [OrderController::class, 'addWishList'])->name('addWishList');
+    Route::delete('wishlist/{id}',                          [OrderController::class, 'destroyWishlist'])->name('wishlistDelete');
+
+    Route::post('add-cart',                                 [OrderController::class, 'addToCart'])->name('addCart');
+    Route::get('shopping-cart',                             [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
+    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout');
+    Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
+    Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
+    Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
+    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán 
+    Route::delete('remove/{id}',                            [OrderController::class, 'removeFromCart'])->name('removeFromCart');
+    Route::post('update-cart',                              [OrderController::class, 'updateCart'])->name('updateCart');
 
     //Counpon
-    Route::post('/apply-discount', [CouponController::class, 'applyDiscount']);
+    Route::post('/apply-discount',                          [CouponController::class, 'applyDiscount']);
 
     // //PayMent
-     Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
+     Route::get('/vnpay-return',                            [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
 
-    // Route::post('/create-order', [PayMentController::class, 'createOrder'])->name('create.order');
+    // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 });
 

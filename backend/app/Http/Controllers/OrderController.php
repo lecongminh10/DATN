@@ -12,6 +12,7 @@ use App\Models\PaymentGateways;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
+use App\Models\WishList;
 use App\Services\OrderLocationService;
 use App\Services\OrderService;
 use App\Repositories\OrderRepository;
@@ -200,7 +201,6 @@ class OrderController extends Controller
         return response()->json($order); // Trả về thông tin đơn hàng dưới dạng JSON
     }
 
-//đoạn hiện trang này ở đâu áTrang nào nhỉ
     /**
      * Store a newly created resource in storage.
      */
@@ -211,16 +211,42 @@ class OrderController extends Controller
         $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
         ->where('user_id', $userId)
         ->get();
-        return view('client.orders.shoppingcart', compact('carts'));
+
+        $cartCount = $carts->sum('quantity');
+        
+        return view('client.orders.shoppingcart', compact('carts', 'cartCount'));
     }
 
     public function showCheckOut()
     {
-        $user =Auth::user();
-        $cartCheckout =Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-                ->where('user_id', $user->id)
-                ->get();
-        return view('client.orders.checkout', compact('cartCheckout'));
+        $userId = auth()->id();
+        $cartCheckout = Cart::with(['product', 'productVariant', 'attributeValues.attribute'])
+            ->where('user_id', $userId)
+            ->get();
+
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $address = Address::select('address_line', 'address_line1', 'address_line2')
+            ->where('user_id', $userId)
+            ->first();
+
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+    
+        $cartCount = $carts->sum('quantity');
+
+        return view('client.orders.checkout', compact('cartCheckout', 'address', 'carts', 'cartCount'));
+      
+//         $user =Auth::user();
+//         $cartCheckout =Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+//                 ->where('user_id', $user->id)
+//                 ->get();
+//         return view('client.orders.checkout', compact('cartCheckout'));
     }
 
     public function removeFromCart($id)
@@ -247,7 +273,17 @@ class OrderController extends Controller
 
             if ($cart) {
                 $cart->quantity = $item['quantity']; // Cập nhật số lượng
-                $cart->total_price = $item['quantity'] * ($cart->productVariant ? $cart->productVariant->price_modifier : $cart->product->price_regular);
+                // Xác định giá cần sử dụng
+                $price = 0;
+                if ($cart->productVariant) {
+                    // Sử dụng giá của biến thể nếu có
+                    $price = $cart->productVariant->price_modifier;
+                } else {
+                    // Sử dụng giá sale nếu có, nếu không thì lấy giá thường
+                    $price = $cart->product->price_sale ?? $cart->product->price_regular;
+                }
+                // Cập nhật tổng giá dựa trên số lượng và giá đã xác định
+                $cart->total_price = $item['quantity'] * $price;
                 $cart->save(); // Lưu lại thay đổi
             }
         }
@@ -377,6 +413,128 @@ class OrderController extends Controller
         $data->forceDelete();
 
         return response()->json(['message' => 'Delete with success'], 200);
+    }
+
+    public function addToCart(Request $request)
+    {
+        // Validate các trường cần thiết
+        // $request->validate([
+        //     'product_id' => 'required|exists:products,id',
+        //     'product_variants_id' => 'nullable|exists:product_variants,id',
+        //     'quantity' => 'required|integer|min:1'
+        // ]);
+
+        if (!Auth::check()) {
+            // Nếu chưa đăng nhập, trả về thông báo lỗi
+            return response()->json(['message' => 'Bạn chưa đăng nhập. Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.'], 401);
+        }
+
+        // Lấy thông tin từ request
+        $productId = $request->input('product_id');
+        $productVariantId = $request->input('product_variants_id');
+        $quantity = $request->input('quantity');
+        $userId = Auth::id();
+
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng của người dùng hay chưa
+        $cartItem = Cart::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->where('product_variants_id', $productVariantId)
+            ->first();
+
+        $price = $productVariantId 
+            ? ProductVariant::find($productVariantId)->price_modifier 
+            : Product::find($productId)->price_sale ?? Product::find($productId)->price_regular;
+
+        if ($cartItem) {
+            // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng và tổng giá
+            $cartItem->quantity += $quantity;
+            $cartItem->total_price += $quantity * $price;
+            $cartItem->save();
+        } else {
+            // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới vào giỏ hàng
+            Cart::create([
+                'user_id' => $userId,
+                'product_id' => $productId,
+                'product_variants_id' => $productVariantId,
+                'quantity' => $quantity,
+                'total_price' => $quantity * $price,
+            ]);
+        }
+
+        // Trả về phản hồi JSON
+        // return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
+    }
+
+    public function wishList() {
+        $userId = auth()->id();
+
+        $wishLists = WishList::with(['product', 'productVariant'])
+        ->where('user_id', $userId)
+        ->get();
+
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+
+        // $wishLists = WishList::with(['product', 'productVariant', 'attributeValues.attribute'])
+        //     ->where('user_id', $userId)
+        //     ->get();
+        // dd($wishLists);
+
+
+        return view('client.products.wishlist', compact('wishLists','carts', 'cartCount'));
+    }
+
+    public function addWishList(Request $request)
+    {
+        // Kiểm tra xác thực người dùng
+        $userId = auth()->id();
+        if (!$userId) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Validate dữ liệu đầu vào
+        // $request->validate([
+        //     'product_id' => 'required|exists:products,id',
+        //     'product_variants_id' => 'nullable|exists:product_variants,id',
+        // ]);
+
+        // Kiểm tra xem sản phẩm đã có trong wishlist chưa
+        $wishlist = WishList::where('user_id', $userId)
+            ->where('product_id', $request->input('product_id'))
+            ->where('product_variants_id', $request->input('product_variants_id'))
+            ->first();
+
+        if ($wishlist) {
+            // Nếu sản phẩm đã tồn tại trong wishlist, thực hiện xóa
+            $wishlist->delete();
+            // return response()->json(['success' => 'Product removed from wishlist']);
+        } else {
+            // Nếu sản phẩm chưa tồn tại trong wishlist, thực hiện thêm mới
+            WishList::create([
+                'user_id' => $userId,
+                'product_id' => $request->input('product_id'),
+                'product_variants_id' => $request->input('product_variants_id'),
+            ]);
+
+            return response()->json(['in_wishlist' => true]);
+        }
+    }
+
+    public function destroyWishlist($id)
+    {
+        $wishlistItem = Wishlist::find($id);
+
+        if (!$wishlistItem) {
+            return response()->json(['message' => 'Wishlist item not found'], 404);
+        }
+
+        $wishlistItem->delete();
+
+        return response()->json(['message' => 'Wishlist item deleted successfully'], 200);
     }
 
 }
