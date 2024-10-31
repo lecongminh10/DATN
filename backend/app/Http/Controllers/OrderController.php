@@ -266,7 +266,17 @@ class OrderController extends Controller
 
             if ($cart) {
                 $cart->quantity = $item['quantity']; // Cập nhật số lượng
-                $cart->total_price = $item['quantity'] * ($cart->productVariant ? $cart->productVariant->price_modifier : $cart->product->price_regular);
+                // Xác định giá cần sử dụng
+                $price = 0;
+                if ($cart->productVariant) {
+                    // Sử dụng giá của biến thể nếu có
+                    $price = $cart->productVariant->price_modifier;
+                } else {
+                    // Sử dụng giá sale nếu có, nếu không thì lấy giá thường
+                    $price = $cart->product->price_sale ?? $cart->product->price_regular;
+                }
+                // Cập nhật tổng giá dựa trên số lượng và giá đã xác định
+                $cart->total_price = $item['quantity'] * $price;
                 $cart->save(); // Lưu lại thay đổi
             }
         }
@@ -531,10 +541,9 @@ class OrderController extends Controller
             ->where('product_variants_id', $productVariantId)
             ->first();
 
-        // Lấy giá của sản phẩm (hoặc giá của biến thể nếu có)
         $price = $productVariantId 
             ? ProductVariant::find($productVariantId)->price_modifier 
-            : (Product::find($productId)->price_sale ?? Product::find($productId)->price_regular);
+            : Product::find($productId)->price_sale ?? Product::find($productId)->price_regular;
 
         if ($cartItem) {
             // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng và tổng giá

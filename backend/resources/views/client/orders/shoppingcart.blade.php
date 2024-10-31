@@ -324,9 +324,13 @@
                                     
 
                                     <div class="float-right">
-                                        <button type="submit" class="btn btn-shop btn-update-cart">
-                                            Cập nhật giỏ hàng
-                                        </button>
+                                        @if ($carts && count($carts) > 0)
+                                            <button type="submit" class="btn btn-shop btn-update-cart">
+                                                Cập nhật giỏ hàng
+                                            </button>
+                                        @else
+                                            {{-- {{ "Không có sản phẩm trong giỏ hàng" }} --}}
+                                        @endif
                                     </div><!-- End .float-right -->
                                 </td>
                             </tr>
@@ -364,8 +368,11 @@
                     </table>
 
                     <div class="checkout-methods">
-                        <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Proceed to Checkout
-                            <i class="fa fa-arrow-right"></i></a>
+                        @if ($carts && count($carts) > 0)
+                            <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Thanh toán <i class="fa fa-arrow-right"></i></a>
+                        @else
+                            {{-- {{ "Không có sản phẩm trong giỏ hàng" }} --}}
+                        @endif
                     </div>
                 </div><!-- End .cart-summary -->
             </div><!-- End .col-lg-4 -->
@@ -384,6 +391,7 @@
     
 @section('scripte_logic')
 <script>
+// Cập nhật số lượng + giá tiền
 function updateSubtotal(inputElement) {
     // Lấy giá trị giá sản phẩm từ data-price
     const price = parseFloat(inputElement.getAttribute('data-price')) || 0;
