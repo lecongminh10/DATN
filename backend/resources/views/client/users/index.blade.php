@@ -1,90 +1,238 @@
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@extends('client.layouts.app')
+@section('style_css')
+<style>
+    .dashboard-widgets {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .dashboard-section h2{
+        margin-left: 25px
+    }
 
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            line-height: 1.6;
-            color: #333;
-        }
+    .widget-card {
+        background-color: #f8f8f8;
+        padding: 20px;
+        flex: 1;
+        border-radius: 10px;
+        text-align: center;
+    }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+    .widget-card h3 {
+        color: #333;
+        margin-bottom: 10px;
+    }
 
-        .logout-btn {
-            color: white;
-            background-color: #333;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+    .widget-card p {
+        margin: 15px 0;
+        font-size: 16px;
+    }
 
-        .logout-btn:hover {
-            background-color: #444;
-        }
+    .view-details {
+        color: #386ce6;
+        font-weight: bold;
+    }
+    
+    .profile-section h5 {
+        font-size: 24px;
+        color: #386ce6;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 2px solid #386ce6;
+        padding-bottom: 10px;
+    }
 
-        /* Profile Container */
-        .profile-container {
-            display: flex;
-            flex-wrap: wrap;
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+    .profile-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background-color: #f8f8f8;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-        .sidebar {
-            width: 20%;
-            background-color: #f0f0f0;
-            padding: 20px;
-            min-width: 250px;
-            padding-bottom: 210px
-        }
+    .user-details p {
+        margin: 10px 0;
+        font-size: 16px;
+        color: #333;
+    }
 
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .edit-btn {
+        padding: 10px 20px;
+        background-color: #386ce6;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
 
-        .sidebar-menu li {
-            margin-bottom: 15px;
-        }
+    .edit-btn:hover {
+        background-color: #5a9eff;
+    }
 
-        .sidebar-menu a {
-            color: #333;
-            padding: 10px 15px;
-            display: block;
-            border-radius: 5px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            transition: background-color 0.3s, color 0.3s, border 0.3s;
-        }
+    /* Icon Section */
+    .icon-section {
+        display: flex;
+        justify-content: space-around;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
 
-        .sidebar-menu a.active,
-        .sidebar-menu a:hover {
-            background-color: #386ce6;
-            color: white;
-            border-color: transparent;
-        }
-    </style>
+    .icon-item {
+        text-align: center;
+        position: relative;
+        text-decoration: none;
+        color: #333;
+        width: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 
-    <main class="profile-container">
-        <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="{{route('users.indexClient')}}" ><i class="fas fa-home"></i> Trang chủ</a></li>
-                <li><a href="{{ route('users.showClient', Auth::user()->id) }}"><i class="fas fa-user"></i> Thông tin tài
-                        khoản</a></li>
-                <li><a href="#orders"><i class="fas fa-shopping-bag"></i> Lịch sử mua hàng</a></li>
-                <li><a href="#rewards"><i class="fas fa-gift"></i> Ưu đãi</a></li>
-                <li><a href="#settings"><i class="fas fa-medal"></i> Hạng thành viên</a></li>
-                <li><a href="#support"><i class="fas fa-headset"></i> Hỗ trợ</a></li>
-                <li><a href="#logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-            </ul>
-        </aside>
-    </main>
+    .icon {
+        width: 60px;
+        height: 60px;
+        background-color: #eaf3ff;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .icon i {
+        font-size: 28px;
+        color: #333;
+    }
+
+    .label {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        padding: 3px 8px;
+        font-size: 10px;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+
+    .badge-hot {
+        background-color: #ff0000;
+        color: white;
+    }
+
+    .badge-new {
+        background-color: #ff0000;
+        color: white;
+    }
+
+    .icon-item:hover {
+        color: #87a5eb;
+    }
+
+    .icon-item:hover .icon {
+        background-color: #87a5eb;
+    }
+
+    .icon-item:hover .badge {
+        background-color: #87a5eb;
+    }
+</style>
+@endsection
+@section('content')
+<main class="main home">
+    <div class="container mb-2">
+        <div class="row">
+            <div class="col-lg-9">
+                <section class="profile-content">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            @if (empty(Auth::user()->profile_image_url) || !Storage::exists(Auth::user()->profile_image_url))
+                                <img src="https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png" alt="" class="rounded-circle me-2" width="50" height="50">
+                            @else
+                                <img src="{{ Storage::url(Auth::user()->profile_image_url) }}" alt="{{ Auth::user()->profile_image_url}}" class="rounded-circle me-2" width="50" height="50">
+                            @endif
+                            <h5 class="mb-0 mx-2">{{ Auth::user()->username }}</h5>
+                        </div> 
+                        <div id="dashboard" class="dashboard-section">
+                            <div class="dashboard-widgets">
+                                <div class="widget-card">
+                                    <h4 style="font-size: 17px">Tổng số đơn hàng</h4>
+                                    <p  >Đơn hàng cá nhân</p>
+                                    <a href="{{ route('users.showOrder', Auth::user()->id) }}" class="view-details">Xem chi tiết</a>
+                                </div>
+                                <div class="widget-card">
+                                    <h4 style="font-size: 17px">Điểm thưởng</h4>
+                                    <p style="font-size: 15px">500 điểm sẵn có</p>
+                                    <a href="#rewards" class="view-details">Đổi điểm</a>
+                                </div>
+                                <div class="widget-card">
+                                    <h4 style="font-size: 17px">Hạng thành viên</h4>
+                                    <p style="font-size: 15px">Hạng 1</p>
+                                    <a href="#profile" class="view-details">Cập nhật hạng</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="profile" class="profile-section mt-7">
+                                <h5 style="font-size: 15px">Thông tin cá nhân</h5>
+                    
+                                @if (Auth::check())
+                                    <div class="profile-info">
+                                        <div class="user-details">
+                                            <p><strong>Tên:</strong> {{ Auth::user()->username }}</p>
+                                            <p><strong>Email:</strong> {{ Auth::user()->email }}</p>
+                                            <p><strong>Số điện thoại:</strong> {{ Auth::user()->phone_number }}</p>
+                                            <p><strong>Điểm khách hàng thân thiết:</strong> {{ Auth::user()->loyalty_points }}</p>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="icon-section">
+                                <a href="#order-history" class="icon-item">
+                                    <div class="icon"><i class="fas fa-history"></i></div>
+                                    <span class="label">Lịch sử mua hàng</span>
+                                </a>
+                                <a href="#s-student" class="icon-item">
+                                    <div class="icon"><i class="fas fa-graduation-cap"></i></div>
+                                    <span class="label">Hỗ trợ</span>
+                                </a>
+                                <a href="#discounts" class="icon-item">
+                                    <div class="icon"><i class="fas fa-ticket-alt"></i></div>
+                                    <span class="label">Mã giảm giá</span>
+                                    <span class="badge badge-hot">HOT</span>
+                                </a>
+                                <a href="#membership" class="icon-item">
+                                    <div class="icon"><i class="fas fa-medal"></i></div>
+                                    <span class="label">Hạng thành viên</span>
+                                    <span class="badge badge-new">MỚI</span>
+                                </a>
+                                <a href="#account-link" class="icon-item">
+                                    <div class="icon"><i class="fas fa-link"></i></div>
+                                    <span class="label">Liên kết tài khoản</span>
+                                    <span class="badge badge-new">MỚI</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+            
+                  
+            
+                </section>
+            </div>
+            @include('client.users.left_menu')
+        </div>
+    </div>
+</main>
+@endsection

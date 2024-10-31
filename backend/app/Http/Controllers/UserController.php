@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Address;
+use App\Models\Cart;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderLocation;
+use App\Services\AddressServices;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +20,7 @@ class UserController extends Controller
     protected $userService;
     protected $userRepository;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService , AddressServices $addressServices)
     {
         $this->userService = $userService;
     }
@@ -72,7 +74,15 @@ class UserController extends Controller
 
         $permissions = $user->permissionsValues;
 
-        return view('admin.users.show', compact('user', 'permissions'));
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+
+        return view('admin.users.show', compact('user', 'permissions', 'carts', 'cartCount'));
     }
 
     public function edit($id)
@@ -142,17 +152,29 @@ class UserController extends Controller
 
     public function indexClient()
     {
-        $user = $this->userService->getAll();
-        return view('client.users.widget', compact('user'));
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+        return view('client.users.index', compact('carts','cartCount'));
     }
 
     public function showClient($id)
     {
         $user = $this->userService->getById($id);
-
         $address = Address::where('user_id', $id)->first();
 
-        return view('client.users.show', compact('user','address'));
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+        return view('client.users.show', compact('user','address', 'carts', 'cartCount'));
     }
 
     public function updateClient(Request $request, $id)
@@ -170,36 +192,45 @@ class UserController extends Controller
         return redirect()->route('users.showClient', $user->id);
     }
 
-    public function showOrder($id, Request $request)
+    public function showOrder(Request $request)
     {
+        $id = Auth::user()->id;
         $status = $request->input('status', 'all'); 
         $query = Order::query();
     
         if ($status !== 'all') {
             $query->where('status', $status); 
         }
-    
         $orders = $query->get(); 
         $totalOrders = $orders->count(); 
+
+        // $userId = auth()->id();
+        $carts  = collect();
+        if($id) {
+            $carts = Cart::where('user_id', $id)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
     
-        return view('client.users.showOrder', compact('orders', 'totalOrders', 'status'));
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
     }
 
     public function showDetailOrder($id){
 
         $orders = Order::findOrFail($id);
+        $locations = OrderLocation::where('order_id', $id)->get();
 
-        $location = OrderLocation::where('order_id', $id)->first();
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
 
-        return view('client.users.showDetailOrder', compact('orders','location'));
+        $cartCount = $carts->sum('quantity');
+
+        return view('client.users.show_detail_order', compact('orders','locations', 'carts', 'cartCount'));
     }
 
-    public function showLocationOrder($id){
-
-        $location = OrderLocation::findOrFail($id);
-
-        return view('client.users.showLocationOrder', compact('location'));
-    }
   
     public function listdeleteMultiple(){
         $user = $this->userService->getAllTrashedUsers();
@@ -225,4 +256,85 @@ class UserController extends Controller
         return response()->json(['success' => false, 'message' => 'Invalid action.'], 400);
     }
 
+    public function updateOrInsertAddress(Request $request)
+    {
+        Log::info('Request received for creating address:', $request->all());
+        // Lấy user hiện tại (giả định đã đăng nhập)
+        $userId = Auth::id();
+
+        // Xác thực dữ liệu đầu vào
+        $validatedData = $request->validate([
+            'specific_address' => 'required|string|max:255',
+            'ward' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'username' => 'nullable|string|unique:users,username,' . $userId,
+            'phone_number' => 'nullable|string|unique:users,phone_number,' . $userId,
+        ]);
+        if(isset($validatedData['username']) || isset($validatedData['phone_number'])){
+            $data=[
+               'username'=> $validatedData['username'],
+               'phone_number'=> $validatedData['phone_number'],
+            ];
+            $this->userService->saveOrUpdate( $data, $userId);
+        }
+        
+        $is_active= Address::hasActiveAddress($userId);
+        // Tạo địa chỉ mới cho user
+        $address = Address::create([
+            'user_id' => $userId,
+            'specific_address' => $validatedData['specific_address'],
+            'ward' => $validatedData['ward'],
+            'district' => $validatedData['district'],
+            'city' => $validatedData['city'],
+            'active'=> $is_active ? false :true
+        ]);
+
+        // Trả về phản hồi thành công dưới dạng JSON
+        return response()->json([
+            'success' => true,
+            'message' => 'Thêm địa chỉ mới thành công!',
+            'address' => $address
+        ]);
+    }
+    public function setDefaultAddress(Request $request, $id)
+    {
+        $userId = Auth::id();
+        Address::where('user_id', $userId)->update(['active' => false]);
+        $address = Address::where('user_id', $userId)->where('id', $id)->first();
+        if ($address) {
+            $address->active = true;
+            $address->save();
+
+            return response()->json(['success' => true, 'message' => 'Cập nhật địa chỉ mặc định thành công!']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Không tìm thấy địa chỉ!'], 404);
+    }
+
+    public function updateAddress(Request $request){
+        $request->validate([
+            'id_address' => 'required|exists:addresses,id',
+            'name' => 'required|string|max:255',
+            'phone' => 'required|digits_between:10,15',
+            'city' => 'required|string',
+            'district' => 'required|string',
+            'ward' => 'required|string',
+            'address' => 'required|string',
+        ]);
+    
+        $dataUser=[
+            'username'=>$request->name,
+            'phone_number'=>$request->phone
+        ];
+        $this->userService->saveOrUpdate( $dataUser, Auth::id());
+        $address = Address::find($request->id_address);
+        $address->city = $request->city;
+        $address->district = $request->district;
+        $address->ward = $request->ward;
+        $address->specific_address = $request->address;
+        $address->save();
+
+        return response()->json(['success' => 'Địa chỉ đã được cập nhật thành công!']);
+    }
 }

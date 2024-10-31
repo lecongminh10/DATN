@@ -20,7 +20,7 @@ class CategoryRepository extends BaseRepository
     }
     public function getParent()
     {
-        $data = Category::query()->with('children')->whereNull('parent_id')->get();
+        $data = Category::query()->with('children')->whereNull('parent_id')->paginate(7);
         return $data;
     }
 

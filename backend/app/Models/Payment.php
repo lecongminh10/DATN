@@ -12,6 +12,18 @@ class Payment extends Model
 
     protected $table = 'payments';
 
+    public const VNPay='VNPay';
+    
+    public const Cash='Cash';
+
+    public const Pending='pending';
+
+    public const Completed ='completed';
+
+    public const Failed ='failed';
+
+    public const Refunded ='refunded';
+
     protected $fillable = [
         'order_id',
         'payment_gateway_id',
@@ -24,8 +36,16 @@ class Payment extends Model
         'updated_by',
     ];
 
-    public function paymentGateway()
-    {
-        return $this->belongsTo(PaymentGateway::class, 'payment_gateway_id');
+
+    protected $casts = [
+        'deleted_at' => 'boolean'
+    ];
+
+    public function order() {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function paymentGateway(){
+        return $this->belongsTo(PaymentGateways::class);
     }
 }

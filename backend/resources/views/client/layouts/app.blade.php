@@ -37,10 +37,12 @@
     <link rel="stylesheet" href="{{asset('themeclient/assets/css/bootstrap.min.css')}}">
 
     <!-- Main CSS File -->
+    <link rel="stylesheet" href="{{asset('themeclient/assets/css/style.min.css')}}">
     <link rel="stylesheet" href="{{asset('themeclient/assets/css/demo1.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('themeclient/assets/vendor/fontawesome-free/css/all.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('themeclient/assets/vendor/simple-line-icons/css/simple-line-icons.min.css')}}">
     @yield('style_css')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -228,17 +230,69 @@
     <a id="scroll-top" href="#top" title="Top" role="button"><i class="icon-angle-up"></i></a>
 
     <!-- Plugins JS File -->
-    <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="{{asset('themeclient/assets/js/jquery.min.js')}}"></script>
+    <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="{{asset('themeclient/assets/js/jquery.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/plugins.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.appear.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.plugin.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.countdown.min.js')}}"></script>
+    
+    {{-- Điều hướng đến các đường dẫn bên ở file js --}}
+    <script>
+        var routes = {
+            shoppingCart: "{{ route('shopping-cart') }}",
+            checkout: "{{ route('checkout') }}"
+        }; 
+    </script>
 
+    <script>
+        function removeFromCart(element) {
+        const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
+
+        // Gửi yêu cầu xóa sản phẩm
+        fetch(`/remove/${cartId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'), // CSRF token
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                // Xóa sản phẩm ra khỏi DOM
+                const productElement = element.closest('.product'); // Tìm phần tử sản phẩm tương ứng
+                const productPriceElement = productElement.querySelector('.cart-product-info'); // Lấy thông tin giá sản phẩm
+                const quantityElement = productElement.querySelector('.cart-product-qty'); // Lấy thông tin số lượng
+
+                // Tính lại subtotal
+                const priceString = productPriceElement.textContent.split('×')[1].trim(); // Lấy giá từ thông tin
+                const price = parseInt(priceString.replace(/\./g, '').replace('₫', '').trim(), 10); // Chuyển đổi giá thành số nguyên
+                const quantity = parseInt(quantityElement.textContent, 10); // Lấy số lượng
+                const subtotal = price * quantity; // Tính subtotal cho sản phẩm
+
+                // Cập nhật subtotal
+                const subtotalElement = document.querySelector('.cart-total-price');
+                const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫', '').trim(), 10); // Lấy subtotal hiện tại
+                const newSubtotal = currentSubtotal - subtotal; // Cập nhật subtotal mới
+                subtotalElement.textContent = `${newSubtotal.toLocaleString('vi-VN')}₫`; // Cập nhật giá trên giao diện
+
+                // Xóa sản phẩm khỏi DOM
+                productElement.remove();
+            } else {
+                console.log('Có lỗi xảy ra khi xóa sản phẩm');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
+    
     <!-- Main JS File -->
     <script src="{{asset('themeclient/assets/js/main.min.js')}}"></script>
     @yield('script_libray')
-    @yield('script_logic')
+    @yield('scripte_logic')
 {{-- <script>(function(){var js = "window['__CF$cv$params']={r:'8205254108eb1073',t:'MTY5OTAyMDA0OC4zMzMwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/61b90d1d/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";var _0xh = document.createElement('iframe');_0xh.height = 1;_0xh.width = 1;_0xh.style.position = 'absolute';_0xh.style.top = 0;_0xh.style.left = 0;_0xh.style.border = 'none';_0xh.style.visibility = 'hidden';document.body.appendChild(_0xh);function handler() {var _0xi = _0xh.contentDocument || _0xh.contentWindow.document;if (_0xi) {var _0xj = _0xi.createElement('script');_0xj.innerHTML = js;_0xi.getElementsByTagName('head')[0].appendChild(_0xj);}}if (document.readyState !== 'loading') {handler();} else if (window.addEventListener) {document.addEventListener('DOMContentLoaded', handler);} else {var prev = document.onreadystatechange || function () {};document.onreadystatechange = function (e) {prev(e);if (document.readyState !== 'loading') {document.onreadystatechange = prev;handler();}};}})();</script></body> --}}
 
 
