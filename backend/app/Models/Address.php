@@ -40,4 +40,9 @@ class Address extends Model
         return $this->belongsTo(User::class);
     }
 
+    public static function getActiveAddress($userId)
+    {
+        return self::where('user_id', $userId)->where('active', true)->first();  
+    }
+
 }
