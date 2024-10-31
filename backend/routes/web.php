@@ -18,7 +18,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Client\HomeController;
-
+use App\Http\Controllers\PayMentController;
 use Illuminate\Support\Facades\Mail;
 
 Route::group([
@@ -256,11 +256,16 @@ Route::prefix('/')->group(function () {
     Route::post('addresses', [UserController::class, 'updateOrInsertAddress'])->name('addresses');
     Route::post('/addresses/set-default/{id}', [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
     Route::post('/update-address', [UserController::class, 'updateAddress'])->name('update.address');
-    Route::post('add-order', [OrderController::class, 'addOrder'])->name('addOrder');
+    Route::post('add-order', [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán 
     Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
   
     //Counpon 
     Route::post('/apply-discount', [CouponController::class, 'applyDiscount']);
+
+    // //PayMent
+     Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
+
+    // Route::post('/create-order', [PayMentController::class, 'createOrder'])->name('create.order');
 });
 

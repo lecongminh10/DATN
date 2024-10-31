@@ -255,104 +255,6 @@ class OrderController extends Controller
         return response()->json(['message' => 'Cart updated successfully']);
     }
     
-
-    public function addOrder(Request $request)
-    {
-        // Validate request data
-        // $request->validate([
-        //     'address' => 'required|string|max:255',
-        //     'ward' => 'required|string|max:255',
-        //     'district' => 'required|string|max:255',
-        //     'city' => 'required|string|max:255',
-        //     'phone_number' => 'required|string|max:15',
-        //     'email' => 'required|email|max:255',
-        //     'note' => 'nullable|string|max:500',
-        //     'radio-ship' => 'required', // Shipping method
-        // ]);
-       $subTotal = 0;
-        if ($request->has('order_item')) {
-            foreach ($request->order_item as $item) {
-                $productId = $item['product_id'];
-                $productVariantId = $item['product_variant_id'] ?? null;
-                $product = Product::find($productId);
-
-                $price = 0;
-
-                if ($productVariantId) {
-                    $variant = ProductVariant::find($productVariantId);
-
-                    if ($variant) {
-                        if ($variant->price_modifier) {
-                            $price = $variant->price_modifier;
-                        } else {
-                            $price = $variant->original_price;
-                        }
-                    }
-                } else {
-                    if ($product->price_sale) {
-                        $price = $product->price_sale;
-                    } else {
-                        $price = $product->price_regular;
-                    }
-                }
-                $quantity = $item['quantity'] ?? 1; 
-                $subTotal += $price * $quantity;
-            }
-        }
-        $dataOrder=[];
-        $shippingCost = floatval($request->input('radio-ship')); // Đảm bảo giá trị là số
-       
-        $totalPrice = $subTotal + $shippingCost;
-        $dataOrder = [
-            'user_id' => Auth::id(),
-            'code' => 'ORDER-' . strtoupper(uniqid()),
-            'total_price' => $totalPrice,
-            'shipping_address_id'=>$request->shipping_address_id,
-            'note' => $request->note,
-            'status' => Order::CHO_XAC_NHAN,
-        ];
-        if($request->has('radio_pay')){
-            $radio_pay = $request->radio_pay;
-            $payment =PaymentGateways::where('name',$radio_pay)->first();
-            if($payment->name=='cash'){
-                $dataOrder['payment_id']= $payment->id;
-            }
-        }
-        $order = $this->orderService->saveOrUpdate($dataOrder);
-
-        $dataOrderLocation = [
-            'order_id' => $order->id,
-            'address' => $request->address,
-            'city' => 'Hà Nội ',
-            'district' => 'Bắc từ Liêm' ,
-            'ward' =>'Trường CD FPT PolyTechnic',
-            'latitude' => null,
-            'longitude' => null,
-        ];
-        if ($request->has('order_item')) {
-            foreach ($request->order_item as $value) {
-                $dataItem = [
-                    'order_id' => $order->id,
-                    'product_id' => $value['product_id'],
-                    'variant_id' => $value['product_variant_id'],
-                    'quantity' => $value['quantity'],
-                    'price' => $value['price'],
-                    'discount' => $value['discount'] ?? null,
-                ];
-                OrderItem::create($dataItem);
-                $idCard = $value['id_cart'];
-                $this->removeFromCart($idCard);
-            }
-        }
-
-        $this->orderLocationService->saveOrUpdate($dataOrderLocation);
-        return redirect()->route('client')->with('message', 'Đơn hàng đã được đặt thành công!');
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //xóa cart ở đâu
@@ -476,6 +378,5 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Delete with success'], 200);
     }
-
 
 }

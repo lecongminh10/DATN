@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('payment_gateway_id');
-            $table->decimal('amount', 10, 2);
+            $table->bigInteger('amount');
             $table->enum('status', ['pending', 'completed', 'failed', 'refunded']);
             $table->string('transaction_id')->unique();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
