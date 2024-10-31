@@ -23,7 +23,7 @@ class Payment extends Model
     public const Failed ='failed';
 
     public const Refunded ='refunded';
-    
+
     protected $fillable = [
         'order_id',
         'payment_gateway_id',
@@ -31,8 +31,11 @@ class Payment extends Model
         'status',
         'transaction_id',
         'deleted_at',
-        'deleted_by'
+        'deleted_by',
+        'created_by',
+        'updated_by',
     ];
+
 
     protected $casts = [
         'deleted_at' => 'boolean'

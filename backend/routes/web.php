@@ -18,6 +18,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
@@ -164,6 +166,30 @@ Route::group([
         Route::get('/deleteMultiple',                       [UserController::class, 'listdeleteMultiple'])->name('users.listdeleteMultiple');
         Route::post('/deleteMultiple',                      [UserController::class, 'deleteMultiple'])->name('users.deleteMultiple');
         Route::post('/manage/{id}',                         [UserController::class, 'manage'])->name('users.manage');
+    });
+
+    //payment
+    Route::prefix('payments')->group(function () {
+        Route::get('/',                                     [PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/add',                                  [PaymentController::class, 'add'])->name('payments.add');
+        Route::post('/store',                               [PaymentController::class, 'store'])->name('payments.store');
+        Route::get('show/{id}',                             [PaymentController::class, 'show'])->name('payments.show');
+        Route::get('/edit/{id}',                            [PaymentController::class, 'edit'])->name('payments.edit');
+        Route::put('update/{id}',                           [PaymentController::class, 'update'])->name('payments.update');
+        Route::delete('/users/{id}/delete',                 [PaymentController::class, 'destroy'])->name('payments.delete');
+        Route::post('/users/deleteMultiple',                [PaymentController::class, 'deleteMultiple'])->name('payments.deleteMultiple');
+    });
+
+    //payment-gateway
+    Route::prefix('paymentgateways')->group(function () {
+        Route::get('/',                                     [PaymentGatewayController::class, 'index'])->name('paymentgateways.index');
+        Route::get('/add',                                  [PaymentGatewayController::class, 'add'])->name('paymentgateways.add');
+        Route::post('/store',                               [PaymentGatewayController::class, 'store'])->name('paymentgateways.store');
+        Route::get('show/{id}',                             [PaymentGatewayController::class, 'show'])->name('paymentgateways.show');
+        Route::get('/edit/{id}',                            [PaymentGatewayController::class, 'edit'])->name('paymentgateways.edit');
+        Route::put('update/{id}',                           [PaymentGatewayController::class, 'update'])->name('paymentgateways.update');
+        Route::delete('/users/{id}/delete',                 [PaymentGatewayController::class, 'destroy'])->name('paymentgateways.delete');
+        Route::post('/users/deleteMultiple',                [PaymentGatewayController::class, 'deleteMultiple'])->name('paymentgateways.deleteMultiple');
     });
 
     //Permissions
