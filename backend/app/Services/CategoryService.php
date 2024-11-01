@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Category;
-use App\Repositories\CatalogueRepository;
 use App\Repositories\CategoryRepository;
 
 class CategoryService extends BaseService
@@ -16,15 +15,18 @@ class CategoryService extends BaseService
         $this->categoryService = $categoryService;
     }
 
-    public function getParentOrChild($search = null)
+    public function getParentOrChild($search = null, $parentId = null)
 {
-    $query = Category::query(); // Tạo một truy vấn mới
-
+    $query = Category::query();
     if ($search) {
-        $query->where('name', 'like', '%' . $search . '%'); // Tìm kiếm theo tên
+        $query->where('name', 'like', "%{$search}%");
     }
-
-    return $query->orderBy('created_at', 'desc'); // Trả về truy vấn mà không thực hiện truy vấn
+    if ($parentId) {
+        $query->where('parent_id', $parentId); // Giả sử bạn có trường parent_id
+    }
+    // Thêm điều kiện sắp xếp theo thời gian tạo giảm dần
+    $query->orderBy('created_at', 'desc');
+    return $query;
 }
     public function getParent()
     {
@@ -40,4 +42,21 @@ class CategoryService extends BaseService
     {
         return $this->categoryService->getAll($search, $perPage);
     }
+    public function getChildCategories($parentId)
+{
+    return Category::where('parent_id', $parentId)->get();
+}
+public function saveOrUpdate(array $data, $id = null)
+{
+    if ($id) {
+        $category = Category::findOrFail($id);
+        $category->update($data);
+    } else {
+        Category::create($data); // Tạo mới danh mục
+    }
+}
+public function findById($id)
+{
+    return Category::findOrFail($id);
+}
 }

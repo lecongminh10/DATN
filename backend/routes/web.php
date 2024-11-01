@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Client\ProductController as ClientProductController ;
+// use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
@@ -18,7 +19,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Client\HomeController;
-
+use App\Http\Controllers\OrderStatisticsController;
 use Illuminate\Support\Facades\Mail;
 
 Route::group([
@@ -134,17 +135,16 @@ Route::group([
         Route::get('/',                                    [CategoryController::class, 'index'])->name('categories.index');
         Route::get('create',                               [CategoryController::class, 'create'])->name('categories.create');
         Route::post('/',                                   [CategoryController::class, 'store'])->name('categories.store');
-        // Route::get('/{category}',                       [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/categories/{category}',               [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/{category}',                          [CategoryController::class, 'edit'])->name('categories.edit');
         Route::put('/{category}',                          [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/{category}',                       [CategoryController::class, 'destroy'])->name('categories.destroy');
         Route::delete('/categories/delete-multiple',       [CategoryController::class, 'deleteMultiple'])->name('categories.delete-multiple');
-        // Route::delete('/{category}/hard-delete',        [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
         Route::patch('/categories/{id}/restore',           [CategoryController::class, 'restore'])->name('categories.restore');
         Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
-
-        Route::post('/update-category-parent',            [CategoryController::class, 'updateParent']);
+        Route::post('/update-category-parent',             [CategoryController::class, 'updateParent']);
+        Route::get('/home',                                [HomeController::class, 'index'])->name('home.index');
+        
     });
     Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
     Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
@@ -259,8 +259,15 @@ Route::prefix('/')->group(function () {
     Route::post('add-order', [OrderController::class, 'addOrder'])->name('addOrder');
     Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
+    Route::get('admin/orders/canceled', [OrderController::class, 'canceledOrders'])->name('admin.orders.canceledOrders');
+    Route::get('admin/orders/completed', [OrderController::class, 'completedOrders'])->name('admin.orders.completedOrders');
+    Route::get('admin/orders/lost', [OrderStatisticsController::class, 'lostOrders'])->name('admin.orders.lostOrders');
   
     //Counpon 
     Route::post('/apply-discount', [CouponController::class, 'applyDiscount']);
+
+
 });
+
+Route::get('/orders/statistics', [OrderStatisticsController::class, 'index'])->name('orders.statistics');
 

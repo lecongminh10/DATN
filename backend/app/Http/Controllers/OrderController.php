@@ -477,5 +477,4 @@ class OrderController extends Controller
         return response()->json(['message' => 'Delete with success'], 200);
     }
 
-
 }

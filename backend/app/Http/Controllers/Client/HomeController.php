@@ -42,10 +42,13 @@ class HomeController extends Controller
         $this->categoryService = $categoryService;
         $this->attributeValueService = $attributeValueService;
     }
-    public function index()
+    public function index(Request $request)
     {
         $products = $this->productService->getFeaturedProducts();
-        return view('client.home', compact('products'));
+        $categories = $this->getCategoriesForMenu();
+        return view('client.home', compact('products', 'categories'));
+
+        
     }
 
     public function showProducts(Request  $request)
@@ -111,4 +114,16 @@ class HomeController extends Controller
 
         return view('client.products.list', compact('products', 'categories', 'minPrice', 'maxPrice'));
     }
+
+    public function getCategoriesForMenu()
+{
+    // Lấy tất cả danh mục cha
+    $parentCategories = $this->categoryService->getParent()->take(9);
+    // Lấy danh mục con cho từng danh mục cha
+    foreach ($parentCategories as $parent) {
+        // Lấy danh mục con bằng cách sử dụng parent_id của danh mục cha
+        $parent->children = $this->categoryService->getChildCategories($parent->id);
+    }
+    return $parentCategories; // Trả về danh mục cha với danh mục con
+}
 }
