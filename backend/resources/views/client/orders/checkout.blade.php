@@ -70,16 +70,35 @@
             width: 70px;
         }
 
+        .title-price{
+            padding-left: 15px;
+        }
+
         .text-muted {
             color: #6c757d;
         }
 
-        .fw-bold {
+        .fw-bold-price{
             font-weight: bold;
+            width: 100px;
+        }
+
+        .fw-bold-quantity{
+            font-weight: bold;
+            width: 65px;
+        }
+
+        .fw-bold-subPrice{
+            font-weight: bold;
+            width: 100px;
         }
 
         .namePro {
-            width: 190px;
+            width: 120px;
+        }
+
+        .sub-total{
+            width: 100px;
         }
 
         /* Modal */
@@ -622,7 +641,7 @@
                                 @foreach ($cartCheckout as $item)
                                     <div class="product-container">
                                         <div class="product-image">
-                                            <img src="" alt="{{ $item->product->name }}" class="img-thumbnail">
+                                            <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="90" height="90" alt="{{ $item->product->getMainImage()->image_gallery }}" />
                                         </div>
                                         <div class="product-info">
                                             <div class="d-flex justify-content-between mt-1">
@@ -645,31 +664,22 @@
                                                     @endif
                                                 </div>
                                                 <div class="text-end">
-                                                    <span class="text-muted">Đơn giá</span>
-                                                    <div class="fw-bold">
-                                                        @if ($item->productVariant)
-                                                            @if (!empty($item->productVariant->price_modifier))
-                                                                {{ number_format($item->productVariant->price_modifier, 0, ',', '.') }}
-                                                                đ
+                                                    <span class="text-muted title-price" >Đơn giá</span>
+                                                    <div class="fw-bold-price" >
+                                                        @if ($item->product && is_null($item->productVariant)) 
+                                                            @if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) 
+                                                                {{ number_format($item->product->price_sale, 0, ',', '.') }} ₫
                                                             @else
-                                                                {{ number_format($item->productVariant->original_price, 0, ',', '.') }}
-                                                                đ
+                                                                {{ number_format($item->product->price_regular, 0, ',', '.') }} ₫
                                                             @endif
-                                                        @else
-                                                            @if (!empty($item->product->price_sale))
-                                                                {{ number_format($item->product->price_sale, 0, ',', '.') }}
-                                                                đ
-                                                            @else
-                                                                {{ number_format($item->product->price_modifier, 0, ',', '.') }}
-                                                                đ
-                                                            @endif
+                                                        @elseif ($item->product && $item->productVariant) 
+                                                            {{ number_format($item->productVariant->price_modifier, 0, ',', '.') }} ₫
                                                         @endif
-
-                                                    </div>
+                                                </div>
                                                 </div>
                                                 <div class="product-quantity">
                                                     <span class="text-muted">Số lượng</span>
-                                                    <div class="fw-bold">{{ $item->quantity }}</div>
+                                                    <div class="fw-bold-quantity">{{ $item->quantity }}</div>
                                                 </div>
                                                 @php
                                                     $price = 0;
@@ -699,8 +709,7 @@
 
                                                 <div class="product-total">
                                                     <span class="text-muted">Thành tiền</span>
-                                                    <div class="fw-bold"> {{ number_format($total, 0, ',', '.') }}
-                                                        đ</div>
+                                                    <div class="fw-bold-subPrice"> {{ number_format($total, 0, ',', '.') }} đ</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -792,14 +801,14 @@
                                             <h4>Vận chuyển</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="30000" checked onchange="updateTotal()">
-                                                    <label class="custom-control-label">Giao hàng nhanh (30.000)</label>
+                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="30.000" checked onchange="updateTotal()" />
+                                                    <label class="custom-control-label">Giao hàng nhanh (30.000 ₫)</label>
                                                 </div>
                                             </div>
                                             <div class="form-group form-group-custom-control mb-0">
                                                 <div class="custom-control custom-radio mb-0">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="15000" onchange="updateTotal()">
-                                                    <label class="custom-control-label">Giao hàng tiết kiệm (15.000)</label>
+                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="15.000" onchange="updateTotal()" />
+                                                    <label class="custom-control-label">Giao hàng tiết kiệm (15.000 ₫)</label>
                                                 </div>
                                             </div>
                                         </td>
@@ -808,15 +817,16 @@
                                         <td class="text-left" colspan="2">
                                             <h4 class="m-b-sm">Phương thức thanh toán</h4>
                                             <div class="form-group form-group-custom-control">
-                                                <div class="custom-control custom-checkbox d-flex">
-                                                    <input type="checkbox" class="custom-control-input" id="payment-online" name="radio_pay" value="VNPay" onclick="selectPayment(this)" />
-                                                    <label class="custom-control-label" for="payment-online">Thanh toán VNPay</label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group form-group-custom-control mb-0">
                                                 <div class="custom-control custom-checkbox d-flex mb-0">
                                                     <input type="checkbox" class="custom-control-input" id="payment-cash" name="radio_pay" value="Cash" onclick="selectPayment(this)" checked />
                                                     <label class="custom-control-label" for="payment-cash">Thanh toán sau khi nhận hàng</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group form-group-custom-control">
+                                                <div class="custom-control custom-checkbox d-flex">
+                                                    <input type="checkbox" class="custom-control-input" id="payment-online" name="radio_pay" value="VNPay" onclick="selectPayment(this)" />
+                                                    <label class="custom-control-label" for="payment-online">Thanh toán VNPay</label>
                                                 </div>
                                             </div>
                                         </td>
@@ -827,7 +837,11 @@
                                             <h4>Tổng </h4>
                                         </td>
                                         <td>
-                                            <b class="total-price"><span id="totalPriceDisplay" name="price">{{ number_format($subTotal, 0, ',', '.') }} đ</span></b>
+                                            <b class="total-price">
+                                                <span id="totalPriceDisplay" class="sub-total" name="price">{{ number_format($subTotal, 0, ',', '.') }} đ</span>
+                                            </b>
+                                            <!-- Thêm input hidden để lưu tổng tiền -->
+                                            <input type="hidden" id="totalAmountInput" name="total_amount">
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -895,26 +909,29 @@
             // Return the formatted string with currency symbol
             return `${formattedWhole} đ`;
         }
+
         // Cập nhật giá tiền khi chọn radio
+        document.addEventListener('DOMContentLoaded', function () {
         function updateTotal() {
             // Lấy giá trị subtotal từ server
             const subtotal = parseFloat('{{ $subTotal }}');
-
-            // Lấy giá trị của phí vận chuyển được chọn
-            const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked').value);
+            
+            // Lấy giá trị của phí vận chuyển được chọn và chuyển sang dạng số
+            const shippingCost = parseFloat(
+                document.querySelector('input[name="radio-ship"]:checked').value.replace(/\./g, '')
+            );
 
             // Tính toán tổng tiền
             const total = subtotal + shippingCost;
 
-            // Cập nhật hiển thị tổng tiền
-            document.getElementById('totalPriceDisplay').textContent = formatCurrency(total);
+            // Cập nhật hiển thị tổng tiền với định dạng tiền Việt Nam
+            document.getElementById('totalPriceDisplay').textContent = `${total.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} ₫`;
             document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị hidden input
         }
 
         // Gọi hàm updateTotal() khi trang được tải
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTotal();
-        });
+        updateTotal();
+    });
         // End
 
         // Nút cập nhật địa chỉ

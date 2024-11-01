@@ -58,7 +58,7 @@ class HomeController extends Controller
         $bestSellingProducts = $this->productService->bestSellingProducts();
         $latestProducts = $this->productService->latestProducts();
         $categories = $this->getCategoriesForMenu();
-        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts'));
+        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'carts', 'cartCount'));
 
     }
 

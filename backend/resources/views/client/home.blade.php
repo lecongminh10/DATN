@@ -164,6 +164,7 @@
 @section('script_libray')
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ asset('themeclient/assets/js/cart-wishlist.js') }}"></script>
     
 @endsection
 
@@ -175,7 +176,7 @@
     </script>
 
 
-<script>
+{{-- <script>
     // Thêm cart
     $(document).ready(function() {
         $('.btn-add-cart').on('click', function(e) {
@@ -239,5 +240,5 @@ function addToWishlist(productId, productVariantId) {
     });
 }
 
-</script>
+</script> --}}
 @endsection

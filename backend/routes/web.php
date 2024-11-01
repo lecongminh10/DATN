@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CarrierController;
@@ -11,9 +10,6 @@ use App\Http\Controllers\PayMentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Client\HomeController;
@@ -24,6 +20,10 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+// use App\Http\Controllers\OrderController;
+// use App\Http\Controllers\Auth\RegisterController;
+// use App\Http\Controllers\Auth\SocialiteController;
+// use App\Http\Controllers\Auth\ResetPasswordController;
 
 
 Route::group([

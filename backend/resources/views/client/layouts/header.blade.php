@@ -167,7 +167,7 @@
                                         @endphp
                                         <span class="cart-product-info">
                                             {{-- <input type="hidden" name="" value="{{ number_format($item->total_price, 0, ',', '.') }}"> --}}
-                                            <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format($sub, 0, ',', '.') }}₫
+                                            <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format($sub, 0, ',', '.') }} ₫
                                         </span>
                                     </div>
                                     <!-- End .product-details -->
