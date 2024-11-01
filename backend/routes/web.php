@@ -18,7 +18,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
