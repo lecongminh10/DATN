@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\OrderStatisticsController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeValueController;
@@ -21,7 +22,6 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-
 
 Route::group([
     'prefix' => 'admin',
@@ -136,17 +136,16 @@ Route::group([
         Route::get('/',                                    [CategoryController::class, 'index'])->name('categories.index');
         Route::get('create',                               [CategoryController::class, 'create'])->name('categories.create');
         Route::post('/',                                   [CategoryController::class, 'store'])->name('categories.store');
-        // Route::get('/{category}',                       [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/categories/{category}',               [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/{category}',                          [CategoryController::class, 'edit'])->name('categories.edit');
         Route::put('/{category}',                          [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/{category}',                       [CategoryController::class, 'destroy'])->name('categories.destroy');
         Route::delete('/categories/delete-multiple',       [CategoryController::class, 'deleteMultiple'])->name('categories.delete-multiple');
-        // Route::delete('/{category}/hard-delete',        [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
         Route::patch('/categories/{id}/restore',           [CategoryController::class, 'restore'])->name('categories.restore');
         Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
-
-        Route::post('/update-category-parent',            [CategoryController::class, 'updateParent']);
+        Route::post('/update-category-parent',             [CategoryController::class, 'updateParent']);
+        Route::get('/home',                                [HomeController::class, 'index'])->name('home.index');
+        
     });
     Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
     Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
@@ -227,15 +226,17 @@ Route::group([
             Route::put('restore_selected',                 [OrderController::class, 'muitpathRestore'])->name('restore_selected');
             Route::delete('hard-delete/{id}',              [OrderController::class, 'hardDelete'])->name('hard_delete');
             Route::delete('multi-hard-delete',             [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete');
+            Route::get('canceled',                         [OrderController::class, 'canceledOrders'])->name('canceledOrders');
+            Route::get('completed',                        [OrderController::class, 'completedOrders'])->name('completedOrders');
+            Route::get('lost',                             [OrderStatisticsController::class, 'lostOrders'])->name('lostOrders');
+            Route::get('orders/statistics',                [OrderStatisticsController::class, 'index'])->name('statistics');
         }
     );
     // statistic
-    Route::group(
-        [
+    Route::group([
             'prefix' => 'statistics',
             'as' => 'statistics.'
-        ],
-        function () {
+        ],function () {
             Route::get('/', [StatsController::class, 'index'])->name('index');
 
         }
@@ -306,8 +307,9 @@ Route::prefix('/')->group(function () {
     Route::post('/apply-discount',                          [CouponController::class, 'applyDiscount']);
 
     // //PayMent
-     Route::get('/vnpay-return',                            [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::get('/vnpay-return',                            [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
+
 });
 

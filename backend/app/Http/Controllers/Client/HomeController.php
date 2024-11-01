@@ -44,7 +44,7 @@ class HomeController extends Controller
         $this->categoryService = $categoryService;
         $this->attributeValueService = $attributeValueService;
     }
-    public function index()
+    public function index(Request $request)
     {
         $userId = auth()->id();
         $carts  = collect();
@@ -59,7 +59,6 @@ class HomeController extends Controller
         $latestProducts = $this->productService->latestProducts();
         $categories = $this->getCategoriesForMenu();
         return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts'));
-
     }
 
     public function showProducts(Request  $request)

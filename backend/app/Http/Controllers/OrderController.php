@@ -529,5 +529,4 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Wishlist item deleted successfully'], 200);
     }
-
 }

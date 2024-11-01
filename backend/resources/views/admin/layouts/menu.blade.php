@@ -38,6 +38,14 @@
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarDashboards">
+                    <ul class="nav nav-sm flex-column">
+                    <li class="nav-item">
+                        <a href="{{route('orders.statistics')}}" class="nav-link"  role="button"
+                            aria-expanded="false" aria-controls="sidebarCategory" data-key="t-category">
+                            THống Kê đơn hàng
+                        </a>
+                    </li>
+                    </ul>
                     </div>
                 </li> <!-- end Dashboard Menu -->
                 <li class="nav-item">
