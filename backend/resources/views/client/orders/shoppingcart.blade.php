@@ -25,7 +25,6 @@
             font-size: 0.9em; /* Kích thước chữ nhỏ hơn cho thuộc tính */
             color: #555; /* Màu chữ nhạt hơn */
         }
-
         .attribute-item strong {
             color: #000; /* Màu chữ cho tên thuộc tính */
         }
@@ -71,10 +70,7 @@
 
     </style>
 @endsection
-
-
 @section('content')
-
 
 <header class="header home">
     <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
@@ -82,7 +78,7 @@
             {{-- <nav class="main-nav w-100">
                 <ul class="menu">
                     <li>
-                        <a href="demo4.html">Home</a>
+                        <a href="{{ route('client') }}">Home</a>
                     </li>
                     <li>
                         <a href="category.html">Categories</a>
@@ -253,7 +249,6 @@
                 <a href="#">Order Complete</a>
             </li>
         </ul>
-
         <div class="row">
             <div class="col-lg-9">
                 <div class="cart-table-container">
@@ -270,7 +265,7 @@
                         <tbody>
                             <?php 
                                 $totalAmount = 0; 
-                                $totalQuantity = 0; 
+                                $totalQuantity = null; 
                             ?>
                             @foreach ($carts as $value)
                             <tr class="product-row">
@@ -348,26 +343,35 @@
                                     </div>
                                 </td>
                                 <?php 
-                                $price = 0;
-                                $subTotal = 0;
-                                
-                                // Check if the product exists and if there's no product variant
-                                if ($value->product && is_null($value->productVariant)) {
-                                    $price = $value->product->price_regular; // Use regular price
-                                    $subTotal = $price * $value->quantity; 
-                                }
-                                // Check if both product and product variant exist
-                                elseif ($value->product && $value->productVariant) {
-                                    $price = $value->productVariant->price_modifier ?? $value->productVariant->original_price; // Use price modifier if exists, else original price
-                                    $subTotal = $price * $value->quantity; 
-                                } else {
-                                    $subTotal = 0; // Default to 0 if no product or variant
-                                }
-                                
-                                $totalAmount += $subTotal; // Accumulate total amount
-                                $totalQuantity += $value->quantity; // Accumulate total quantity
-                                ?>
-                                
+                                    $price = 0;
+                                    $subTotal = 0;
+                                    if ($value->product) {
+                                        if ($value->productVariant) {
+                                            // Use price modifier if it exists, otherwise use original price
+                                            if (!empty($value->productVariant->price_modifier) && $value->productVariant->price_modifier !== null) {
+                                                $price = $value->productVariant->price_modifier; // Use price modifier
+                                            } else {
+                                                $price = $value->productVariant->original_price; // Use original price
+                                            }
+                                        } else {
+                                            if(!empty($value->product->price_sale) && $value->product->price_sale!==null)
+                                            {
+                                                $price = $value->product->price_sale; 
+                                            }
+                                            else {
+                                                $price = $value->product->price_regular; 
+                                            }
+                                        }
+
+                                        $subTotal = $price * $value->quantity; 
+                                    } else {
+                                        $subTotal = 0; // Default to 0 if no product
+                                    }
+
+                                    // Accumulate total amount and quantity
+                                    $totalAmount += $subTotal; // Accumulate total amount
+                                    $totalQuantity += $value->quantity; // Accumulate total quantity
+                                    ?>                          
                                 <td class="text-right">
                                     <span class="subtotal-price">{{ number_format($subTotal, 0, ',', '.') }} đ</span>
                                 </td>
@@ -381,9 +385,13 @@
                                     
 
                                     <div class="float-right">
-                                        <button type="submit" class="btn btn-shop btn-update-cart">
-                                            Cập nhật giỏ hàng
-                                        </button>
+                                        @if ($carts && count($carts) > 0)
+                                            <button type="submit" class="btn btn-shop btn-update-cart">
+                                                Cập nhật giỏ hàng
+                                            </button>
+                                        @else
+                                            {{-- {{ "Không có sản phẩm trong giỏ hàng" }} --}}
+                                        @endif
                                     </div><!-- End .float-right -->
                                 </td>
                             </tr>
@@ -411,7 +419,7 @@
                         </div>
                     </div>
                     <div class="checkout-methods">
-                        <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Đến giỏ hàng
+                        <a href="{{ route('checkout') }}" class="btn btn-block btn-dark">Thanh toán 
                             <i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div><!-- End .cart-summary -->
@@ -429,8 +437,9 @@
      
 @endsection
     
-@section('script_logic')
+@section('scripte_logic')
 <script>
+// Cập nhật số lượng + giá tiền
 function updateSubtotal(inputElement) {
     const price = parseFloat(inputElement.getAttribute('data-price')) || 0;
     const quantity = parseInt(inputElement.value);
@@ -445,7 +454,7 @@ function updateSubtotal(inputElement) {
 
 
 // Xóa khỏi giỏ hàng
-function removeFromCart(element) {
+function removeCart(element) {
     const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
 
     // Gửi yêu cầu xóa sản phẩm

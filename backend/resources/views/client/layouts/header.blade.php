@@ -68,8 +68,8 @@
                 <button class="mobile-menu-toggler mr-2" type="button">
                     <i class="fas fa-bars"></i>
                 </button>
-                <a href="{{route('client')}}" class="logo">
-                    <img src="assets/images/logo.png" width="111" height="44" alt="Porto Logo">
+                <a href="{{ route('client') }}" class="logo">
+                    <img src="{{ asset('themeclient/assets/images/logo.png') }}" width="111" height="44" alt="Porto Logo">
                 </a>
             </div>
             <!-- End .header-left -->
@@ -118,12 +118,16 @@
                     <i class="icon-user-2"></i>
                 </a>
                 
-                <a href="wishlist.html" class="header-icon"><i class="icon-wishlist-2"></i></a>
+                <a href="{{ route('wishList') }}" class="header-icon"><i class="icon-wishlist-2"></i></a>
 
                 <div class="dropdown cart-dropdown">
                     <a href="#" title="Cart" class="dropdown-toggle dropdown-arrow cart-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                         <i class="minicart-icon"></i>
-                        <span class="cart-count badge-circle">3</span>
+                        @if(isset($cartCount))
+                           @if ($cartCount >0)
+                           <span class="cart-count badge-circle">{{ $cartCount }}</span> <!-- Hiển thị số sản phẩm nếu có -->
+                           @endif
+                        @endif
                     </a>
 
                     <div class="cart-overlay"></div>
@@ -131,89 +135,69 @@
                     <div class="dropdown-menu mobile-cart">
                         <a href="#" title="Close (Esc)" class="btn-close">×</a>
 
-                        <div class="dropdownmenu-wrapper custom-scrollbar">
+                        <div class="dropdownmenu-wrapper custom-scrollbar"> 
                             <div class="dropdown-cart-header">Shopping Cart</div>
                             <!-- End .dropdown-cart-header -->
-
+                        
                             <div class="dropdown-cart-products">
-                                <div class="product">
-                                    <div class="product-details">
-                                        <h4 class="product-title">
-                                            <a href="demo1-product.html">Ultimate 3D Bluetooth Speaker</a>
-                                        </h4>
-
-                                        <span class="cart-product-info">
-                                            <span class="cart-product-qty">1</span> × $99.00
-                                        </span>
-                                    </div>
-                                    <!-- End .product-details -->
-
-                                    <figure class="product-image-container">
-                                        <a href="demo1-product.html" class="product-image">
-                                            <img src="assets/images/products/product-1.jpg" alt="product" width="80" height="80">
-                                        </a>
-
-                                        <a href="#" class="btn-remove" title="Remove Product"><span>×</span></a>
-                                    </figure>
-                                </div>
-                                <!-- End .product -->
-
-                                <div class="product">
-                                    <div class="product-details">
-                                        <h4 class="product-title">
-                                            <a href="demo1-product.html">Brown Women Casual HandBag</a>
-                                        </h4>
-
-                                        <span class="cart-product-info">
-                                            <span class="cart-product-qty">1</span> × $35.00
-                                        </span>
-                                    </div>
-                                    <!-- End .product-details -->
-
-                                    <figure class="product-image-container">
-                                        <a href="demo1-product.html" class="product-image">
-                                            <img src="assets/images/products/product-2.jpg" alt="product" width="80" height="80">
-                                        </a>
-
-                                        <a href="#" class="btn-remove" title="Remove Product"><span>×</span></a>
-                                    </figure>
-                                </div>
-                                <!-- End .product -->
-
-                                <div class="product">
-                                    <div class="product-details">
-                                        <h4 class="product-title">
-                                            <a href="demo1-product.html">Circled Ultimate 3D Speaker</a>
-                                        </h4>
-
-                                        <span class="cart-product-info">
-                                            <span class="cart-product-qty">1</span> × $35.00
-                                        </span>
-                                    </div>
-                                    <!-- End .product-details -->
-
-                                    <figure class="product-image-container">
-                                        <a href="demo1-product.html" class="product-image">
-                                            <img src="assets/images/products/product-3.jpg" alt="product" width="80" height="80">
-                                        </a>
-                                        <a href="#" class="btn-remove" title="Remove Product"><span>×</span></a>
-                                    </figure>
-                                </div>
+                                @php
+                                    $subTotal = 0; // Khởi tạo tổng phụ
+                                @endphp
+                        
+                               @if (isset($carts))
+                               @foreach ($carts as $item)
+                               <div class="product">
+                                   <div class="product-details">
+                                       <h4 class="product-title">
+                                           <a href="{{ route('client.showProduct', $item->product->id ) }}">{{ $item->product->name }}</a>
+                                       </h4>
+                                       @php
+                                           
+                                           if ($item->product && is_null($item->productVariant)) {
+                                               // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
+                                               if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
+                                                   $price = $item->product->price_sale; // Lấy giá sale nếu có
+                                               } else {
+                                                   $price = $item->product->price_regular; // Nếu không có giá sale, lấy giá thường
+                                               }
+                                               $sub = $price * $item->quantity; 
+                                           } elseif ($item->product && $item->productVariant) {
+                                               // Nếu có sản phẩm và có biến thể, lấy giá biến thể
+                                               $price = $item->productVariant->price_modifier;
+                                               $sub = $price * $item->quantity; 
+                                           }
+                                           $subTotal += $sub; // Cộng dồn vào tổng phụ
+                                       @endphp
+                                       <span class="cart-product-info">
+                                           {{-- <input type="hidden" name="" value="{{ number_format($item->total_price, 0, ',', '.') }}"> --}}
+                                           <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format($sub, 0, ',', '.') }}₫
+                                       </span>
+                                   </div>
+                                   <!-- End .product-details -->
+                       
+                                   <figure class="product-image-container">
+                                       <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
+                                           <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
+                                       </a>
+                       
+                                       <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>
+                                   </figure>
+                               </div>
+                               @endforeach
+                               @endif
                                 <!-- End .product -->
                             </div>
                             <!-- End .cart-product -->
-
+                        
                             <div class="dropdown-cart-total">
                                 <span>SUBTOTAL:</span>
-
-                                <span class="cart-total-price float-right">$134.00</span>
+                                <span class="cart-total-price float-right">{{ number_format($subTotal, 0, ',', '.') }}₫</span>
                             </div>
                             <!-- End .dropdown-cart-total -->
-
+                        
                             <div class="dropdown-cart-action">
-                                <a href="{{ route('shopping-cart') }}" class="btn btn-gray btn-block view-cart">View
-                                    Cart</a>
-                                <a href="#" class="btn btn-dark btn-block">Checkout</a>
+                                <a href="{{ route('shopping-cart') }}" class="btn btn-gray btn-block view-cart">View Cart</a>
+                                <a href="{{ route('checkout') }}" class="btn btn-dark btn-block">Checkout</a>
                             </div>
                             <!-- End .dropdown-cart-total -->
                         </div>

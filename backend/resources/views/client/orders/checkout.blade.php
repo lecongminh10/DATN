@@ -746,7 +746,6 @@
                                                     <input type="hidden" name="order_item[{{ $key }}][id_cart]" value="{{ $value->id }}">
                                                 </h3>
                                             </td>
-                            
                                             <td class="price-col">
                                                 <span>
                                                     @if ($value->productVariant)
@@ -793,14 +792,14 @@
                                             <h4>Vận chuyển</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="30.00" checked onchange="updateTotal()">
-                                                    <label class="custom-control-label">Giao hàng nhanh (30.00)</label>
+                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="30000" checked onchange="updateTotal()">
+                                                    <label class="custom-control-label">Giao hàng nhanh (30.000)</label>
                                                 </div>
                                             </div>
                                             <div class="form-group form-group-custom-control mb-0">
                                                 <div class="custom-control custom-radio mb-0">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="15.00" onchange="updateTotal()">
-                                                    <label class="custom-control-label">Giao hàng tiết kiệm (15.00)</label>
+                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="15000" onchange="updateTotal()">
+                                                    <label class="custom-control-label">Giao hàng tiết kiệm (15.000)</label>
                                                 </div>
                                             </div>
                                         </td>
@@ -810,13 +809,13 @@
                                             <h4 class="m-b-sm">Phương thức thanh toán</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-checkbox d-flex">
-                                                    <input type="checkbox" class="custom-control-input" id="payment-online" name="radio_pay" value="online" onclick="selectPayment(this)" />
-                                                    <label class="custom-control-label" for="payment-online">Thanh toán online</label>
+                                                    <input type="checkbox" class="custom-control-input" id="payment-online" name="radio_pay" value="VNPay" onclick="selectPayment(this)" />
+                                                    <label class="custom-control-label" for="payment-online">Thanh toán VNPay</label>
                                                 </div>
                                             </div>
                                             <div class="form-group form-group-custom-control mb-0">
                                                 <div class="custom-control custom-checkbox d-flex mb-0">
-                                                    <input type="checkbox" class="custom-control-input" id="payment-cash" name="radio_pay" value="cash" onclick="selectPayment(this)" checked />
+                                                    <input type="checkbox" class="custom-control-input" id="payment-cash" name="radio_pay" value="Cash" onclick="selectPayment(this)" checked />
                                                     <label class="custom-control-label" for="payment-cash">Thanh toán sau khi nhận hàng</label>
                                                 </div>
                                             </div>
@@ -834,7 +833,6 @@
                                 </tfoot>
                             </table>
                             
-
                             {{-- <div class="payment-methods">
                                     <h4 class="">Payment methods</h4>
                                     <div class="info-box with-icon p-0">
@@ -872,7 +870,7 @@
     </script>
 @endsection
 
-@section('script_logic')
+@section('scripte_logic')
     <script>
         // Chọn checkbox
         function selectPayment(selectedCheckbox) {
@@ -887,6 +885,16 @@
                 }
             });
         }
+        function formatCurrency(value) {
+            // Convert to number and round to 2 decimal places
+            const number = Number(value).toFixed(2);
+            // Split the number into whole and decimal parts
+            const [whole, decimal] = number.split('.');
+            // Format the whole part with commas as thousand separators
+            const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            // Return the formatted string with currency symbol
+            return `${formattedWhole} đ`;
+        }
         // Cập nhật giá tiền khi chọn radio
         function updateTotal() {
             // Lấy giá trị subtotal từ server
@@ -899,7 +907,7 @@
             const total = subtotal + shippingCost;
 
             // Cập nhật hiển thị tổng tiền
-            document.getElementById('totalPriceDisplay').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('totalPriceDisplay').textContent = formatCurrency(total);
             document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị hidden input
         }
 
@@ -946,15 +954,7 @@
 
             // Nút thêm địa chỉ mới
             btnAddAddress.addEventListener('click', function() {
-                // Hiển thị form thêm địa chỉ và ẩn form cập nhật
-                addAddressForm.style.display = 'block';
-                updateAddressForm.style.display = 'none';
-                document.getElementById('addAddressModalLabel').innerText = "Thêm địa chỉ mới";
-
-                // Cập nhật trạng thái nút
-                btnAdd.textContent = 'Thêm địa chỉ';
-                btnBack.style.display = 'inline-block';
-                btnHuy.style.display = 'none';
+                $('#editAddressModal').modal('show');
             });
 
             // Nút trở lại

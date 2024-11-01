@@ -145,6 +145,25 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body p-5 text-center">
+                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
+                            <div class="mt-4 text-center">
+                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?</h4>
+                                <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
+                                    <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
+                                </div>
+                                <div class="hstack gap-2 justify-content-center remove mt-3">
+                                    <button class="btn btn-link btn-ghost-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal">
+                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
+                                    </button>
+                                    <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
     
                 <!-- Modal xác nhận xóa -->
                 <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
@@ -183,7 +202,6 @@
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             let selectedIds = [];
 
-            // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
@@ -191,7 +209,6 @@
                 });
             });
 
-            // Thêm sự kiện cho checkbox "Chọn tất cả"
             checkAll.addEventListener('change', function() {
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
@@ -199,7 +216,6 @@
                 deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none'; 
             });
 
-            // Thêm sự kiện click cho nút xóa nhiều
             deleteMultipleBtn.addEventListener('click', function() {
                 selectedIds = Array.from(checkboxes)
                     .filter(checkbox => checkbox.checked)
@@ -210,16 +226,13 @@
                     return;
                 }
 
-                // Hiển thị modal cho xóa nhiều
                 document.getElementById('modalUsername').innerText = `Người dùng: ${selectedIds.length} người`;
                 document.getElementById('modalTitle').innerText = 'Bạn có chắc chắn muốn xóa những người dùng này?';
 
                 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
                 const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-                // Xóa sự kiện cũ để không gán nhiều lần
                 confirmDeleteBtn.onclick = function() {
-                    // Gửi yêu cầu xóa nhiều người dùng
                     const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
                     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                     
@@ -250,7 +263,6 @@
                 deleteModal.show();
             });
 
-            // Chức năng tìm kiếm
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', function() {
                 const filter = searchInput.value.toLowerCase();
@@ -264,31 +276,26 @@
                     
                     if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(filter)) {
                         row.style.display = '';
-                        noResults = false; // Có ít nhất một kết quả
+                        noResults = false;
                     } else {
                         row.style.display = 'none';
                     }
                 });
 
-                // Hiển thị thông báo không tìm thấy kết quả nếu không có hàng nào
                 const noResultDiv = document.querySelector('.noresult');
                 noResultDiv.style.display = noResults ? 'block' : 'none';
             });
         });
 
         function confirmDelete(userId, username) {
-            // Hiển thị modal
             document.getElementById('modalUsername').innerText = `Người dùng: ${username}`;
             const deleteBtn = document.getElementById('confirmDeleteBtn');
             const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-            // Xóa sự kiện cũ để không gán nhiều lần
             deleteBtn.onclick = function() {
-                // Kiểm tra trạng thái checkbox và cập nhật giá trị vào form
                 const forceDeleteInput = document.getElementById(`forceDeleteInput-${userId}`);
                 forceDeleteInput.value = forceDeleteCheckbox.checked ? 'true' : 'false';
 
-                // Gửi form
                 document.getElementById(`deleteForm-${userId}`).submit();
             };
 

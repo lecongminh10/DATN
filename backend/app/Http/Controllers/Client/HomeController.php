@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Category;
 use App\Services\TagService;
@@ -10,6 +11,7 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Address;
 use App\Services\AttributeValueService;
 use App\Services\ProductGalleryService;
 use App\Services\ProductVariantService;
@@ -44,11 +46,19 @@ class HomeController extends Controller
     }
     public function index(Request $request)
     {
-        $products = $this->productService->getFeaturedProducts();
-        $categories = $this->getCategoriesForMenu();
-        return view('client.home', compact('products', 'categories'));
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
 
-        
+        $cartCount = $carts->sum('quantity');
+        $products = $this->productService->getFeaturedProducts();
+        $topRatedProducts = $this->productService->topRatedProducts();
+        $bestSellingProducts = $this->productService->bestSellingProducts();
+        $latestProducts = $this->productService->latestProducts();
+        $categories = $this->getCategoriesForMenu();
+        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts'));
     }
 
     public function showProducts(Request  $request)
@@ -116,14 +126,14 @@ class HomeController extends Controller
     }
 
     public function getCategoriesForMenu()
-{
-    // Lấy tất cả danh mục cha
-    $parentCategories = $this->categoryService->getParent()->take(9);
-    // Lấy danh mục con cho từng danh mục cha
-    foreach ($parentCategories as $parent) {
-        // Lấy danh mục con bằng cách sử dụng parent_id của danh mục cha
-        $parent->children = $this->categoryService->getChildCategories($parent->id);
+    {
+        // Lấy tất cả danh mục cha
+        $parentCategories = $this->categoryService->getParent()->take(9);
+        // Lấy danh mục con cho từng danh mục cha
+        foreach ($parentCategories as $parent) {
+            // Lấy danh mục con bằng cách sử dụng parent_id của danh mục cha
+            $parent->children = $this->categoryService->getChildCategories($parent->id);
+        }
+        return $parentCategories; // Trả về danh mục cha với danh mục con
     }
-    return $parentCategories; // Trả về danh mục cha với danh mục con
-}
 }

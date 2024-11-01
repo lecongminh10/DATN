@@ -18,7 +18,6 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                
                 <div class="card-body">
                     <form action="{{ route('admin.categories.update', $data->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf

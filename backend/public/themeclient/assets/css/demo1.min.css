@@ -12523,6 +12523,8 @@ main .sticky-header .product-ratings:before {
 .product-single-filter .config-size-list li a {
     margin: 3px 6px 3px 0;
     min-width: 3.2rem;
+    /* tăng width của variant */
+    width: 50px;
     height: 2.6rem;
     border: 1px solid #eee;
     color: inherit;
@@ -14632,7 +14634,7 @@ body {
     font-size: 17px;
 }
 .dropdown-arrow .badge-circle {
-    top: -5px;
+    top: 4px;
     left: 23px;
     z-index: 1;
 }

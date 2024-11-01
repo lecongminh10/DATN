@@ -69,31 +69,30 @@
                                     </div>
                                 </div><br>
                                 <form action="{{ route('admin.categories.delete-multiple') }}" method="POST" id="delete-multiple-form">
-    @csrf
-    @method('DELETE')
-
-   <table class="table table-bordered align-middle table-nowrap mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col"><input type="checkbox" id="checkAll"></th>
-                                                <!-- Checkbox tổng -->
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Tên</th>
-                                                <th scope="col">Mô tả</th>
-                                                 <th scope="col">Ảnh</th>
-                                                <th scope="col">Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($parentCategories as $category)
-                                                @include('admin.categories.partials.category-row', [
-                                                    'category' => $category,
-                                                    'level' => 0,
-                                                ])
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-</form>
+                                      @csrf
+                                      @method('DELETE')
+                                     <table class="table table-bordered align-middle table-nowrap mb-0">
+                                              <thead>
+                                                  <tr>
+                                                      <th scope="col"><input type="checkbox" id="checkAll"></th>
+                                                      <!-- Checkbox tổng -->
+                                                      <th scope="col">ID</th>
+                                                      <th scope="col">Tên</th>
+                                                      <th scope="col">Mô tả</th>
+                                                       <th scope="col">Ảnh</th>
+                                                      <th scope="col">Hành động</th>
+                                                  </tr>
+                                              </thead>
+                                              <tbody>
+                                                  @foreach ($parentCategories as $category)
+                                                      @include('admin.categories.partials.category-row', [
+                                                          'category' => $category,
+                                                          'level' => 0,
+                                                      ])
+                                                  @endforeach
+                                              </tbody>
+                                       </table>
+                                    </form>
                                 <div class="d-flex justify-content-center mt-3">
                                     {{ $parentCategories->links('vendor.pagination.bootstrap-5') }}
                                 </div>
@@ -106,23 +105,23 @@
 
         <script>
             document.getElementById('checkAll').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.category-checkbox');
-    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-});
+                const checkboxes = document.querySelectorAll('.category-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+            });
 
-document.getElementById('delete-selected').addEventListener('click', function() {
-    const checkboxes = document.querySelectorAll('.category-checkbox:checked');
-    const form = document.getElementById('delete-multiple-form');
+            document.getElementById('delete-selected').addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.category-checkbox:checked');
+                const form = document.getElementById('delete-multiple-form');
 
-    if (checkboxes.length === 0) {
-        alert('Vui lòng chọn ít nhất một danh mục để xóa.');
-        return;
-    }
+                if (checkboxes.length === 0) {
+                    alert('Vui lòng chọn ít nhất một danh mục để xóa.');
+                    return;
+                }
 
-    if (confirm('Bạn có chắc chắn muốn xóa các danh mục đã chọn?')) {
-        form.submit();
-    }
-});
+                if (confirm('Bạn có chắc chắn muốn xóa các danh mục đã chọn?')) {
+                    form.submit();
+                }
+            });
         </script>
     @endsection
     @section('script_libray')

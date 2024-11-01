@@ -22,30 +22,9 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-
-//  Số lượng bản ghi trên mỗi trang
-    $perPage = 5;
-
-    // Lấy danh mục cha (có parent_id = null) với phân trang
-    $parentCategories = Category::whereNull('parent_id')->paginate($perPage);
-
-    return view(self::PATH_VIEW . __FUNCTION__,  compact('parentCategories'));
-
-    //     $search = $request->input('search');
-    // $parentId = $request->input('parent_id'); // Lấy ID danh mục cha từ request
-
-    // // Lấy danh mục theo điều kiện lọc và phân trang
-    // $data = $this->categoryService->getParentOrChild($search, $parentId)->paginate(5);
-
-    // // Lấy danh mục con cho từng danh mục cha và sắp xếp từ mới đến cũ
-    // foreach ($data as $item) {
-    //     $item->children = $this->categoryService->getChildCategories($item->id)->sortByDesc('created_at');
-    // }
-
-    // // Lấy danh mục cha để hiển thị trong dropdown (hoặc select)
-    // $parentCategories = $this->categoryService->getParent();
-
-    // return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'search', 'parentCategories', 'parentId'));
+      $perPage = 5;
+      $parentCategories = Category::whereNull('parent_id')->paginate($perPage);
+      return view(self::PATH_VIEW . __FUNCTION__,  compact('parentCategories'));
     }
 
     public function create()

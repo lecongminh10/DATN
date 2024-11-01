@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
+use App\Models\Cart;
 use App\Services\AttributeService;
 use App\Services\AttributeValueService;
 use App\Services\CategoryService;
@@ -48,16 +49,27 @@ class ProductController extends Controller
     public function showProduct(int $id)
     {
         $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries']);
-        // dd($data);
-        $variants = $this->productVariantService->getAttributeByProduct($id);
-
+        // Lấy biến thể sản phẩm
+        $variants = $this->productVariantService->getProductVariant($id);
+        // dd($variants);
+        
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+        $cartCount = $carts->sum('quantity');
+        
+        // Lấy các thuộc tính và giá trị
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
             ->select('id', 'attribute_name')
             ->get();
-        return view('client.product')->with([
+        return view('client.product-detail')->with([
             'data'           => $data,
-            'attribute'      => $attributesWithValues,
-            'variants'       => $variants
+            'attributes'     => $attributesWithValues,
+            'variants'       => $variants,
+            'carts'          => $carts,
+            'cartCount'      => $cartCount
         ]);
     }
 }

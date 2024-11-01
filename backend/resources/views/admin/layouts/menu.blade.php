@@ -92,7 +92,7 @@
                             <li class="nav-item">
                                 <a href="#sidebarProduct" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarProduct" data-key="t-product">
-                                    Sản phẩm 
+                                    Sản phẩm
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarProduct">
                                     <ul class="nav nav-sm flex-column">
@@ -124,7 +124,7 @@
                             <li class="nav-item">
                                 <a href="#sidebarCarrier" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarCarrier" data-key="t-product">
-                                    Vận chuyển 
+                                    Vận chuyển
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarCarrier">
                                     <ul class="nav nav-sm flex-column">
@@ -156,7 +156,7 @@
                             <li class="nav-item">
                                 <a href="#sidebarAccount" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarAccount" data-key="t-product">
-                                    Tài khoản 
+                                    Tài khoản
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarAccount">
                                     <ul class="nav nav-sm flex-column">
@@ -181,6 +181,19 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.permissions.create') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#sidebarStatistic" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarStatistic" data-key="t-product">
+                                    Thống kê
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarStatistic">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.statistics.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
                                         </li>
                                     </ul>
                                 </div>
