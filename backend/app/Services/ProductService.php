@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use App\Repositories\ProductRepository;
 
 
@@ -22,6 +23,36 @@ class ProductService extends BaseService
     {
         return $this->productService->getAll($search, $perPage);
     }
+    public function getFeaturedProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->orderByDesc('view')
+            ->take(10)
+            ->get();
+    }
+    public function getTopProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->orderByDesc('view')
+            ->get();
+    }
+    public function getAllProducts($count , $minprice=null, $maxprice=null)
+    {
+        return Product::with(['galleries', 'category'])
+        ->orwhereBetween('price_regular', [$minprice, $maxprice])
+        ->orWhereBetween('price_sale', [$minprice, $maxprice])
+        ->paginate($count);
+    }
+
+    public function getSaleProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
+            ->orderBy('discount_percentage', 'desc')
+            ->take(4)
+            ->get();
+    }
+
 
     public function show_soft_delete($search , $perPage)
     {
@@ -45,4 +76,29 @@ class ProductService extends BaseService
     //         $product->galleries()->create(['image' => $path]);
     //     }
     // }
+
+    public function topRatedProducts()
+    {
+        return Product::with(['galleries', 'category'])
+        ->orderByDesc('rating')
+        ->limit(10)
+        ->get();
+    }
+
+    public function bestSellingProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
+            ->orderBy('discount_percentage', 'desc')
+            ->take(10)
+            ->get();
+    }
+
+    public function latestProducts()
+    {
+        return Product::with(['galleries', 'category'])
+        ->orderByDesc('id')
+        ->limit(10)
+        ->get();
+    }
 }
