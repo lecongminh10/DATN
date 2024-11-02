@@ -46,18 +46,18 @@ class ProductController extends Controller
     }
 
     public function showProduct(int $id)
-    {
-        $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries']);
-        // dd($data);
-        $variants = $this->productVariantService->getAttributeByProduct($id);
+{
+    $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries']);
+    $variants = $this->productVariantService->getProductVariant($id);
+    $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
+        ->select('id', 'attribute_name')
+        ->get();
 
-        $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
-            ->select('id', 'attribute_name')
-            ->get();
-        return view('client.product')->with([
-            'data'           => $data,
-            'attribute'      => $attributesWithValues,
-            'variants'       => $variants
-        ]);
-    }
+    return view('client.product')->with([
+        'data'      => $data,
+        'attributes' => $attributesWithValues, 
+        'variants'  => $variants,
+    ]);
+}
+
 }

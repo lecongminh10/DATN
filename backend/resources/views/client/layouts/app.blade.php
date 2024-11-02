@@ -56,6 +56,12 @@
 
         @include('client.layouts.footer')
         <!-- End .footer -->
+
+        {{-- @vite('resources/js/coupon.js') --}}
+
+       
+
+
     </div>
     <!-- End .page-wrapper -->
 
@@ -235,6 +241,7 @@
     <script src="{{asset('themeclient/assets/js/jquery.plugin.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.countdown.min.js')}}"></script>
 
+    <script type="module" src="{{asset('build/assets/coupon-0033ede9.js') }}"></script>
     <!-- Main JS File -->
     <script src="{{asset('themeclient/assets/js/main.min.js')}}"></script>
     @yield('script_libray')

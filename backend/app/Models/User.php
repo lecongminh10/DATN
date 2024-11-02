@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\UserEvent;
 use App\Models\PermissionValue;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -72,5 +73,23 @@ class User extends Authenticatable
         return $this->permissionsValues()
                     ->whereIn('value', [self::TYPE_ADMIN, self::TYPE_SUBADMIN])
                     ->exists();
+    }
+
+    //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function () {
+            event(new UserEvent());
+        });
+
+        static::updated(function () {
+            event(new UserEvent());
+        });
+
+        static::deleted(function () {
+            event(new UserEvent());
+        });
     }
 }

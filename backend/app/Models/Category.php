@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\CategoryEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,6 +46,23 @@ class Category extends Model
         return $this->belongsToMany(Coupon::class, 'coupons_categories')
                     ->withTimestamps();
     }
+    
+    //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::created(function () {
+            event(new CategoryEvent());
+        });
+
+        static::updated(function () {
+            event(new CategoryEvent());
+        });
+
+        static::deleted(function () {
+            event(new CategoryEvent());
+        });
+    }
 
 }

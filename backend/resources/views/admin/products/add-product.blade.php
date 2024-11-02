@@ -525,7 +525,7 @@
                                             </div>
                                             <div class="col-md-10">
                                                 <div class="tab-content text-muted mt-4 mt-md-0" id="v-pills-tabContent">
-
+                                                    {{---------}}
                                                     <div class="tab-pane fade show active" id="v-pills-home"
                                                         role="tabpanel" aria-labelledby="attribute_value">
                                                         <div id="saveAttributes" class="btn btn-primary  float-start">Lưu

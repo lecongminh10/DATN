@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ProductEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -76,6 +77,23 @@ class Product extends Model
                     ->withTimestamps();
     }
     
+    //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function () {
+            event(new ProductEvent());
+        });
+
+        static::updated(function () {
+            event(new ProductEvent());
+        });
+
+        static::deleted(function () {
+            event(new ProductEvent());
+        });
+    }
 
     
 }

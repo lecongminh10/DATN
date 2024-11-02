@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\CategoryEvent;
+use App\Events\ProductEvent;
+use App\Events\UserEvent;
+use App\Listeners\CategoriesJson;
+use App\Listeners\ProductsJson;
+use App\Listeners\UsersJson;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -17,6 +23,15 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        CategoryEvent::class => [
+            CategoriesJson::class,
+        ],
+        ProductEvent::class => [
+            ProductsJson::class,
+        ],
+        UserEvent::class => [
+            UsersJson::class,
         ],
     ];
 

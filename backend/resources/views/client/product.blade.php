@@ -3,12 +3,12 @@
     @php
         $allImages = [];
         $mainImage = null; // Biến tạm để lưu ảnh chính
+
         // Lặp qua các ảnh trong gallery
         foreach ($data->galleries as $gallery) {
             if (isset($gallery->image_gallery)) {
                 // Nếu ảnh là chính, lưu vào biến tạm
                 if ($gallery->is_main) {
-                    // Chỉ lưu ảnh chính một lần và không thêm vào mảng ở đây
                     $mainImage = $gallery->image_gallery;
                 } else {
                     // Thêm các ảnh khác vào mảng
@@ -16,16 +16,18 @@
                 }
             }
         }
-        // Nếu có ảnh chính, thêm vào vị trí 0 của mảng
+
+        // Nếu có ảnh chính, thêm vào vị trí đầu tiên của mảng
         if ($mainImage !== null) {
             array_unshift($allImages, $mainImage);
         }
+
+        // Lặp qua các biến thể và thêm ảnh của biến thể vào danh sách
         foreach ($data->variants as $variant) {
             if (isset($variant->variant_image)) {
                 $allImages[] = $variant->variant_image;
             }
         }
-
     @endphp
     <header class="header">
         <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': false}">
@@ -214,16 +216,44 @@
                 </div>
 
                 <div class="row">
+                    @php
+                        $allImages = [];
+                        $mainImage = null; // Biến tạm để lưu ảnh chính
+
+                        // Lặp qua các ảnh trong gallery
+                        foreach ($data->galleries as $gallery) {
+                            if (isset($gallery->image_gallery)) {
+                                // Nếu ảnh là chính, lưu vào biến tạm
+                                if ($gallery->is_main) {
+                                    $mainImage = $gallery->image_gallery;
+                                } else {
+                                    // Thêm các ảnh khác vào mảng
+                                    $allImages[] = $gallery->image_gallery;
+                                }
+                            }
+                        }
+
+                        // Nếu có ảnh chính, thêm vào vị trí đầu tiên của mảng
+                        if ($mainImage !== null) {
+                            array_unshift($allImages, $mainImage);
+                        }
+
+                        // Lặp qua các biến thể và thêm ảnh của biến thể vào danh sách
+                        foreach ($data->variants as $variant) {
+                            if (isset($variant->variant_image)) {
+                                $allImages[] = $variant->variant_image;
+                            }
+                        }
+                    @endphp
+
                     <div class="col-lg-5 col-md-6 product-single-gallery">
                         <div class="product-slider-container">
                             <div class="label-group">
                                 <div class="product-label label-hot">HOT</div>
-
-                                <div class="product-label label-sale">
-                                    -16%
-                                </div>
+                                <div class="product-label label-sale">-16%</div>
                             </div>
 
+                            <!-- Slider chính hiển thị hình ảnh sản phẩm -->
                             <div class="product-single-carousel owl-carousel owl-theme show-nav-hover">
                                 @foreach ($allImages as $item)
                                     <div class="product-item">
@@ -234,11 +264,16 @@
                                 @endforeach
                             </div>
                             <!-- End .product-single-carousel -->
+                            <div class="product-gallery">
+                                <img id="product-image" src="{{ asset('path_to_default_image.jpg') }}" alt="Product Image">
+                            </div>
+
                             <span class="prod-full-screen">
                                 <i class="icon-plus"></i>
                             </span>
                         </div>
 
+                        <!-- Hiển thị ảnh dưới dạng thumbnail -->
                         <div class="prod-thumbnail owl-dots">
                             @foreach ($allImages as $item)
                                 <div class="owl-dot">
@@ -249,6 +284,7 @@
                         </div>
                     </div>
                     <!-- End .product-single-gallery -->
+
 
                     <div class="col-lg-7 col-md-6 product-single-details">
                         <h1 class="product-title">{{ $data->name }}</h1>
@@ -327,16 +363,21 @@
                                 TAGs: <strong><a href="#" class="product-category">CLOTHES</a></strong>,
                                 <strong><a href="#" class="product-category">SWEATER</a></strong>
                             </li>
-                            @foreach ($attribute as $item)
+                            @foreach ($attributes as $item)
                                 <div class="product-filters-container">
                                     <div class="product-single-filter">
                                         <label class="fw-bold">{{ $item->attribute_name }}:</label>
                                         <ul class="config-size-list config-color-list config-filter-list list-unstyled">
                                             @foreach ($item->attributeValues as $value)
-                                                @if ($data->variants->contains('product_attribute_id', $value->id))
-                                                    <li class="mb-1"> 
+                                                @if (
+                                                    $variants->contains(function ($variant) use ($value) {
+                                                        return $variant['attributes']->contains('attribute_value_id', $value->id);
+                                                    }))
+                                                    <li class="mb-1">
                                                         <a href="javascript:;"
-                                                            class="d-flex align-items-center justify-content-center">
+                                                            class="d-flex align-items-center justify-content-center"
+                                                            data-image="{{ $variant['variant_image'] }}" 
+                                                            onclick="changeImage(this)">
                                                             <div data-bs-toggle="tooltip" data-bs-trigger="hover"
                                                                 data-bs-placement="top" title="Out of Stock">
                                                                 {{ $value->attribute_value }}
@@ -351,7 +392,6 @@
                             @endforeach
 
                         </ul>
-
                         <div class="product-action">
                             <div class="product-single-qty">
                                 <input class="horizontal-quantity form-control" type="text">
@@ -1314,5 +1354,11 @@
             }
         })();
     </script>
-    </body>
+    <script>
+        function changeImage(element) {
+            var imageUrl = element.getAttribute('data-image');
+            var productImage = document.getElementById('product-image');
+            productImage.src = imageUrl;
+        }
+    </script>
 @endsection
