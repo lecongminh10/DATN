@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserCoupon;
 use App\Services\CouponService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -47,6 +48,9 @@ class CouponController extends Controller
      */
     public function create()
     {
+        Artisan::call('generate:categories-json');
+        Artisan::call('generate:products-json');
+        Artisan::call('generate:users-json');
         return view('admin.coupons.create');
     }
 
@@ -162,6 +166,9 @@ class CouponController extends Controller
      */
     public function edit(string $id)
     {
+        Artisan::call('generate:categories-json');
+        Artisan::call('generate:products-json');
+        Artisan::call('generate:users-json');
         $coupon = $this->couponService->getById($id);
         $categories = $coupon->categories()->select('categories.id', 'categories.name')->get();
         $products = $coupon->products()->select('products.id', 'products.name')->get();

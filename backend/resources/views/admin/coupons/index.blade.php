@@ -142,7 +142,7 @@
                             </form>
                         </div>
                         <div class="card-body">
-                            <div>
+                            <div class="mx-2">
                                 <div class="table-responsive table-card mb-1">
                                     <table class="table align-middle" id="couponsTable">
                                         <thead class="table-light text-muted">

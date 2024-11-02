@@ -160,7 +160,7 @@
     <!-- End .container -->
 </main>
 @endsection
-@section('script_logic')
+@section('scripte_logic')
     <script>
         if (window.location.hash === "#_=_") {
             window.location.hash = "";
