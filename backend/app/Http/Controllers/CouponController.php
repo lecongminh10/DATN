@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CouponEvent;
 use App\Http\Requests\CouponRequest;
+use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\CouponCategory;
+use App\Models\CouponProduct;
+use App\Models\Product;
+use App\Models\User;
+use App\Models\UserCoupon;
 use App\Services\CouponService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,7 +56,11 @@ class CouponController extends Controller
     public function store(Request $couponRequest)
     {
         $validatedData = $couponRequest->all();
+
         try {
+            DB::beginTransaction();
+
+            // Dữ liệu chính của coupon
             $couponData = [
                 'applies_to'          => $validatedData['applies_to'],
                 'code'                => $validatedData['code'],
@@ -64,11 +75,64 @@ class CouponController extends Controller
                 'is_active'           => $validatedData['is_active'] ? 1 : 0,
                 'is_stackable'        => $validatedData['is_stackable'] ? 1 : 0,
                 'eligible_users_only' => $validatedData['eligible_users_only'] ? 1 : 0,
-                'created_by'          => auth()->id() ?? 1, // Lấy ID của người dùng hiện tại
+                'created_by'          => auth()->id() ?? 1,
             ];
+
+            // Lưu coupon mới
             $coupon = $this->couponService->saveOrUpdate($couponData);
+
+            $appliesTo = $validatedData['applies_to'];
+            $dynamicValueIds = explode(',', $validatedData['dynamic_value']); // Chuyển chuỗi ID thành mảng các ID
+
+            // Xử lý từng trường hợp áp dụng
+            if ($appliesTo === 'category') {
+                foreach ($dynamicValueIds as $categoryId) {
+                    CouponCategory::create([
+                        'coupon_id' => $coupon->id,
+                        'category_id' => (int) $categoryId,
+                    ]);
+                }
+            } elseif ($appliesTo === 'product') {
+                foreach ($dynamicValueIds as $productId) {
+                    CouponProduct::create([
+                        'coupon_id' => $coupon->id,
+                        'product_id' => (int) $productId,
+                    ]);
+                }
+            } elseif ($appliesTo === 'user') {
+                foreach ($dynamicValueIds as $userId) {
+                    UserCoupon::create([
+                        'coupon_id' => $coupon->id,
+                        'user_id' => (int) $userId,
+                    ]);
+                }
+            } elseif ($appliesTo === 'all') {
+                User::all()->each(function ($user) use ($coupon) {
+                    UserCoupon::create([
+                        'coupon_id' => $coupon->id,
+                        'user_id' => $user->id,
+                    ]);
+                });
+                Product::all()->each(function ($product) use ($coupon) {
+                    CouponProduct::create([
+                        'coupon_id' => $coupon->id,
+                        'product_id' => $product->id,
+                    ]);
+                });
+                Category::all()->each(function ($category) use ($coupon) {
+                    CouponCategory::create([
+                        'coupon_id' => $coupon->id,
+                        'category_id' => $category->id,
+                    ]);
+                });
+            }
+
+            // Phát broadcast coupon
+            broadcast(new CouponEvent($coupon));
+            DB::commit();
             return redirect()->route('admin.coupons.index', compact('coupon'))->with('success', 'Thêm mới coupon thành công');
         } catch (\Exception $e) {
+            Log::error('Đã xảy ra lỗi khi cập nhật coupon: ' . $e->getMessage(), ['trace' => $e->getTrace()]);
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi thêm coupon: ' . $e->getMessage()]);
         }
@@ -82,6 +146,7 @@ class CouponController extends Controller
     public function show(string $id)
     {
         $coupon = $this->couponService->getById($id);
+        $coupon = Coupon::with(['products', 'users', 'categories'])->find($id);
 
         if (!$coupon) {
             Log::error('Coupon not found: ' . $id);
@@ -98,8 +163,13 @@ class CouponController extends Controller
     public function edit(string $id)
     {
         $coupon = $this->couponService->getById($id);
-        return view('admin.coupons.edit', compact('coupon'));
+        $categories = $coupon->categories()->select('categories.id', 'categories.name')->get();
+        $products = $coupon->products()->select('products.id', 'products.name')->get();
+        $users = $coupon->users()->select('users.id', 'users.username')->get();
+        // dd($categories); 
+        return view('admin.coupons.edit', compact('coupon', 'categories', 'products', 'users'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -110,43 +180,117 @@ class CouponController extends Controller
 
         try {
             DB::beginTransaction();
-
-            // Lấy coupon theo ID
             $coupon = $this->couponService->getById($id);
 
-            // Kiểm tra nếu coupon không tồn tại
             if (!$coupon) {
                 return redirect()->back()->withErrors(['error' => 'Coupon không tồn tại']);
             }
 
-            // Cập nhật thông tin coupon
-            $couponData  = ([
-                'applies_to'                    => $validatedData['applies_to'],
-                'code'                          => $validatedData['code'],
-                'description'                   => $validatedData['description'] ?? null,
-                'discount_type'                 => $validatedData['discount_type'],
-                'discount_value'                => $validatedData['discount_value'],
-                'max_discount_amount'           => $validatedData['max_discount_amount'] ?? null,
-                'min_order_value'               => $validatedData['min_order_value'] ?? null,
-                'start_date'                    => $validatedData['start_date'] ?? null,
-                'end_date'                      => $validatedData['end_date'] ?? null,
-                'usage_limit'                   => $validatedData['usage_limit'] ?? null,
-                'per_user_limit'                => $validatedData['per_user_limit'] ?? null,
-                'is_active'                     => $validatedData['is_active'],  
-                'is_stackable'                  => $validatedData['is_stackable'], 
-                'eligible_users_only'           => $validatedData['eligible_users_only'],
-            ]);
-            // dd($couponData);
-            $coupon = $this->couponService->saveOrUpdate($couponData, $id);
+            // Xóa các bản ghi liên quan trước khi cập nhật
+            CouponCategory::where('coupon_id', $coupon->id)->delete();
+            CouponProduct::where('coupon_id', $coupon->id)->delete();
+            UserCoupon::where('coupon_id', $coupon->id)->delete();
+            $couponData = [
+                'applies_to'          => $validatedData['applies_to'],
+                'code'                => $validatedData['code'],
+                'description'         => $validatedData['description'] ?? null,
+                'discount_type'       => $validatedData['discount_type'],
+                'discount_value'      => $validatedData['discount_value'],
+                'max_discount_amount' => $validatedData['max_discount_amount'] ?? null,
+                'min_order_value'     => $validatedData['min_order_value'] ?? null,
+                'start_date'          => $validatedData['start_date'] ?? null,
+                'end_date'            => $validatedData['end_date'] ?? null,
+                'usage_limit'         => $validatedData['usage_limit'] ?? null,
+                'per_user_limit'      => $validatedData['per_user_limit'] ?? null,
+                'is_active'           => $validatedData['is_active'] ? 1 : 0,
+                'is_stackable'        => $validatedData['is_stackable'] ? 1 : 0,
+                'eligible_users_only' => $validatedData['eligible_users_only'] ? 1 : 0,
+            ];
+
+            $this->couponService->saveOrUpdate($couponData, $id);
+
+            // Lấy danh sách các giá trị ID mới từ dynamic_value
+            $dynamicValueIds = is_array($validatedData['dynamic_value']) ? $validatedData['dynamic_value'] : explode(',', $validatedData['dynamic_value']);
+
+            $appliesTo = $validatedData['applies_to'];
+            switch ($appliesTo) {
+                case 'category':
+
+                    $existingCategoryIds = CouponCategory::where('coupon_id', $coupon->id)->pluck('category_id')->toArray();
+                    $categoryIdsToDelete = array_diff($existingCategoryIds, $dynamicValueIds);
+                    $categoryIdsToAdd = array_diff($dynamicValueIds, $existingCategoryIds);
+                    CouponCategory::where('coupon_id', $coupon->id)
+                        ->whereIn('category_id', $categoryIdsToDelete)
+                        ->delete();
+                    foreach ($categoryIdsToAdd as $categoryId) {
+                        CouponCategory::create([
+                            'coupon_id' => $coupon->id,
+                            'category_id' => $categoryId,
+                        ]);
+                    }
+                    break;
+
+                case 'product':
+                    $existingProductIds = CouponProduct::where('coupon_id', $coupon->id)->pluck('product_id')->toArray();
+                    $productIdsToDelete = array_diff($existingProductIds, $dynamicValueIds);
+                    $productIdsToAdd = array_diff($dynamicValueIds, $existingProductIds);
+
+                    CouponProduct::where('coupon_id', $coupon->id)
+                        ->whereIn('product_id', $productIdsToDelete)
+                        ->delete();
+
+                    foreach ($productIdsToAdd as $productId) {
+                        CouponProduct::create([
+                            'coupon_id' => $coupon->id,
+                            'product_id' => $productId,
+                        ]);
+                    }
+                    break;
+                case 'user':
+                    $existingUserIds = UserCoupon::where('coupon_id', $coupon->id)->pluck('user_id')->toArray();
+                    $userIdsToDelete = array_diff($existingUserIds, $dynamicValueIds);
+                    $userIdsToAdd = array_diff($dynamicValueIds, $existingUserIds);
+                    UserCoupon::where('coupon_id', $coupon->id)
+                        ->whereIn('user_id', $userIdsToDelete)
+                        ->delete();
+                    foreach ($userIdsToAdd as $userId) {
+                        UserCoupon::create([
+                            'coupon_id' => $coupon->id,
+                            'user_id' => $userId,
+                        ]);
+                    }
+                    break;
+                case 'all':
+                    User::all()->each(function ($user) use ($coupon) {
+                        UserCoupon::create([
+                            'coupon_id' => $coupon->id,
+                            'user_id' => $user->id,
+                        ]);
+                    });
+                    Product::all()->each(function ($product) use ($coupon) {
+                        CouponProduct::create([
+                            'coupon_id' => $coupon->id,
+                            'product_id' => $product->id,
+                        ]);
+                    });
+                    Category::all()->each(function ($category) use ($coupon) {
+                        CouponCategory::create([
+                            'coupon_id' => $coupon->id,
+                            'category_id' => $category->id,
+                        ]);
+                    });
+                    break;
+            }
 
             DB::commit();
-
             return redirect()->route('admin.coupons.index')->with('success', 'Cập nhật coupon thành công');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi cập nhật coupon: ' . $e->getMessage()]);
         }
     }
+
+
 
 
     /**
@@ -206,12 +350,18 @@ class CouponController extends Controller
     {
         $data = $this->couponService->getIdWithTrashed($id);
         if (!$data) {
-            return redirect()->route('admin.coupons.index')->with('success', 'Thuộc tính đã được xóa không thành công');
+            return redirect()->route('admin.coupons.index')->with('error', 'Thuộc tính đã được xóa không thành công');
         }
-        $data->forceDelete();
-        return redirect()->route('admin.coupons.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
-    }
+        DB::transaction(function () use ($data) {
+            $data->users()->detach();
+            $data->categories()->detach();
+            $data->products()->detach();
+            $data->usage()->forceDelete();
+            $data->forceDelete();
+        });
 
+        return redirect()->route('admin.coupons.deleted')->with('success', 'Thuộc tính và các liên kết trung gian đã bị xóa vĩnh viễn');
+    }
 
     public function deleteMuitpalt(Request $request)
     {

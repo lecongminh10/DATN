@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('user_coupons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->comment('Khóa ngoại bảng coupons');
-            $table->foreignId('user_id')->nullable()->constrained('users')->comment('Khóa ngoại bảng users-người dùng');
+            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->onDelete('cascade')->comment('Khóa ngoại bảng coupons');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('Khóa ngoại bảng users-người dùng');
             $table->integer('times_used')->default(0)->comment('Số lần người dùng này đã sử dụng mã giảm giá');
            
             $table->softDeletes()->comment('Thời gian xóa mềm');
