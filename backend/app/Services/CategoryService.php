@@ -28,17 +28,7 @@ class CategoryService extends BaseService
         $query->orderBy('created_at', 'desc');
         return $query;
     }
-  
-    public function getParentOrChild($search = null)
-    {
-        $query = Category::query(); // Tạo một truy vấn mới
 
-        if ($search) {
-            $query->where('name', 'like', '%' . $search . '%'); // Tìm kiếm theo tên
-        }
-
-        return $query->orderBy('created_at', 'desc')->paginate(7); 
-    }
     public function getParent()
     {
         return $this->categoryService->getParent();

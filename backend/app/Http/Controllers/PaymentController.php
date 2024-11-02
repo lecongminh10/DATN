@@ -264,10 +264,7 @@ class PayMentController extends Controller
         // CRUD
         public function index()
         {
-            $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
-                            ->select('payments.*', 'payment_gateways.name as gateway_name')
-                            ->get();
-        
+            $payments = PaymentGateway::paginate(5);
             return view('admin.payments.index', compact('payments'));
         }
     

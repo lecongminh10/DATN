@@ -322,7 +322,7 @@
                                         <div class="live-preview">
                                             <div class="row gy-4">
                                                 <div class="col-md-12">
-                                                    <label for="name" class="form-label">Tên </label>
+                                                    <label for="name" class="form-label">Tên <span class="text-danger">*</span></label> </label>
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
                                                         name="name" id="name" value="{{ old('name') }}">
@@ -334,20 +334,20 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Mô tả ngắn  <span class="text-danger">*</span></label>
+                                                    <label for="description" class="form-label">Mô tả ngắn </label>
                                                     <textarea class="form-control" value="{{old('short_description')}}" name="short_description" id="short_description"></textarea>
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="meta_title" class="form-label">SEO tiêu đề  <span class="text-danger">*</span></label>
+                                                    <label for="meta_title" class="form-label">SEO tiêu đề   </label>
                                                     <textarea class="form-control" name="meta_title" id="meta_title" value="{{old('meta_title')}}"></textarea>
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="meta_description" class="form-label">SEO mô tả  <span class="text-danger">*</span></label>
+                                                    <label for="meta_description" class="form-label">SEO mô tả  </label>
                                                     <textarea class="form-control" name="meta_description" id="meta_description" value="{{old('meta_description')}}"></textarea>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="mt-3">
-                                                        <label for="code" class="form-label">Mã</label>
+                                                        <label for="code" class="form-label">Mã <span class="text-danger">*</span></label></label>
                                                         <input type="text"
                                                             class="form-control @error('code') is-invalid @enderror"
                                                             name="code" id="code"
@@ -359,7 +359,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="stock" class="form-label">Số lượng tồn kho</label>
+                                                        <label for="stock" class="form-label">Số lượng tồn kho <span class="text-danger">*</span></label></label>
                                                         <input type="number"
                                                             class="form-control @error('stock') is-invalid @enderror" value="{{old('stock')}}"
                                                             name="stock" id="stock" onchange="getPrices()">
@@ -370,7 +370,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_regular" class="form-label">Giá gốc</label>
+                                                        <label for="price_regular" class="form-label">Giá gốc <span class="text-danger">*</span></label></label>
                                                         <input type="number"
                                                             class="form-control @error('price_regular') is-invalid @enderror" value="{{old('price_regular')}}"
                                                             name="price_regular" id="price_regular" onchange="getPrices()">
@@ -381,7 +381,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_sale" class="form-label">Giá khuyến mãi <span class="text-danger">*</span></label>
+                                                        <label for="price_sale" class="form-label">Giá khuyến mãi </label>
                                                         <input type="number"
                                                             class="form-control @error('price_sale') is-invalid @enderror" value="{{old('price_sale')}}"
                                                             name="price_sale" id="price_sale" onchange="getPrices()">
@@ -393,14 +393,14 @@
                                                     </div>
                                                     <div class="mt-3">
                                                         <label for="product_tags"
-                                                            class="form-label text-muted">Thẻ <span class="text-danger">*</span></label>
+                                                            class="form-label text-muted">Thẻ  </label>
                                                         <select class="form-control" name="product_tags[]"
                                                             id="choices-multiple-remove-button"
                                                             placeholder="This is a placeholder" multiple>
                                                         </select>
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_sale" class="form-label">Thời gian bảo hành <span class="text-danger">*</span>
+                                                        <label for="price_sale" class="form-label">Thời gian bảo hành
                                                         </label>
                                                         <input type="number" class="form-control" name="warranty_period" value="{{old('warranty_period')}}"
                                                             id="warranty_period">
@@ -416,7 +416,7 @@
                                                             ];
                                                         @endphp
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Trạng thái <span class="text-danger">*</span></h4>
+                                                            <h4 class="card-title mb-0 flex-grow-1">Trạng thái</h4>
                                                         </div>
                                                         <div class="card">
                                                             <div class="card-body">
@@ -444,7 +444,7 @@
                                                 <div class="col-md-4">
                                                     <div class="card">
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục</h4>
+                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục <span class="text-danger">*</span></label></h4>
                                                             @error('category_id')
                                                                 <div>
                                                                     <div class="invalid-feedback">
@@ -480,7 +480,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Content <span class="text-danger">*</span></label></h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
@@ -518,11 +518,11 @@
                                                         aria-controls="v-pills-profile" aria-selected="false">
                                                         Các biến thể
                                                     </a>
-                                                    <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
+                                                    {{-- <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
                                                         href="#v-pills-coupons" role="tab"
                                                         aria-controls="v-pills-coupons" aria-selected="false">
                                                         Khuyến mãi
-                                                    </a>
+                                                    </a> --}}
                                                 </div>
                                             </div>
                                             <div class="col-md-10">
@@ -695,7 +695,7 @@
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h4 class="card-title mb-0">Mục ảnh sản phẩm </h4>
+                                            <h4 class="card-title mb-0">Mục ảnh sản phẩm  <span class="text-danger">*</span></h4>
                                         </div><!-- end card header -->
 
                                         <div class="card-body">

@@ -26,16 +26,16 @@
                 <i class="ri-more-2-fill"></i>
             </a>
              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a href="{{ route('admin.categories.show', $category->id) }}" class="dropdown-item">View</a></li>
-                                <li><a class="dropdown-item" href="{{ route('admin.categories.edit', $category->id) }}">Edit</a></li>
-                                <li>
-                                    <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">Xóa</button>
-                                    </form>
-                                </li>
-                            </ul>
+                    <li><a href="{{ route('admin.categories.show', $category->id) }}" class="dropdown-item">View</a></li>
+                    <li><a class="dropdown-item" href="{{ route('admin.categories.edit', $category->id) }}">Edit</a></li>
+                    <li>
+                        <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                            @csrf
+                            @method('DELETE')
+                        <button type="submit" class="dropdown-item text-danger">Xóa</button>
+                          </form>
+                    </li>
+                </ul>
         </div>
     </td>
 </tr>
@@ -43,7 +43,7 @@
 <!-- Gọi đệ quy hiển thị danh mục con trong collapse -->
 @if ($category->children->isNotEmpty())
     <tr class="collapse" id="collapseCategory{{ $category->id }}">
-        <td colspan="5"> <!-- colspan 5 để phủ hết các cột -->
+        <td colspan="6"> <!-- colspan 5 để phủ hết các cột -->
             <table class="table table-borderless">
                 <tbody>
                     @foreach ($category->children as $childCategory)

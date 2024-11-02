@@ -321,7 +321,7 @@
                                         <div class="live-preview">
                                             <div class="row gy-4">
                                                 <div class="col-md-12">
-                                                    <label for="name" class="form-label">Tên </label>
+                                                    <label for="name" class="form-label">Tên <span class="text-danger">*</span></label> </label>
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
                                                         name="name" id="name"
@@ -349,7 +349,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="mt-3">
-                                                        <label for="code" class="form-label">Mã</label>
+                                                        <label for="code" class="form-label">Mã <span class="text-danger">*</span></label></label>
                                                         <input type="text"
                                                             class="form-control @error('code') is-invalid @enderror"
                                                             name="code" id="code"
@@ -373,7 +373,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_regular" class="form-label">Giá gốc</label>
+                                                        <label for="price_regular" class="form-label">Giá gốc <span class="text-danger">*</span></label></label>
                                                         <input type="number"
                                                             class="form-control @error('price_regular') is-invalid @enderror"
                                                             name="price_regular" id="price_regular"
@@ -454,7 +454,7 @@
                                                 <div class="col-md-4">
                                                     <div class="card">
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục</h4>
+                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục <span class="text-danger">*</span></label></h4>
                                                             @error('category_id')
                                                                 <div>
                                                                     <div class="invalid-feedback">
@@ -464,7 +464,7 @@
                                                             @enderror
                                                         </div>
                                                         <div class="card-body">
-                                                            <div class="list-group col nested-list nested-sortable"
+                                                            <div data-simplebar style="max-height: 525px;" class="list-group col nested-list nested-sortable"
                                                                 id="nested-sortable">
                                                                 @foreach ($categories as $category)
                                                                     @include(
@@ -488,7 +488,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Content <span class="text-danger">*</span></label></h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
@@ -526,11 +526,11 @@
                                                         aria-controls="v-pills-profile" aria-selected="false">
                                                         Các biến thể
                                                     </a>
-                                                    <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
+                                                    {{-- <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
                                                         href="#v-pills-coupons" role="tab"
                                                         aria-controls="v-pills-coupons" aria-selected="false">
                                                         Khuyến mãi
-                                                    </a>
+                                                    </a> --}}
                                                 </div>
                                             </div>
                                             <div class="col-md-10">
@@ -697,7 +697,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title mb-0">Mục ảnh sản phẩm </h4>
+                                        <h4 class="card-title mb-0">Mục ảnh sản phẩm  <span class="text-danger">*</span></h4>
                                     </div><!-- end card header -->
 
                                     <div class="card-body">

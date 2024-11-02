@@ -35,16 +35,12 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse"
                         role="button" aria-expanded="false" aria-controls="sidebarDashboards">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Chính</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarDashboards">
                     <ul class="nav nav-sm flex-column">
-                    <li class="nav-item">
-                        <a href="{{route('orders.statistics')}}" class="nav-link"  role="button"
-                            aria-expanded="false" aria-controls="sidebarCategory" data-key="t-category">
-                            THống Kê đơn hàng
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                        </li>
                     </ul>
                     </div>
                 </li> <!-- end Dashboard Menu -->
@@ -186,23 +182,166 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a href="#sidebarStatistic" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebarStatistic" data-key="t-product">
-                                    Thống kê
+                                <a href="#sidebarPayment" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarPayment" data-key="t-product">
+                                    Thanh Toán 
                                 </a>
-                                <div class="collapse menu-dropdown" id="sidebarStatistic">
+                                <div class="collapse menu-dropdown" id="sidebarPayment">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.statistics.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.paymentgateways.add') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
                                         </li>
                                     </ul>
                                 </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#sidebarTag" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarTag" data-key="t-product">
+                                    Thẻ
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarTag">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#sidebarStatistic" class="nav-link" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarStatistic" data-key="t-product">
+                        <i class="ri-rocket-line"></i>  <span data-key="t-landing"> Thống kê</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarStatistic">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.statistics.index') }}" class="nav-link" >
+                                    Thống kê sản phẩm 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('admin.orders.statistics')}}" class="nav-link" >
+                                    Thống kê đơn hàng
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#sidebar-display-management" class="nav-link" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebar-display-management" data-key="t-product">
+                        <i class="ri-rocket-line"></i>  <span data-key="t-landing"> Quản lí hiển thị </span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebar-display-management">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    Giao diện người dùng
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    Giao diện người quản lí
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#sidebar-comments-questions" class="nav-link" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebar-comments-questions" data-key="t-product">
+                        <i class="ri-rocket-line"></i>  <span data-key="t-landing">Gớp ý và câu hỏi</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebar-comments-questions">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    Góp ý 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    Câu hỏi 
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#sidebar-sale-seo" class="nav-link" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebar-sale-seo" data-key="t-product">
+                        <i class="ri-rocket-line"></i>  <span data-key="t-landing">Quảng cáo</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebar-sale-seo">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    SEO
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    SALE
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#sidebar-post" class="nav-link" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebar-post" data-key="t-product">
+                        <i class="ri-rocket-line"></i>  <span data-key="t-landing">Bài viết </span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebar-post">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    Danh mục 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    Sản phẩm
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                    Tin tức
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#sidebar-message" class="nav-link" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebar-message" data-key="t-product">
+                        <i class="ri-rocket-line"></i>  <span data-key="t-landing">Thông báo </span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebar-message">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                   Email
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link" >
+                                   Trò chuyện 
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </li>
                 <div>
             </ul>
+            
         </div>
         <!-- Sidebar -->
     </div>

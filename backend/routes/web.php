@@ -168,14 +168,14 @@ Route::group([
 
     //payment
     Route::prefix('payments')->group(function () {
-        Route::get('/',                                     [PaymentController::class, 'index'])->name('payments.index');
-        Route::get('/add',                                  [PaymentController::class, 'add'])->name('payments.add');
-        Route::post('/store',                               [PaymentController::class, 'store'])->name('payments.store');
-        Route::get('show/{id}',                             [PaymentController::class, 'show'])->name('payments.show');
-        Route::get('/edit/{id}',                            [PaymentController::class, 'edit'])->name('payments.edit');
-        Route::put('update/{id}',                           [PaymentController::class, 'update'])->name('payments.update');
-        Route::delete('/users/{id}/delete',                 [PaymentController::class, 'destroy'])->name('payments.delete');
-        Route::post('/users/deleteMultiple',                [PaymentController::class, 'deleteMultiple'])->name('payments.deleteMultiple');
+        Route::get('/',                                     [PayMentController::class, 'index'])->name('payments.index');
+        Route::get('/add',                                  [PayMentController::class, 'add'])->name('payments.add');
+        Route::post('/store',                               [PayMentController::class, 'store'])->name('payments.store');
+        Route::get('show/{id}',                             [PayMentController::class, 'show'])->name('payments.show');
+        Route::get('/edit/{id}',                            [PayMentController::class, 'edit'])->name('payments.edit');
+        Route::put('update/{id}',                           [PayMentController::class, 'update'])->name('payments.update');
+        Route::delete('/users/{id}/delete',                 [PayMentController::class, 'destroy'])->name('payments.delete');
+        Route::post('/users/deleteMultiple',                [PayMentController::class, 'deleteMultiple'])->name('payments.deleteMultiple');
     });
 
     //payment-gateway
@@ -227,7 +227,7 @@ Route::group([
             Route::delete('hard-delete/{id}',              [OrderController::class, 'hardDelete'])->name('hard_delete');
             Route::delete('multi-hard-delete',             [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete');
             Route::get('canceled',                         [OrderController::class, 'canceledOrders'])->name('canceledOrders');
-            Route::get('completed',                        [OrderController::class, 'completedOrders'])->name('completedOrders');
+            Route::get('completed',                        [OrderStatisticsController::class, 'completedOrders'])->name('completedOrders');
             Route::get('lost',                             [OrderStatisticsController::class, 'lostOrders'])->name('lostOrders');
             Route::get('orders/statistics',                [OrderStatisticsController::class, 'index'])->name('statistics');
         }
@@ -307,7 +307,7 @@ Route::prefix('/')->group(function () {
     Route::post('/apply-discount',                          [CouponController::class, 'applyDiscount']);
 
     // //PayMent
-    Route::get('/vnpay-return',                            [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::get('/vnpay-return',                            [PayMentController::class, 'vnpayReturn'])->name('vnpay.return');
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 

@@ -37,11 +37,11 @@
                                             <input class="form-check-input" type="checkbox" id="checkAll" value="option">
                                         </div>
                                     </th>
-                                    <th class="sort" data-sort="id">ID</th>
                                     <th class="sort" data-sort="name">Tên</th>
                                     <th class="sort" data-sort="api_key">Khóa API</th>
                                     <th class="sort" data-sort="secret_key">Khóa bí mật</th>
                                     <th class="sort" data-sort="gateway_type">Loại cổng thanh toán</th>
+                                    <th class="sort" data-sort="gateway_type">Hình thức</th>
                                 </tr>
                             </thead>
                             <tbody class="list form-check-all" id="userTableBody">

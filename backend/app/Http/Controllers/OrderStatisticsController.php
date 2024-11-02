@@ -44,19 +44,19 @@ class OrderStatisticsController extends Controller
     }
 
     public function completedOrders()
-{
-    $completedOrders = Order::where('status', Order::HOAN_THANH)->get();
-    return view('admin.orders.completedOrders', compact('completedOrders'));
-}
-
-    public function canceledOrders()
     {
-        $canceledOrders = Order::getCanceledOrders();
-        return view('admin.orders.canceledOrders', compact('canceledOrders'));
+        $completedOrders = Order::where('status', Order::HOAN_THANH)->get();
+        return view('admin.orders.completedOrders', compact('completedOrders'));
     }
-    public function lostOrders()
-{
-    $lostOrders = Order::where('status', Order::HANG_THAT_LAC)->get();
-    return view('admin.orders.lostOrders', compact('lostOrders'));
-}
+
+        public function canceledOrders()
+        {
+            $canceledOrders = Order::getCanceledOrders();
+            return view('admin.orders.canceledOrders', compact('canceledOrders'));
+        }
+        public function lostOrders()
+    {
+        $lostOrders = Order::where('status', Order::HANG_THAT_LAC)->get();
+        return view('admin.orders.lostOrders', compact('lostOrders'));
+    }
 }
