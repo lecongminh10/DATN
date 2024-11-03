@@ -42,7 +42,8 @@ class UpdateProductRequest extends FormRequest
             'is_new'             => 'boolean',
             'is_good_deal'       => 'boolean',
             'coupon'             => 'nullable|array', 
-            'addcoupon'          => 'nullable|array'
+            'addcoupon'          => 'nullable|array',
+            'promotion_end_time' => 'nullable|date'
         ];
     }
 

@@ -21,7 +21,8 @@ class ProductVariant extends Model
         "status",
         "variant_image",
         'deleted_at',
-        'deleted_by'
+        'deleted_by',
+        'promotion_end_time'
     ];
 
     protected $casts = [

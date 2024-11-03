@@ -114,6 +114,7 @@ class ProductController extends Controller
         $dataProduct['is_show_home'] ??= 0;
         $dataProduct['is_new'] ??= 0;
         $dataProduct['is_good_deal'] ??= 0;
+        $dataProduct['promotion_end_time']??=null;
 
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
@@ -128,7 +129,8 @@ class ProductController extends Controller
                     'original_price' =>$item['original_price'],
                     'stock' => $item['stock'] ?? 0,
                     'status' => $item['status'] ?? '',
-                    'sku' => substr(bin2hex(random_bytes(5)), 0, 10)
+                    'sku' => substr(bin2hex(random_bytes(5)), 0, 10),
+                    'promotion_end_time'=> $dataProduct['promotion_end_time']??null
                 ];
                 if (isset($item['variant_image']) && $item['variant_image'] instanceof UploadedFile) {
                     $extension = $item['variant_image']->getClientOriginalExtension();
@@ -248,6 +250,7 @@ class ProductController extends Controller
         $dataProduct['is_show_home'] ??= 0;
         $dataProduct['is_new'] ??= 0;
         $dataProduct['is_good_deal'] ??= 0;
+        $dataProduct['promotion_end_time']??=null;
 
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
@@ -265,6 +268,7 @@ class ProductController extends Controller
                     'stock' => $item['stock'] ?? 0,
                     'status' => $item['status'] ?? '',
                     'sku' => $item['sku'] ?? substr(bin2hex(random_bytes(5)), 0, 10),
+                    'promotion_end_time'=> $dataProduct['promotion_end_time']??null
                 ];
                 if (isset($item['variant_image']) && $item['variant_image'] instanceof UploadedFile) {
                     $extension = $item['variant_image']->getClientOriginalExtension();

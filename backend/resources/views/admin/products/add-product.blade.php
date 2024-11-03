@@ -392,6 +392,13 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
+                                                        <label for="promotion_end_time" class="form-label">Thời gian kết thúc giá khuyến mãi</label>
+                                                        <input type="datetime-local" class="form-control" name="promotion_end_time" value="{{ old('promotion_end_time') }}" id="promotion_end_time" required>
+                                                        @if ($errors->has('promotion_end_time'))
+                                                            <div class="text-danger">{{ $errors->first('promotion_end_time') }}</div>
+                                                        @endif
+                                                    </div> 
+                                                    <div class="mt-3">
                                                         <label for="product_tags"
                                                             class="form-label text-muted">Thẻ  </label>
                                                         <select class="form-control" name="product_tags[]"
@@ -404,7 +411,7 @@
                                                         </label>
                                                         <input type="number" class="form-control" name="warranty_period" value="{{old('warranty_period')}}"
                                                             id="warranty_period">
-                                                    </div>
+                                                    </div>                                                   
                                                     <div class="row">
                                                         @php
                                                             $status = [
