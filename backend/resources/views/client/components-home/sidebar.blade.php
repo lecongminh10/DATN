@@ -1,32 +1,32 @@
 <aside class="sidebar-home col-lg-3 order-lg-first mobile-sidebar">
     <div class="side-menu-wrapper text-uppercase mb-2 d-none d-lg-block">
-        <h2 class="side-menu-title bg-gray ls-n-25">Browse Categories</h2>
+        <h2 class="side-menu-title bg-gray ls-n-25">Mục chính</h2>
 
         <nav class="side-nav">
             <ul class="menu menu-vertical sf-arrows">
-                <li class="active"><a href="/"><i class="icon-home"></i>Home</a></li>
-                <li>
-                    <a href="#" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
-                    <div class="megamenu megamenu-fixed-width megamenu-3cols">
-                        <div class="row">
-                            @foreach ($categories as $parent)
-                                <div class="col-lg-4">
-                                    <a href="#" class="nolink pl-0">{{ $parent->name }}</a>
-                                    @if($parent->children->isNotEmpty())
-                                        <ul class="submenu">
-                                            @foreach ($parent->children as $child)
-                                                <li><a href="#">{{ $child->name }}</a></li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </div>
-                            @endforeach
+                <li class="active"><a href="/"><i class="icon-home"></i>Trag chủ </a></li>
+                    <li>
+                        <a href="#" class="sf-with-ul"><i class="sicon-badge"></i>Danh mục</a>
+                        <div class="megamenu megamenu-fixed-width megamenu-3cols">
+                            <div class="row">
+                                @foreach ($categories as $parent)
+                                    <div class="col-lg-4">
+                                        <a href="{{ route('client.products.Category', ['id' => $parent->id]) }}" class="nolink pl-0">{{ $parent->name }}</a>
+                                        @if($parent->children->isNotEmpty())
+                                            <ul class="submenu">
+                                                @foreach ($parent->children as $child)
+                                                    <li><a href="{{ route('client.products.Category', ['id' => $child->id]) }}">{{ $child->name }}</a></li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                <li>
+                    <li>
                     <a href="{{route('client.products')}}" class="sf-with-ul"><i
-                            class="sicon-basket"></i>Products</a>
-                    <div class="megamenu megamenu-fixed-width">
+                            class="sicon-basket"></i>Sản phẩm </a>
+                    {{-- <div class="megamenu megamenu-fixed-width">
                         <div class="row">
                             <div class="col-lg-4">
                                 <a href="#" class="nolink pl-0">PRODUCT PAGES</a>
@@ -84,7 +84,7 @@
                             <!-- End .col-lg-4 -->
                         </div>
                         <!-- End .row -->
-                    </div>
+                    </div> --}}
                     <!-- End .megamenu -->
                 </li>
                 <li>

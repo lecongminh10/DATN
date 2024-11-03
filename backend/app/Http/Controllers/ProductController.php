@@ -221,7 +221,7 @@ class ProductController extends Controller
         if (!$product) {
             return redirect()->route('admin.products.index')->with('error', 'Product not found');
         }
-        $categories = Category::with('children')->whereNull('parent_id')->get();
+        $categories = Category::with('children')->whereNull('parent_id')->where('is_active', true)->get();
         $selectedTags = $product->tags->pluck('id')->toArray();
         $variants = $this->productVariantService->getProductVariant($id);
         session()->forget('product_attributes');

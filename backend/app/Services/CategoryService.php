@@ -89,4 +89,25 @@ class CategoryService extends BaseService
         return $parentCategories;
     }
     
+    public function getActiveCategoriesWithProducts()
+    {
+        return Category::with(['children' => function ($query) {
+                                    $query->where('is_active', true)
+                                        ->has('products'); // Only child categories with products
+                                }])
+                    ->whereNull('parent_id')          // Only top-level categories
+                    ->where('is_active', true)        // Parent category is active
+                    ->where(function ($query) {
+                        $query->has('products')       // Parent category has products
+                                ->orWhereHas('children', function ($query) {
+                                    $query->where('is_active', true)
+                                        ->has('products'); // Or at least one child has products
+                                });
+                    })
+                    ->withCount('products')           // Count products for parent categories
+                    ->get();
+    }
+
+    
+
 }

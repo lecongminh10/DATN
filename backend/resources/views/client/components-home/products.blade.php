@@ -57,7 +57,7 @@
                     {{-- <div class="product-label label-sale"></div> --}}
                 </div>
                 <div class="btn-icon-group">
-                    <a href="#" title="Add To Cart"
+                    <a href="#" title="Add To Cart" onclick="addToCart({{$item->id}})"
                         class="btn-icon btn-add-cart product-type-simple"><i
                             class="icon-shopping-cart"></i></a>
                 </div>

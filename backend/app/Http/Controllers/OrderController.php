@@ -445,7 +445,7 @@ class OrderController extends Controller
             $cartItem->save();
         } else {
             // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới vào giỏ hàng
-            Cart::create([
+        $cart =  Cart::create([
                 'user_id' => $userId,
                 'product_id' => $productId,
                 'product_variants_id' => $productVariantId,
@@ -455,7 +455,7 @@ class OrderController extends Controller
         }
 
         // Trả về phản hồi JSON
-        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
+        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng' , 'data'=>$cart]);
     }
 
     public function wishList() {

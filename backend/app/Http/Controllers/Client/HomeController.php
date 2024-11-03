@@ -68,7 +68,7 @@ class HomeController extends Controller
         $maxprice = $request->input('max');
         $products = $this->productService->getAllProducts($count , $minprice , $maxprice);
         $sale = $this->productService->getSaleProducts();
-        $categories = $this->categoryService->getAll();
+        $categories = $this->categoryService->getActiveCategoriesWithProducts();
         return view('client.products.list', compact('products', 'sale', 'categories'));
     }
     // sắp xếp sản phẩm

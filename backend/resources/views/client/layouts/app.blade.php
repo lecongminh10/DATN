@@ -247,6 +247,30 @@
     </script>
 
     <script>
+        function addToCart(productId) {
+        const quantity = 1; 
+        $.ajax({
+            type: "POST",
+            url: "{{ route('addCart') }}", // Ensure this route exists
+            data: {
+                product_id: productId,
+                quantity: quantity,
+                _token: '{{ csrf_token() }}' // CSRF token for security
+            },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr) {
+                if (xhr.status === 401) {
+                    // User needs to be logged in
+                    alert('Bạn cần dăng nhập trước.');
+                } else {
+                    // General error handling
+                    alert('Lỗi hệ thống.');
+                }
+            }
+        });
+    }
         function removeFromCart(element) {
         const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
 

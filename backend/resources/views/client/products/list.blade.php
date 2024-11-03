@@ -3,6 +3,33 @@ $minPrice = \App\Models\Product::min('price_sale'); // Lấy giá trị min
 $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 ?>
 @extends('client.layouts.app')
+@section('style_css')
+    <style>
+   .cat-list, .cat-sublist {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.cat-list > li, .cat-sublist > li {
+    margin: 5px 0;
+}
+
+.cat-list a, .cat-sublist a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    display: block;
+}
+
+.cat-sublist {
+    padding-left: 15px;
+    margin-top: 5px;
+    border-left: 1px solid #ddd;
+}
+
+    </style>
+@endsection
 @section('content')
     @include('client.layouts.nav')
     <div class="container">
@@ -94,12 +121,21 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                         <div class="col-6 col-sm-4">
                             <div class="product-default">
                                 <figure>
-                                    @foreach ($item->galleries as $value)
-                                        <a href="">
-                                            <img src="{{ \Storage::url('' . $value->image_gallery) }}" width="205"
-                                                height="205" alt="{{ $item->name }}" />
+                                    @php
+                                    $mainImage = $item->galleries->firstWhere('is_main', true);
+                                    $fallbackImage = $item->galleries->first();
+                                    @endphp
+                                    
+                                    @if ($mainImage)
+                                        <a href="{{ route('client.showProduct', $item->id) }}">
+                                            <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
                                         </a>
-                                    @endforeach
+                                    @elseif ($fallbackImage)
+                                        <a href="{{ route('client.showProduct', $item->id) }}">
+                                            <img src="{{ \Storage::url($fallbackImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
+                                        </a>
+                                    @endif
+                                
                                     <div class="label-group">
                                         <div class="product-label label-hot">{{ $item->tags }}</div>
                                         @if ($item->price_sale < $item->price_regular)
@@ -118,12 +154,12 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                 <div class="product-details">
                                     <div class="category-wrap">
                                         <div class="category-list">
-                                            <a href="{{ route('client.products.Category', ['id' =>$item->category->id]) }}"
+                                            <a href="{{route('client.showProduct', $item->id)}}"
                                                 class="product-category">{{ $item->category->name }}</a>
                                         </div>
                                     </div>
 
-                                    <h3 class="product-title"> <a href="product.">{{ $item->name }}</a> </h3>
+                                    <h3 class="product-title"> <a href="{{route('client.showProduct', $item->id)}}">{{ $item->name }}</a> </h3>
 
                                     <div class="ratings-container">
                                         <div class="product-ratings">
@@ -136,14 +172,14 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
                                     <div class="price-box">
                                         @if ($item->price_sale < $item->price_regular)
-                                            <span class="product-price" style="color: #08c;">{{ $item->price_sale }}
-                                                VNĐ</span>
+                                            <span class="product-price" style="color: #08c;">
+                                                {{ number_format($item->price_sale, 0, ',', '.') }} ₫
+                                                </span>
                                             <span class="old-price"
-                                                style="text-decoration: line-through; font-size: 0.8em;">{{ $item->price_regular }}
-                                                VNĐ</span>
+                                                style="text-decoration: line-through; font-size: 0.8em;">
+                                                {{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
                                         @else
-                                            <span class="product-price" style="color: #08c;">{{ $item->price_regular }}
-                                                VNĐ</span>
+                                            <span class="product-price" style="color: #08c;">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
                                         @endif
                                     </div>
 
@@ -152,9 +188,8 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     <div class="product-action">
                                         <a href="wishlist.html" class="btn-icon-wish" title="wishlist"><i
                                                 class="icon-heart"></i></a>
-                                        <a href="product.html" class="btn-icon btn-add-cart"><i
-                                                class="fa fa-arrow-right"></i><span>SELECT
-                                                OPTIONS</span></a>
+                                        <a href="{{route('client.showProduct', $item->id)}}" class="btn-icon btn-add-cart"><i
+                                                class="fa fa-arrow-right"></i><span>Xem chi tiết </span></a>
                                         <a href="ajax/product-quick-view.html" class="btn-quickview"
                                             title="Quick View"><i class="fas fa-external-link-alt"></i></a>
                                     </div>
@@ -193,43 +228,14 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     <div class="widget">
                         <h3 class="widget-title">
                             <a data-toggle="collapse" href="#widget-body-2" role="button" aria-expanded="true"
-                                aria-controls="widget-body-2">Categories</a>
+                                aria-controls="widget-body-2">Danh mục</a>
                         </h3>
 
                         <div class="collapse show" id="widget-body-2">
-                            <div class="widget-body">
-                                <ul class="cat-list">
-                                    @foreach ($categories as $category)
-                                        <li>
-                                            <a href="{{ route('client.products.Category', ['id' => $category->id]) }}"
-                                                role="button"
-                                                aria-expanded="{{ $category->children->isNotEmpty() ? 'true' : 'false' }}"
-                                                aria-controls="widget-category-{{ $category->id }}">
-                                                {{ $category->name }}
-                                                <span class="products-count">({{ $category->products_count }})</span>
-                                                <span class="toggle"></span>
-                                            </a>
-                                            @if ($category->children->isNotEmpty())
-                                                <div class="collapse {{ $category->children->isNotEmpty() ? 'show' : '' }}"
-                                                    id="widget-category-{{ $category->id }}">
-                                                    <ul class="cat-sublist">
-                                                        @foreach ($category->children as $subcategory)
-                                                            <li>
-                                                                <a
-                                                                    href="{{ route('client.products.Category',$subcategory->id) }}">
-                                                                    {{ $subcategory->name }}
-                                                                    <span
-                                                                        class="products-count">({{ $subcategory->products_count }})</span>
-                                                                </a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                            <!-- Assuming this is part of your main view where categories are displayed -->
+                                <div class="widget-body">
+                                    @include('client.products.components.categories-list', ['categories' => $categories])
+                                </div>
                             <!-- End .widget-body -->
                         </div>
 
@@ -240,7 +246,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     <div class="widget">
                         <h3 class="widget-title">
                             <a data-toggle="collapse" href="#widget-body-3" role="button" aria-expanded="true"
-                                aria-controls="widget-body-3">Price</a>
+                                aria-controls="widget-body-3">Giá </a>
                         </h3>
 
                         <div class="collapse show" id="widget-body-3">
@@ -253,9 +259,9 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     <div
                                         class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
                                         <div class="filter-price-text">
-                                            Price:
-                                            <span id="filter-price-range">₫{{ $minPrice ?? 0 }} -
-                                                ₫{{ $maxPrice ?? 100000000 }}</span>
+                                            Giá từ:
+                                            <span id="filter-price-range">{{ number_format($minPrice ?? 0, 0, ',', '.') }} đ - 
+                                                {{ number_format($maxPrice ?? 100000000, 0, ',', '.') }} đ</span>
                                         </div>
 
                                         <input type="hidden" name="min" id="min"
@@ -265,6 +271,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
                                         <button type="submit" class="btn btn-primary">Lọc</button>
                                     </div>
+
                                 </form>
 
                             </div>
@@ -410,6 +417,46 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
         document.getElementById('sort-options').addEventListener('change', function() {
             this.form.submit();
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".cat-list a[role='button']").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    const targetId = this.getAttribute("aria-controls");
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.classList.toggle("show");
+                        this.setAttribute(
+                            "aria-expanded",
+                            targetElement.classList.contains("show") ? "true" : "false"
+                        );
+                    }
+                });
+            });
+        });
+
+        
     </script>
+    <script>
+        function toggleDropdown(event) {
+                // Prevent default action
+                event.preventDefault();
+
+                // Get the clicked toggle element and corresponding sublist
+                const toggle = event.target;
+                const sublist = document.getElementById(toggle.getAttribute('aria-controls'));
+
+                // Toggle the visibility of the sublist
+                if (sublist.style.display === 'none') {
+                    sublist.style.display = 'block';
+                    toggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    sublist.style.display = 'none';
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            }
+        </script>
+        
 @endsection
 </style>
