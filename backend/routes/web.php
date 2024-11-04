@@ -22,6 +22,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Export_Import;
 
 Route::group([
     'prefix' => 'admin',
@@ -241,6 +242,23 @@ Route::group([
 
         }
     );
+
+    // Export Import
+    Route::group([
+        'prefix' => 'export-import',
+        'as' => 'export-import.'
+    ], function() {
+        Route::get('/', [Export_Import::class, 'exportAndImport'])->name('view-export-import');
+        // export
+        Route::get('export-category', [Export_Import::class, 'exportCategory'])->name('exportCategory');
+        Route::get('export-product', [Export_Import::class, 'exportProduct'])->name('exportProduct');
+        Route::get('export-post', [Export_Import::class, 'exportPost'])->name('exportPost');
+
+        // import
+        Route::get('import-category', [Export_Import::class, 'importCategory'])->name('importCategory');
+        Route::get('import-product', [Export_Import::class, 'importProduct'])->name('importProduct');
+        Route::get('import-post', [Export_Import::class, 'importPost'])->name('importPost');
+    });
 });
 
 
