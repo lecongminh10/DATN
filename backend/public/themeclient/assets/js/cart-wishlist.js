@@ -10,7 +10,7 @@
         var quantity = 1; // Hoặc lấy từ một input nếu cần
 
         $.ajax({
-            url: '{{ route('addCart') }}',
+            url: addCartUrl,
             type: 'POST',
             data: {
                 product_id: productId,
@@ -42,7 +42,7 @@
 function addToWishlist(productId, productVariantId) {
 $.ajax({
     type: "POST",
-    url: "{{ route('addWishList') }}",
+    url: addWishlistUrl,
     data: {  
         product_id: productId,
         product_variants_id: productVariantId,

@@ -244,6 +244,9 @@
             shoppingCart: "{{ route('shopping-cart') }}",
             checkout: "{{ route('checkout') }}"
         }; 
+
+        const addCartUrl = @json(route('addCart'));
+        const addWishlistUrl = @json(route('addWishList'));
     </script>
 
     <script>

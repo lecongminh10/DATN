@@ -68,7 +68,7 @@
     <script src="{{asset('theme/assets/js/pages/particles.app.js')}}"></script>
     <!-- password-addon init -->
     <script src="{{asset('theme/assets/js/pages/password-addon.init.js')}}"></script>
-    @yield('script_logic')
+    @yield('scripte_logic')
 </body>
 
 </html>

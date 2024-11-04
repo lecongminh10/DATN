@@ -801,13 +801,13 @@
                                             <h4>Vận chuyển</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="30.000" checked onchange="updateTotal()" />
+                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="30000" checked onchange="updateTotal()" />
                                                     <label class="custom-control-label">Giao hàng nhanh (30.000 ₫)</label>
                                                 </div>
                                             </div>
                                             <div class="form-group form-group-custom-control mb-0">
                                                 <div class="custom-control custom-radio mb-0">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="15.000" onchange="updateTotal()" />
+                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="15000" onchange="updateTotal()" />
                                                     <label class="custom-control-label">Giao hàng tiết kiệm (15.000 ₫)</label>
                                                 </div>
                                             </div>
@@ -837,11 +837,8 @@
                                             <h4>Tổng </h4>
                                         </td>
                                         <td>
-                                            <b class="total-price">
-                                                <span id="totalPriceDisplay" class="sub-total" name="price">{{ number_format($subTotal, 0, ',', '.') }} đ</span>
-                                            </b>
-                                            <!-- Thêm input hidden để lưu tổng tiền -->
-                                            <input type="hidden" id="totalAmountInput" name="total_amount">
+                                            <b class="total-price"><span id="totalPriceDisplay" name="price">{{ number_format($subTotal, 0, ',', '.') }} ₫</span></b>
+                                            <input type="hidden" name="price" id="totalAmountInput" value="{{ $subTotal }}">
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -884,7 +881,7 @@
     </script>
 @endsection
 
-@section('script_logic')
+@section('scripte_logic')
     <script>
         // Chọn checkbox
         function selectPayment(selectedCheckbox) {
@@ -910,29 +907,25 @@
             return `${formattedWhole} đ`;
         }
 
-        // Cập nhật giá tiền khi chọn radio
-        document.addEventListener('DOMContentLoaded', function () {
-        function updateTotal() {
-            // Lấy giá trị subtotal từ server
-            const subtotal = parseFloat('{{ $subTotal }}');
-            
-            // Lấy giá trị của phí vận chuyển được chọn và chuyển sang dạng số
-            const shippingCost = parseFloat(
-                document.querySelector('input[name="radio-ship"]:checked').value.replace(/\./g, '')
-            );
+    // Cập nhật giá tiền khi chọn radio
+    function updateTotal() {
+    // Lấy giá trị subtotal từ server
+    const subtotal = parseFloat('{{ $subTotal }}');
+    // Lấy giá trị của phí vận chuyển được chọn
+    const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked').value);
+    // Tính toán tổng tiền
+    const total = subtotal + shippingCost;
+    // Định dạng và cập nhật hiển thị tổng tiền bằng tiền Việt Nam
+    const formattedTotal = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total);
+    document.getElementById('totalPriceDisplay').textContent = formattedTotal;
+    document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị hidden input
+    }
 
-            // Tính toán tổng tiền
-            const total = subtotal + shippingCost;
-
-            // Cập nhật hiển thị tổng tiền với định dạng tiền Việt Nam
-            document.getElementById('totalPriceDisplay').textContent = `${total.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} ₫`;
-            document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị hidden input
-        }
-
-        // Gọi hàm updateTotal() khi trang được tải
+    // Gọi hàm updateTotal() khi trang được tải
+    document.addEventListener('DOMContentLoaded', function () {
         updateTotal();
     });
-        // End
+    // End  
 
         // Nút cập nhật địa chỉ
         document.querySelectorAll('.edit-address-link').forEach(link => {
