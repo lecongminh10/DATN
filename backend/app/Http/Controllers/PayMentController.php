@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiHelper;
 use App\Models\Address;
 use App\Models\Cart;
 use Illuminate\Http\Request;
@@ -242,9 +243,25 @@ class PayMentController extends Controller
         $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway'])
             ->where('code', $responseData['order_code'])
             ->first();
+        $addressResponse = ApiHelper::getAddressShop();
         $address = Address::getActiveAddress(Auth::user()->id);
+        $addressShop=[];
+        if ($addressResponse['code']==200) {
+            if (isset($addressResponse['data']) && !empty($addressResponse['data']['shops'])) {
+                $shopData = $addressResponse['data']['shops'][0];
+                $addressShop = [
+                    'name' => $shopData['name'],
+                    'phone' => $shopData['phone'],
+                    'address' => $shopData['address']
+                ];
+            } else {
+                $addressShop = null; 
+            }
+        } else {
+            $addressShop = null; 
+        }
 
-        return view('client.orders.payment.return', compact('responseData', 'order' ,'address'));
+        return view('client.orders.payment.return', compact('responseData', 'order','address','addressShop'));
     }
 
 

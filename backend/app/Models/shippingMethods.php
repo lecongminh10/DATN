@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class shippingMethods extends Model
 {
     use HasFactory;
+
+    public const HANG_NHE = 2;
+    public const HANG_NANG = 5;
+    public const WEIGHT =20000;
+
     protected $table = 'shipping_methods';
     protected $fillable = [
         'order_id',

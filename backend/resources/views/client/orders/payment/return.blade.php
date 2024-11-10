@@ -80,8 +80,19 @@
                                                     <img src="{{asset('theme/assets/images/logo-dark.png')}}" class="card-logo card-logo-dark" alt="logo dark" height="17">
                                                     <img src="{{asset('theme/assets/images/logo-light.png')}}" class="card-logo card-logo-light" alt="logo light" height="17">
                                                     <div class="mt-sm-5 mt-4">
-                                                        <h6 class="text-muted text-uppercase fw-semibold">Địa chỉ : Trường CĐ FPT PolyTechnic , Đường Trịnh Văn Bô , Bắc Từ Liên , Hà Nội</h6>
-                                                        <p class="text-muted mb-1" id="address-details">Số điện thoại : 0392853609</p>
+                                                        <h6 class="text-muted text-uppercase fw-semibold">Địa chỉ : 
+                                                             @if ($addressShop && $addressShop['address']!==null)
+                                                            {{ $addressShop['address']}}
+                                                           @else
+                                                            Trường CĐ FPT
+                                                           @endif</h6>
+                                                        <p class="text-muted mb-1" id="address-details">Số điện thoại :
+                                                            @if ($addressShop && $addressShop['phone']!==null)
+                                                            {{ $addressShop['phone']}}
+                                                            @else
+                                                            0392853609
+                                                            @endif  
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -127,9 +138,27 @@
                                             <div class="row g-3">
                                                 <div class="col-6">
                                                     <h6 class="text-muted text-uppercase fw-semibold mb-3">Địa chỉ giao hàng </h6>
-                                                    <p class="fw-medium mb-2" id="billing-name">{{ config('app.name') }}</p>
-                                                    <p class="text-muted mb-1" id="billing-address-line-1">Trường CĐ FPT</p>
-                                                    <p class="text-muted mb-1"><span>Sđt: +</span><span id="billing-phone-no">0392853609</span></p>
+                                                    <p class="fw-medium mb-2" id="billing-name">
+                                                        @if ($addressShop && $addressShop['name']!==null)
+                                                            {{ $addressShop['name']}}
+                                                        @else
+                                                        {{ config('app.name') }}
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-muted mb-1" id="billing-address-line-1">
+                                                        @if ($addressShop && $addressShop['address']!==null)
+                                                         {{ $addressShop['address']}}
+                                                        @else
+                                                         Trường CĐ FPT
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-muted mb-1"><span>Sđt: +</span><span id="billing-phone-no">
+                                                        @if ($addressShop && $addressShop['phone']!==null)
+                                                          {{ $addressShop['phone']}}
+                                                        @else
+                                                        0392853609
+                                                        @endif    
+                                                    </span></p>
                                                 </div>
                                                 <!--end col-->
                                                 <div class="col-6">

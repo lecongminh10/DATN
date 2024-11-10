@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\ChatController;
 
 Route::group([
     'prefix' => 'admin',
@@ -311,5 +313,12 @@ Route::prefix('/')->group(function () {
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 
-});
+    //Chat
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
 
+    // Route để gửi tin nhắn
+    Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
+
+        // routes/web.php
+    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+});

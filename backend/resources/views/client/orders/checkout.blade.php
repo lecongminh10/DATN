@@ -792,16 +792,11 @@
                                             <h4>Vận chuyển</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="30000" checked onchange="updateTotal()">
-                                                    <label class="custom-control-label">Giao hàng nhanh (30.000)</label>
+                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="{{$dataShippingMethod['shipp']}}" checked onchange="updateTotal()">
+                                                    <label class="custom-control-label">{{$dataShippingMethod['message']}}({{ number_format($dataShippingMethod['shipp'], 0, ',', '.') }} đ)</label>
                                                 </div>
                                             </div>
-                                            <div class="form-group form-group-custom-control mb-0">
-                                                <div class="custom-control custom-radio mb-0">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="15000" onchange="updateTotal()">
-                                                    <label class="custom-control-label">Giao hàng tiết kiệm (15.000)</label>
-                                                </div>
-                                            </div>
+                                               
                                         </td>
                                     </tr>
                                     <tr class="order-shipping">
