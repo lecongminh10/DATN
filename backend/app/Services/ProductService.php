@@ -101,4 +101,17 @@ class ProductService extends BaseService
         ->limit(10)
         ->get();
     }
+    public function searchProducts($query, $categoryId = null)
+{
+    $products = Product::query()
+        ->when($query, function ($queryBuilder) use ($query) {
+            return $queryBuilder->where('name', 'like', "%{$query}%");
+        })
+        ->when($categoryId, function ($queryBuilder) use ($categoryId) {
+            return $queryBuilder->where('category_id', $categoryId);
+        })
+        ->get();
+
+    return $products;
+}
 }

@@ -72,4 +72,16 @@ class ProductController extends Controller
             'cartCount'      => $cartCount
         ]);
     }
+    public function search(Request $request)
+{
+    // Lấy từ khóa tìm kiếm và danh mục (nếu có)
+    $query = $request->input('q');
+    $categoryId = $request->input('cat');
+
+    // Tìm kiếm sản phẩm
+    $products = $this->productService->searchProducts($query, $categoryId);
+
+
+    return view('client.products.search-results', compact('products'));
+}
 }
