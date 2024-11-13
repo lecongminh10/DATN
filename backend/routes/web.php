@@ -99,7 +99,7 @@ Route::group([
         Route::get('{id}/edit',                             [CouponController::class, 'edit'])->name('coupons.edit');
         Route::put('/{id}',                                 [CouponController::class, 'update'])->name('coupons.update');
         Route::patch('/restore/{id}',                       [CouponController::class, 'restore'])->name('coupons.restore');
-        // Route::get('/listsotfdeleted',                   [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
+        // Route::get('/listsotfdeleted',                                [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
         Route::get('/showsotfdelete/{id}',                  [CouponController::class, 'showSotfDeleteID'])->name('coupons.showsotfdelete');
         // Xóa mềm Coupons
         Route::delete('/{id}',                              [CouponController::class, 'destroyCoupon'])->name('coupons.destroy');

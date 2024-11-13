@@ -1,5 +1,59 @@
 @extends('admin.layouts.app')
+@section('style_css')
+    <style>
+        .dropzone {
+            border: 1px solid rgb(212 212 212 / 80%);
+        }
 
+        #searchInput {
+            position: relative;
+        }
+
+        #result {
+            position: absolute;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 280px;
+            top: calc(100% + 1px);
+            /* Cách trên 1px */
+            left: -14px;
+            z-index: 1000;
+            margin-top: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #result .dropdown-item {
+            padding: 10px 15px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        #result .dropdown-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        #selected-values {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            background-color: #fff;
+            font-size: 15px;
+            color: #6c757d;
+            min-height: 35px;
+            box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.1);
+            padding-bottom: 10px;
+        }
+
+        #selected-values::before {
+            color: #adb5bd;
+            display: block;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -34,32 +88,15 @@
                             <div class="row">
                                 <div class="col-xl-12">
                                     <div class="card-body">
-                                        <!-- Phạm vi áp dụng và mã giảm giá -->
-                                        <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <label class="form-label" for="applies-to-input">Phạm vi áp dụng</label>
-                                                <select class="form-select" id="applies-to-input" name="applies_to"
-                                                    required>
-                                                    <option value="all" checked>All</option>
-                                                    <option value="category">Category</option>
-                                                    <option value="product">Product</option>
-                                                </select>
-                                                @error('applies_to')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="col-md-8">
-                                                <label class="form-label" for="code-input">Mã giảm giá</label>
-                                                <input value="{{ strtoupper(\Str::random(8)) }}" type="text" class="form-control" id="code-input" name="code"
-                                                    placeholder="Nhập mã giảm giá" required>
-                                                @error('code')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="code-input">Mã giảm giá</label>
+                                            <input value="{{ strtoupper(\Str::random(8)) }}" type="text"
+                                                class="form-control" id="code-input" name="code"
+                                                placeholder="Nhập mã giảm giá" required>
+                                            @error('code')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
-
-                                        <!-- Mô tả mã giảm giá -->
                                         <div class="mb-3">
                                             <label class="form-label" for="description-input">Mô tả mã giảm giá</label>
                                             <textarea class="form-control" id="description-input" name="description" placeholder="Nhập mô tả"></textarea>
@@ -67,8 +104,6 @@
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
-
-                                        <!-- Loại giảm giá, giá trị giảm giá, giảm giá tối đa, giá trị đơn hàng tối thiểu -->
                                         <div class="row mb-3">
                                             <div class="col-md-3">
                                                 <label class="form-label" for="discount-type-input">Loại giảm giá</label>
@@ -155,52 +190,92 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <!-- Trạng thái hoạt động -->
-                                        <div class="form-check form-switch form-switch-custom form-switch-danger mb-3">
-                                            <label class="form-check-label" for="is-active-input">Trạng thái hoạt
-                                                động</label>
-                                            <input type="hidden" name="is_active" value="0">
-                                            <!-- Giá trị mặc định là 0 nếu không được check -->
-                                            <input class="form-check-input" type="checkbox" id="is-active-input"
-                                                name="is_active" value="1"
-                                                {{ old('is_active', 1) ? 'checked' : '' }}>
-                                        </div>
-                                        @error('is_active')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                        <!-- Có thể dùng chung với mã khác? -->
-                                        <div class="mb-3">
-                                            <label class="form-label" for="is-stackable-input">Có thể dùng chung với mã
-                                                khác?</label>
-                                            <div class="form-check form-switch form-switch-success">
-                                                <input type="hidden" name="is_stackable" value="0">
-                                                <!-- Giá trị mặc định là 0 nếu không được check -->
-                                                <input class="form-check-input" type="checkbox" id="is-stackable-input"
-                                                    name="is_stackable" value="1"
-                                                    {{ old('is_stackable') ? 'checked' : '' }}>
+                                        <div class="row">
+                                            <div class="col-4"><!-- Trạng thái hoạt động -->
+                                                <label class="form-label" for="is-active-input">Trạng thái hoạt
+                                                    động</label>
+                                                <div class="form-check form-switch form-switch-custom form-switch-danger mb-3">
+                                                    <input type="hidden" name="is_active" value="0">
+                                                    <!-- Giá trị mặc định là 0 nếu không được check -->
+                                                    <input class="form-check-input" type="checkbox" id="is-active-input"
+                                                        name="is_active" value="1"
+                                                        {{ old('is_active', 1) ? 'checked' : '' }}>
+                                                </div>
+                                                @error('is_active')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
-                                            @error('is_stackable')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                        <!-- Chỉ dành cho một số người dùng? -->
-                                        <div class="mb-3">
-                                            <label class="form-label" for="eligible-users-only-input">Chỉ dành cho một số
-                                                người dùng?</label>
-                                            <div class="form-check form-switch form-switch-success">
-                                                <input type="hidden" name="eligible_users_only" value="0">
-                                                <!-- Giá trị mặc định là 0 nếu không được check -->
-                                                <input class="form-check-input" type="checkbox"
-                                                    id="eligible-users-only-input" name="eligible_users_only"
-                                                    value="1" {{ old('eligible_users_only') ? 'checked' : '' }}>
+                                            <div class="col-4"><!-- Có thể dùng chung với mã khác? -->
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="is-stackable-input">Dùng chung
+                                                        với mã khác?</label>
+                                                    <div class="form-check form-switch form-switch-success">
+                                                        <input type="hidden" name="is_stackable" value="0">
+                                                        <!-- Giá trị mặc định là 0 nếu không được check -->
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="is-stackable-input" name="is_stackable" value="1"
+                                                            {{ old('is_stackable') ? 'checked' : '' }}>
+                                                    </div>
+                                                    @error('is_stackable')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
                                             </div>
-                                            @error('eligible_users_only')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                            <div class="col-4"><!-- Chỉ dành cho một số người dùng? -->
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="eligible-users-only-input">Chỉ dành cho
+                                                        một số
+                                                        người dùng?</label>
+                                                    <div class="form-check form-switch form-switch-success">
+                                                        <input type="hidden" name="eligible_users_only" value="0">
+                                                        <!-- Giá trị mặc định là 0 nếu không được check -->
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="eligible-users-only-input" name="eligible_users_only"
+                                                            value="1"
+                                                            {{ old('eligible_users_only') ? 'checked' : '' }}>
+                                                    </div>
+                                                    @error('eligible_users_only')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-2">
+                                                <label class="form-label" for="applies-to-input">Phạm vi áp dụng</label>
+                                                <select class="form-select" id="applies-to-input" name="applies_to"
+                                                    required>
+                                                    <option value="#" checked>Chọn phạm vi</option>
+                                                    <option value="all">All</option>
+                                                    <option value="category">Category</option>
+                                                    <option value="product">Product</option>
+                                                    <option value="user">User</option>
+                                                </select>
+                                                @error('applies_to')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div id="dynamicSelect" class="col-md-3 position-relative">
+                                                <label class="form-label" for="search-input">Chọn giá trị</label>
+                                                <input novalidate type="text" id="search-input" class="form-control"
+                                                    placeholder="Tìm kiếm giá trị..." oninput="filterResults()" required>
+                                                <div id="result" style="display: none" class="dropdown-menu w-100" >
+                                                    <!-- Các kết quả sẽ được hiển thị tại đây -->
+                                                </div>
+                                                @error('dynamic_value')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                                <input type="hidden" id="dynamic-select" name="dynamic_value" required>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <label class="form-label" for="search-input">Giá trị</label>
+                                                <div id="selected-values" class="form-control">
+                                                    <!-- Các giá trị đã chọn sẽ được hiển thị tại đây -->
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Submit và quay lại danh sách -->
                                 <div class="text-end me-3 mb-3">
                                     <button type="submit" class="btn btn-success w-sm">
                                         <i class="ri-check-double-line me-2"></i>Submit
@@ -216,4 +291,116 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script_libray')
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+@endsection
+@section('scripte_logic')
+    <script>
+        document.getElementById('applies-to-input').addEventListener('change', function() {
+            const selectedOption = this.value;
+            const inputMessage = document.getElementById('search-input');
+            let url = '';
+            if (selectedOption === 'all') {
+                if (inputMessage.value === '') {
+                    inputMessage.value = 'Áp dụng toàn bộ cửa hàng';
+                }
+            } else if (selectedOption === 'category') {
+                url = '/storage/categories.json';
+            } else if (selectedOption === 'product') {
+                url = '/storage/products.json';
+            } else if (selectedOption === 'user') {
+                url = '/storage/users.json';
+            }
+                
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDropdown = document.getElementById('result');
+                    resultDropdown.style.display = 'block';
+
+                    resultDropdown.innerHTML = data.length > 0 ?
+                        data.map(item =>
+                            `<button type="button" class="dropdown-item" data-id="${item.id}" data-name="${item.name}">${item.name}</button>`
+                        ).join('') :
+                        `<div class="dropdown-item disabled">Không có kết quả</div>`;
+
+                    document.querySelectorAll('#result .dropdown-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const selectedId = this.getAttribute('data-id');
+                            const selectedName = this.getAttribute('data-name');
+
+                            addSelectedValue(selectedId, selectedName);
+
+                            resultDropdown.style.display = 'none';
+                            document.getElementById('search-input').value = '';
+                        });
+                    });
+                })
+                .catch(error => console.error('Error loading JSON data:', error));
+        });
+
+        function addSelectedValue(id, name) {
+            const selectedValues = document.getElementById('selected-values');
+
+            // Kiểm tra nếu đã chọn giá trị này
+            if (document.querySelector(`#selected-values [data-id="${id}"]`)) {
+                return;
+            }
+
+            const valueContainer = document.createElement('div');
+            valueContainer.className = 'selected-value badge bg-primary text-white me-1 mb-1';
+            valueContainer.setAttribute('data-id', id);
+            valueContainer.innerHTML = `${name} <span class="remove-value" style="cursor:pointer;">&times;</span>`;
+
+            selectedValues.appendChild(valueContainer);
+
+            updateHiddenInput();
+
+            valueContainer.querySelector('.remove-value').addEventListener('click', function() {
+                valueContainer.remove();
+                updateHiddenInput();
+            });
+        }
+
+        function updateHiddenInput() {
+            const selectedIds = Array.from(document.querySelectorAll('#selected-values .selected-value'))
+                .map(item => item.getAttribute('data-id'));
+            document.getElementById('dynamic-select').value = selectedIds.join(',');
+        }
+
+        document.getElementById('search-input').addEventListener('focus', function() {
+            const resultDropdown = document.getElementById('result');
+            if (this.value) {
+                filterResults(); // Lọc theo từ khóa đã nhập
+            } else {
+                resultDropdown.style.display = 'block';
+            }
+        });
+
+        function filterResults() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const items = document.querySelectorAll('#result .dropdown-item:not(.disabled)');
+            if (!searchInput) {
+                items.forEach(item => item.style.display = 'block');
+                return;
+            }
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(searchInput) ? 'block' : 'none';
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const searchInput = document.getElementById('search-input');
+            const resultDropdown = document.getElementById('result');
+            if (!searchInput.contains(e.target) && !resultDropdown.contains(e.target)) {
+                resultDropdown.style.display = 'none';
+            }
+        });
+    </script>
 @endsection
