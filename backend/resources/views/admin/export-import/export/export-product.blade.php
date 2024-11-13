@@ -150,19 +150,19 @@
                             <div class="col-md-4">
                                 <div class="title-total ">
                                     <h5>Tổng mặt hàng</h5>
-                                    <span class="number"><b>79</b></span>
+                                    <span class="number"><b>{{ $sumProduct }}</b></span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="title-total x">
                                     <h5>Tổng sản phẩm</h5>
-                                    <span class="number"><b>23</b></span>
+                                    <span class="number"><b>{{ $countProduct }}</b></span>
                                 </div>
                             </div>
                             <div class="col-md-4 ">
                                 <div class="title-total ">
                                     <h5>Tổng sản phẩm biến thể</h5>
-                                    <span class="number"><b>56</b></span>
+                                    <span class="number"><b>{{ $countProductVariants }}</b></span>
                                 </div>
                             </div>
                         </div>
@@ -172,27 +172,54 @@
                             <div class="title-category">
                                 <div class="content">
                                     <h5 class="title">Cột</h5>
-                                    <a href="#"><h5 class="title-link">Tất cả</h5></a>
+                                    <a href="#"  id="selectAllCheckboxes"><h5 class="title-link">Tất cả</h5></a>
                                 </div>
                             </div>
+                            <form action="export-products" method="post">
+                                @csrf
                             <div class="row align-items-center">
                                 <div class="col-sm">
                                     <div>
                                         <h6>Sản phẩm: </h6>
                                     </div>
                                     <div class="row align-items-center">
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Sản phẩm 1</label>
-                                        </div>
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Sản phẩm 2</label>
-                                        </div>
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Sản phẩm 3</label>
-                                        </div>
+
+                                        @php
+                                            $columnNamesPro = [
+                                                'id' => 'ID sản phẩm',
+                                                'category_id' => 'Mã danh mục',
+                                                'code ' => 'Mã sản phẩm',
+                                                'name' => 'Tên sản phẩm',
+                                                'short_description' => 'Mô tả ngắn',
+                                                'content' => 'Mô tả chi tiết',
+                                                'price_regular' => 'Giá sản phẩm',
+                                                'price_sale' => 'Giá giảm',
+                                                'stock' => 'Số lượng tồn kho',
+                                                'rating' => 'Điểm đánh giá',
+                                                'warranty_period' => "Thời gian bảo hành(tháng)",
+                                                'view' => 'Số lượt xem',
+                                                'buycount' => 'Số lượng lượt mua',
+                                                'wishlistscount' => 'Số lượng lượt yêu thích',
+                                                'is_active' => 'Cờ kích hoạt sản phẩm',
+                                                'is_hot_deal' => 'Trạng thái hot của sản phẩm',
+                                                'is_show_home' => 'Trạng thái hiển thị ra màn hình chủ',
+                                                'is_new' => 'Trạng thái sản phẩm mới',
+                                                'is_good_deal' => '	Trạng thái tốt của sản phẩm',
+                                                'slug' => 'Slug của sản phẩm',
+                                                'meta_title' => 'Tiêu đề SEO của sản phẩm',
+                                                'meta_description' => 'Mô tả SEO của sản phẩm',
+                                                'deleted_at' => 'Ngày xóa',
+                                                'deleted_by' => 'Người xóa',
+                                                'created_at' => 'Ngày tạo',
+                                                'updated_at' => 'Ngày cập nhật',
+                                            ];
+                                        @endphp
+                                        @foreach ($columnsDataPro as $key=> $pro)
+                                            <div class="col-md-4 checkbox-container">
+                                                <input type="checkbox" name="product[][{{ $pro['name'] }}]" id="checkbox-{{ $pro['name'] }}" class="custom-checkbox">
+                                                <label for="checkbox-{{ $pro['name'] }}">{{ $columnNamesPro[$pro['name']] ?? $pro['name'] }}</label>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -203,18 +230,27 @@
                                         <h6>Sản phẩm biến thể: </h6>
                                     </div>
                                     <div class="row align-items-center">
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="Option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Sản phẩm biến thể 1</label>
-                                        </div>
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="Option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Sản phẩm biến thể 2</label>
-                                        </div>
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="Option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Sản phẩm biến thể 3</label>
-                                        </div>
+                                        @php
+                                            $columnNamesProVar = [
+                                                'id' => 'ID sản phẩm biến thể',
+                                                'product_id' => 'Mã sản phẩm',
+                                                'price_modifier' => 'Giá biến thể',
+                                                'original_price' => 'Giá gốc',
+                                                'stock' => 'Số lượng tồn kho',
+                                                'sku' => 'Mã SKU',
+                                                'status' => 'Trạng thái',
+                                                'deleted_at' => 'Ngày xóa',
+                                                'deleted_by' => 'Người xóa',
+                                                'created_at' => 'Ngày tạo',
+                                                'updated_at' => 'Ngày cập nhật',
+                                            ];
+                                        @endphp
+                                        @foreach ($columnNamesProVar as $key => $proVar)
+                                            <div class="col-md-4 checkbox-container">
+                                                <input type="checkbox" name="product_variant[][{{$key}}]" id="checkbox-{{$key}}" class="custom-checkbox">
+                                                <label for="checkbox-{{$key}}">{{ $proVar}}</label>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -235,9 +271,13 @@
 
                         <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
                             <div class="">
-                                <button class="btn btn-primary">Xuất</button>
+                                {{-- <button class="btn btn-primary" id="exportButton" disabled>Xuất</button> --}}
+                                
+                                    {{-- <input type="hidden" name="selected_columns" id="selected_columns"> --}}
+                                    <button class="btn btn-primary" id="exportButton" disabled>Xuất</button>
                             </div>
                         </div>
+                    </form>
                     </div>
 
                    
@@ -253,5 +293,65 @@
 @endsection
 
 @section('scripte_logic')
-    
+    <script>
+        // Nhấn Tất cả sẽ tích chọn checkbox
+        document.getElementById('selectAllCheckboxes').addEventListener('click', function(event) {
+        event.preventDefault(); // Ngăn chặn chuyển hướng mặc định
+        const checkboxes = document.querySelectorAll('.custom-checkbox');
+        
+        // Kiểm tra nếu có ít nhất một checkbox chưa được chọn
+        const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+        
+        // Thiết lập lại trạng thái của tất cả checkbox dựa vào allChecked
+        checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
+        });
+
+        // Khi chọn các checkbox và radio sẽ cho nhấn xuất
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.custom-checkbox');
+            const radioButtons = document.querySelectorAll('.custom-radio');
+            const exportButton = document.getElementById('exportButton');
+
+            function updateExportButtonState() {
+                // Kiểm tra nếu ít nhất một checkbox được chọn
+                const isAnyCheckboxChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                // Kiểm tra nếu ít nhất một radio button được chọn
+                const isAnyRadioChecked = Array.from(radioButtons).some(radio => radio.checked);
+                // Kích hoạt nút Xuất nếu có ít nhất một checkbox và một radio được chọn
+                exportButton.disabled = !(isAnyCheckboxChecked && isAnyRadioChecked);
+            }
+
+            // Lắng nghe sự kiện thay đổi trên checkbox và radio button
+            checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateExportButtonState));
+            radioButtons.forEach(radio => radio.addEventListener('change', updateExportButtonState));
+        });
+
+        // Gửi dữ liệu
+        //document.getElementById('exportButton').addEventListener('click', function () {
+        //    const selectedColumns = Array.from(document.querySelectorAll('.custom-checkbox:checked')).map(checkbox => checkbox.id.replace('checkbox-', ''));
+        //    const selectedFormat = document.querySelector('.custom-radio:checked').id;
+
+        //    fetch("export-products", {
+        //        method: 'POST',
+        //        headers: {
+        //            'Content-Type': 'application/json',
+        //            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        //        },
+        //        body: JSON.stringify({ columns: selectedColumns, format: selectedFormat })
+        //    })
+        //    .then(response => response.blob())
+        //    .then(blob => {
+        //        const url = window.URL.createObjectURL(blob);
+        //        const a = document.createElement('a');
+        //        a.style.display = 'none';
+        //        a.href = url;
+        //        a.download = 'products_and_variants.xlsx';
+        //        document.body.appendChild(a);
+        //        a.click();
+        //        window.URL.revokeObjectURL(url);
+        //    })
+        //    .catch(error => console.error('Export failed:', error));
+        //});
+
+    </script>
 @endsection

@@ -26,8 +26,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionsSeeder::class,
             PermissionsValueSeeder::class,
-            UserSeeder::class,
-            PaymentGatewaysSeeder::class
+            UserSeeder::class
+            // PaymentGatewaysSeeder::class
         ]);
 
 

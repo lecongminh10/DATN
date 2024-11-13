@@ -149,7 +149,7 @@
                     <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0">
                         <div class="total-category">
                             <h5>Tổng bài viết</h5>
-                            <span class="number"><b>30</b></span>
+                            <span class="number"><b>{{$countPost}}</b></span>
                         </div>
                     </div>
 
@@ -157,24 +157,39 @@
                             <div class="title-category">
                                 <div class="content">
                                     <h5 class="title">Cột</h5>
-                                    <a href="#"><h5 class="title-link">Tất cả</h5></a>
+                                    <a href="#" id="selectAllCheckboxes"><h5 class="title-link">Tất cả</h5></a>
                                 </div>
                             </div>
                             <div class="row align-items-center">
                                 <div class="col-sm">
                                     <div class="row align-items-center">
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Bài viết 1</label>
-                                        </div>
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Bài viết 2</label>
-                                        </div>
-                                        <div class="col-md-4 checkbox-container">
-                                            <input type="checkbox" name="option" id="checkbox" class="custom-checkbox">
-                                            <label for="checkbox">Bài viết 3</label>
-                                        </div>
+                                        @php
+                                            $columnNames = [
+                                                'id' => 'ID bài viết',
+                                                'title' => 'Tên bài viết',
+                                                'content' => 'Nội dung',
+                                                'slug' => 'Slug cho bài viết',
+                                                'meta_title' => 'Tiêu đề SEO',
+                                                'meta_description' => 'Mô tả SEO',
+                                                'user_id' => 'ID người dùng',
+                                                'is_published' => 'Trạng thái xuất bản',
+                                                'published_at' => 'Thời gian xuất bản',
+                                                'deleted_at' => 'Ngày xóa',
+                                                'deleted_by' => 'Người xóa',
+                                                'created_at' => 'Ngày tạo',
+                                                'updated_at' => 'Ngày cập nhật',
+                                            ];
+                                        @endphp
+
+                                        @foreach ($columnsData as $post)
+                                            @if ($post['name'] !== 'thumbnail')
+                                                <div class="col-md-4 checkbox-container">
+                                                    <input type="checkbox" name="option" id="checkbox-{{ $post['name'] }}" class="custom-checkbox">
+                                                    <label for="checkbox-{{ $post['name'] }}">{{ $columnNames[$post['name']] ?? $post['name'] }}</label>
+                                                </div>
+                                            @endif
+                                        @endforeach
+
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +210,7 @@
 
                         <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
                             <div class="">
-                                <button class="btn btn-primary">Export</button>
+                                <button class="btn btn-primary" id="exportButton" disabled>Xuất</button>
                             </div>
                         </div>
                     </div>
@@ -213,5 +228,68 @@
 @endsection
 
 @section('scripte_logic')
-    
+    <script>
+        // Nhấn Tất cả sẽ tích chọn checkbox
+        document.getElementById('selectAllCheckboxes').addEventListener('click', function(event) {
+        event.preventDefault(); // Ngăn chặn chuyển hướng mặc định
+        const checkboxes = document.querySelectorAll('.custom-checkbox');
+        
+        // Kiểm tra nếu có ít nhất một checkbox chưa được chọn
+        const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+        
+        // Thiết lập lại trạng thái của tất cả checkbox dựa vào allChecked
+        checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
+        });
+
+        // Khi chọn các checkbox và radio sẽ cho nhấn xuất
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.custom-checkbox');
+            const radioButtons = document.querySelectorAll('.custom-radio');
+            const exportButton = document.getElementById('exportButton');
+
+            function updateExportButtonState() {
+                // Kiểm tra nếu ít nhất một checkbox được chọn
+                const isAnyCheckboxChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                // Kiểm tra nếu ít nhất một radio button được chọn
+                const isAnyRadioChecked = Array.from(radioButtons).some(radio => radio.checked);
+                // Kích hoạt nút Xuất nếu có ít nhất một checkbox và một radio được chọn
+                exportButton.disabled = !(isAnyCheckboxChecked && isAnyRadioChecked);
+            }
+
+            // Lắng nghe sự kiện thay đổi trên checkbox và radio button
+            checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateExportButtonState));
+            radioButtons.forEach(radio => radio.addEventListener('change', updateExportButtonState));
+        });
+
+
+        // Gửi dữ liệu
+        document.getElementById('exportButton').addEventListener('click', function () {
+            const selectedColumns = Array.from(document.querySelectorAll('.custom-checkbox:checked')).map(checkbox => checkbox.id.replace('checkbox-', ''));
+            const selectedFormat = document.querySelector('.custom-radio:checked').id;
+            // console.log(selectedColumns);
+            // console.log(selectedFormat);
+
+
+            fetch("export-posts", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ columns: selectedColumns, format: selectedFormat })
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'posts.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Export failed:', error));
+        });
+    </script>
 @endsection

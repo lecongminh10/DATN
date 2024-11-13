@@ -99,6 +99,89 @@
         .button{
             background-color: #eef3f6;
         }
+
+        /* Style cho modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 115px; /* Khoảng cách từ trên cùng */
+            left: 1195px; /* Khoảng cách từ bên phải */
+            width: 300px; /* Chiều rộng modal */
+            height: auto;
+            border-radius: 10px; /* Góc bo tròn */
+            animation: slideIn 0.5s ease-out forwards; /* Hiệu ứng xuất hiện */
+        }
+        .text-modal{
+            font-size: 16px;
+        }
+
+        /* Hiệu ứng xuất hiện */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50%); /* Ban đầu nằm ngoài màn hình */
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0); /* Vị trí ban đầu */
+            }
+        }
+
+        /* Nội dung modal */
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px; /* Góc bo tròn */
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+            text-align: center;
+        }
+
+        /* Nút đóng */
+        .close {
+            color: #aaa;
+            font-size: 16px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Nút "Xong" */
+        .btn-modal {
+            /* background-color: #4CAF50; Màu xanh lá */
+            /* color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            margin-top: 15px; */
+
+            background-color: #405189;
+            color: #e9ecff;
+            border: none;
+            padding: 4px 7px;
+            /* margin-left: 176px; */
+            border-radius: 5px;
+            /* width: 75px; */
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 13px;
+        }
+
+        button:hover {
+            background-color: #4e62a2; /* Màu xanh đậm hơn khi hover */
+            color: #e9ecff;
+        }
+
     </style>
 
     
@@ -143,7 +226,7 @@
                             <span>Chọn một tệp có phần mở rộng sau: csv, xls, xlsx.</span>
                         </div>
 
-                        <div class="chunk-size">
+                        {{-- <div class="chunk-size">
                             <label for="" class="title">Kích thước khối</label>
                             <input type="number" class="form-control" value="1000"/>
                             <div class="text-span">
@@ -151,7 +234,7 @@
                                     Tăng giá trị này nếu bạn có tệp lớn và dữ liệu được nhập rất nhanh. Giảm giá trị 
                                     này nếu bạn gặp phải giới hạn bộ nhớ hoặc sự cố hết thời gian chờ cổng khi nhập dữ liệu.</span>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
@@ -197,6 +280,23 @@
 
     </div>
 </div>
+
+<!-- Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <h5 class="text-modal">Nhập dữ liệu thành công!</h5>
+        <button class="btn-modal" onclick="reloadPage()">Xong</button>
+    </div>
+</div>
+
+<div id="warningModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <h5 class="text-modal">Nhập sai file. Hãy thử lại với file có tên (import-categories)!</h5>
+        <button class="btn-modal" onclick="reloadPage()">Ok</button>
+    </div>
+</div>
 @endsection
 
 @section('script_libray')
@@ -205,16 +305,19 @@
 
 @section('scripte_logic')
     <script>
+
+       
+
         // Thả và kéo hoặc chọn tệp tin
         const fileUploadContainer = document.getElementById('fileUploadContainer');
         const fileInput = document.getElementById('fileInput');
-        const importButton = document.getElementById('importButton'); // Lấy nút nhập
+        const importButton = document.getElementById('importButton');
 
         function showFileName() {
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 replaceContainerWithFileInfo(file);
-                importButton.disabled = false; // Kích hoạt nút nhập khi có tệp
+                importButton.disabled = false;
             }
         }
 
@@ -224,13 +327,12 @@
             if (files.length > 0) {
                 fileInput.files = files;
                 replaceContainerWithFileInfo(files[0]);
-                importButton.disabled = false; // Kích hoạt nút nhập khi có tệp
+                importButton.disabled = false;
             }
         }
 
         function replaceContainerWithFileInfo(file) {
-            const fileSize = (file.size / 1024 / 1024).toFixed(2); // Kích thước file tính bằng MB
-
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
             fileUploadContainer.innerHTML = `
                 <div class="file-info" id="fileInfoContainer">
                     <span class="file-icon">📄</span>
@@ -254,6 +356,58 @@
             fileUploadContainer.onclick = () => fileInput.click();
 
             importButton.disabled = true; // Vô hiệu hóa nút nhập khi không có tệp
+        }
+
+        // Nhập dữ liệu
+        document.getElementById('importButton').addEventListener('click', function () {
+            if (!fileInput || fileInput.files.length === 0) {
+                alert('Vui lòng chọn một tệp trước khi nhập.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            fetch("import-categories", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showModal(); // Hiển thị modal thành công
+                } else {
+                    showWarningModal(); // Hiển thị modal cảnh báo khi nhập sai tệp
+                }
+            })
+            .catch(error => console.error('Lỗi khi nhập tệp:', error));
+        });
+
+        // Hiển thị modal
+        function showModal() {
+            document.getElementById('successModal').style.display = 'block';
+        }
+
+        // Hiển thị modal cảnh báo
+        function showWarningModal() {
+            document.getElementById('warningModal').style.display = 'block';
+        } 
+
+        // Đóng modal
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        function closeWarningModal() {
+            document.getElementById('warningModal').style.display = 'none';
+        }
+
+        // Tải lại trang
+        function reloadPage() {
+            location.reload();
         }
 
     </script>

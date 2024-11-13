@@ -144,6 +144,79 @@
         .button{
             background-color: #eef3f6;
         }
+
+        /* Style cho modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 115px; /* Khoảng cách từ trên cùng */
+            left: 1195px; /* Khoảng cách từ bên phải */
+            width: 300px; /* Chiều rộng modal */
+            height: auto;
+            border-radius: 10px; /* Góc bo tròn */
+            animation: slideIn 0.5s ease-out forwards; /* Hiệu ứng xuất hiện */
+        }
+        .text-modal{
+            font-size: 16px;
+        }
+
+        /* Hiệu ứng xuất hiện */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50%); /* Ban đầu nằm ngoài màn hình */
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0); /* Vị trí ban đầu */
+            }
+        }
+
+        /* Nội dung modal */
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px; /* Góc bo tròn */
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+            text-align: center;
+        }
+
+        /* Nút đóng */
+        .close {
+            color: #aaa;
+            font-size: 16px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Nút "Xong" */
+        .btn-modal {
+            background-color: #405189;
+            color: #e9ecff;
+            border: none;
+            padding: 4px 7px;
+            /* margin-left: 176px; */
+            border-radius: 5px;
+            /* width: 75px; */
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 13px;
+        }
+
+        button:hover {
+            background-color: #4e62a2; /* Màu xanh đậm hơn khi hover */
+            color: #e9ecff;
+        }
     </style>
 
     
@@ -176,55 +249,33 @@
                             </div>
                         </div>
                     </div>
-
+        
                     <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0">
-
                         <div class="import-type">
                             <h5>Loại nhập <span style="color: rgb(224, 5, 5)">*</span></h5>
-                            <select name="import-type" class="form-control" id="import-type">
-                                <option value="1">All</option>
-                                <option value="2">Products</option>
-                                <option value="3">Variations</option>
+                            <select name="import-type" class="form-control" id="import-type" onchange="handleImportTypeChange()">
+                                <option value="products">Sản phẩm</option>
+                                <option value="product_variants">Biến thể</option>
                             </select>
                         </div>
-
-                        <div class="check-box">
-                            <input type="checkbox" class="custom-checkbox" />
-                            <div class="text-checkbox">
-                                <h5 class="title">Cập nhật sản phẩm hiện có</h5>
-                                <span class="text-span">Các sản phẩm hiện có sẽ được cập nhật dựa trên ID hoặc SKU. Các sản phẩm không tồn tại sẽ bị bỏ qua.</span>
-                            </div>
-                            
-                        </div>
-
-
+        
+                        <!-- Phần tải lên tệp -->
                         <div class="file-upload-container" onclick="document.getElementById('fileInput').click()"
                             ondragover="event.preventDefault()" ondrop="handleDrop(event)" id="fileUploadContainer">
                             <h3 id="fileUploadText">Kéo và thả tập tin vào đây hoặc nhấp để tải lên</h3>
                             <input type="file" id="fileInput" class="file-input" accept=".csv, .xls, .xlsx" onchange="showFileName()" />
                         </div>
-
+        
                         <div class="text-span">
                             <span>Chọn một tệp có phần mở rộng sau: csv, xls, xlsx.</span>
                         </div>
-
-                        <div class="chunk-size">
-                            <h5 for="" class="title">Kích thước khối</h5>
-                            <input type="number" class="form-control" value="10"/>
-                            <div class="text-span">
-                                <span>Số lượng hàng được nhập tại một thời điểm được xác định bởi kích thước khối. 
-                                    Tăng giá trị này nếu bạn có tệp lớn và dữ liệu được nhập rất nhanh. Giảm giá trị 
-                                    này nếu bạn gặp phải giới hạn bộ nhớ hoặc sự cố hết thời gian chờ cổng khi nhập dữ liệu.</span>
-                            </div>
-                        </div>
                     </div>
-
+        
                     <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
                         <div class="btn-footer">
                             <button id="importButton" class="btn btn-primary" disabled>Nhập</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -239,7 +290,7 @@
                             </div>
                         </div>
                     </div>
-                    <table class="table table-striped">
+                    <table class="table table-striped" id="products-table">
                         <thead class="table-thead">
                             <tr>
                                 <th class="ps-3"> Cột</th>
@@ -256,10 +307,44 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <table class="table table-striped" id="product-variants-table" hidden>
+                        <thead class="table-thead">
+                            <tr>
+                                <th class="ps-3"> Cột</th>
+                                <th> Quy tắc</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody class="table-tbody">
+                            @foreach($columnsDataVariant  as $column)
+                                <tr>
+                                    <td class="w-50 ps-3">{{ $column['name'] }}</td>
+                                    <td>{{ $column['type'] }}:  {{$column['comments']}}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
+    </div>
+</div>
+
+{{-- Modal --}}
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <h5 class="text-modal">Nhập dữ liệu thành công!</h5>
+        <button class="btn-modal" onclick="reloadPage()">Xong</button>
+    </div>
+</div>
+
+<div id="warningModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <h5 class="text-modal">Nhập sai file. Hãy thử lại!</h5>
+        <button class="btn-modal" onclick="reloadPage()">Ok</button>
     </div>
 </div>
 @endsection
@@ -269,6 +354,25 @@
 @endsection
 
 @section('scripte_logic')
+    <script>
+        // JavaScript function to handle onchange event
+        function handleImportTypeChange() {
+            const importType = document.getElementById('import-type').value;
+            
+            // Get references to both table divs
+            const productsTable = document.getElementById('products-table');
+            const productVariantsTable = document.getElementById('product-variants-table');
+        
+            // Toggle visibility based on the selected value
+            if (importType === 'products') {
+                productsTable.hidden = false;
+                productVariantsTable.hidden = true;
+            } else if (importType === 'product_variants') {
+                productsTable.hidden = true;
+                productVariantsTable.hidden = false;
+            }
+        }
+        </script>
     <script>
         // Thả và kéo hoặc chọn tệp tin
         const fileUploadContainer = document.getElementById('fileUploadContainer');
@@ -319,6 +423,60 @@
             fileUploadContainer.onclick = () => fileInput.click();
 
             importButton.disabled = true; // Vô hiệu hóa nút nhập khi không có tệp
+        }
+
+        // Nhập dữ liệu
+        document.getElementById('importButton').addEventListener('click', function () {
+            if (!fileInput || fileInput.files.length === 0) {
+                alert('Vui lòng chọn một tệp trước khi nhập.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('import-type', document.getElementById('import-type').value);
+
+            fetch("import-products", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showModal(); // Hiển thị modal thành công
+                } else {
+                    showWarningModal(); // Hiển thị modal cảnh báo khi nhập sai tệp
+                }
+            })
+            .catch(error => console.error('Lỗi khi nhập tệp:', error));
+            // showWarningModal(); // Hiển thị modal cảnh báo khi có lỗi trong quá trình nhập
+        });
+
+        // Hiển thị modal
+        function showModal() {
+            document.getElementById('successModal').style.display = 'block';
+        }
+
+        // Hiển thị modal cảnh báo
+        function showWarningModal() {
+            document.getElementById('warningModal').style.display = 'block';
+        }       
+
+        // Đóng modal
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        function closeWarningModal() {
+            document.getElementById('warningModal').style.display = 'none';
+        }
+
+        // Tải lại trang
+        function reloadPage() {
+            location.reload();
         }
 
     </script>
