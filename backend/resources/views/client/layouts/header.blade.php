@@ -177,7 +177,13 @@
                        
                                    <figure class="product-image-container">
                                        <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
-                                           <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
+                                           @php
+                                               if($item->product->getMainImage()->image_gallery !==null){
+                                                  $url = $item->product->getMainImage()->image_gallery;
+                                               }
+                                               $url='';
+                                           @endphp
+                                           <img src="{{Storage::url($url)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
                                        </a>
                        
                                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>

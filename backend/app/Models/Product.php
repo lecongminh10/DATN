@@ -99,6 +99,10 @@ class Product extends Model
         });
     }
 
+    public function productDimension()
+    {
+        return $this->hasOne(ProductDimension::class, 'product_id');  // Sử dụng hasOne vì mỗi sản phẩm chỉ có một bảng kích thước
+    }
     
 }
 

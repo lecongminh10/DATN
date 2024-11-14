@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiHelper;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Coupon;
@@ -12,6 +13,7 @@ use App\Models\Payment;
 use App\Models\PaymentGateways;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\shippingMethods;
 use App\Models\User;
 use App\Models\WishList;
 use App\Services\OrderLocationService;
@@ -237,10 +239,58 @@ class OrderController extends Controller
 
         $cartCount = $carts->sum('quantity');
 
-        $cartCheckout = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-            ->where('user_id', $userId)
-            ->get();
-        return view('client.orders.checkout', compact('cartCheckout', 'carts', 'cartCount'));
+        $cartCheckout =Cart::with(['product', 'product.variants','productVariant.attributeValues.attribute', 'product.galleries','product.productDimension'])
+                ->where('user_id', $userId)
+                ->get();
+       
+                $productDimensions = [];
+                $items = [];
+                $type = shippingMethods::HANG_NHE;
+                $dataShippingMethod =[];
+                foreach ($cartCheckout as $key => $cart) {
+                
+                    $item = [
+                        'name' => $cart->relationLoaded('productVariant') && !empty($cart->productVariant) ? $cart->productVariant->sku : $cart->product->code,
+                        'quantity' => $cart->quantity,
+                    ];
+                
+                    if ($cart->relationLoaded('product') && $cart->product->relationLoaded('productDimension')) {
+                        $productDimension = $cart->product->productDimension;
+                        $item = array_merge($item, [
+                            'height' => $productDimension->height,
+                            'weight' => $productDimension->weight,
+                            'length' => $productDimension->length,
+                            'width' => $productDimension->width,
+                        ]);
+                
+                        $productDimensions[] = [
+                            'weight' => $productDimension->weight,
+                        ];
+                    }
+                
+                    $items[$key] = $item;
+                }
+                
+                $totalWeight = array_reduce($productDimensions, function ($carry, $item) {
+                    return $carry + $item['weight'];
+                }, 0);
+                
+                if ($totalWeight >= shippingMethods::WEIGHT) {
+                    $type = shippingMethods::HANG_NANG;
+                    $dataShippingMethod['type']=$type;
+                    $dataShippingMethod['value']="ghn";
+                    $dataShippingMethod['message']="Vận chuyển hàng nặng";
+                }else{
+                    $dataShippingMethod['value']="ghn";
+                    $dataShippingMethod['type']=$type;
+                    $dataShippingMethod['message']="Vận chuyển hàng nhẹ";
+                }
+                
+      
+        $shipp = ApiHelper::calculateServiceFee($type, $totalWeight, $items); 
+        $dataShippingMethod['shipp']=$shipp;
+
+        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod'));
     }
 
     public function removeFromCart($id)

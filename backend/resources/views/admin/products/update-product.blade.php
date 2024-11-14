@@ -410,6 +410,21 @@
                                                         <input type="number" class="form-control" name="warranty_period"
                                                             id="warranty_period" value="{{$product->warranty_period}}">
                                                     </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="height" id="height"  value="{{old('height',$productDemension->height)}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="length" id="length"  value="{{old('length',$productDemension->length)}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="width" id="width"  value="{{old('width',$productDemension->width)}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="weight" id="weight"  value="{{old('weight',$productDemension->weight)}}" placeholder="Cân nặng (gr)">
+                                                            </div>
+                                                    </div>
                                                     <div class="row">
                                                         @php
                                                             $status = [
