@@ -299,12 +299,13 @@ class PayMentController extends Controller
         if(!$check){
             // Save order information to the database if the transaction was successful
             if ($responseData['result'] == 'GD Thanh cong') {
-                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=> substr($responseData['amount'], 0, -2) ,'status'=>Payment::Pending , 'transaction_id'=> $responseData['transaction_no']]);
-                Payment::where('id',$payment->id)->update(['status'=>Payment::Completed]);
-                shippingMethods::where('transaction_id',$order->code)->update(['transaction_id'=> $payment->transaction_id]);
+                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=> substr($responseData['amount'], 0, -2) ,'status'=>Payment::Completed , 'transaction_id'=> $responseData['transaction_no']]);
+                shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id ,'status'=>shippingMethods::COMPLETED]);
             }else
             {
+                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=>$order->total_price ,'status'=>Payment::Failed , 'transaction_id'=>$order->code]);
                 Order::where('code', $order->code)->update(['status' =>Order::DA_HUY]);
+                shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id,'status'=>shippingMethods::FAILED]);
             }
         }
         $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])
