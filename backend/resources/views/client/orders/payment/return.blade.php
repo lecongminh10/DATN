@@ -29,37 +29,40 @@
 
 <body>
     <?php
-     $vnp_TmnCode = env('VNP_TMN_CODE'); 
-     $vnp_HashSecret = env('VNP_HASH_SECRET');
-     $vnp_Url = env('VNP_URL');
-    $vnp_Returnurl = "http://localhost/vnpay_php/vnpay_return.php";
-    $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
-    $apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
-    $startTime = date("YmdHis");
-    $expire = date('YmdHis',strtotime('+15 minutes',strtotime($startTime)));
+     if($check){
+        $vnp_TmnCode = env('VNP_TMN_CODE'); 
+        $vnp_HashSecret = env('VNP_HASH_SECRET');
+        $vnp_Url = env('VNP_URL');
+        $vnp_Returnurl = "http://localhost/vnpay_php/vnpay_return.php";
+        $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
+        $apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+        $startTime = date("YmdHis");
+        $expire = date('YmdHis',strtotime('+15 minutes',strtotime($startTime)));
 
-    $vnp_SecureHash = $_GET['vnp_SecureHash'];
-    $inputData = array();
-    foreach ($_GET as $key => $value) {
-        if (substr($key, 0, 4) == "vnp_") {
-            $inputData[$key] = $value;
+        $vnp_SecureHash = $_GET['vnp_SecureHash'];
+        $inputData = array();
+        foreach ($_GET as $key => $value) {
+            if (substr($key, 0, 4) == "vnp_") {
+                $inputData[$key] = $value;
+            }
         }
-    }
-    
-    unset($inputData['vnp_SecureHash']);
-    ksort($inputData);
-    $i = 0;
-    $hashData = "";
-    foreach ($inputData as $key => $value) {
-        if ($i == 1) {
-            $hashData .= '&' . urlencode($key) . "=" . urlencode($value);
-        } else {
-            $hashData .= urlencode($key) . "=" . urlencode($value);
-            $i = 1;
+        
+        unset($inputData['vnp_SecureHash']);
+        ksort($inputData);
+        $i = 0;
+        $hashData = "";
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashData .= '&' . urlencode($key) . "=" . urlencode($value);
+            } else {
+                $hashData .= urlencode($key) . "=" . urlencode($value);
+                $i = 1;
+            }
         }
-    }
 
-    $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
+        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
+        $code= htmlspecialchars($_GET['vnp_TxnRef']);
+     }
     ?>
     {{-- @php
         dd($order)
@@ -104,7 +107,7 @@
                                             <div class="row g-3">
                                                 <div class="col-lg-3 col-6">
                                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Mã hóa đơn </p>
-                                                    <h5 class="fs-14 mb-0"><span id="invoice-no">{{htmlspecialchars($_GET['vnp_TxnRef'])}}</span></h5>
+                                                    <h5 class="fs-14 mb-0"><span id="invoice-no">{{isset($code)? $code :$order->code}}</span></h5>
                                                 </div>
                                                 <!--end col-->
                                                 <div class="col-lg-3 col-6">
@@ -120,7 +123,13 @@
                                                 <!--end col-->
                                                 <div class="col-lg-3 col-6">
                                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Trạng thái thanh toán</p>
-                                                    <span class="badge bg-success-subtle text-success fs-11" id="payment-status">{{$order->payment->status}}</span>
+                                                    @php
+                                                        if($order->payment !==null){
+                                                            $status =$order->payment->status;
+                                                        }
+                                                        $status='Đã hủy khi thanh toán '
+                                                    @endphp
+                                                    <span class="badge bg-success-subtle text-success fs-11" id="payment-status">{{ $status}}</span>
                                                 </div>
                                                 <!--end col-->
                                                 <div class="col-lg-3 col-6">
@@ -182,6 +191,7 @@
                                                         <tr class="table-active">
                                                             <th scope="col" style="width: 50px;">#</th>
                                                             <th scope="col">Sản phẩm</th>
+                                                            <th scope="col">Ảnh</th>
                                                             <th scope="col">Giá</th>
                                                             <th scope="col">Số lượng</th>
                                                             <th scope="col" class="text-end">Thành tiền</th>
@@ -212,7 +222,19 @@
                                                                 @else
                                                                     <p class="text-muted mb-0">No variant available</p> <!-- Message for no variant -->
                                                                 @endif
-                                                            </td>                                                            
+                                                            </td>
+                                                            <td>
+                                                                @php
+                                                                    $img="";
+                                                                    $variant = $value->productVariant;
+                                                                    if(!empty($variant)){
+                                                                        $img = $value->productVariant->variant_image;
+                                                                    }else{
+                                                                        $img = $value->product->getMainImage->image_gallery;
+                                                                    }
+                                                                @endphp
+                                                            <img src="{{Storage::url( $img)}}" alt="" style="max-height: 100px; max-width: 100px;">
+                                                            </td>                                                         
                                                             @if ($variant)
                                                                 @php
                                                                     // Determine the price based on variant price modifier or original price
@@ -227,7 +249,7 @@
                                                                 <td>{{ number_format($price, 0, ',', '.') }} đ</td>
                                                             @endif
                                                             <td>{{ $value->quantity }}</td>
-                                                            <td class="text-end">{{ number_format($price * $value->quantity,  0, ',', '.') }} đ</td>
+                                                            <td class="text-end price">{{ number_format($price * $value->quantity,  0, ',', '.') }} đ</td>
                                                         </tr>    
                                                         @endforeach
                                                     </tbody>
@@ -236,22 +258,18 @@
                                             <div class="border-top border-top-dashed mt-2">
                                                 <table class="table table-borderless table-nowrap align-middle mb-0 ms-auto" style="width:250px">
                                                     <tbody>
-                                                        {{-- <tr>
+                                                        <tr>
                                                             <td>Tổng giá gốc</td>
-                                                            <td class="text-end"></td>
+                                                            <td class="text-end total-price" ></td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Estimated Tax (12.5%)</td>
-                                                            <td class="text-end">$44.99</td>
+                                                            <td>Voucher (12.5%)</td>
+                                                            <td class="text-end">0 đ</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Discount <small class="text-muted">(VELZON15)</small></td>
-                                                            <td class="text-end">- $53.99</td>
+                                                            <td>Phí vận chuyển </td>
+                                                            <td class="text-end">{{ number_format($order->shippingMethod->shipping_fee,  0, ',', '.') }} đ</td>
                                                         </tr>
-                                                        <tr>
-                                                            <td>Shipping Charge</td>
-                                                            <td class="text-end">$65.00</td>
-                                                        </tr> --}}
                                                         <tr class="border-top border-top-dashed fs-15">
                                                             <th scope="row">Tổng giá </th>
                                                             <th class="text-end">{{ number_format($order->total_price,  0, ',', '.') }} đ</th>
@@ -262,7 +280,13 @@
                                             </div>
                                             <div class="mt-3">
                                                 <h6 class="text-muted text-uppercase fw-semibold mb-3">Phương thức thanh toán :</h6>
-                                                <p class="text-muted mb-1">Loại thanh toán : <span class="fw-medium" id="payment-method">{{$order->payment->paymentGateway->name}}</span></p>
+                                                @php
+                                                    if($order->payment !==null){
+                                                        $payment=$order->payment->paymentGateway->name;
+                                                    }
+                                                    $payment='Đã hủy '
+                                                @endphp
+                                                <p class="text-muted mb-1">Loại thanh toán : <span class="fw-medium" id="payment-method">{{$payment}}</span></p>
                                                 <p class="text-muted mb-1">Ngân hàng : <span class="fw-medium" id="card-holder-name">{{$responseData['bank_code']}}</span></p>
                                                 <p class="text-muted mb-1">Loại : <span class="fw-medium" id="card-number">{{$responseData['vnp_CardType']}}</span></p>
                                                 <p class="text-muted">Giá : <span class="fw-medium" id=""></span><span id="card-total-amount">{{ number_format($order->total_price,  0, ',', '.') }} đ</span></p>
@@ -311,6 +335,42 @@
 
     <!-- App js -->
     <script src="{{asset('theme/assets/js/app.js')}}"></script>
+    <script>
+        const prices = document.querySelectorAll('.price');
+
+        let total = 0;
+
+        // Loop through each element and sum up the values
+        prices.forEach(priceElement => {
+            // Get the text content (e.g., "157.795 đ")
+            let priceText = priceElement.textContent.trim();
+            console.log(`Giá: ${priceText}`);
+
+            // Remove the currency symbol (e.g., "đ") and change "." (thousands separator) to ""
+            // Change "," (decimal separator) to "." for numeric conversion if needed
+            let numericValue = parseFloat(priceText
+                .replace(/[^\d,.-]/g, '') // Remove any characters that are not digits, commas, dots, or negative signs
+                .replace(/\./g, '') // Remove thousands separator
+                .replace(',', '.')); // Replace decimal separator with a dot
+
+            console.log(`Numeric Giá: ${numericValue}`);
+            
+            // Add the value to the total (only if it's a valid number)
+            if (!isNaN(numericValue)) {
+                total += numericValue;
+            }
+        });
+
+        function numberFormat(value, decimals = 0, decPoint = ',', thousandsSep = '.') {
+            const parts = value.toFixed(decimals).split('.'); // Ensure fixed decimal places
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep); // Format thousands
+            return parts[0]; // Return only the integer part
+        }
+
+        document.querySelector('.total-price').innerHTML=numberFormat(total, 2) +'đ'
+
+
+    </script>
 
 </body>
 

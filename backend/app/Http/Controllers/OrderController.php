@@ -277,8 +277,10 @@ class OrderController extends Controller
                 if ($totalWeight >= shippingMethods::WEIGHT) {
                     $type = shippingMethods::HANG_NANG;
                     $dataShippingMethod['type']=$type;
+                    $dataShippingMethod['value']="ghn";
                     $dataShippingMethod['message']="Vận chuyển hàng nặng";
                 }else{
+                    $dataShippingMethod['value']="ghn";
                     $dataShippingMethod['type']=$type;
                     $dataShippingMethod['message']="Vận chuyển hàng nhẹ";
                 }

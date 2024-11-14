@@ -12,5 +12,5 @@ class Carrier extends Model
 
     public const GHN='Giao Hàng Nhanh';
     protected $table='carriers';
-    protected $fillable = ['name', 'api_url', 'api_token', 'phone', 'email', 'is_active', 'deleted_by'];
+    protected $fillable = ['name','code','api_url', 'api_token', 'phone', 'email', 'is_active', 'deleted_by'];
 }

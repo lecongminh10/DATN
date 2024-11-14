@@ -622,7 +622,15 @@
                                 @foreach ($cartCheckout as $item)
                                     <div class="product-container">
                                         <div class="product-image">
-                                            <img src="" alt="{{ $item->product->name }}" class="img-thumbnail">
+                                            @php
+                                            if ($item->productVariant && !empty($item->productVariant->variant_image)) {
+                                                $url = $item->productVariant->variant_image; 
+                                            } else {
+                                                $mainImage = $item->product->getMainImage(); 
+                                                $url = $mainImage ? $mainImage->image_gallery : 'default-image-path.jpg';
+                                            }
+                                             @endphp
+                                            <img src="{{ Storage::url($url) }}" alt="{{ $item->product->name }}" class="img-thumbnail" style="width: 120px;height: 100px;">
                                         </div>
                                         <div class="product-info">
                                             <div class="d-flex justify-content-between mt-1">
@@ -792,7 +800,7 @@
                                             <h4>Vận chuyển</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" name="radio-ship" value="{{$dataShippingMethod['shipp']}}" checked onchange="updateTotal()">
+                                                    <input type="radio" class="custom-control-input shipp-fe" name="shipp[{{$dataShippingMethod['value']}}]" value="{{$dataShippingMethod['shipp']}}" checked onchange="updateTotal()">
                                                     <label class="custom-control-label">{{$dataShippingMethod['message']}}({{ number_format($dataShippingMethod['shipp'], 0, ',', '.') }} đ)</label>
                                                 </div>
                                             </div>
@@ -896,7 +904,7 @@
             const subtotal = parseFloat('{{ $subTotal }}');
 
             // Lấy giá trị của phí vận chuyển được chọn
-            const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked').value);
+            const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
 
             // Tính toán tổng tiền
             const total = subtotal + shippingCost;

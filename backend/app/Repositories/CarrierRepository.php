@@ -66,4 +66,9 @@ class CarrierRepository extends BaseRepository
                 ->update(['is_active' => 'inactive']);
         }
     }
+
+    public function getByCode (string $code)
+    {
+        return Carrier::where('code', $code)->first();
+    }
 }
