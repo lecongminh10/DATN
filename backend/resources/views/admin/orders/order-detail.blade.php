@@ -68,7 +68,7 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <h5 class="fs-15"><a href="#" class="link-primary">{{ $value->product->name }}</a></h5>
-                                                    @if ($value->productVariant)
+                                                    @if (isset($value->productVariant) && !empty($value->productVariant->attributeValue))
                                                        <div>
                                                         @foreach ($value->productVariant->attributeValue as $attributeValue)
                                                             <p class="text-muted mb-0" >{{ $value->productVariant->attribute->attribute_name }}:

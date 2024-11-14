@@ -34,4 +34,9 @@ class CarrierService extends BaseService
     {
         return $this->carrierRepository->update_status($id, $validatedData);
     }
+
+    public function getByCode($code)
+    {
+        return $this->carrierRepository->getByCode($code);
+    }
 }
