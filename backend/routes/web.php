@@ -147,7 +147,6 @@ Route::group([
         Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
         Route::post('/update-category-parent',             [CategoryController::class, 'updateParent']);
         Route::get('/home',                                [HomeController::class, 'index'])->name('home.index');
-        
     });
     Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
     Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
@@ -211,7 +210,7 @@ Route::group([
     });
 
     //Oder
-   Route::group(
+    Route::group(
         [
             'prefix' => 'orders',
             'as' => 'orders.'
@@ -224,7 +223,7 @@ Route::group([
             Route::put('update-order/{id}',                [OrderController::class, 'updateOrder'])->name('updateOrder');
             Route::delete('soft-delete/{id}',              [OrderController::class, 'destroy'])->name('soft_delete');
             Route::delete('multi-soft-delete',             [OrderController::class, 'deleteMuitpalt'])->name('multi_soft_delete');
-            Route::put('restore/{id}',                     [OrderController::class, 'restore'])->name('restore');// một cái được rồi đúng khoong  ô thử lại caid
+            Route::put('restore/{id}',                     [OrderController::class, 'restore'])->name('restore'); // một cái được rồi đúng khoong  ô thử lại caid
             Route::put('restore_selected',                 [OrderController::class, 'muitpathRestore'])->name('restore_selected');
             Route::delete('hard-delete/{id}',              [OrderController::class, 'hardDelete'])->name('hard_delete');
             Route::delete('multi-hard-delete',             [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete');
@@ -235,12 +234,13 @@ Route::group([
         }
     );
     // statistic
-    Route::group([
+    Route::group(
+        [
             'prefix' => 'statistics',
             'as' => 'statistics.'
-        ],function () {
+        ],
+        function () {
             Route::get('/', [StatsController::class, 'index'])->name('index');
-
         }
     );
 });
@@ -273,24 +273,23 @@ Route::prefix('auth')->group(function () {
     Route::get('twitter',                                 [SocialiteController::class, 'redirectToTwitter'])->name('auth.twitter');
     Route::get('twitter/callback',                        [SocialiteController::class, 'handleTwitterCallback']);
 });
-
 Route::prefix('/')->group(function () {
-    Route::get('',[HomeController::class, 'index'])->name('client');
-  //profile
+    Route::get('', [HomeController::class, 'index'])->name('client');
+    //profile
     Route::get('/user',                                     [UserController::class, 'indexClient'])->name('users.indexClient');
     Route::get('profile/{id}',                              [UserController::class, 'showClient'])->name('users.showClient');
     Route::put('update-profile/{id}',                       [UserController::class, 'updateClient'])->name('users.updateClient');
     Route::get('show-order',                                [UserController::class, 'showOrder'])->name('users.showOrder');
     Route::get('show-order-detail/{id}',                    [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
 
-  //product
+    //product
     Route::get('/products',                                 [HomeController::class, 'showProducts'])->name('client.products');
     Route::get('/products/sort',                            [HomeController::class, 'sortProducts'])->name('client.products.sort');
     Route::get('/product/{id}',                             [ClientProductController::class, 'showProduct'])->name('client.showProduct');
     Route::get('/products/category/{id}',                   [HomeController::class, 'getByCategory'])->name('client.products.Category');
     Route::get('/products/filter-by-price',                 [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
 
-  //Oder
+    //Oder
     Route::get('wishlist',                                  [OrderController::class, 'wishList'])->name('wishList');
     Route::post('add-wishlist',                             [OrderController::class, 'addWishList'])->name('addWishList');
     Route::delete('wishlist/{id}',                          [OrderController::class, 'destroyWishlist'])->name('wishlistDelete');
@@ -301,7 +300,7 @@ Route::prefix('/')->group(function () {
     Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
     Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
     Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
-    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán 
+    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder'); // tahnh toán 
     Route::delete('remove/{id}',                            [OrderController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('update-cart',                              [OrderController::class, 'updateCart'])->name('updateCart');
 
@@ -319,6 +318,12 @@ Route::prefix('/')->group(function () {
     // Route để gửi tin nhắn
     Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
 
+// Route kiểm tra mã giảm giá
+    Route::post('/check-coupon', [OrderController::class, 'checkCoupon'])->name('check.coupon');
+    // Route áp dụng mã giảm giá vào đơn hàng
+    Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply.coupon');
+
         // routes/web.php
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
 });
+

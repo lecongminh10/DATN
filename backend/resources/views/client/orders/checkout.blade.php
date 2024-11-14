@@ -346,6 +346,36 @@
         .checkout-container textarea.form-control {
             min-height: 70px;
         }
+
+        /* Cải thiện giao diện của phần thông tin giảm giá */
+        .alert-info {
+            background-color: #e7f7ff;
+            border-color: #b8e0f4;
+            color: #31708f;
+            padding: 5px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .alert-info p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .alert-info p strong {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .alert-info p span {
+            font-size: 5px;
+            color: #2980b9;
+        }
+
+        .alert-info p {
+            margin-bottom: 5px;
+        }
     </style>
 @endsection
 
@@ -534,29 +564,32 @@
                 </li>
             </ul>
 
-
             <div class="checkout-discount">
                 <h4>Mã giảm giá?
                     <button data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
-                        aria-controls="collapseOne" class="btn btn-link btn-toggle">ENTER YOUR CODE</button>
+                        aria-controls="collapseTwo" class="btn btn-link btn-toggle">ENTER YOUR CODE</button>
                 </h4>
-
                 <div id="collapseTwo" class="collapse">
                     <div class="feature-box">
-                        <div class="feature-box-content">
-                            <p>Nếu bạn có mã giảm giá .</p>
-
-                            <form action="#">
-                                <div class="input-group">
-                                    <input type="text" class="form-control form-control-sm w-auto"
-                                        placeholder="Coupon code" required="" name="order_item[][discount]" />
-                                    <div class="input-group-append">
-                                        <button class="btn btn-sm mt-0" type="submit">
-                                            Nhập mã giảm giá
-                                        </button>
+                        <div class="feature-box-content row">
+                            <div class="col-6">
+                                <p>Nếu bạn có mã giảm giá, hãy nhập mã vào ô bên dưới.</p>
+                                <form id="couponForm">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-sm w-auto"
+                                            placeholder="Coupon code" required name="coupon_code" id="coupon_code" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-sm mt-0" type="button" onclick="applyCoupon()">Nhập
+                                                mã giảm giá</button>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
+                            <div class="col-6">
+                                <div id="discount-info"></div> <!-- Hiển thị thông tin giảm giá -->
+                                <button id="applyDiscountBtn" class="btn btn-primary mt-3" style="display:none;"
+                                    onclick="applyDiscountToOrder()">Áp dụng giảm giá</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -747,26 +780,42 @@
                                                 <h3 class="product-title">
                                                     {{ $value->product->name }}
                                                     <span class="product-qty">× {{ $value->quantity }}</span>
-                                                    <input type="hidden" name="order_item[{{ $key }}][product_id]" value="{{ $value->product_id }}">
-                                                    <input type="hidden" name="order_item[{{ $key }}][product_variant_id]" value="{{ $value->product_variants_id }}">
-                                                    <input type="hidden" name="order_item[{{ $key }}][quantity]" value="{{ $value->quantity }}">
-                                                    <input type="hidden" name="order_item[{{ $key }}][price]" value="{{ $value->total_price }}">
-                                                    <input type="hidden" name="order_item[{{ $key }}][id_cart]" value="{{ $value->id }}">
+                                                    <input type="hidden"
+                                                        name="order_item[{{ $key }}][product_id]"
+                                                        value="{{ $value->product_id }}">
+                                                    <input type="hidden"
+                                                        name="order_item[{{ $key }}][product_variant_id]"
+                                                        value="{{ $value->product_variants_id }}">
+                                                    <input type="hidden"
+                                                        name="order_item[{{ $key }}][quantity]"
+                                                        value="{{ $value->quantity }}">
+                                                    <input type="hidden" name="order_item[{{ $key }}][price]"
+                                                        value="{{ $value->total_price }}">
+                                                    <input type="hidden" name="order_item[{{ $key }}][id_cart]"
+                                                        value="{{ $value->id }}">
                                                 </h3>
                                             </td>
                                             <td class="price-col">
                                                 <span>
                                                     @if ($value->productVariant)
                                                         @if (!empty($value->productVariant->price_modifier))
-                                                            <span class="">{{ number_format($value->productVariant->price_modifier, 0, ',', '.') }} đ</span>
+                                                            <span
+                                                                class="">{{ number_format($value->productVariant->price_modifier, 0, ',', '.') }}
+                                                                đ</span>
                                                         @else
-                                                            <span class="">{{ number_format($value->productVariant->original_price, 0, ',', '.') }} đ</span>
+                                                            <span
+                                                                class="">{{ number_format($value->productVariant->original_price, 0, ',', '.') }}
+                                                                đ</span>
                                                         @endif
                                                     @else
                                                         @if (!empty($value->product->price_sale))
-                                                            <span class="">{{ number_format($value->product->price_sale, 0, ',', '.') }} đ</span>
+                                                            <span
+                                                                class="">{{ number_format($value->product->price_sale, 0, ',', '.') }}
+                                                                đ</span>
                                                         @else
-                                                            <span class="">{{ number_format($value->product->price_regular, 0, ',', '.') }} đ</span>
+                                                            <span
+                                                                class="">{{ number_format($value->product->price_regular, 0, ',', '.') }}
+                                                                đ</span>
                                                         @endif
                                                     @endif
                                                 </span>
@@ -797,6 +846,14 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2" class="text-left">
+                                            <h4>Mã giảm giá</h4>
+                                            <!-- Mã giảm giá được áp dụng -->
+                                            <div id="couponInfo">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="text-left">
                                             <h4>Vận chuyển</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
@@ -812,30 +869,38 @@
                                             <h4 class="m-b-sm">Phương thức thanh toán</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-checkbox d-flex">
-                                                    <input type="checkbox" class="custom-control-input" id="payment-online" name="radio_pay" value="VNPay" onclick="selectPayment(this)" />
-                                                    <label class="custom-control-label" for="payment-online">Thanh toán VNPay</label>
+                                                    <input type="checkbox" class="custom-control-input"
+                                                        id="payment-online" name="radio_pay" value="VNPay"
+                                                        onclick="selectPayment(this)" />
+                                                    <label class="custom-control-label" for="payment-online">Thanh toán
+                                                        VNPay</label>
                                                 </div>
                                             </div>
                                             <div class="form-group form-group-custom-control mb-0">
                                                 <div class="custom-control custom-checkbox d-flex mb-0">
-                                                    <input type="checkbox" class="custom-control-input" id="payment-cash" name="radio_pay" value="Cash" onclick="selectPayment(this)" checked />
-                                                    <label class="custom-control-label" for="payment-cash">Thanh toán sau khi nhận hàng</label>
+                                                    <input type="checkbox" class="custom-control-input" id="payment-cash"
+                                                        name="radio_pay" value="Cash" onclick="selectPayment(this)"
+                                                        checked />
+                                                    <label class="custom-control-label" for="payment-cash">Thanh toán sau
+                                                        khi nhận hàng</label>
                                                 </div>
                                             </div>
                                         </td>
                                     </tr>
-                            
+
                                     <tr class="order-total">
                                         <td>
                                             <h4>Tổng </h4>
                                         </td>
                                         <td>
-                                            <b class="total-price"><span id="totalPriceDisplay" name="price">{{ number_format($subTotal, 0, ',', '.') }} đ</span></b>
+                                            <b class="total-price"><span id="totalPriceDisplay"
+                                                    name="price">{{ number_format($subTotal, 0, ',', '.') }}
+                                                    đ</span></b>
                                         </td>
                                     </tr>
                                 </tfoot>
                             </table>
-                            
+
                             {{-- <div class="payment-methods">
                                     <h4 class="">Payment methods</h4>
                                     <div class="info-box with-icon p-0">
@@ -888,37 +953,151 @@
                 }
             });
         }
+
+        // Hàm định dạng tiền tệ
         function formatCurrency(value) {
-            // Convert to number and round to 2 decimal places
             const number = Number(value).toFixed(2);
-            // Split the number into whole and decimal parts
             const [whole, decimal] = number.split('.');
-            // Format the whole part with commas as thousand separators
             const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            // Return the formatted string with currency symbol
             return `${formattedWhole} đ`;
         }
-        // Cập nhật giá tiền khi chọn radio
-        function updateTotal() {
-            // Lấy giá trị subtotal từ server
-            const subtotal = parseFloat('{{ $subTotal }}');
+        // Hàm định dạng giá trị giảm giá
+        function formatCurrency2(value) {
+            const number = Number(value).toFixed(2);
+            const [whole, decimal] = number.split('.');
+            const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return `${formattedWhole}`;
+        }
 
+        // Hàm cập nhật tổng tiền với phí vận chuyển và giảm giá nếu có
+        function calculateTotal(subtotal, discount = 0, shippingCost = 0) {
+            const total = subtotal - discount + shippingCost; // Tính tổng tiền sau khi trừ giảm giá và cộng phí ship
+            document.getElementById('totalPriceDisplay').textContent = formatCurrency(total); // Hiển thị tổng tiền
+            document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị tổng vào input ẩn
+        }
+
+        // Hàm cập nhật phí vận chuyển
+        function updateShipping() {
+            const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked').value);
+            const subtotal = parseFloat('{{ $subTotal }}'); // Giá trị tổng phụ từ server
+            const discount = parseFloat(document.getElementById('discountAmountInput')?.value ||
+                0); // Lấy giá trị giảm giá từ input (nếu có)
+            calculateTotal(subtotal, discount, shippingCost); // Tính tổng với giá trị giảm giá và phí vận chuyển
+        }
+
+        let appliedCoupons = []; // Mảng lưu trữ các mã giảm giá đã áp dụng
+
+        // Hàm áp dụng mã giảm giá
+        function applyCoupon() {
+            const couponCode = document.getElementById("coupon_code").value.trim();
+            // Xóa thông báo lỗi nếu có khi người dùng bắt đầu nhập mã mới
+            const discountInfo = document.getElementById("discount-info");
+            const couponInfo = document.getElementById("couponInfo");
+            if (!couponCode) {
+                alert("Vui lòng nhập mã giảm giá");
+                return;
+            }
             // Lấy giá trị của phí vận chuyển được chọn
             const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
 
-            // Tính toán tổng tiền
-            const total = subtotal + shippingCost;
+            // Kiểm tra xem mã giảm giá đã được áp dụng hay chưa
+            if (appliedCoupons.includes(couponCode)) {
+                alert("Mã giảm giá này đã được áp dụng.");
+                return;
+            }
 
-            // Cập nhật hiển thị tổng tiền
-            document.getElementById('totalPriceDisplay').textContent = formatCurrency(total);
-            document.getElementById('totalAmountInput').value = total; // Cập nhật giá trị hidden input
+            // Gửi yêu cầu tới server để kiểm tra mã giảm giá
+            fetch("/apply-coupon", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                    },
+                    body: JSON.stringify({
+                        coupon_code: couponCode
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const discountInfo = document.getElementById("discount-info");
+                    const couponInfo = document.getElementById("couponInfo");
+
+                    if (data.success) {
+                        // Lưu mã giảm giá vào danh sách đã áp dụng
+                        appliedCoupons.push(couponCode);
+
+                        // Hiển thị thông tin giảm giá vào discountInfo
+                        discountInfo.innerHTML += `
+                    <div class="alert-info">
+                        <p><strong>Mã giảm giá:</strong> ${data.coupon.code}</p>
+                        <p><strong>Giá trị giảm giá:</strong> ${formatCurrency2(data.coupon.discount_value)} ${data.coupon.discount_type === 'percentage' ? '%' : 'đ'}</p>
+                        <p><strong>Số tiền được giảm:</strong> ${formatCurrency(data.coupon.discount_amount)}</p>
+                    </div>
+                `;
+
+                        // Hiển thị thông tin giảm giá vào couponInfo
+                        couponInfo.innerHTML += `
+                    <div class="alert-info">
+                        <p><strong>Mã giảm giá:</strong> ${data.coupon.code}</p>
+                        <p><strong>Giá trị giảm giá:</strong> ${formatCurrency2(data.coupon.discount_value)} ${data.coupon.discount_type === 'percentage' ? '%' : 'đ'}</p>
+                        <p><strong>Số tiền được giảm:</strong> ${formatCurrency(data.coupon.discount_amount)}</p>
+                    </div>
+                `;
+
+                        // Tính tổng giảm giá từ tất cả các mã đã áp dụng
+                        let totalDiscount = 0;
+                        appliedCoupons.forEach(code => {
+                            const coupon = data.coupons.find(coupon => coupon.code ===
+                                code); // Lấy coupon theo mã
+                            totalDiscount += coupon ? coupon.discount_amount : 0;
+                        });
+
+                        // Tính tổng tiền sau giảm giá
+                        const subtotal = parseFloat('{{ $subTotal }}'); // Giá trị tổng phụ từ server
+                        console.log("Subtotal:", subtotal);
+                        const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked')
+                            .value);
+                        const totalAfterDiscount = subtotal - totalDiscount; // Tổng tiền sau khi giảm giá
+
+                        // Cập nhật lại tổng tiền sau giảm giá và phí vận chuyển
+                        const totalPriceDisplay = document.getElementById("totalPriceDisplay");
+                        totalPriceDisplay.innerHTML =
+                            `${new Intl.NumberFormat('vi-VN').format(totalAfterDiscount + shippingCost)} đ`;
+
+                        // Cập nhật tổng vào input ẩn (giả sử bạn có input ẩn để lưu tổng tiền)
+                        const totalAmountInput = document.getElementById('totalAmountInput');
+                        totalAmountInput.value = totalAfterDiscount + shippingCost;
+
+                        // Cập nhật lại giá trị tổng sau giảm giá và phí vận chuyển
+                        calculateTotal(totalAfterDiscount,
+                            shippingCost); // Hàm calculateTotal tính lại tổng với giảm giá và phí ship
+
+                    } else {
+                        // Nếu mã giảm giá không hợp lệ
+                        discountInfo.innerHTML = `<p style="color: red;">${data.message}</p>`;
+
+                        // Nếu không có mã giảm giá hợp lệ, đặt lại giá trị tổng
+                        document.getElementById('totalPriceDisplay').innerHTML = '0 đ';
+                        updateShipping(); // Cập nhật lại tổng với phí vận chuyển
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Đã xảy ra lỗi khi áp dụng mã giảm giá.");
+                });
         }
 
-        // Gọi hàm updateTotal() khi trang được tải
+
+
+        // Gọi hàm updateShipping() khi trang được tải
         document.addEventListener('DOMContentLoaded', function() {
-            updateTotal();
+            updateShipping();
         });
-        // End
+
+        // Sự kiện thay đổi phí vận chuyển
+        document.querySelectorAll('input[name="radio-ship"]').forEach(radio => {
+            radio.addEventListener('change', updateShipping);
+        });
 
         // Nút cập nhật địa chỉ
         document.querySelectorAll('.edit-address-link').forEach(link => {
