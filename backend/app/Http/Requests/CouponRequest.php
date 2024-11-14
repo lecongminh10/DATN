@@ -23,9 +23,13 @@ class CouponRequest extends FormRequest
     public function rules()
     {
         $id = $this->route('id'); // Lấy ID từ route
-        if(isset($id)){
+        if (isset($id)) {
             return [
-                'applies_to' => 'required|string|max:20',
+                'applies_to' => 'required|string',
+                'dynamic_value' => [
+                    'required_if:applies_to,category,product,user',
+                    'nullable',
+                ],
                 'code' => 'required|string|unique:coupons,code,' . $id,
                 'description' => 'nullable|string',
                 'discount_type' => 'required|in:percentage,fixed_amount',
@@ -43,7 +47,11 @@ class CouponRequest extends FormRequest
             ];
         }
         return [
-            'applies_to' => 'required|string|max:20',
+            'applies_to' => 'required|string',
+            'dynamic_value' => [
+                'required_if:applies_to,category,product,user',
+                'nullable', 
+            ],
             'code' => 'required|string|unique:coupons,code',
             'description' => 'nullable|string',
             'discount_type' => 'required|in:percentage,fixed_amount',
@@ -66,6 +74,7 @@ class CouponRequest extends FormRequest
     {
         return [
             'applies_to.required'               => 'Phạm vi áp dụng là bắt buộc.',
+            'dynamic_value.required_if'         => 'Trường dynamic value là bắt buộc khi áp dụng cho danh mục, sản phẩm hoặc người dùng.',
             'code.required'                     => 'Mã giảm giá là bắt buộc.',
             'code.unique'                       => 'Mã giảm giá đã tồn tại.',
             'discount_type.required'            => 'Loại giảm giá là bắt buộc.',

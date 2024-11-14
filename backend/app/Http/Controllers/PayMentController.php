@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiHelper;
 use App\Models\Address;
 use App\Models\Cart;
 use Illuminate\Http\Request;
@@ -10,9 +11,13 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\OrderItem;
 use App\Models\Payment;
+use App\Models\PaymentGateway;
 use App\Models\PaymentGateways;
+use App\Models\shippingMethods;
+use App\Services\CarrierService;
 use App\Services\OrderLocationService;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -21,13 +26,20 @@ class PayMentController extends Controller
     protected $orderService;
     protected $orderLocationService;
 
+    protected $paymentService;
+    protected $paymentRepository;
+    protected $carrierService;
+    
     public function __construct(
         OrderService $orderService,
         OrderLocationService $orderLocationService,
-
+        PaymentService $paymentService,
+        CarrierService $carrierService
     ) {
         $this->orderService = $orderService;
         $this->orderLocationService = $orderLocationService;
+        $this->paymentService = $paymentService;
+        $this->carrierService = $carrierService;
     }
     public function addOrder(Request $request)
     {
@@ -53,7 +65,16 @@ class PayMentController extends Controller
             }
         }
 
-        $shippingCost = floatval($request->input('radio-ship'));
+        $shippFe =$request->input('shipp');
+        foreach($shippFe as $key =>$val){
+            $shippingCost=  floatval($val);
+            $carry= $this->carrierService->getByCode($key);
+            if(isset($carry))
+            {
+                $carrier_id = $carry->id;
+            }
+            $carrier_id =null;
+        }
         $totalPrice = $subTotal + $shippingCost;
         $dataOrder = [
             'user_id' => Auth::id(),
@@ -62,24 +83,69 @@ class PayMentController extends Controller
             'shipping_address_id' => $request->shipping_address_id,
             'note' => $request->note,
             'status' => Order::CHO_XAC_NHAN,
+            'carrier_id'=>$carrier_id,
         ];
 
-        $check = false;
+        $check = true;
         if ($request->has('radio_pay')) {
             $radio_pay = $request->radio_pay;
-            $payment = PaymentGateways::where('name', $radio_pay)->first();
+            $payment = PaymentGateway::where('name', $radio_pay)->first();
             if ($payment && $payment->name ==Payment::VNPay) {
                 $dataOrder['payment_id'] = $payment->id;
                 $check=false;
-                $this->saveOrderItemAndOrderLocation($dataOrder , $request , $check);
+                $order =$this->saveOrderItemAndOrderLocation($dataOrder , $request , $check);
+                $dataShipFe = [
+                    'order_id'          =>$order->id,
+                    'payment_gateway_id'=>$dataOrder['payment_id'],
+                    'amount'            =>$dataOrder['total_price'],
+                    'status'            =>shippingMethods::PENDING,
+                    'transaction_id'    =>$order->code,
+                    'shipping_fee'      =>$shippingCost
+                ];
+                shippingMethods::create($dataShipFe);
                 return $this->createOrder($dataOrder);
             } else {
                 $dataOrder['payment_id'] = $payment->id;
                 $check = false;
             }
         }
-        $this->saveOrderItemAndOrderLocation($dataOrder , $request , $check);
-        return redirect()->route('client')->with('message', 'Đơn hàng đã được đặt thành công!');
+        $data= $this->saveOrderItemAndOrderLocation($dataOrder , $request , $check);
+        $payment=Payment::create(['order_id'=>$data->id , 'payment_gateway_id'=>$data->payment_id, 'amount'=> $data->total_price ,'status'=>Payment::Pending, 'transaction_id'=>str_replace('.', '', uniqid(mt_rand(), true))]);
+
+        $dataShipFe = [
+            'order_id'          => $data->id,
+            'payment_gateway_id'=>$dataOrder['payment_id'],
+            'amount'            =>$dataOrder['total_price'],
+            'status'            =>shippingMethods::PENDING,
+            'transaction_id'    =>$payment->transaction_id,
+            'shipping_fee'      =>$shippingCost
+        ];
+        shippingMethods::create($dataShipFe);
+        $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])
+            ->where('code', $data['code'])
+            ->first();
+        $responseData= [
+            'bank_code'    =>'',
+            'vnp_CardType' =>'Thanh toán sau khi nhận hàng'
+        ];
+        $addressResponse = ApiHelper::getAddressShop();
+        $address = Address::getActiveAddress(Auth::user()->id);
+        $addressShop=[];
+        if ($addressResponse['code']==200) {
+            if (isset($addressResponse['data']) && !empty($addressResponse['data']['shops'])) {
+                $shopData = $addressResponse['data']['shops'][0];
+                $addressShop = [
+                    'name' => $shopData['name'],
+                    'phone' => $shopData['phone'],
+                    'address' => $shopData['address']
+                ];
+            } else {
+                $addressShop = null; 
+            }
+        } else {
+            $addressShop = null; 
+        }
+        return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop'));
     }
 
     private function saveOrderItemAndOrderLocation($dataOrder , $request , $check){
@@ -115,7 +181,7 @@ class PayMentController extends Controller
             'longitude' => null,
         ];
         $this->orderLocationService->saveOrUpdate($dataOrderLocation);
-
+        return $order;
     }
 
     private function createOrder($data)
@@ -228,17 +294,42 @@ class PayMentController extends Controller
                 : 'GD Khong thanh cong hoặc Chu ky khong hop le',
         ];
     
-        // Save order information to the database if the transaction was successful
-        if ($responseData['result'] == 'GD Thanh cong') {
-            $order= $this->orderService->getbyCode($responseData['order_code']);
-            Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=> substr($responseData['amount'], 0, -2) ,'status'=>Payment::Completed , 'transaction_id'=> $responseData['transaction_no']]);
+        $order= $this->orderService->getbyCode($responseData['order_code']);
+        $check= $this->paymentService->getCheckOrderById($order->id);
+        if(!$check){
+            // Save order information to the database if the transaction was successful
+            if ($responseData['result'] == 'GD Thanh cong') {
+                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=> substr($responseData['amount'], 0, -2) ,'status'=>Payment::Completed , 'transaction_id'=> $responseData['transaction_no']]);
+                shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id ,'status'=>shippingMethods::COMPLETED]);
+            }else
+            {
+                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=>$order->total_price ,'status'=>Payment::Failed , 'transaction_id'=>$order->code]);
+                Order::where('code', $order->code)->update(['status' =>Order::DA_HUY]);
+                shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id,'status'=>shippingMethods::FAILED]);
+            }
         }
-        $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway'])
+        $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])
             ->where('code', $responseData['order_code'])
             ->first();
+        $addressResponse = ApiHelper::getAddressShop();
         $address = Address::getActiveAddress(Auth::user()->id);
-
-        return view('client.orders.payment.return', compact('responseData', 'order' ,'address'));
+        $addressShop=[];
+        if ($addressResponse['code']==200) {
+            if (isset($addressResponse['data']) && !empty($addressResponse['data']['shops'])) {
+                $shopData = $addressResponse['data']['shops'][0];
+                $addressShop = [
+                    'name' => $shopData['name'],
+                    'phone' => $shopData['phone'],
+                    'address' => $shopData['address']
+                ];
+            } else {
+                $addressShop = null; 
+            }
+        } else {
+            $addressShop = null; 
+        }
+        $check=true;
+        return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop'));
     }
 
 
@@ -253,4 +344,97 @@ class PayMentController extends Controller
 
         return response()->json(['message' => 'Product not found'], 404);
     }
+    public function index()
+    {
+        $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
+                           ->select('payments.*', 'payment_gateways.name as gateway_name')
+                           ->get();
+    
+        return view('admin.payments.index', compact('payments'));
+    }
+    
+        public function add()
+        {
+            $paymentGateways = PaymentGateway::all();
+            return view('admin.payments.create', compact('paymentGateways')); 
+        }
+    
+        public function store(Request $request)
+        {
+            try {
+    
+                $data = $request->only([
+                    'order_id',
+                    'payment_gateway_id',
+                    'amount',
+                    'status',
+                    'transaction_id',
+                ]);
+    
+                $payments = $this->paymentService->createPayment($data);
+    
+                return redirect()->route('admin.payments.index')->with([
+                    'payments' => $payments
+                ]);
+            } catch (\Exception $e) {
+                Log::error("Error creating payments: " . $e->getMessage());
+                return redirect()->back()->with('error', 'Có lỗi xảy ra khi tạo người dùng.');
+            }
+        }
+    
+        public function show($id)
+        {
+            $payments = Payment::with('paymentGateway')->findOrFail($id);
+    
+            return view('admin.payments.show', compact('payments'));
+        }
+    
+        public function edit($id)
+        {
+            $payments = Payment::findOrFail($id);
+            $paymentGateways = PaymentGateway::all();
+    
+            return view('admin.payments.update', compact('payments', 'paymentGateways'));
+        }
+    
+        public function update(Request $request, $id)
+        {
+            $data = $request->all();
+    
+            $payments = $this->paymentService->updatePayment($id, $data);
+    
+            return redirect()->route('admin.payments.index')->with([
+                'payments' => $payments
+            ]);
+        }
+    
+        public function destroy($id, Request $request)
+        {
+            $payments = Payment::findOrFail($id);
+    
+            if ($request->forceDelete === 'true') {
+                $payments->forceDelete();
+            } else {
+                $payments->delete();
+            }
+            
+            return redirect()->route('admin.payments.index');
+        }
+    
+        public function deleteMultiple(Request $request)
+        {
+            $ids = json_decode($request->ids); 
+            $forceDelete = $request->forceDelete === 'true'; 
+    
+            foreach ($ids as $id) {
+                $payments = Payment::find($id);
+                if ($forceDelete) {
+                    $payments->forceDelete(); 
+                } else {
+                    $payments->delete();
+                }
+            }
+    
+            return response()->json(['success' => true, 'message' => 'Người dùng đã được xóa.']);
+        }
 }

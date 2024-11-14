@@ -198,7 +198,7 @@
                                         </tbody>
                                     </table>
                                     <div class="modal fade" id="viewCouponModal" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-dialog modal-xl">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-light p-3">
                                                     <h5 class="modal-title" id="viewCouponModalLabel">Chi Tiết Coupon</h5>
@@ -206,103 +206,141 @@
                                                         aria-label="Close" id="close-modal"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <table class="table">
-                                                        <thead class="thead-light">
-                                                            <tr>
-                                                                <th title="Tiêu đề thông tin" class="font-weight-bold">
-                                                                    Thông Tin</th>
-                                                                <th title="Giá trị tương ứng" class="font-weight-bold">Giá
-                                                                    Trị</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td title="Đối tượng áp dụng mã giảm giá này"><strong>Áp
-                                                                        Dụng Cho:</strong></td>
-                                                                <td id="AppliesTo">Tất cả sản phẩm</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Mã của coupon hoặc mã giảm giá">
-                                                                    <strong>Mã:</strong>
-                                                                </td>
-                                                                <td id="code"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Mô tả ngắn gọn về ưu đãi"><strong>Mô
-                                                                        Tả:</strong></td>
-                                                                <td div data-simplebar data-simplebar-auto-hide="false" style="max-height: 100px;" class="px-2">
-                                                                    <p id="description"></p></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Loại giảm giá (ví dụ: phần trăm hoặc số tiền)">
-                                                                    <strong>Loại Giảm Giá:</strong>
-                                                                </td>
-                                                                <td id="discountType"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Giá trị giảm giá, ví dụ: 20%"><strong>Giá Trị
-                                                                        Giảm Giá:</strong></td>
-                                                                <td id="discountValue"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Giá trị giảm giá tối đa có thể được áp dụng">
-                                                                    <strong>Giảm Giá Tối Đa:</strong>
-                                                                </td>
-                                                                <td id="maxDiscount"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Giá trị đơn hàng tối thiểu để áp dụng giảm giá">
-                                                                    <strong>Giá Trị Đơn Hàng Tối Thiểu:</strong>
-                                                                </td>
-                                                                <td id="minOrderValue"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Ngày bắt đầu hiệu lực của mã giảm giá">
-                                                                    <strong>Ngày Bắt Đầu:</strong>
-                                                                </td>
-                                                                <td id="startDate"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Ngày kết thúc hiệu lực của mã giảm giá">
-                                                                    <strong>Ngày Kết Thúc:</strong>
-                                                                </td>
-                                                                <td id="endDate"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td
-                                                                    title="Giới hạn tổng số lần mã giảm giá có thể được sử dụng">
-                                                                    <strong>Giới Hạn Sử Dụng:</strong>
-                                                                </td>
-                                                                <td id="usageLimit"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td
-                                                                    title="Số lượng tối đa mã giảm giá mỗi người dùng có thể sử dụng">
-                                                                    <strong>Giới Hạn Mỗi Người Dùng:</strong>
-                                                                </td>
-                                                                <td id="perUserLimit"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Trạng thái kích hoạt của mã giảm giá">
-                                                                    <strong>Đang Kích Hoạt:</strong>
-                                                                </td>
-                                                                <td id="isActive"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td title="Cho phép gộp nhiều mã giảm giá với nhau không">
-                                                                    <strong>Có Thể Gộp:</strong>
-                                                                </td>
-                                                                <td id="isStackable"></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td
-                                                                    title="Liệu mã giảm giá chỉ áp dụng cho người dùng đủ điều kiện không">
-                                                                    <strong>Người Dùng Đủ Điều Kiện:</strong>
-                                                                </td>
-                                                                <td id="eligibleUsersOnly"></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <table class="table">
+                                                                <thead >
+                                                                    <tr>
+                                                                        <th title="Tiêu đề thông tin"
+                                                                            class="font-weight-bold">
+                                                                            Thông Tin</th>
+                                                                        <th title="Giá trị tương ứng"
+                                                                            class="font-weight-bold">Giá
+                                                                            Trị</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td title="Đối tượng áp dụng mã giảm giá này">
+                                                                            <strong>Áp
+                                                                                Dụng Cho:</strong></td>
+                                                                        <td id="AppliesTo"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td title="Thông tin liên quan"><strong>Thông Tin Liên
+                                                                                Quan:</strong></td>
+                                                                        <td id="RelatedInfo"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td title="Mã của coupon hoặc mã giảm giá">
+                                                                            <strong>Mã:</strong>
+                                                                        </td>
+                                                                        <td id="code"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td title="Mô tả ngắn gọn về ưu đãi"><strong>Mô
+                                                                                Tả:</strong></td>
+                                                                        <td>
+                                                                            <div data-simplebar
+                                                                                data-simplebar-auto-hide="false"
+                                                                                style="max-height: 100px;" class="px-2">
+                                                                                <p id="description"></p>
+    
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td
+                                                                            title="Loại giảm giá (ví dụ: phần trăm hoặc số tiền)">
+                                                                            <strong>Loại Giảm Giá:</strong>
+                                                                        </td>
+                                                                        <td id="discount_Type"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td title="Giá trị giảm giá, ví dụ: 20%"><strong>Giá
+                                                                                Trị
+                                                                                Giảm Giá:</strong></td>
+                                                                        <td id="discountValue"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td
+                                                                            title="Giá trị giảm giá tối đa có thể được áp dụng">
+                                                                            <strong>Giảm Giá Tối Đa:</strong>
+                                                                        </td>
+                                                                        <td id="maxDiscount"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td
+                                                                            title="Giá trị đơn hàng tối thiểu để áp dụng giảm giá">
+                                                                            <strong>Giá Trị Đơn Hàng Tối Thiểu:</strong>
+                                                                        </td>
+                                                                        <td id="minOrderValue"></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class=" col-6">
+                                                            <table class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th title="Tiêu đề thông tin"
+                                                                            class="font-weight-bold">
+                                                                            Thông Tin</th>
+                                                                        <th title="Giá trị tương ứng"
+                                                                            class="font-weight-bold">Giá
+                                                                            Trị</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td title="Ngày bắt đầu hiệu lực của mã giảm giá">
+                                                                            <strong>Ngày Bắt Đầu:</strong>
+                                                                        </td>
+                                                                        <td id="startDate"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td title="Ngày kết thúc hiệu lực của mã giảm giá">
+                                                                            <strong>Ngày Kết Thúc:</strong>
+                                                                        </td>
+                                                                        <td id="endDate"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td
+                                                                            title="Giới hạn tổng số lần mã giảm giá có thể được sử dụng">
+                                                                            <strong>Giới Hạn Sử Dụng:</strong>
+                                                                        </td>
+                                                                        <td id="usageLimit"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td
+                                                                            title="Số lượng tối đa mã giảm giá mỗi người dùng có thể sử dụng">
+                                                                            <strong>Giới Hạn Mỗi Người Dùng:</strong>
+                                                                        </td>
+                                                                        <td id="perUserLimit"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td title="Trạng thái kích hoạt của mã giảm giá">
+                                                                            <strong>Đang Kích Hoạt:</strong>
+                                                                        </td>
+                                                                        <td id="isActive"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td
+                                                                            title="Cho phép gộp nhiều mã giảm giá với nhau không">
+                                                                            <strong>Có Thể Gộp:</strong>
+                                                                        </td>
+                                                                        <td id="isStackable"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td
+                                                                            title="Liệu mã giảm giá chỉ áp dụng cho người dùng đủ điều kiện không">
+                                                                            <strong>Người Dùng Đủ Điều Kiện:</strong>
+                                                                        </td>
+                                                                        <td id="eligibleUsersOnly"></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <div class="hstack gap-2 justify-content-end">
@@ -426,7 +464,7 @@
             $(document).on('click', '.view-coupon', function() {
                 var couponId = $(this).data('id');
                 $.ajax({
-                    url: '/coupons/showsotfdelete/' + couponId,
+                    url: '/admin/coupons/showsotfdelete/' + couponId,
                     type: 'GET',
                     success: function(response) {
                         console.log(response); // Kiểm tra phản hồi từ API

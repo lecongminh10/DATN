@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\UserEvent;
 use App\Models\Order;
 use App\Models\PermissionValue;
 use Laravel\Sanctum\HasApiTokens;
@@ -75,6 +76,30 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isClient()
+    {
+        return $this->permissionsValues()
+            ->whereIn('value', [self::TYPE_CLIENT])
+            ->exists();
+    }
+    //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function () {
+            event(new UserEvent());
+        });
+
+        static::updated(function () {
+            event(new UserEvent());
+        });
+
+        static::deleted(function () {
+            event(new UserEvent());
+        });
+    }
+
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'user_id', 'id')->withTimestamps();
@@ -88,4 +113,11 @@ class User extends Authenticatable
     {
         return DB::table('users_reviews')->where('user_id', $this->id)->get();
     }
+    public function scopeClients($query)
+    {
+        return $query->whereHas('permissionsValues', function ($q) {
+            $q->where('value', self::TYPE_CLIENT);
+        });
+    }
+
 }

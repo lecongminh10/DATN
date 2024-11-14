@@ -58,6 +58,12 @@
 
         @include('client.layouts.footer')
         <!-- End .footer -->
+
+        {{-- @vite('resources/js/coupon.js') --}}
+
+       
+
+
     </div>
     <!-- End .page-wrapper -->
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\ChatController;
 
 Route::group([
     'prefix' => 'admin',
@@ -99,7 +101,7 @@ Route::group([
         Route::get('{id}/edit',                             [CouponController::class, 'edit'])->name('coupons.edit');
         Route::put('/{id}',                                 [CouponController::class, 'update'])->name('coupons.update');
         Route::patch('/restore/{id}',                       [CouponController::class, 'restore'])->name('coupons.restore');
-        // Route::get('/listsotfdeleted',                   [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
+        // Route::get('/listsotfdeleted',                                [CouponController::class, 'showSotfDelete'])->name('coupons.deleted');
         Route::get('/showsotfdelete/{id}',                  [CouponController::class, 'showSotfDeleteID'])->name('coupons.showsotfdelete');
         // Xóa mềm Coupons
         Route::delete('/{id}',                              [CouponController::class, 'destroyCoupon'])->name('coupons.destroy');
@@ -295,7 +297,7 @@ Route::prefix('/')->group(function () {
 
     Route::post('add-cart',                                 [OrderController::class, 'addToCart'])->name('addCart');
     Route::get('shopping-cart',                             [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
-    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout');
+    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout')->middleware('check-cart');
     Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
     Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
     Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
@@ -311,5 +313,12 @@ Route::prefix('/')->group(function () {
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 
-});
+    //Chat
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
 
+    // Route để gửi tin nhắn
+    Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
+
+        // routes/web.php
+    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+});

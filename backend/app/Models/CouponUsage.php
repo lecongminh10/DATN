@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CouponUsage extends Model
 {
-    use HasFactory, SoftDeletes;
-
+    use HasFactory;
+    protected $table = 'coupons_usage';
     protected $fillable = ['coupon_id', 'user_id', 'order_id', 'product_id', 'category_id', 'deleted_by'];
 
     public function coupon()

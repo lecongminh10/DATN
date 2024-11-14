@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -15,4 +16,20 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+
+Broadcast::channel('broadcast-coupon', function () {
+    return true;
+});
+
+Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
+    Log::info('Channel access attempt:', [
+        'user_id' => $user->id,
+        'room_id' => $roomId,
+        'is_admin' => $user->isAdmin(),
+        'is_client' => $user->isClient()
+    ]);
+
+    return $user->isAdmin() || ($user->isClient() && $user->id == $roomId);
 });
