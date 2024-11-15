@@ -184,7 +184,7 @@
                             <li class="nav-item">
                                 <a href="#sidebarPayment" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarPayment" data-key="t-product">
-                                    Thanh Toán 
+                                    Thanh Toán
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarPayment">
                                     <ul class="nav nav-sm flex-column">
@@ -205,11 +205,28 @@
                                 <div class="collapse menu-dropdown" id="sidebarTag">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.tags.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
                                         </li>
                                     </ul>
                                 </div>
                             </li>
+                            <li class="nav-item">
+                                <a href="#sidebarPage" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarPage" data-key="t-product">
+                                    Trang
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarPage">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.pages.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.pages.create') }}" class="nav-link" data-key="t-product-list">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
 
                         </ul>
                     </div>
@@ -223,7 +240,7 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="{{ route('admin.statistics.index') }}" class="nav-link" >
-                                    Thống kê sản phẩm 
+                                    Thống kê sản phẩm
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -263,12 +280,12 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="" class="nav-link" >
-                                    Góp ý 
+                                    Góp ý
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="" class="nav-link" >
-                                    Câu hỏi 
+                                    Câu hỏi
                                 </a>
                             </li>
                         </ul>
@@ -282,7 +299,7 @@
                     <div class="collapse menu-dropdown" id="sidebar-sale-seo">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link" >
+                                <a href="{{route('admin.seo.index')}}" class="nav-link" >
                                     SEO
                                 </a>
                             </li>
@@ -303,7 +320,7 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="" class="nav-link" >
-                                    Danh mục 
+                                    Danh mục
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -333,7 +350,7 @@
                             </li>
                             <li class="nav-item">
                                 <a href="" class="nav-link" >
-                                   Trò chuyện 
+                                   Trò chuyện
                                 </a>
                             </li>
                         </ul>
@@ -341,7 +358,7 @@
                 </li>
                 <div>
             </ul>
-            
+
         </div>
         <!-- Sidebar -->
     </div>

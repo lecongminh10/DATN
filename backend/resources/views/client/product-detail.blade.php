@@ -1,12 +1,15 @@
+@section('meta_title', $meta_title)
+@section('meta_description', $meta_description)
+@section('keywords',$meta_keywords)
 @extends('client.layouts.app')
 @section('style_css')
     <style>
         /* .icon-wishlist-2 {
-            color: #ccc; 
+            color: #ccc;
         }
 
         .icon-wishlist-filled {
-            color: red; 
+            color: red;
         } */
 
         /* .wishlist-modal {
@@ -74,7 +77,7 @@
             list-style-type: none;
             padding: 0;
         }
-        
+
         #new-price-variant{
             color: #222529;
             font-size: 2.4rem;
@@ -432,7 +435,7 @@
                         <div class="price-box">
                             @if ($data->price_sale == null)
                                 <span class="new-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
-                            
+
                             @else
                                 <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                                 <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
@@ -473,7 +476,7 @@
                         @php
                             // Mảng để nhóm các thuộc tính và giá trị của chúng từ tất cả các biến thể
                             $attributesGrouped = [];
-                        
+
                             // Duyệt qua từng biến thể
                             if (count($variants) > 0) {
                                 foreach ($variants as $variant) {
@@ -483,7 +486,7 @@
                                             if (!isset($attributesGrouped[$attribute['attribute_name']])) {
                                                 $attributesGrouped[$attribute['attribute_name']] = [];
                                             }
-                                            
+
                                             // Thêm giá trị vào mảng nếu chưa tồn tại để tránh trùng lặp
                                             if (!in_array($attribute['attribute_value'], $attributesGrouped[$attribute['attribute_name']])) {
                                                 $attributesGrouped[$attribute['attribute_name']][] = $attribute['attribute_value'];
@@ -493,25 +496,25 @@
                             }
                             }
                         @endphp
-                        
+
                         @if (count($attributesGrouped) > 0)
-                            @foreach ($attributesGrouped as $attributeName => $values)      
+                            @foreach ($attributesGrouped as $attributeName => $values)
                             <div class="product-single-filter">
                                 <label>{{ $attributeName }}:</label>
                                     <ul class="config-size-list">
                                     @foreach ($values as $value)
                                         <li>
-                                            <a href="javascript:;" 
-                                            class="d-flex align-items-center justify-content-center attribute-link" 
-                                            style="min-height: 30px ; min-width:70px" 
-                                            data-attribute-name="{{ $attributeName }}" 
+                                            <a href="javascript:;"
+                                            class="d-flex align-items-center justify-content-center attribute-link"
+                                            style="min-height: 30px ; min-width:70px"
+                                            data-attribute-name="{{ $attributeName }}"
                                             data-attribute-value="{{ $value }}">
                                                 {{ $value }}
                                             </a>
                                         </li>
                                     @endforeach
                                 </ul>
-                            </div>  
+                            </div>
                             @endforeach
                         @endif
 
@@ -522,15 +525,15 @@
                             <!---->
 
                         <div class="product-action">
-                            
+
 
                             <div class="price-box product-filtered-price"  style="display: flex;">
-                                
+
                             </div>
 
                             <div class="product-single-qty">
                                 <input class="horizontal-quantity form-control" onchange="updateQuantity()" id="quantity-product" type="text">
-                            </div>  
+                            </div>
                             <!-- End .product-single-qty -->
 
                             <a href="javascript:;" data-quantity-product="1" onchange="updateQuantity()" data-product-id="{{ $data->id }}" data-variant-id="" id="product-variant-id" class="btn btn-dark add-cart mr-2" title="Add to Cart">Thêm vào giỏ hàng</a>
@@ -557,8 +560,8 @@
                             <a href="javascript:;" data-product-id="{{ $data->id }}" data-variant-id="" id="wishlist-variant-id" class="btn-icon-wish add-wishlist" title="Add to Wishlist">
                                 <i id="wishlist-icon" class="icon-wishlist-2"></i>
                                 <span>Thêm yêu thích</span>
-                            </a>                            
-            
+                            </a>
+
                         </div>
                         <!-- End .product single-share -->
                     </div>
@@ -1510,7 +1513,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Lắng nghe sự kiện thay đổi trên các input để thực hiện thêm các hành động
     const attributeInputs = document.querySelectorAll('.attribute-input');
-    
+
     attributeInputs.forEach(input => {
         input.addEventListener('change', function () {
             // Có thể thực hiện các hành động khi một thuộc tính được chọn, ví dụ:
@@ -1519,7 +1522,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Đổi giá variant 
+// Đổi giá variant
 
 // Biến để lưu trữ giá của từng biến thể
 const variants = @json($variants);

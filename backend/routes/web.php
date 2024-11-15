@@ -22,6 +22,9 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\SeoController;
+use App\Http\Controllers\TagController;
 
 Route::group([
     'prefix' => 'admin',
@@ -90,6 +93,55 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
     });
+     //tags
+     Route::prefix('tags')->group(function () {
+        Route::get('/',                                     [TagController::class, 'index'])->name('tags.index');
+        Route::get('/create',                               [TagController::class, 'create'])->name('tags.create');
+        Route::post('/',                                    [TagController::class, 'store'])->name('tags.store');
+        Route::get('{id}/edit',                             [TagController::class, 'edit'])->name('tags.edit');
+        Route::put('/{id}',                                 [TagController::class, 'update'])->name('tags.update');
+        Route::patch('/restore/{id}',                       [TagController::class, 'restore'])->name('tags.restore');
+        Route::get('/listsotfdeleted',                      [TagController::class, 'showSotfDelete'])->name('tags.deleted');
+        // Xóa mềm
+        Route::delete('/{id}',                              [TagController::class, 'destroyTag'])->name('tags.destroy');
+        // Xóa cứng
+        Route::delete('/{id}/hard-delete',                  [TagController::class, 'hardDeleteTag'])->name('tags.hardDelete');
+        // Xóa nhiều
+        Route::post('/delete-multiple',                     [TagController::class, 'deleteMuitpalt'])->name('tags.deleteMultiple');
+    });
+     //pages
+     Route::prefix('pages')->group(function () {
+        Route::get('/',                                     [PageController::class, 'index'])->name('pages.index');
+        Route::get('/create',                               [PageController::class, 'create'])->name('pages.create');
+        Route::post('/',                                    [PageController::class, 'store'])->name('pages.store');
+        Route::get('{id}/edit',                             [PageController::class, 'edit'])->name('pages.edit');
+        Route::put('/{id}',                                 [PageController::class, 'update'])->name('pages.update');
+        Route::patch('/restore/{id}',                       [PageController::class, 'restore'])->name('pages.restore');
+        Route::get('/listsotfdeleted',                      [PageController::class, 'showSotfDelete'])->name('pages.deleted');
+        // Xóa mềm
+        Route::delete('/{id}',                              [PageController::class, 'destroyPage'])->name('pages.destroy');
+        // Xóa cứng
+        Route::delete('/{id}/hard-delete',                  [PageController::class, 'hardDeletePage'])->name('pages.hardDelete');
+        // Xóa nhiều
+        Route::post('/delete-multiple',                     [PageController::class, 'deleteMuitpalt'])->name('pages.deleteMultiple');
+    });
+     //seo
+     Route::prefix('seo')->group(function () {
+        Route::get('/',                                     [SeoController::class, 'index'])->name('seo.index');
+        Route::get('/create',                               [SeoController::class, 'create'])->name('seo.create');
+        Route::post('/',                                    [SeoController::class, 'store'])->name('seo.store');
+        Route::get('{id}/edit',                             [SeoController::class, 'edit'])->name('seo.edit');
+        Route::put('/{id}',                                 [SeoController::class, 'update'])->name('seo.update');
+        Route::get('/{id}/products',                        [SeoController::class, 'getProductsBySeo'])->name('seo.products');
+        Route::patch('/restore/{id}',                       [SeoController::class, 'restore'])->name('seo.restore');
+        Route::get('/listsotfdeleted',                      [SeoController::class, 'showSotfDelete'])->name('seo.deleted');
+        // Xóa mềm
+        Route::delete('/{id}',                              [SeoController::class, 'destroySeo'])->name('seo.destroy');
+        // Xóa cứng
+        Route::delete('/{id}/hard-delete',                  [SeoController::class, 'hardDeleteSeo'])->name('seo.hardDelete');
+        // Xóa nhiều
+        Route::post('/delete-multiple',                     [SeoController::class, 'deleteMuitpalt'])->name('seo.deleteMultiple');
+    });
     //Coupons
     Route::prefix('coupons')->group(function () {
         Route::get('/',                                     [CouponController::class, 'index'])->name('coupons.index');
@@ -145,7 +197,7 @@ Route::group([
         Route::delete('/categories/{id}/hard-delete',      [CategoryController::class, 'hardDelete'])->name('categories.hard-delete');
         Route::post('/update-category-parent',             [CategoryController::class, 'updateParent']);
         Route::get('/home',                                [HomeController::class, 'index'])->name('home.index');
-        
+
     });
     Route::get('/categoryTrashed',                        [CategoryController::class, 'trashed'])->name('categories.trashed');
     Route::get('/categoriesTrashed/search',               [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
@@ -299,7 +351,7 @@ Route::prefix('/')->group(function () {
     Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
     Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
     Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
-    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán 
+    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán
     Route::delete('remove/{id}',                            [OrderController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('update-cart',                              [OrderController::class, 'updateCart'])->name('updateCart');
 

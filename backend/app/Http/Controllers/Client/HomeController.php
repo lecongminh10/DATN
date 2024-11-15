@@ -108,7 +108,7 @@ class HomeController extends Controller
     {
         $categories = $this->categoryService->getAll();
         $category = Category::with('products')->where('id', $id)->firstOrFail();
-        $products = $category->products()->paginate(10);
+        $products = $category->products()->paginate(12);
 
         return view('client.products.list', compact('products', 'categories'));
     }

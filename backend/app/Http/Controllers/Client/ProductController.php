@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Client;
 
-use App\Http\Controllers\Controller;
-use App\Models\Attribute;
+use App\Models\Seo;
 use App\Models\Cart;
-use App\Services\AttributeService;
-use App\Services\AttributeValueService;
-use App\Services\CategoryService;
-use App\Services\ProductGalleryService;
-use App\Services\ProductService;
-use App\Services\ProductVariantService;
+use App\Models\Attribute;
 use App\Services\TagService;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
+use App\Services\CategoryService;
+use App\Services\AttributeService;
+use App\Http\Controllers\Controller;
+use App\Services\AttributeValueService;
+use App\Services\ProductGalleryService;
+use App\Services\ProductVariantService;
 
 class ProductController extends Controller
 {
@@ -48,18 +49,27 @@ class ProductController extends Controller
 
     public function showProduct(int $id)
     {
-        $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries']);
+        $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries','seos']);
         // Lấy biến thể sản phẩm
         $variants = $this->productVariantService->getProductVariant($id);
         // dd($variants);
-        
+        $seo = $data->seos->first();
+        if ($seo) {
+            $meta_title = $seo->meta_title;
+            $meta_description = $seo->meta_description;
+            $meta_keywords = $seo->meta_keywords;
+        } else {
+            $meta_title = 'Default Title';
+            $meta_description = 'Default Description';
+            $meta_keywords = 'Default Keywords';
+        }
         $userId = auth()->id();
         $carts  = collect();
-        if($userId) {
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $cartCount = $carts->sum('quantity');
-        
+        // dd($meta_title);
         // Lấy các thuộc tính và giá trị
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
             ->select('id', 'attribute_name')
@@ -69,7 +79,10 @@ class ProductController extends Controller
             'attributes'     => $attributesWithValues,
             'variants'       => $variants,
             'carts'          => $carts,
-            'cartCount'      => $cartCount
+            'cartCount'      => $cartCount,
+            'meta_title'       => $meta_title,
+            'meta_description' => $meta_description,
+            'meta_keywords'    => $meta_keywords,
         ]);
     }
 }

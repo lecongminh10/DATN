@@ -14,25 +14,25 @@
                     $mainImage = $item->galleries->where('is_main', true)->first();
                     $otherImages = $item->galleries->where('is_main', false)->take(1);
                 @endphp
-                
+
                 @if ($mainImage)
                     <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
                 @endif
-                
+
                 @foreach ($otherImages as $value)
                     <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
                 @endforeach
                     </a>
                 <div class="label-group">
                     @if ($item->is_hot_deal == 1)
-                        <div class="product-label label-hot">HOT</div> 
+                        <div class="product-label label-hot">HOT</div>
                     @endif
                     {{-- <div class="product-label label-hot">HOT</div> --}}
 
                     @php
                         // Xác định giá sản phẩm
                         if (isset($item->productVariant)) {
-                            // Nếu có product_variant, lấy giá từ biến thể  
+                            // Nếu có product_variant, lấy giá từ biến thể
                             $price = $item->productVariant->price_modifier;
                         } else {
                             // Nếu không có product_variant, kiểm tra giá sale của sản phẩm
@@ -67,10 +67,10 @@
                 <div class="category-wrap">
                     <div class="category-list">
                         <a href="{{route('client.showProduct',$item->id)}}" class="product-category">
-                            {{ $item->category->name }}
+                            {{-- {{ $item->category->name }} --}}
                         </a>
                     </div>
-                    <a href="#" class="btn-icon-wish" 
+                    <a href="#" class="btn-icon-wish"
                     onclick="addToWishlist({{ $item->id }}, {{ $item->product_variant_id }})"
                     title="{{ $item->isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
                         <i class="icon-heart {{ $item->isInWishlist ? 'active' : '' }}"></i>
@@ -94,7 +94,7 @@
                     @else
                         <span class="new-price" style="color: #08c;  font-size: 1.2em;">{{ number_format($item->price_sale, 0, ',', '.') }} ₫</span>
                         <span class="old-price">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
-                    @endif                                 
+                    @endif
                 </div>
                 <!-- End .price-box -->
             </div>

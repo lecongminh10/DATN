@@ -80,7 +80,7 @@ class Product extends Model
         return $this->belongsToMany(Coupon::class, 'coupons_products')
                     ->withTimestamps();
     }
-    
+
     //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
     protected static function boot()
     {
@@ -98,8 +98,12 @@ class Product extends Model
             event(new ProductEvent());
         });
     }
+    public function seos()
+{
+    return $this->belongsToMany(SEO::class, 'seo_product')->withTimestamps()->withTrashed();
+}
 
-    
+
 }
 
 
