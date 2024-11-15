@@ -107,4 +107,19 @@ class User extends Authenticatable
     {
         return DB::table('users_reviews')->where('user_id', $this->id)->get();
     }
+
+    public function getMembershipLevelAttribute()
+    {
+        // Kiểm tra số điểm loyalty và trả về hạng thành viên tương ứng
+        if ($this->loyalty_points < 5000) {
+            return 'Bronze'; 
+        } elseif ($this->loyalty_points <= 10000) {
+            return 'Silver'; 
+        } elseif ($this->loyalty_points <= 20000) {
+            return 'Gold'; 
+        } else {
+            return 'Platinum'; 
+        }
+    }
+
 }

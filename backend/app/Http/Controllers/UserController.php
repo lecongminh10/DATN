@@ -10,17 +10,22 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderLocation;
+use App\Models\Payment;
+use App\Models\Product;
+use App\Models\UserReview;
 use App\Services\AddressServices;
 use App\Services\UserService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     protected $userService;
     protected $userRepository;
 
-    public function __construct(UserService $userService , AddressServices $addressServices)
+    public function __construct(UserService $userService, AddressServices $addressServices)
     {
         $this->userService = $userService;
     }
@@ -40,18 +45,26 @@ class UserController extends Controller
             ->permissionValues;
         return view('admin.users.store', compact('permissionsValues'));
     }
-    
+
     public function store(Request $request)
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'password' => 'required',
+            'password' => 'required|string|min:8',
             'phone_number' => 'required|string|max:15',
             'email' => 'required|email|max:255|unique:users,email',
             'date_of_birth' => 'required|date',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
         try {
             $data = $request->except('permissions');
+
+            $data['password'] = bcrypt($request->input('password'));
+
+            if ($request->hasFile('profile_picture')) {
+                $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+                $data['profile_picture'] = $imagePath;
+            }
 
             $user = $this->userService->createUser($data);
 
@@ -76,7 +89,7 @@ class UserController extends Controller
 
         $userId = auth()->id();
         $carts  = collect();
-        if($userId) {
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
@@ -109,7 +122,23 @@ class UserController extends Controller
         ]);
         $data = $request->all();
 
+        $data['password'] = bcrypt($request->input('password'));
+
         $user = $this->userService->updateUser($id, $data);
+
+        if ($request->hasFile('profile_picture')) {
+            // Xóa ảnh cũ nếu có
+            if ($user->profile_picture && Storage::exists('public/' . $user->profile_picture)) {
+                Storage::delete('public/' . $user->profile_picture);
+            }
+
+            // Lưu ảnh mới
+            $filename = time() . '.' . $request->file('profile_picture')->extension();
+            $path = $request->file('profile_picture')->storeAs('profile_pictures', $filename, 'public');
+
+            $user->profile_picture = $path;
+            $user->save(); // Lưu lại thông tin người dùng cùng ảnh mới
+        }
 
         if ($request->has('id_permissions')) {
             $user->permissionsValues()->sync($request->id_permissions);
@@ -127,7 +156,7 @@ class UserController extends Controller
             $user->delete();
         }
 
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully');
+        return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
 
 
@@ -137,11 +166,11 @@ class UserController extends Controller
         $ids = json_decode($request->ids); // Lấy danh sách ID từ yêu cầu
         $forceDelete = $request->forceDelete === 'true'; // Kiểm tra có xóa vĩnh viễn không
         // Xóa người dùng
-      
+
         foreach ($ids as $id) {
-            $user=User::withTrashed()->find($id);
+            $user = User::withTrashed()->find($id);
             if ($forceDelete) {
-                $user->forceDelete(); 
+                $user->forceDelete();
             } else {
                 $user->delete();
             }
@@ -154,12 +183,12 @@ class UserController extends Controller
     {
         $userId = auth()->id();
         $carts  = collect();
-        if($userId) {
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
         $cartCount = $carts->sum('quantity');
-        return view('client.users.index', compact('carts','cartCount'));
+        return view('client.users.index', compact('carts', 'cartCount'));
     }
 
     public function showClient($id)
@@ -169,16 +198,16 @@ class UserController extends Controller
 
         $userId = auth()->id();
         $carts  = collect();
-        if($userId) {
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show', compact('user','address', 'carts', 'cartCount'));
+        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount'));
     }
 
     public function updateClient(Request $request, $id)
-    {   
+    {
         $request->validate([
             'username' => 'required|string|max:255',
             'phone_number' => 'required|string|max:15|unique:users,phone_number',
@@ -194,45 +223,71 @@ class UserController extends Controller
 
     public function showOrder(Request $request)
     {
-        $id = Auth::user()->id;
-        $status = $request->input('status', 'all'); 
-        $query = Order::query();
-    
-        if ($status !== 'all') {
-            $query->where('status', $status); 
-        }
-        $orders = $query->get(); 
-        $totalOrders = $orders->count(); 
+        $userId = Auth::id();
+        $status = $request->input('status', 'all');
 
-        // $userId = auth()->id();
-        $carts  = collect();
-        if($id) {
-            $carts = Cart::where('user_id', $id)->with('product')->get();
+        $query = Order::with([
+            'items.product',
+            'items.productVariant.attributeValues.attribute',
+            'payment.paymentGateway',
+            'shippingMethod'
+        ])->where('user_id', $userId); 
+        if ($status !== 'all') {
+            $query->where('status', $status);
         }
+
+        $orders = $query->simplePaginate(5);
+
+        $totalOrders = $query->count();
+
+        $carts = Cart::where('user_id', $userId)
+            ->with('product')
+            ->get();
 
         $cartCount = $carts->sum('quantity');
-    
+
         return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
     }
 
-    public function showDetailOrder($id){
 
-        $orders = Order::findOrFail($id);
+    public function showDetailOrder($id)
+    {
+
+        $orders = Order::with([
+            'items.product',
+            'items.productVariant.attributeValues.attribute',
+            'payment.paymentGateway',
+            'shippingMethod'
+        ])->findOrFail($id);
+
+
         $locations = OrderLocation::where('order_id', $id)->get();
+        $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
+            ->select('payments.*', 'payment_gateways.name as gateway_name')
+            ->get();
 
         $userId = auth()->id();
         $carts  = collect();
-        if($userId) {
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
         $cartCount = $carts->sum('quantity');
+        $address = Address::getActiveAddress(Auth::user()->id);
 
-        return view('client.users.show_detail_order', compact('orders','locations', 'carts', 'cartCount'));
+        $orderItems = $orders->items;
+        $firstProduct = $orderItems->first()->product;
+        $similarProducts = Product::where('category_id', $firstProduct->category_id)
+            ->where('id', '!=', $firstProduct->id)
+            ->take(5)
+            ->get();
+
+        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts'));
     }
 
-  
-    public function listdeleteMultiple(){
+
+    public function listdeleteMultiple()
+    {
         $user = $this->userService->getAllTrashedUsers();
         return view('admin.users.deleted', compact('user'));
     }
@@ -271,15 +326,15 @@ class UserController extends Controller
             'username' => 'nullable|string|unique:users,username,' . $userId,
             'phone_number' => 'nullable|string|unique:users,phone_number,' . $userId,
         ]);
-        if(isset($validatedData['username']) || isset($validatedData['phone_number'])){
-            $data=[
-               'username'=> $validatedData['username'],
-               'phone_number'=> $validatedData['phone_number'],
+        if (isset($validatedData['username']) || isset($validatedData['phone_number'])) {
+            $data = [
+                'username' => $validatedData['username'],
+                'phone_number' => $validatedData['phone_number'],
             ];
-            $this->userService->saveOrUpdate( $data, $userId);
+            $this->userService->saveOrUpdate($data, $userId);
         }
-        
-        $is_active= Address::hasActiveAddress($userId);
+
+        $is_active = Address::hasActiveAddress($userId);
         // Tạo địa chỉ mới cho user
         $address = Address::create([
             'user_id' => $userId,
@@ -287,7 +342,7 @@ class UserController extends Controller
             'ward' => $validatedData['ward'],
             'district' => $validatedData['district'],
             'city' => $validatedData['city'],
-            'active'=> $is_active ? false :true
+            'active' => $is_active ? false : true
         ]);
 
         // Trả về phản hồi thành công dưới dạng JSON
@@ -312,7 +367,8 @@ class UserController extends Controller
         return response()->json(['success' => false, 'message' => 'Không tìm thấy địa chỉ!'], 404);
     }
 
-    public function updateAddress(Request $request){
+    public function updateAddress(Request $request)
+    {
         $request->validate([
             'id_address' => 'required|exists:addresses,id',
             'name' => 'required|string|max:255',
@@ -322,12 +378,12 @@ class UserController extends Controller
             'ward' => 'required|string',
             'address' => 'required|string',
         ]);
-    
-        $dataUser=[
-            'username'=>$request->name,
-            'phone_number'=>$request->phone
+
+        $dataUser = [
+            'username' => $request->name,
+            'phone_number' => $request->phone
         ];
-        $this->userService->saveOrUpdate( $dataUser, Auth::id());
+        $this->userService->saveOrUpdate($dataUser, Auth::id());
         $address = Address::find($request->id_address);
         $address->city = $request->city;
         $address->district = $request->district;
@@ -336,5 +392,58 @@ class UserController extends Controller
         $address->save();
 
         return response()->json(['success' => 'Địa chỉ đã được cập nhật thành công!']);
+    }
+
+    public function showRank($id)
+    {
+        $user = $this->userService->getById($id);
+        return view('client.users.show_rank', compact('user'));
+    }
+
+    public function cancelOrder($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        // Kiểm tra xem trạng thái có phải là "Chờ xác nhận" không
+        if ($order->status === 'Chờ xác nhận') {
+            // Cập nhật trạng thái của đơn hàng thành "Đã hủy"
+            $order->status = 'Đã hủy';
+            $order->save();
+
+            // Trả về thông báo thành công hoặc chuyển hướng về trang chi tiết đơn hàng
+            return redirect()->back()->with('success', 'Đơn hàng đã được hủy.');
+        }
+
+        // Nếu không phải "Chờ xác nhận", trả về thông báo lỗi
+        return redirect()->back()->with('error', 'Không thể hủy đơn hàng này.');
+    }
+
+    public function submitReview(Request $request, $productId)
+    {
+        $userId = Auth::id();
+        $existingReview = UserReview::where('user_id', Auth::id())
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($existingReview) {
+            return redirect()->back()->with('error', 'Bạn đã đánh giá cho đơn hàng này rồi.');
+        }
+
+        // Validate dữ liệu form
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review_text' => 'required|string',
+        ]);
+
+        // Lưu dữ liệu vào bảng users_reviews
+        UserReview::create([
+            'user_id' => $userId,
+            'product_id' => $productId,
+            'rating' => $request->input('rating'),
+            'review_text' => $request->input('review_text'),
+            'review_date' => Carbon::now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi thành công!');
     }
 }

@@ -17,6 +17,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{asset('themeclient/assets/images/icons/favicon.png')}}">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <script>
         WebFontConfig = {
@@ -243,7 +244,8 @@
     <script src="{{asset('themeclient/assets/js/jquery.appear.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.plugin.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.countdown.min.js')}}"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
     {{-- Điều hướng đến các đường dẫn bên ở file js --}}
     <script>
         var routes = {

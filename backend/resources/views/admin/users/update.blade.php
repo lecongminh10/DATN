@@ -109,7 +109,15 @@
                                             <span class="text-danger">Quyền không được để trống.</span>
                                         @enderror
                                     </div>
-
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Ảnh</label>
+                                        <input type="file" class="form-control"  value="{{ $user->profile_picture }}" name="profile_picture" accept="image/*">
+                                        @error('image')
+                                            <span class="text-danger">Ảnh không hợp lệ.</span>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="col-12 mt-4">
                                     <div class="d-flex justify-content">
