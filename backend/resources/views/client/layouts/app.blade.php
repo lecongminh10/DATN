@@ -268,29 +268,29 @@
             if (response.ok) {
                 // Xóa sản phẩm ra khỏi DOM
                 const productElement = element.closest('.product'); // Tìm phần tử sản phẩm tương ứng
-                const productPriceElement = productElement.querySelector('.cart-product-info'); // Lấy thông tin giá sản phẩm
-                const quantityElement = productElement.querySelector('.cart-product-qty'); // Lấy thông tin số lượng
 
-                // Tính lại subtotal
-                const priceString = productPriceElement.textContent.split('×')[1].trim(); // Lấy giá từ thông tin
-                const price = parseInt(priceString.replace(/\./g, '').replace('₫', '').trim(), 10); // Chuyển đổi giá thành số nguyên
-                const quantity = parseInt(quantityElement.textContent, 10); // Lấy số lượng
-                const subtotal = price * quantity; // Tính subtotal cho sản phẩm
+                // Tính toán subtotal
+                const cartProductInfo = productElement.querySelector('.cart-product-info'); // Thông tin giá và số lượng
+                const [quantityText, priceText] = cartProductInfo.textContent.split('×').map(item => item.trim());
+                
+                const quantity = parseInt(quantityText.replace(/\D/g, ''), 10); // Lấy số lượng từ text
+                const price = parseInt(priceText.replace(/\./g, '').replace('₫', ''), 10); // Lấy giá từ text
+                const subtotalForProduct = quantity * price; // Tính subtotal cho sản phẩm
 
-                // Cập nhật subtotal
+                // Cập nhật subtotal tổng
                 const subtotalElement = document.querySelector('.cart-total-price');
-                const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫', '').trim(), 10); // Lấy subtotal hiện tại
-                const newSubtotal = currentSubtotal - subtotal; // Cập nhật subtotal mới
-                subtotalElement.textContent = `${newSubtotal.toLocaleString('vi-VN')}₫`; // Cập nhật giá trên giao diện
+                const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫', ''), 10);
+                const newSubtotal = currentSubtotal - subtotalForProduct;
 
-                // Xóa sản phẩm khỏi DOM
-                productElement.remove();
+                // Cập nhật DOM
+                subtotalElement.textContent = `${newSubtotal.toLocaleString('vi-VN')}₫`; // Hiển thị subtotal mới
+                productElement.remove(); // Xóa sản phẩm khỏi giao diện
             } else {
-                console.log('Có lỗi xảy ra khi xóa sản phẩm');
+                console.error('Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng.');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Lỗi kết nối hoặc xử lý:', error);
         });
     }
     </script>

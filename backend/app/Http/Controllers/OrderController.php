@@ -209,11 +209,11 @@ class OrderController extends Controller
     {
         $userId = auth()->id();
         $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-        ->where('user_id', $userId)
-        ->get();
+            ->where('user_id', $userId)
+            ->get();
 
         $cartCount = $carts->sum('quantity');
-        
+
         return view('client.orders.shoppingcart', compact('carts', 'cartCount'));
     }
 
@@ -224,22 +224,22 @@ class OrderController extends Controller
             ->where('user_id', $userId)
             ->get();
 
-        $carts  = collect();
-        if($userId) {
+        $carts = collect();
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
-        $carts  = collect();
-        if($userId) {
+        $carts = collect();
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-    
+
         $cartCount = $carts->sum('quantity');
 
-        $cartCheckout =Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-                ->where('user_id', $userId)
-                ->get();
-        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount'));
+        $cartCheckout = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $userId)
+            ->get();
+        return view('client.orders.checkout', compact('cartCheckout', 'carts', 'cartCount'));
     }
 
     public function removeFromCart($id)
@@ -283,7 +283,7 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Cart updated successfully']);
     }
-    
+
     public function show(string $id)
     {
         //xóa cart ở đâu
@@ -434,8 +434,8 @@ class OrderController extends Controller
             ->where('product_variants_id', $productVariantId)
             ->first();
 
-        $price = $productVariantId 
-            ? ProductVariant::find($productVariantId)->price_modifier 
+        $price = $productVariantId
+            ? ProductVariant::find($productVariantId)->price_modifier
             : Product::find($productId)->price_sale ?? Product::find($productId)->price_regular;
 
         if ($cartItem) {
@@ -453,20 +453,24 @@ class OrderController extends Controller
                 'total_price' => $quantity * $price,
             ]);
         }
-
+        $totalQuantity = Cart::where('user_id', $userId)->sum('quantity');
+        $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+        ->where('user_id', $userId)
+        ->get();
         // Trả về phản hồi JSON
-        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
+        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng', 'totalQuantity' => $totalQuantity , 'carts'=>$carts]);
     }
 
-    public function wishList() {
+    public function wishList()
+    {
         $userId = auth()->id();
 
         $wishLists = WishList::with(['product', 'productVariant'])
-        ->where('user_id', $userId)
-        ->get();
+            ->where('user_id', $userId)
+            ->get();
 
-        $carts  = collect();
-        if($userId) {
+        $carts = collect();
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
@@ -478,7 +482,7 @@ class OrderController extends Controller
         // dd($wishLists);
 
 
-        return view('client.products.wishlist', compact('wishLists','carts', 'cartCount'));
+        return view('client.products.wishlist', compact('wishLists', 'carts', 'cartCount'));
     }
 
     public function addWishList(Request $request)

@@ -123,11 +123,14 @@
                 <div class="dropdown cart-dropdown">
                     <a href="#" title="Cart" class="dropdown-toggle dropdown-arrow cart-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                         <i class="minicart-icon"></i>
-                        @if(isset($cartCount))
-                           @if ($cartCount >0)
-                           <span class="cart-count badge-circle">{{ $cartCount }}</span> <!-- Hiển thị số sản phẩm nếu có -->
-                           @endif
-                        @endif
+                            @php
+                                if($cartCount >0 && isset($cartCount)){
+                                    $count =  $cartCount;
+                                }else{
+                                    $count='';
+                                }
+                            @endphp
+                        <span class="cart-count badge-circle">{{ $count }}</span>
                     </a>
 
                     <div class="cart-overlay"></div>
@@ -141,7 +144,7 @@
                         
                             <div class="dropdown-cart-products">
                                 @php
-                                    $subTotal = 0; // Khởi tạo tổng phụ
+                                    $subTotal = 0; 
                                 @endphp
                         
                                @if (isset($carts))
@@ -153,19 +156,19 @@
                                        </h4>
                                        @php
                                            
-                                           if ($item->product && is_null($item->productVariant)) {
-                                               // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
-                                               if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
-                                                   $price = $item->product->price_sale; // Lấy giá sale nếu có
-                                               } else {
-                                                   $price = $item->product->price_regular; // Nếu không có giá sale, lấy giá thường
-                                               }
-                                               $sub = $price * $item->quantity; 
-                                           } elseif ($item->product && $item->productVariant) {
-                                               // Nếu có sản phẩm và có biến thể, lấy giá biến thể
-                                               $price = $item->productVariant->price_modifier;
-                                               $sub = $price * $item->quantity; 
-                                           }
+                                            if ($item->product && is_null($item->productVariant)) {
+                                                // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
+                                                if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
+                                                    $price = $item->product->price_sale; // Lấy giá sale nếu có
+                                                } else {
+                                                    $price = $item->product->price_regular; // Nếu không có giá sale, lấy giá thường
+                                                }
+                                                $sub = $price * $item->quantity; 
+                                            } elseif ($item->product && $item->productVariant) {
+                                                // Nếu có sản phẩm và có biến thể, lấy giá biến thể
+                                                $price = $item->productVariant->price_modifier;
+                                                $sub = $price * $item->quantity; 
+                                            }
                                            $subTotal += $sub; // Cộng dồn vào tổng phụ
                                        @endphp
                                        <span class="cart-product-info">
@@ -177,7 +180,11 @@
                        
                                    <figure class="product-image-container">
                                        <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
-                                           <img src="{{Storage::url($item->product->getMainImage()->image_gallery)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
+                                        @php
+                                            $mainImage = $item->product->getMainImage();
+                                            $imageUrl = $mainImage && !empty($mainImage->image_gallery) ? Storage::url($mainImage->image_gallery) : asset('images/default-image.jpg');
+                                        @endphp
+                                        <img src="{{ $imageUrl }}" width="80" height="80" alt="{{ $item->product->name ?? 'No image available' }}" />
                                        </a>
                        
                                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>
