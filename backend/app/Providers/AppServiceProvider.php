@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Announcement;
+use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,8 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
 {
-    // view()->composer('*', function ($view) {
-    //     $view->with('announcements', Announcement::first());
-    // });
+    // Thiết lập ngôn ngữ mặc định của Carbon là tiếng Việt
+    Carbon::setLocale('vi');
 }
 }
