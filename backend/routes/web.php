@@ -27,6 +27,7 @@ use App\Http\Controllers\FooterController;
 use App\Http\Controllers\InfoBoxController;
 use App\Http\Controllers\PopuphomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserReviewController;
 
 Route::group([
     'prefix' => 'admin',
@@ -301,6 +302,17 @@ Route::group([
         function () {
             Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
             Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
+        }
+    );
+    //////comment
+    Route::group(
+        [
+            'prefix' => 'comment', 
+            'as' => 'comment.', 
+        ],
+        function () {
+            Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
+            Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
         }
     );
 });
