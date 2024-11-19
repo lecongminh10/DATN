@@ -134,7 +134,7 @@
                                                                 $status='Thanh toán thành công';
                                                                 $style="bg-success-subtle text-success";
                                                             }
-                                                        }else{
+                                                         }else{
                                                             $status='Đã hủy khi thanh toán ';
                                                             $style="bg-success-subtle text-success";
                                                         }
@@ -272,13 +272,31 @@
                                                             <td>Tổng giá gốc</td>
                                                             <td class="text-end total-price" ></td>
                                                         </tr>
-                                                        <tr>
-                                                            <td>Voucher (12.5%)</td>
-                                                            <td class="text-end">0 đ</td>
+                                                        @php
+                                                            $price = 0;
+                                                            if(count($couponUsage)>0){
+                                                                foreach ($couponUsage as $key => $value) {
+                                                                 {
+                                                                    $price += $value->usage_discount_value;
+                                                                 }
+                                                                }
+                                                            }
+                                                        @endphp
+                                                         <tr>
+                                                              <td>Voucher</td>
+                                                               <td class="text-end">-{{ number_format($price,  0, ',', '.') }} đ</td>
                                                         </tr>
+                                                        @if (count($couponUsage)>0)
+                                                            @foreach ($couponUsage as $item)
+                                                            <tr>
+                                                                <td style="font-size: 11px; padding-left: 30px; font-weight: 100;">{{$item->coupon_code}}</td>
+                                                                <td class="text-end">{{ number_format($item->usage_discount_value,  0, ',', '.') }} đ</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        @endif
                                                         <tr>
                                                             <td>Phí vận chuyển </td>
-                                                            <td class="text-end">{{ number_format($order->shippingMethod->shipping_fee,  0, ',', '.') }} đ</td>
+                                                            <td class="text-end">+{{ number_format($order->shippingMethod->shipping_fee,  0, ',', '.') }} đ</td>
                                                         </tr>
                                                         <tr class="border-top border-top-dashed fs-15">
                                                             <th scope="row">Tổng giá </th>
@@ -303,15 +321,12 @@
                                                 <p class="text-muted">Giá : <span class="fw-medium" id=""></span><span id="card-total-amount">{{ number_format($order->total_price,  0, ',', '.') }} đ</span></p>
                                             </div>
                                             <div class="mt-4">
-                                                {{-- <div class="alert alert-info">
+                                                <div class="alert alert-info">
                                                     <p class="mb-0"><span class="fw-semibold">NOTES:</span>
-                                                        <span id="note">All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or
-                                                            credit card or direct payment online. If account is not paid within 7
-                                                            days the credits details supplied as confirmation of work undertaken
-                                                            will be charged the agreed quoted fee noted above.
+                                                        <span id="note">{{$order->note}}
                                                         </span>
                                                     </p>
-                                                </div> --}}
+                                                </div>
                                             </div>
                                             <div class="hstack gap-2 justify-content-end d-print-none mt-4">
                                                 {{-- <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Print</a> --}}
