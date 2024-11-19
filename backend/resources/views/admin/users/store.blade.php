@@ -102,6 +102,15 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="profile_picture" class="form-label">Ảnh đại diện</label>
+                                    <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                                    @error('profile_picture')
+                                        <span class="text-danger">File ảnh không hợp lệ. Chỉ chấp nhận jpg, jpeg, png và dung lượng tối đa 2MB.</span>
+                                    @enderror
+                                </div>
+                            </div>
                             <div class="col-12 mt-4">
                                 <div class="d-flex justify-content">
                                     <div class="text-start">

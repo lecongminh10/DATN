@@ -424,6 +424,10 @@ Route::prefix('/')->group(function () {
     Route::put('update-profile/{id}',                       [UserController::class, 'updateClient'])->name('users.updateClient');
     Route::get('show-order',                                [UserController::class, 'showOrder'])->name('users.showOrder');
     Route::get('show-order-detail/{id}',                    [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
+    Route::get('show-rank/{id}',                            [UserController::class, 'showRank'])->name('users.showRank');
+    Route::post('/order/{orderId}/cancel',                  [UserController::class, 'cancelOrder'])->name('users.cancel');
+    Route::post('/order/{order}/review',                    [UserController::class, 'submitReview'])->name('users.submitReview');
+
 
     //product
     Route::get('/products',                                 [HomeController::class, 'showProducts'])->name('client.products');
