@@ -325,5 +325,14 @@ Route::prefix('/')->group(function () {
 
         // routes/web.php
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
+
+    Route::get('/clear-coupons', function() {
+        $currentUrl = url()->current();
+        if($currentUrl=="http://localhost:8000/checkout"){
+            return response()->json(['success' => false]);
+        }
+        session()->forget('coupons'); // Clear the coupons session
+        return response()->json(['success' => true]); 
+    });
 });
 

@@ -346,26 +346,37 @@
         .checkout-container textarea.form-control {
             min-height: 70px;
         }
-
+        #discount-info {
+            display: none;
+            max-height: 200px;
+            overflow-y: auto; 
+            padding: 10px;
+            border: 1px solid #ccc; 
+            background-color: #d9e2eb59;
+            border: 1px solid #bde1f5
+        }
         /* Cải thiện giao diện của phần thông tin giảm giá */
         .alert-info {
-            background-color: #e7f7ff;
-            border-color: #b8e0f4;
-            color: #31708f;
+            box-shadow: inset 0px 0px 1px 0px #0088cc;
+            background-color: #ffffff;
+            border-color: #e0ebf0;
+            color: #3d4143;
             padding: 5px;
             margin-bottom: 20px;
             border-radius: 5px;
             font-size: 14px;
+            padding: 5px;
         }
 
         .alert-info p {
             margin: 0;
             line-height: 1.6;
+            padding: 5px;
         }
 
         .alert-info p strong {
             font-weight: bold;
-            color: #2c3e50;
+            color: #3d4349;
         }
 
         .alert-info p span {
@@ -577,16 +588,31 @@
                                 <form id="couponForm">
                                     <div class="input-group">
                                         <input type="text" class="form-control form-control-sm w-auto"
-                                            placeholder="Coupon code" required name="coupon_code" id="coupon_code" />
+                                            placeholder="Nhập mã" required name="coupon_code" id="coupon_code" />
                                         <div class="input-group-append">
-                                            <button class="btn btn-sm mt-0" type="button" onclick="applyCoupon()">Nhập
+                                            <button class="btn btn-sm mt-0" type="button" onclick="applyCoupon()"  data-toggle="modal" data-target="#applyToCoupon">Nhập
                                                 mã giảm giá</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div class="col-6">
-                                <div id="discount-info"></div> <!-- Hiển thị thông tin giảm giá -->
+                                <div id="discount-info" style="display: {{ session('coupons') ? 'block' : 'none' }};">
+                                    @if(session('coupons'))
+                                        @foreach (session('coupons') as $coupon)
+                                        <div class="alert-info position-relative">
+                                                <p class="end position-absolute top-0 end-0 m-0" style="right: 10px; color: #b7062ef2;">Đang áp dụng</p>
+                                                <p><strong class="mx-2">Mã giảm giá:</strong>{{$coupon['code']}}</p>
+                                                <p><strong class="mx-2">Giá trị giảm giá:</strong>
+                                                    {{ $coupon['discount_type'] == 'percentage' 
+                                                        ? $coupon['discount_value'] . ' %' 
+                                                        : number_format($coupon['discount_amount'], 0, ',', '.') . ' đ' }}
+                                                </p>
+                                                <p><strong class="mx-2">Số tiền được giảm:</strong>  {{ number_format($coupon['discount_amount'], 0, ',', '.') }}đ</p>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div> <!-- Hiển thị thông tin giảm giá -->
                                 <button id="applyDiscountBtn" class="btn btn-primary mt-3" style="display:none;"
                                     onclick="applyDiscountToOrder()">Áp dụng giảm giá</button>
                             </div>
@@ -845,12 +871,27 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" class="text-left">
+                                        <td style="margin-top: 10px">
                                             <h4>Mã giảm giá</h4>
-                                            <!-- Mã giảm giá được áp dụng -->
-                                            <div id="couponInfo">
-                                            </div>
                                         </td>
+                                        <td class="price-col"></td>
+                                    </tr>
+                                    <tr id="couponInfo">
+                                        @php
+                                         //  dd(session('coupons'));
+                                        @endphp
+                                        @if(session('coupons'))
+                                            @foreach (session('coupons') as $key=> $coupon)
+                                            <tr>
+                                                <td style="padding-left: 5px;">
+                                                    <h5 style="font-weight: 100; font-size: 11px; padding-left: 20px;margin: 0px;">{{$coupon['code']}}</h5>
+                                                </td>
+                                                <td class="price-col price-coupone" > {{ number_format($coupon['discount_amount'], 0, ',', '.') }}đ</td>
+                                             </tr> 
+                                             <input type="hidden" name="coupons[{{$key}}][code]" value="{{$coupon['code']}}"/>
+                                             <input type="hidden" name="coupons[{{$key}}][discount_amount]" value="{{$coupon['discount_amount']}}"/>
+                                            @endforeach
+                                        @endif
                                     </tr>
                                     <tr>
                                         <td colspan="2" class="text-left">
@@ -926,13 +967,32 @@
 
 
     </main>
+   {{-- Modal thông báo lỗi khi áp dụng mã giảm giá --}}
 
-
-
+  <!-- Modal -->
+  <div class="modal fade" id="applyToCoupon" tabindex="-1" role="dialog" aria-labelledby="applyToCouponLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="max-width: 550px">
+        <div class="modal-header">
+          <h5 class="modal-title" id="applyToCouponLabel">Thông báo </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 
 @section('script_libray')
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
@@ -984,17 +1044,39 @@
                 0); // Lấy giá trị giảm giá từ input (nếu có)
             calculateTotal(subtotal, discount, shippingCost); // Tính tổng với giá trị giảm giá và phí vận chuyển
         }
+        function updateTotal() {
+            const subtotal = parseFloat('{{ $subTotal }}');
+            const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
+            let discountTotal = 0;
+            @if(session('coupons'))
+                @foreach(session('coupons') as $coupon)
+                    discountTotal += {{ $coupon['discount_amount'] }};
+                @endforeach
+            @endif
+            let total=0;
+            total = subtotal + shippingCost - discountTotal;
+            if(total<0){
+                total=0;
+            }
+
+            document.getElementById('totalPriceDisplay').textContent = formatCurrency(total);
+            document.getElementById('totalAmountInput').value = total;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTotal();
+        });
 
         let appliedCoupons = []; // Mảng lưu trữ các mã giảm giá đã áp dụng
-
         // Hàm áp dụng mã giảm giá
         function applyCoupon() {
             const couponCode = document.getElementById("coupon_code").value.trim();
+            
             // Xóa thông báo lỗi nếu có khi người dùng bắt đầu nhập mã mới
             const discountInfo = document.getElementById("discount-info");
             const couponInfo = document.getElementById("couponInfo");
             if (!couponCode) {
-                alert("Vui lòng nhập mã giảm giá");
+                document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">Vui lòng nhập mã giảm giá</p>`
                 return;
             }
             // Lấy giá trị của phí vận chuyển được chọn
@@ -1002,7 +1084,7 @@
 
             // Kiểm tra xem mã giảm giá đã được áp dụng hay chưa
             if (appliedCoupons.includes(couponCode)) {
-                alert("Mã giảm giá này đã được áp dụng.");
+                document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">Mã giảm giá này đã được áp dụng</p>`
                 return;
             }
 
@@ -1018,72 +1100,61 @@
                     })
                 })
                 .then(response => response.json())
-                .then(data => {
+                .then(data => {    
+                    document.getElementById("coupon_code").value=""
+                 if (data.success) {
                     const discountInfo = document.getElementById("discount-info");
+                    discountInfo.style.display="block";
                     const couponInfo = document.getElementById("couponInfo");
-
-                    if (data.success) {
                         // Lưu mã giảm giá vào danh sách đã áp dụng
                         appliedCoupons.push(couponCode);
 
                         // Hiển thị thông tin giảm giá vào discountInfo
                         discountInfo.innerHTML += `
-                    <div class="alert-info">
-                        <p><strong>Mã giảm giá:</strong> ${data.coupon.code}</p>
-                        <p><strong>Giá trị giảm giá:</strong> ${formatCurrency2(data.coupon.discount_value)} ${data.coupon.discount_type === 'percentage' ? '%' : 'đ'}</p>
-                        <p><strong>Số tiền được giảm:</strong> ${formatCurrency(data.coupon.discount_amount)}</p>
-                    </div>
-                `;
+                        <div class="alert-info position-relative">
+                            <p class="end position-absolute top-0 end-0 m-0" style="right: 10px; color: #b7062ef2;">Đang áp dụng</p>
+                            <p><strong>Mã giảm giá:</strong> ${data.coupon.code}</p>
+                            <p><strong>Giá trị giảm giá:</strong> ${formatCurrency2(data.coupon.discount_value)} ${data.coupon.discount_type === 'percentage' ? '%' : 'đ'}</p>
+                            <p><strong>Số tiền được giảm:</strong> ${formatCurrency(data.coupon.discount_amount)}</p>
+                        </div>`;
 
                         // Hiển thị thông tin giảm giá vào couponInfo
-                        couponInfo.innerHTML += `
-                    <div class="alert-info">
-                        <p><strong>Mã giảm giá:</strong> ${data.coupon.code}</p>
-                        <p><strong>Giá trị giảm giá:</strong> ${formatCurrency2(data.coupon.discount_value)} ${data.coupon.discount_type === 'percentage' ? '%' : 'đ'}</p>
-                        <p><strong>Số tiền được giảm:</strong> ${formatCurrency(data.coupon.discount_amount)}</p>
-                    </div>
-                `;
+                        const newRow = `
+                            <tr>
+                                <td style="padding-left: 5px;">
+                                    <h5 style="font-weight: 100; font-size: 11px; padding-left: 20px;margin: 0px;">${data.coupon.code}</h5>
+                                </td>
+                                <td class="price-col price-coupone" >${formatCurrency(data.coupon.discount_amount)}</td>
+                            </tr> 
+                             <input type="hidden" name="coupons[${data.coupon.code}][code]" value="${data.coupon.code}"/>
+                             <input type="hidden" name="coupons[${data.coupon.code}][discount_amount]" value="${data.coupon.discount_amount}"/>
+                            `;
+                        couponInfo.insertAdjacentHTML('beforebegin', newRow);
 
+                        document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="">${data.message}</p>`
                         // Tính tổng giảm giá từ tất cả các mã đã áp dụng
-                        let totalDiscount = 0;
-                        appliedCoupons.forEach(code => {
-                            const coupon = data.coupons.find(coupon => coupon.code ===
-                                code); // Lấy coupon theo mã
-                            totalDiscount += coupon ? coupon.discount_amount : 0;
-                        });
-
-                        // Tính tổng tiền sau giảm giá
-                        const subtotal = parseFloat('{{ $subTotal }}'); // Giá trị tổng phụ từ server
-                        console.log("Subtotal:", subtotal);
-                        const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked')
-                            .value);
-                        const totalAfterDiscount = subtotal - totalDiscount; // Tổng tiền sau khi giảm giá
-
-                        // Cập nhật lại tổng tiền sau giảm giá và phí vận chuyển
                         const totalPriceDisplay = document.getElementById("totalPriceDisplay");
-                        totalPriceDisplay.innerHTML =
-                            `${new Intl.NumberFormat('vi-VN').format(totalAfterDiscount + shippingCost)} đ`;
-
-                        // Cập nhật tổng vào input ẩn (giả sử bạn có input ẩn để lưu tổng tiền)
-                        const totalAmountInput = document.getElementById('totalAmountInput');
-                        totalAmountInput.value = totalAfterDiscount + shippingCost;
-
-                        // Cập nhật lại giá trị tổng sau giảm giá và phí vận chuyển
-                        calculateTotal(totalAfterDiscount,
-                            shippingCost); // Hàm calculateTotal tính lại tổng với giảm giá và phí ship
+                        const currentTotal = parseFloat(totalPriceDisplay.innerText.replace(/[^\d.-]/g, ''));
+                        const discountAmount = parseFloat(data.coupon.discount_amount);
+                        console.log(discountAmount);
+                        
+                        const newTotal = currentTotal*1000 - discountAmount;
+                        if(newTotal<0){
+                            newTotal=0;
+                        }
+                        // Display the formatted new total (assuming formatCurrency handles formatting)
+                        totalPriceDisplay.innerText = formatCurrency(newTotal);
 
                     } else {
-                        // Nếu mã giảm giá không hợp lệ
-                        discountInfo.innerHTML = `<p style="color: red;">${data.message}</p>`;
-
-                        // Nếu không có mã giảm giá hợp lệ, đặt lại giá trị tổng
-                        document.getElementById('totalPriceDisplay').innerHTML = '0 đ';
-                        updateShipping(); // Cập nhật lại tổng với phí vận chuyển
+                        console.log(data.message);
+                        
+                         document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">${data.message}</p>`
+                       //  updateShipping(); // Cập nhật lại tổng với phí vận chuyển
                     }
                 })
                 .catch(error => {
-                    console.error("Error:", error);
-                    alert("Đã xảy ra lỗi khi áp dụng mã giảm giá.");
+                     document.getElementById("coupon_code").value=""
+                     document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">Đã có lỗi khi thêm mã giảm giá</p>`
                 });
         }
 

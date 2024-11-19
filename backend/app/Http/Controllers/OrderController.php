@@ -687,23 +687,27 @@ class OrderController extends Controller
 
         // Tính tổng tiền sau khi thêm phí vận chuyển
         $total = $totalAfterDiscount + $shippingCost;
-
+        $coupons = session('coupons', []);
+        $couponData=[
+            'code' => $coupon->code,
+            'discount_type' => $coupon->discount_type,
+            'discount_value' => $coupon->discount_value,
+            'discount_amount' => $discountAmount,
+            'total' => $total,
+        ];
+        $coupons[]=$couponData;
+        session(['coupons'=>$coupons]);
         return response()->json([
             'success' => true,
-            'coupon' => [
-                'code' => $coupon->code,
-                'discount_type' => $coupon->discount_type,
-                'discount_value' => $coupon->discount_value,
-                'discount_amount' => $discountAmount,
-                'total' => $total,
-            ],
+            'coupon' =>$couponData,
             'cartSummary' => [
                 'subTotal' => $subTotal,
                 'quantity' => $quantity,
                 'shippingCost' => $shippingCost,
                 'totalAfterDiscount' => $totalAfterDiscount,
                 'total' => $total,
-            ]
+            ],
+            'message' => 'Thêm mã giảm giá thành công ',
         ]);
     }
 }
