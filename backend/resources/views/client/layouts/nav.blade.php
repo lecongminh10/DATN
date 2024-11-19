@@ -1,4 +1,4 @@
-<div class="header-bottom sticky-header d-none d-lg-block bg-gray" data-sticky-options="{'mobile': false}">
+<div class="header-bottom sticky-header d-none d-lg-block bg-gray" data-sticky-options="{'mobile': true}">
     <div class="container">
         {{-- <div class="header-left">
             <a href="demo1.html" class="logo">
@@ -6,7 +6,7 @@
             </a>
         </div> --}}
         <div class="header-center">
-            <nav class="main-nav w-100">
+            <nav class="main-nav w-100"> 
                 <ul class="menu">
                     <li>
                         <a href="{{route('client')}}">Home</a>

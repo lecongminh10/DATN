@@ -56,7 +56,9 @@ class ProductController extends Controller
         $userId = auth()->id();
         $carts  = collect();
         if($userId) {
-            $carts = Cart::where('user_id', $userId)->with('product')->get();
+            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $userId)
+            ->get();
         }
         $cartCount = $carts->sum('quantity');
         

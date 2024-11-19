@@ -23,6 +23,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\ExportImportController;
 use App\Http\Controllers\ChatController;
 
 Route::group([
@@ -243,6 +244,36 @@ Route::group([
             Route::get('/', [StatsController::class, 'index'])->name('index');
         }
     );
+
+    // Export Import
+    Route::group([
+        'prefix' => 'export-import',
+        'as' => 'export-import.'
+    ], function() {
+        Route::get('/', [ExportImportController::class, 'exportAndImport'])->name('view-export-import');
+        // export
+        Route::get('export-category', [ExportImportController::class, 'exportCategory'])->name('exportCategory');
+        Route::post('export-categories', [ExportImportController::class, 'exportCategories'])->name('exportCategories');
+        
+        Route::get('export-product', [ExportImportController::class, 'exportProduct'])->name('exportProduct');
+        Route::post('export-products', [ExportImportController::class, 'exportProducts'])->name('exportProducts');
+        
+        Route::get('export-post', [ExportImportController::class, 'exportPost'])->name('exportPost');
+        Route::post('export-posts', [ExportImportController::class, 'exportPosts'])->name('exportPosts');
+
+
+        // import
+        Route::get('import-category', [ExportImportController::class, 'importCategory'])->name('importCategory');
+        Route::post('import-categories', [ExportImportController::class, 'importCategories'])->name('importCategories');
+
+        Route::get('import-product', [ExportImportController::class, 'importProduct'])->name('importProduct');
+        Route::post('import-products', [ExportImportController::class, 'importProducts'])->name('importProducts');
+        
+        Route::get('import-post', [ExportImportController::class, 'importPost'])->name('importPost');
+        Route::post('import-posts', [ExportImportController::class, 'importPosts'])->name('importPosts');
+
+
+    });
 });
 
 

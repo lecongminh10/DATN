@@ -234,15 +234,16 @@
                             <td>
                                 <figure class="product-image-container">
                                     <a href="{{ route('client.showProduct', $value->product->id) }}" class="product-image">
-                                        {{-- @php
-                                            if ($value->productVariant && !empty($value->productVariant->variant_image)) {
-                                                $url = $value->productVariant->variant_image; 
-                                            } else {
-                                                $mainImage = $value->product->getMainImage(); 
-                                                $url = $mainImage ? $mainImage->image_gallery : 'default-image-path.jpg';
-                                            }
-                                        @endphp --}}
-                                        <img src="{{Storage::url($value->product->getMainImage()->image_gallery)}}" alt="{{ $value->product->getMainImage()->image_gallery }}" />
+                                        @php
+                                        if ($value->productVariant && !empty($value->productVariant->variant_image)) {
+                                            $url = $value->productVariant->variant_image; 
+                                        } else {
+                                            $mainImage = $value->product->getMainImage(); 
+                                            $url = $mainImage && !empty($mainImage->image_gallery) ? $mainImage->image_gallery : 'default-image-path.jpg';
+                                        }
+                                        @endphp
+                                        <img src="{{ $url ? Storage::url($url) : asset('default-image-path.jpg') }}" 
+                                            alt="{{ $value->product->name ?? 'No image available' }}" />
                                     </a>
 
                                     <a href="javascript:void(0);" class="btn-remove icon-cancel" 

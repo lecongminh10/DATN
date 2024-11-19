@@ -339,6 +339,12 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.export-import.view-export-import') }}" class="nav-link"  role="button"
+                        aria-expanded="false" aria-controls="sidebar-message" data-key="t-product">
+                        <i class="ri-rocket-line"></i><span>Xuất và Nhập</span>
+                    </a>
+                </li>
                 <div>
             </ul>
             
