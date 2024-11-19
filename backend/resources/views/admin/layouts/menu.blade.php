@@ -253,6 +253,7 @@
                                 <div class="collapse menu-dropdown" id="sidebarTag">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
+                                            <a href="{{ route('admin.tags.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
                                             <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link"
                                                 data-key="t-product-list">Danh sách</a>
                                         </li>
@@ -270,6 +271,22 @@
                                         <li class="nav-item">
                                             <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link"
                                                 data-key="t-product-list">Footer</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#sidebarPage" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarPage" data-key="t-product">
+                                    Trang
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarPage">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.pages.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.pages.create') }}" class="nav-link" data-key="t-product-list">Thêm mới</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -401,7 +418,7 @@
                     <div class="collapse menu-dropdown" id="sidebar-sale-seo">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link">
+                                <a href="{{route('admin.seo.index')}}" class="nav-link" >
                                     SEO
                                 </a>
                             </li>

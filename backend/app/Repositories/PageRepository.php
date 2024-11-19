@@ -2,19 +2,19 @@
 
 namespace App\Repositories;
 
-use App\Models\Tag;
+use App\Models\Page;
 
-class  TagRepository extends BaseRepository
+class  PageRepository extends BaseRepository
 {
-    protected $tagRepository;
+    protected $pageRepository;
 
-    public function __construct(Tag $tagRepository) {
-        parent::__construct($tagRepository);
-        $this->tagRepository = $tagRepository;
+    public function __construct(Page $pageRepository) {
+        parent::__construct($pageRepository);
+        $this->pageRepository = $pageRepository;
     }
     public function getAll($search = null, $perPage = null)
     {
-        $query = Tag::query()->latest('id');
+        $query = Page::query()->latest('id');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -23,13 +23,9 @@ class  TagRepository extends BaseRepository
         }
         return $query->paginate($perPage);
     }
-    public function getIdandNameAll() {
-        $data = Tag::query()->pluck('name', 'id')->all();
-        return $data;
-    }
     public function show_soft_delete($search = null, $perPage = 10) // $perPage mặc định là 10
     {
-        $query = Tag::onlyTrashed()->latest('id');
+        $query = Page::onlyTrashed()->latest('id');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -42,7 +38,7 @@ class  TagRepository extends BaseRepository
     }
     public function restore_delete($id)
     {
-        $model = Tag::onlyTrashed()->findOrFail($id);
+        $model = Page::onlyTrashed()->findOrFail($id);
         $model->restore();
     }
 }

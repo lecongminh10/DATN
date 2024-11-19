@@ -1,3 +1,9 @@
+@php
+use App\Models\Seo;
+
+    $seo = SEO::getSeoByCurrentUrl();
+
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,9 +16,10 @@
 
     <title>@yield('title')</title>
 
-    <meta name="keywords" content="HTML5 Template" />
-    <meta name="description" content="Porto - Bootstrap eCommerce Template">
-    <meta name="author" content="SW-THEMES">
+    <meta name="title" content="@yield('meta_title') , {{$seo->meta_title  ?? ''}}">
+    <meta name="description" content="@yield('meta_description') , {{$seo->meta_description  ?? ''}}">
+    <meta name="keywords" content="@yield('keywords') , {{ $seo->meta_keywords ?? '' }}">
+
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{asset('themeclient/assets/images/icons/favicon.png')}}">
@@ -62,7 +69,7 @@
 
         {{-- @vite('resources/js/coupon.js') --}}
 
-       
+
 
 
     </div>
@@ -246,12 +253,13 @@
     <script src="{{asset('themeclient/assets/js/jquery.countdown.min.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
+
     {{-- Điều hướng đến các đường dẫn bên ở file js --}}
     <script>
         var routes = {
             shoppingCart: "{{ route('shopping-cart') }}",
             checkout: "{{ route('checkout') }}"
-        }; 
+        };
     </script>
 
     <script>
@@ -313,7 +321,7 @@
     });
 
     </script>
-    
+
     <!-- Main JS File -->
     <script src="{{asset('themeclient/assets/js/main.min.js')}}"></script>
     @yield('script_libray')

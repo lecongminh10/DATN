@@ -1,13 +1,16 @@
+@section('meta_title', $meta_title)
+@section('meta_description', $meta_description)
+@section('keywords',$meta_keywords)
 @extends('client.layouts.app')
 @section('style_css')
     <style>
         /* .icon-wishlist-2 {
-                        color: #ccc;
-                    }
+                  color: #ccc;
+           }
 
-                    .icon-wishlist-filled {
-                        color: red;
-                    } */
+           .icon-wishlist-filled {
+                   color: red;
+          } */
 
         /* .wishlist-modal {
                     position: fixed;
@@ -529,10 +532,7 @@
                         <!---->
 
                         <div class="product-action">
-
-
                             <div class="price-box product-filtered-price" style="display: flex;">
-
                             </div>
 
                             <div class="product-single-qty">
@@ -1600,6 +1600,51 @@
                     _0xj.innerHTML = js;
                     _0xi.getElementsByTagName('head')[0].appendChild(_0xj);
                 }
+            };
+        }
+    })();
+</script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Lắng nghe sự kiện thay đổi trên các input để thực hiện thêm các hành động
+    const attributeInputs = document.querySelectorAll('.attribute-input');
+
+    attributeInputs.forEach(input => {
+        input.addEventListener('change', function () {
+            // Có thể thực hiện các hành động khi một thuộc tính được chọn, ví dụ:
+            console.log(`Selected ${this.name}: ${this.value}`);
+        });
+    });
+});
+
+// Đổi giá variant
+
+// Biến để lưu trữ giá của từng biến thể
+const variants = @json($variants);
+
+document.addEventListener('DOMContentLoaded', function () {
+    const priceBox = document.querySelector('.product-filtered-price');
+    let selectedAttributes = {};
+
+    document.querySelectorAll('.attribute-link').forEach(link => {
+        link.addEventListener('click', function () {
+            const filterContainer = this.closest('.product-single-filter');
+            const attributeName = this.dataset.attributeName;
+            const attributeValue = this.dataset.attributeValue;
+
+            // Kiểm tra nếu thuộc tính hiện tại đã được chọn
+            const isAlreadyActive = this.classList.contains('active');
+
+            // Bỏ chọn các lựa chọn khác trong cùng một nhóm thuộc tính
+            filterContainer.querySelectorAll('.attribute-link').forEach(otherLink => {
+                otherLink.classList.remove('active');
+            });
+
+            if (isAlreadyActive) {
+                // Nếu đã chọn, bỏ chọn và xóa khỏi selectedAttributes
+                delete selectedAttributes[attributeName];
             }
             if (document.readyState !== 'loading') {
                 handler();
