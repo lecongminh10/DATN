@@ -6,7 +6,7 @@
             <ul class="menu menu-vertical sf-arrows">
                 <li class="active"><a href="/"><i class="icon-home"></i>Home</a></li>
                 <li>
-                    <a href="#" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
+                    <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
                     <div class="megamenu megamenu-fixed-width megamenu-3cols">
                         <div class="row">
                             @foreach ($categories as $parent)
@@ -15,7 +15,7 @@
                                     @if($parent->children->isNotEmpty())
                                         <ul class="submenu">
                                             @foreach ($parent->children as $child)
-                                                <li><a href="#">{{ $child->name }}</a></li>
+                                                <li><a href="{{ route('client.products.Category',$child->id) }}">{{ $child->name }}</a></li>
                                             @endforeach
                                         </ul>
                                     @endif

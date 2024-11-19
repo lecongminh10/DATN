@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -23,8 +24,13 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\FooterController;
+use App\Http\Controllers\InfoBoxController;
+use App\Http\Controllers\PopuphomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExportImportController;
 use App\Http\Controllers\ChatController;
+
 
 Route::group([
     'prefix' => 'admin',
@@ -244,6 +250,63 @@ Route::group([
             Route::get('/', [StatsController::class, 'index'])->name('index');
         }
     );
+    // profile
+    Route::group(
+        [
+            'prefix' => 'profile',
+            'as' => 'profile.'
+        ],
+        function () {
+            Route::get('/', [ProfileController::class, 'index'])->name('index');
+            Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('edit');
+            Route::post('/profile/update', [ProfileController::class, 'update'])->name('update');
+            Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
+        }
+    );
+    //footer
+    Route::group(
+        [
+            'prefix' => 'footer',
+            'as' => 'footer.'
+        ],
+        function () {
+            Route::get('footer/edit', [FooterController::class, 'edit'])->name('edit');
+            Route::post('footer/update', [FooterController::class, 'update'])->name('update');
+        }
+    );
+    //thongbao(announcement)
+    Route::group(
+        [
+            'prefix' => 'announcement',
+            'as' => 'announcement.'
+        ],
+        function () {
+            Route::get('/announcement/edit', [AnnouncementController::class, 'edit'])->name('edit');
+            Route::post('/announcement/update', [AnnouncementController::class, 'update'])->name('update');
+        }
+    );
+    //////info_boxes
+    Route::group(
+        [
+            'prefix' => 'info-boxes',
+            'as' => 'info_boxes.',   
+        ],
+        function () {
+            Route::get('info_boxes/edit', [InfoBoxController::class, 'edit'])->name('edit');
+            Route::post('info_boxes/update', [InfoBoxController::class, 'update'])->name('update');
+        }
+    );
+    //////popuphome
+    Route::group(
+        [
+            'prefix' => 'popuphome',
+            'as' => 'popuphome.',   
+        ],
+        function () {
+            Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
+            Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
+        }
+    );
 
     // Export Import
     Route::group([
@@ -275,7 +338,6 @@ Route::group([
 
     });
 });
-
 
 
 Route::prefix('auth')->group(function () {
@@ -319,6 +381,7 @@ Route::prefix('/')->group(function () {
     Route::get('/product/{id}',                             [ClientProductController::class, 'showProduct'])->name('client.showProduct');
     Route::get('/products/category/{id}',                   [HomeController::class, 'getByCategory'])->name('client.products.Category');
     Route::get('/products/filter-by-price',                 [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
+    Route::get('/search',                                   [ClientProductController::class, 'search'])->name('search');
 
     //Oder
     Route::get('wishlist',                                  [OrderController::class, 'wishList'])->name('wishList');
@@ -366,4 +429,3 @@ Route::prefix('/')->group(function () {
         return response()->json(['success' => true]); 
     });
 });
-
