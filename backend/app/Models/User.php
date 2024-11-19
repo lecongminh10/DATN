@@ -126,6 +126,7 @@ class User extends Authenticatable
         } else {
             return 'Platinum'; 
         }
+    }
     public function scopeClients($query)
     {
         return $query->whereHas('permissionsValues', function ($q) {

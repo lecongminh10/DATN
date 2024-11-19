@@ -3,7 +3,6 @@
 use App\Http\Controllers\AnnouncementController;
 use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\CouponController;
@@ -11,17 +10,13 @@ use App\Http\Controllers\CarrierController;
 use App\Http\Controllers\PayMentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Client\PostController;
@@ -31,7 +26,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
-use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SeoController;
@@ -46,10 +40,10 @@ use App\Http\Controllers\ChatController;
 
 
 Route::group([
-    'prefix' => 'admin',
-    'as' => 'admin.',
-    'middleware' => ['auth', 'isAdmin']
-], function () {
+        'prefix' => 'admin',
+        'as' => 'admin.',
+        'middleware' => ['auth', 'isAdmin']
+    ], function () {
     Route::get('dashboard', function () {
         return view('admin/dashboard');
     })->name('dashboard');
@@ -439,35 +433,8 @@ Route::group([
 
 
     });
-});
 
 
-Route::prefix('auth')->group(function () {
-    Route::get('admin/login', [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
-    Route::get('login', [LoginController::class, 'showFormLogin'])->name('client.login');
-    Route::post('login', [LoginController::class, 'login'])->name('auth.login');
-    Route::get('logout', [LoginController::class, 'logout'])->name('auth.logout');
-    Route::get('register', [RegisterController::class, 'showFormRegister'])->name('show.register');
-    Route::post('register', [RegisterController::class, 'register'])->name('register');
-
-    // Route::get('password/confirm',                     [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.showconfirm');
-    // Route::post('password/confirm',                    [ConfirmPasswordController::class, 'confirm'])->name('password.confirm');
-    Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
-    Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-
-    Route::get('google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
-    Route::get('google/callback', [SocialiteController::class, 'handleGoogleCallback']);
-
-    Route::get('facebook', [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
-    Route::get('facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
-    Route::get('github', [SocialiteController::class, 'redirectToGitHub'])->name('auth.github');
-    Route::get('github/callback', [SocialiteController::class, 'handleGitHubCallback']);
-
-    Route::get('twitter', [SocialiteController::class, 'redirectToTwitter'])->name('auth.twitter');
-    Route::get('twitter/callback', [SocialiteController::class, 'handleTwitterCallback']);
-});
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
     //profile
@@ -535,6 +502,6 @@ Route::prefix('/')->group(function () {
         session()->forget('coupons'); // Clear the coupons session
         return response()->json(['success' => true]); 
     });
+    Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
 });
-Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
 // Route::post('/reviews', [UserReviewController::class, 'store'])->name('reviews.store');
