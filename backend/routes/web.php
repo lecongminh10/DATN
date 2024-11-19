@@ -329,7 +329,7 @@ Route::group([
     Route::group(
         [
             'prefix' => 'info-boxes',
-            'as' => 'info_boxes.',   
+            'as' => 'info_boxes.',
         ],
         function () {
             Route::get('info_boxes/edit', [InfoBoxController::class, 'edit'])->name('edit');
@@ -340,7 +340,7 @@ Route::group([
     Route::group(
         [
             'prefix' => 'popuphome',
-            'as' => 'popuphome.',   
+            'as' => 'popuphome.',
         ],
         function () {
             Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
@@ -350,8 +350,8 @@ Route::group([
     //////comment
     Route::group(
         [
-            'prefix' => 'comment', 
-            'as' => 'comment.', 
+            'prefix' => 'comment',
+            'as' => 'comment.',
         ],
         function () {
             Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
@@ -484,3 +484,5 @@ Route::prefix('/')->group(function () {
         return response()->json(['success' => true]); 
     });
 });
+Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
+// Route::post('/reviews', [UserReviewController::class, 'store'])->name('reviews.store');
