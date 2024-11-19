@@ -3,13 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\PaymentGateways;
+use App\Models\PaymentGateway;
 
 class PaymentGatewaysSeeder extends Seeder
 {
     public function run()
     {
-        PaymentGateways::create([
+        PaymentGateway::create([
             'name' => 'VNPay',
             'api_key' =>  env('VNP_TMN_CODE'), 
             'secret_key' =>  env('VNP_HASH_SECRET'), 
@@ -17,7 +17,7 @@ class PaymentGatewaysSeeder extends Seeder
             'deleted_by' => null, 
         ]);
 
-        PaymentGateways::create([
+        PaymentGateway::create([
             'name' => 'Cash',
             'api_key' => 'cash',
             'secret_key' => 'cash', 

@@ -76,6 +76,12 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isClient()
+    {
+        return $this->permissionsValues()
+            ->whereIn('value', [self::TYPE_CLIENT])
+            ->exists();
+    }
     //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
     protected static function boot()
     {
@@ -120,6 +126,11 @@ class User extends Authenticatable
         } else {
             return 'Platinum'; 
         }
+    public function scopeClients($query)
+    {
+        return $query->whereHas('permissionsValues', function ($q) {
+            $q->where('value', self::TYPE_CLIENT);
+        });
     }
 
 }
