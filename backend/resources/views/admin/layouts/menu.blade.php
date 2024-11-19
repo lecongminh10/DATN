@@ -175,6 +175,22 @@
                                 </div>
                             </li>
                             <li class="nav-item">
+                                <a href="#sidebarBlog" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarBlog" data-key="t-product">
+                                    Bài viết
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarBlog">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.blogs.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.blogs.create') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
                                 <a href="#sidebarAccount" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarAccount" data-key="t-product">
                                     Tài khoản

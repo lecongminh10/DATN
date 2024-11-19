@@ -107,7 +107,7 @@
                         <li><a href="forgot-password.html">Forgot Password</a></li>
                     </ul>
                 </li>
-                <li><a href="blog.html"><i class="sicon-book-open"></i>Blog</a></li>
+                <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Blog</a></li>
                 <li><a href="demo1-about.html"><i class="sicon-users"></i>About Us</a></li>
                 <li><a href="#"><i class="icon-cat-gift"></i>Special Offer!</a></li>
                 <li><a href="https://1.envato.market/DdLk5" target="_blank"><i
