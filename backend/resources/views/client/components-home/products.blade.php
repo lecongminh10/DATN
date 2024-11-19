@@ -11,17 +11,17 @@
             <figure class="img-effect">
                 <a href="{{route('client.showProduct',$item->id)}}">
                     @php
-                    $mainImage = $item->galleries->where('is_main', true)->first();
-                    $otherImages = $item->galleries->where('is_main', false)->take(1);
-                @endphp
+                        $mainImage = $item->galleries->where('is_main', true)->first();
+                        $otherImages = $item->galleries->where('is_main', false)->take(1);
+                    @endphp
                 
-                @if ($mainImage)
-                    <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
-                @endif
-                
-                @foreach ($otherImages as $value)
-                    <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
-                @endforeach
+                    @if ($mainImage)
+                        <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
+                    @endif
+                    
+                    @foreach ($otherImages as $value)
+                        <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
+                    @endforeach
                     </a>
                 <div class="label-group">
                     @if ($item->is_hot_deal == 1)

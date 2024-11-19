@@ -20,4 +20,10 @@ class Tag extends Model
     {
         return $this->belongsToMany(Product::class, 'product_tags', 'tag_id', 'product_id');
     }
+    
+    // Quan hệ với Post qua bảng trung gian post_tags
+    public function posts()
+    {
+        return $this->belongsToMany(Post::class, 'post_tags', 'tag_id', 'post_id');
+    }
 }

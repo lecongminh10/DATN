@@ -34,7 +34,7 @@ class UpdateProductRequest extends FormRequest
             'warranty_period'    => 'nullable|integer|min:0',
             'content'            => 'required|string',
             'short_description'   =>'nullable',
-            'meta_title'          =>'nullable',
+            'meta_title'          =>'nullable|max:255',
             'meta_description'    =>'nullable',
             'is_active'          => 'boolean',
             'is_hot_deal'        => 'boolean',
@@ -42,7 +42,11 @@ class UpdateProductRequest extends FormRequest
             'is_new'             => 'boolean',
             'is_good_deal'       => 'boolean',
             'coupon'             => 'nullable|array', 
-            'addcoupon'          => 'nullable|array'
+            'addcoupon'          => 'nullable|array',
+            'height'             => 'nullable|integer|min:0|max:10000',
+            'length'             => 'nullable|integer|min:0|max:10000',
+            'weight'             => 'nullable|integer|min:0|max:10000',
+            'width'              => 'nullable|integer|min:0|max:10000',
         ];
     }
 
@@ -66,6 +70,7 @@ class UpdateProductRequest extends FormRequest
             'price_regular.numeric' => 'Giá gốc phải là một số.',
             'content.required' => 'Mô tả chi tiết sản phẩm là bắt buộc.',
             'content.string' => 'Mô tả chi tiết sản phẩm phải là một chuỗi văn bản.',
+            'meta_title.max'  =>'Mô tả quá dài '
         ];
     }
 }

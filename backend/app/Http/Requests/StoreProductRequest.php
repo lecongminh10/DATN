@@ -23,7 +23,7 @@ class StoreProductRequest extends FormRequest
             'warranty_period'    => 'nullable|integer|min:0',
             'content'            => 'required|string',
             'short_description'  => 'nullable|string',
-            'meta_title'         => 'nullable|string',
+            'meta_title'         => 'nullable|string|max:255',
             'meta_description'   => 'nullable|string',
             'is_active'          => 'boolean',
             'is_hot_deal'        => 'boolean',
@@ -31,7 +31,12 @@ class StoreProductRequest extends FormRequest
             'is_new'             => 'boolean',
             'is_good_deal'       => 'boolean',
             'coupon'             => 'nullable|array', 
-            'addcoupon'          => 'nullable|array'
+            'addcoupon'          => 'nullable|array',
+            'height'             => 'nullable|integer|min:0|max:10000',
+            'length'             => 'nullable|integer|min:0|max:10000',
+            'weight'             => 'nullable|integer|min:0|max:10000',
+            'width'              => 'nullable|integer|min:0|max:10000',
+
         ];
 
         return $rules;
@@ -55,6 +60,7 @@ class StoreProductRequest extends FormRequest
             'stock.min'=>'Số lượng phải là một số nguyên',
             'price_regular.required'=>'Nhập giá gốc',
             'content.required' => 'Mô tả chi tiết sản phẩm là bắt buộc.',
+            'meta_title.max' =>'Mô tả quá dài '
         ];
     }
 }
