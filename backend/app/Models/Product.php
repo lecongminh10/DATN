@@ -99,10 +99,15 @@ class Product extends Model
         });
     }
     public function seos()
-{
-    return $this->belongsToMany(SEO::class, 'seo_product')->withTimestamps()->withTrashed();
-}
+    {
+        return $this->belongsToMany(SEO::class, 'seo_product')->withTimestamps()->withTrashed();
+    }
 
+
+    public function productDimension()
+    {
+        return $this->hasOne(ProductDimension::class, 'product_id');  // Sử dụng hasOne vì mỗi sản phẩm chỉ có một bảng kích thước
+    }
 
 }
 

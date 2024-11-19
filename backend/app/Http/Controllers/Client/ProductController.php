@@ -65,8 +65,10 @@ class ProductController extends Controller
         }
         $userId = auth()->id();
         $carts  = collect();
-        if ($userId) {
-            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        if($userId) {
+            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $userId)
+            ->get();
         }
         $cartCount = $carts->sum('quantity');
         // dd($meta_title);
@@ -85,4 +87,16 @@ class ProductController extends Controller
             'meta_keywords'    => $meta_keywords,
         ]);
     }
+    public function search(Request $request)
+{
+    // Lấy từ khóa tìm kiếm và danh mục (nếu có)
+    $query = $request->input('q');
+    $categoryId = $request->input('cat');
+
+    // Tìm kiếm sản phẩm
+    $products = $this->productService->searchProducts($query, $categoryId);
+
+
+    return view('client.products.search-results', compact('products'));
+}
 }

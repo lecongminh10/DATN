@@ -24,6 +24,7 @@ use App\Models\Seo;
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{asset('themeclient/assets/images/icons/favicon.png')}}">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <script>
         WebFontConfig = {
@@ -250,6 +251,8 @@ use App\Models\Seo;
     <script src="{{asset('themeclient/assets/js/jquery.appear.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.plugin.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.countdown.min.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 
     {{-- Điều hướng đến các đường dẫn bên ở file js --}}
     <script>
@@ -275,31 +278,48 @@ use App\Models\Seo;
             if (response.ok) {
                 // Xóa sản phẩm ra khỏi DOM
                 const productElement = element.closest('.product'); // Tìm phần tử sản phẩm tương ứng
-                const productPriceElement = productElement.querySelector('.cart-product-info'); // Lấy thông tin giá sản phẩm
-                const quantityElement = productElement.querySelector('.cart-product-qty'); // Lấy thông tin số lượng
 
-                // Tính lại subtotal
-                const priceString = productPriceElement.textContent.split('×')[1].trim(); // Lấy giá từ thông tin
-                const price = parseInt(priceString.replace(/\./g, '').replace('₫', '').trim(), 10); // Chuyển đổi giá thành số nguyên
-                const quantity = parseInt(quantityElement.textContent, 10); // Lấy số lượng
-                const subtotal = price * quantity; // Tính subtotal cho sản phẩm
+                // Tính toán subtotal
+                const cartProductInfo = productElement.querySelector('.cart-product-info'); // Thông tin giá và số lượng
+                const [quantityText, priceText] = cartProductInfo.textContent.split('×').map(item => item.trim());
+                
+                const quantity = parseInt(quantityText.replace(/\D/g, ''), 10); // Lấy số lượng từ text
+                const price = parseInt(priceText.replace(/\./g, '').replace('₫', ''), 10); // Lấy giá từ text
+                const subtotalForProduct = quantity * price; // Tính subtotal cho sản phẩm
 
-                // Cập nhật subtotal
+                // Cập nhật subtotal tổng
                 const subtotalElement = document.querySelector('.cart-total-price');
-                const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫', '').trim(), 10); // Lấy subtotal hiện tại
-                const newSubtotal = currentSubtotal - subtotal; // Cập nhật subtotal mới
-                subtotalElement.textContent = `${newSubtotal.toLocaleString('vi-VN')}₫`; // Cập nhật giá trên giao diện
+                const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫', ''), 10);
+                const newSubtotal = currentSubtotal - subtotalForProduct;
 
-                // Xóa sản phẩm khỏi DOM
-                productElement.remove();
+                // Cập nhật DOM
+                subtotalElement.textContent = `${newSubtotal.toLocaleString('vi-VN')}₫`; // Hiển thị subtotal mới
+                productElement.remove(); // Xóa sản phẩm khỏi giao diện
             } else {
-                console.log('Có lỗi xảy ra khi xóa sản phẩm');
+                console.error('Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng.');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Lỗi kết nối hoặc xử lý:', error);
         });
     }
+    window.addEventListener('beforeunload', function () {
+    // Send a GET request to the '/clear-coupons' route to clear the session
+        fetch('/clear-coupons', {
+            method: 'GET', // Set the request method to GET
+            headers: {
+                'Content-Type': 'application/json', // Set the content type to JSON
+            },
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            console.log('Coupons session cleared:', data); // Log success
+        })
+        .catch(error => {
+            console.error('Error:', error); // Log any error
+        });
+    });
+
     </script>
 
     <!-- Main JS File -->

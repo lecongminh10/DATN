@@ -15,6 +15,7 @@ use App\Services\TagService;
 use App\Services\AttributeService;
 use App\Services\AttributeValueService;
 use App\Models\Attribute;
+use App\Models\ProductDimension;
 use App\Services\CouponService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
@@ -107,19 +108,27 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $dataProduct = $request->validated();
-        unset($dataProduct['product_variants'], $dataProduct['product_galaries'] , $dataProduct['coupon'] , $dataProduct['addcoupon']);
+        unset($dataProduct['product_variants'], $dataProduct['product_galaries'] , $dataProduct['coupon'] , $dataProduct['addcoupon'], $dataProduct['height'], $dataProduct['length'], $dataProduct['width'], $dataProduct['weight']);
 
         $dataProduct['is_active'] ??= 0;
         $dataProduct['is_hot_deal'] ??= 0;
         $dataProduct['is_show_home'] ??= 0;
         $dataProduct['is_new'] ??= 0;
         $dataProduct['is_good_deal'] ??= 0;
+        
 
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         }
         $product = $this->productService->saveOrUpdate($dataProduct);
 
+        ProductDimension::create([
+            'product_id' =>  $product->id,
+            'height' => $request->height,
+            'length' =>  $request->length,
+            'weight' =>  $request->weight,
+            'width' =>  $request->width
+        ]);
         if ($request->has('product_variants')) {
             foreach ($request->product_variants as $item) {
                 $dataProductVariants = [
@@ -128,7 +137,7 @@ class ProductController extends Controller
                     'original_price' =>$item['original_price'],
                     'stock' => $item['stock'] ?? 0,
                     'status' => $item['status'] ?? '',
-                    'sku' => substr(bin2hex(random_bytes(5)), 0, 10)
+                    'sku' => $item['sku'] ??  strtoupper(Str::random(8))
                 ];
                 if (isset($item['variant_image']) && $item['variant_image'] instanceof UploadedFile) {
                     $extension = $item['variant_image']->getClientOriginalExtension();
@@ -223,9 +232,10 @@ class ProductController extends Controller
         }
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $selectedTags = $product->tags->pluck('id')->toArray();
+        $productDemension = ProductDimension::where('product_id' ,$id)->first();
         $variants = $this->productVariantService->getProductVariant($id);
         session()->forget('product_attributes');
-        return view('admin.products.update-product', compact('product','categories','selectedTags','variants'));
+        return view('admin.products.update-product', compact('product','categories','selectedTags','variants','productDemension'));
     }
     
 
@@ -241,7 +251,7 @@ class ProductController extends Controller
             ], 404);
         }
 
-        $dataProduct = $request->except(['product_variants', 'product_galaries']);
+        $dataProduct = $request->except(['product_variants', 'product_galaries','height','length','weight','width']);
 
         $dataProduct['is_active'] ??= 0;
         $dataProduct['is_hot_deal'] ??= 0;
@@ -252,7 +262,12 @@ class ProductController extends Controller
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         }
-
+        ProductDimension::where('product_id', $id)->update([
+            'height' => $request->height ?? null, 
+            'length' => $request->length ?? null,
+            'weight' => $request->weight ?? null,
+            'width'  => $request->width  ?? null,
+        ]);
         $product = $this->productService->saveOrUpdate($dataProduct, $product->id);
         if ($request->has('product_variants')) {
             $currentVariants = $this->productVariantService->getVariantByProduct($id); 
