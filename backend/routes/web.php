@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -27,6 +28,9 @@ use App\Http\Controllers\FooterController;
 use App\Http\Controllers\InfoBoxController;
 use App\Http\Controllers\PopuphomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ExportImportController;
+use App\Http\Controllers\ChatController;
+
 
 Route::group([
     'prefix' => 'admin',
@@ -303,6 +307,36 @@ Route::group([
             Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
         }
     );
+
+    // Export Import
+    Route::group([
+        'prefix' => 'export-import',
+        'as' => 'export-import.'
+    ], function() {
+        Route::get('/', [ExportImportController::class, 'exportAndImport'])->name('view-export-import');
+        // export
+        Route::get('export-category', [ExportImportController::class, 'exportCategory'])->name('exportCategory');
+        Route::post('export-categories', [ExportImportController::class, 'exportCategories'])->name('exportCategories');
+        
+        Route::get('export-product', [ExportImportController::class, 'exportProduct'])->name('exportProduct');
+        Route::post('export-products', [ExportImportController::class, 'exportProducts'])->name('exportProducts');
+        
+        Route::get('export-post', [ExportImportController::class, 'exportPost'])->name('exportPost');
+        Route::post('export-posts', [ExportImportController::class, 'exportPosts'])->name('exportPosts');
+
+
+        // import
+        Route::get('import-category', [ExportImportController::class, 'importCategory'])->name('importCategory');
+        Route::post('import-categories', [ExportImportController::class, 'importCategories'])->name('importCategories');
+
+        Route::get('import-product', [ExportImportController::class, 'importProduct'])->name('importProduct');
+        Route::post('import-products', [ExportImportController::class, 'importProducts'])->name('importProducts');
+        
+        Route::get('import-post', [ExportImportController::class, 'importPost'])->name('importPost');
+        Route::post('import-posts', [ExportImportController::class, 'importPosts'])->name('importPosts');
+
+
+    });
 });
 
 
@@ -332,7 +366,6 @@ Route::prefix('auth')->group(function () {
     Route::get('twitter',                                 [SocialiteController::class, 'redirectToTwitter'])->name('auth.twitter');
     Route::get('twitter/callback',                        [SocialiteController::class, 'handleTwitterCallback']);
 });
-
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
     //profile
@@ -357,7 +390,7 @@ Route::prefix('/')->group(function () {
 
     Route::post('add-cart',                                 [OrderController::class, 'addToCart'])->name('addCart');
     Route::get('shopping-cart',                             [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
-    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout');
+    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout')->middleware('check-cart');
     Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
     Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
     Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
@@ -373,4 +406,26 @@ Route::prefix('/')->group(function () {
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 
+    //Chat
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
+
+    // Route để gửi tin nhắn
+    Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
+
+// Route kiểm tra mã giảm giá
+    Route::post('/check-coupon', [OrderController::class, 'checkCoupon'])->name('check.coupon');
+    // Route áp dụng mã giảm giá vào đơn hàng
+    Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply.coupon');
+
+        // routes/web.php
+    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+
+    Route::get('/clear-coupons', function() {
+        $currentUrl = url()->current();
+        if($currentUrl=="http://localhost:8000/checkout"){
+            return response()->json(['success' => false]);
+        }
+        session()->forget('coupons'); // Clear the coupons session
+        return response()->json(['success' => true]); 
+    });
 });
