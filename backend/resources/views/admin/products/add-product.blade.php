@@ -322,7 +322,7 @@
                                         <div class="live-preview">
                                             <div class="row gy-4">
                                                 <div class="col-md-12">
-                                                    <label for="name" class="form-label">Tên </label>
+                                                    <label for="name" class="form-label">Tên <span class="text-danger">*</span></label> </label>
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
                                                         name="name" id="name" value="{{ old('name') }}">
@@ -334,20 +334,20 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Mô tả ngắn</label>
+                                                    <label for="description" class="form-label">Mô tả ngắn </label>
                                                     <textarea class="form-control" value="{{old('short_description')}}" name="short_description" id="short_description"></textarea>
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="meta_title" class="form-label">SEO tiêu đề</label>
+                                                    <label for="meta_title" class="form-label">SEO tiêu đề   </label>
                                                     <textarea class="form-control" name="meta_title" id="meta_title" value="{{old('meta_title')}}"></textarea>
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="meta_description" class="form-label">SEO mô tả</label>
+                                                    <label for="meta_description" class="form-label">SEO mô tả  </label>
                                                     <textarea class="form-control" name="meta_description" id="meta_description" value="{{old('meta_description')}}"></textarea>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="mt-3">
-                                                        <label for="code" class="form-label">Mã</label>
+                                                        <label for="code" class="form-label">Mã <span class="text-danger">*</span></label></label>
                                                         <input type="text"
                                                             class="form-control @error('code') is-invalid @enderror"
                                                             name="code" id="code"
@@ -359,7 +359,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="stock" class="form-label">Số lượng tồn kho</label>
+                                                        <label for="stock" class="form-label">Số lượng tồn kho <span class="text-danger">*</span></label></label>
                                                         <input type="number"
                                                             class="form-control @error('stock') is-invalid @enderror" value="{{old('stock')}}"
                                                             name="stock" id="stock" onchange="getPrices()">
@@ -370,7 +370,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_regular" class="form-label">Giá gốc</label>
+                                                        <label for="price_regular" class="form-label">Giá gốc <span class="text-danger">*</span></label></label>
                                                         <input type="number"
                                                             class="form-control @error('price_regular') is-invalid @enderror" value="{{old('price_regular')}}"
                                                             name="price_regular" id="price_regular" onchange="getPrices()">
@@ -381,7 +381,7 @@
                                                         @enderror
                                                     </div>
                                                     <div class="mt-3">
-                                                        <label for="price_sale" class="form-label">Giá khuyến mãi</label>
+                                                        <label for="price_sale" class="form-label">Giá khuyến mãi </label>
                                                         <input type="number"
                                                             class="form-control @error('price_sale') is-invalid @enderror" value="{{old('price_sale')}}"
                                                             name="price_sale" id="price_sale" onchange="getPrices()">
@@ -393,7 +393,7 @@
                                                     </div>
                                                     <div class="mt-3">
                                                         <label for="product_tags"
-                                                            class="form-label text-muted">Thẻ</label>
+                                                            class="form-label ">Thẻ  </label>
                                                         <select class="form-control" name="product_tags[]"
                                                             id="choices-multiple-remove-button"
                                                             placeholder="This is a placeholder" multiple>
@@ -404,6 +404,21 @@
                                                         </label>
                                                         <input type="number" class="form-control" name="warranty_period" value="{{old('warranty_period')}}"
                                                             id="warranty_period">
+                                                    </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="height" id="height"  value="{{old('height')}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="length" id="length"  value="{{old('length')}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="width" id="width"  value="{{old('width')}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="weight" id="weight"  value="{{old('weight')}}" placeholder="Cân nặng (gr)">
+                                                            </div>
                                                     </div>
                                                     <div class="row">
                                                         @php
@@ -416,7 +431,7 @@
                                                             ];
                                                         @endphp
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Trạng thái</h4>
+                                                            <label for="price_sale" class="form-label">Trạng thái </label>
                                                         </div>
                                                         <div class="card">
                                                             <div class="card-body">
@@ -444,7 +459,7 @@
                                                 <div class="col-md-4">
                                                     <div class="card">
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục</h4>
+                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục <span class="text-danger">*</span></label></h4>
                                                             @error('category_id')
                                                                 <div>
                                                                     <div class="invalid-feedback">
@@ -454,7 +469,8 @@
                                                             @enderror
                                                         </div>
                                                         <div class="card-body">
-                                                            <div class="list-group col nested-list nested-sortable"
+                                                            <div data-simplebar style="max-height: 525px;">
+                                                                <div class="list-group col nested-list nested-sortable"
                                                                 id="nested-sortable">
                                                                 @foreach ($categories as $category)
                                                                     @include(
@@ -462,6 +478,7 @@
                                                                         ['category' => $category]
                                                                     )
                                                                 @endforeach
+                                                            </div>
                                                             </div>
                                                         </div><!-- end card-body -->
                                                     </div><!-- end card -->
@@ -478,7 +495,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Content <span class="text-danger">*</span></label></h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
@@ -516,16 +533,16 @@
                                                         aria-controls="v-pills-profile" aria-selected="false">
                                                         Các biến thể
                                                     </a>
-                                                    <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
+                                                    {{-- <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
                                                         href="#v-pills-coupons" role="tab"
                                                         aria-controls="v-pills-coupons" aria-selected="false">
                                                         Khuyến mãi
-                                                    </a>
+                                                    </a> --}}
                                                 </div>
                                             </div>
                                             <div class="col-md-10">
                                                 <div class="tab-content text-muted mt-4 mt-md-0" id="v-pills-tabContent">
-
+                                                    {{---------}}
                                                     <div class="tab-pane fade show active" id="v-pills-home"
                                                         role="tabpanel" aria-labelledby="attribute_value">
                                                         <div id="saveAttributes" class="btn btn-primary  float-start">Lưu
@@ -552,6 +569,7 @@
                                                             <table class="table table-bordered" id="attributeTable">
                                                                 <thead>
                                                                     <tr>
+                                                                        <th>Mã </th>
                                                                         <th>Giá trị</th>
                                                                         <th>Giá Gốc</th>
                                                                         <th>Giá Mới</th>
@@ -596,6 +614,13 @@
                                                                                         value="{{ $attributeValueString }}"
                                                                                         class="product_variants">
                                                                                     {!! $attributeString !!}
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input type="text"
+                                                                                        name="product_variants[{{ $i }}][sku]"
+                                                                                        value="{{ strtoupper(\Str::random(8)) }}"
+                                                                                        class="form-control sku"
+                                                                                        id="sku_{{ $i }}" />
                                                                                 </td>
                                                                                 <td>
                                                                                     <input type="number"
@@ -693,7 +718,7 @@
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h4 class="card-title mb-0">Mục ảnh sản phẩm </h4>
+                                            <h4 class="card-title mb-0">Mục ảnh sản phẩm  <span class="text-danger">*</span></h4>
                                         </div><!-- end card header -->
 
                                         <div class="card-body">
@@ -1023,7 +1048,9 @@
 
                                 // Construct attribute strings
                                 for (const [key, item] of Object.entries(attribute)) {
-                                    attributeString += `${key}: ${item}<br>`;
+                                    attributeString += `<strong style="font-size: 12px; color: #888;">${key}:</strong> 
+                                                       <span style="font-size: 11px;">${item}</span>
+                                                       <br>`;
                                     attributeValueString += `${item},`;
                                 }
 
@@ -1034,6 +1061,15 @@
                                 // Build the HTML for the row
                                 htmlContent += `
                                 <tr>
+                                    <td>
+                                      <input type="text"
+                                        name="
+                                        product_variants[${index + 1}][sku]
+                                        "
+                                        value="{{ strtoupper(\Str::random(8)) }}_${index + 1}"
+                                        class="form-control sku"
+                                        id="sku_${index + 1}" />
+                                    </td>
                                     <td>
                                         <input type="hidden" name="product_variants[${index + 1}][attributes_values]" value="${attributeValueString}" class="product_variants">
                                         ${attributeString}
@@ -1049,10 +1085,9 @@
                                     </td>
                                     <td>
                                         <select class="form-control status_attribute" name="product_variants[${index + 1}][status]">
-                                            <option value="none">None</option>
-                                            <option value="available">Available</option>
-                                            <option value="out_of_stock">Out of Stock</option>
-                                            <option value="discontinued">Discontinued</option>
+                                            <option value="available">Có sẵn</option>
+                                            <option value="out_of_stock">Hết hàng </option>
+                                            <option value="discontinued">Đã ngừng sản xuất</option>
                                         </select>
                                     </td>
                                     <td>

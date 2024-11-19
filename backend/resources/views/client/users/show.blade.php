@@ -37,7 +37,11 @@
             <div class="col-lg-9">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <img src="{{ Storage::url(Auth::user()->profile_image_url) }}" alt="{{ Auth::user()->profile_image_url}}" class="rounded-circle me-2" width="50" height="50">
+                            @if (empty(Auth::user()->profile_image_url) || !Storage::exists(Auth::user()->profile_image_url))
+                                <img src="https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png" alt="" class="rounded-circle me-2" width="50" height="50">
+                            @else
+                                <img src="{{ Storage::url(Auth::user()->profile_image_url) }}" alt="{{ Auth::user()->profile_image_url}}" class="rounded-circle me-2" width="50" height="50">
+                            @endif
                         <h5 class="mb-0 mx-2">{{ Auth::user()->username }}</h5>
                     </div>                    
                     <div class="card-body">
@@ -76,13 +80,7 @@
                                     @error('phone_number')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                </div>
-                    
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">Địa chỉ:</label>
-                                    <input type="text" id="address" name="address" class="form-control" value="{{ $address->address_line }}">
-                                </div>
-                    
+                                </div>               
                                 <div class="mb-3">
                                     <label for="date_of_birth" class="form-label">Ngày sinh:</label>
                                     <input type="date" id="date_of_birth" name="date_of_birth" class="form-control"

@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\PermissionValue;
+use App\Events\UserEvent;
 use App\Models\Order;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use App\Models\PermissionValue;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -74,13 +76,48 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isClient()
+    {
+        return $this->permissionsValues()
+            ->whereIn('value', [self::TYPE_CLIENT])
+            ->exists();
+    }
+    //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function () {
+            event(new UserEvent());
+        });
+
+        static::updated(function () {
+            event(new UserEvent());
+        });
+
+        static::deleted(function () {
+            event(new UserEvent());
+        });
+    }
+
     public function orders()
     {
-        return $this->belongsToMany(Order::class, 'user_id', 'id')->withTimestamps(); 
+        return $this->belongsToMany(Order::class, 'user_id', 'id')->withTimestamps();
     }
 
     public function addresses()
     {
         return $this->hasMany(Address::class);
     }
+    public function reviews()
+    {
+        return DB::table('users_reviews')->where('user_id', $this->id)->get();
+    }
+    public function scopeClients($query)
+    {
+        return $query->whereHas('permissionsValues', function ($q) {
+            $q->where('value', self::TYPE_CLIENT);
+        });
+    }
+
 }

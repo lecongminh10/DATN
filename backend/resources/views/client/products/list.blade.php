@@ -3,6 +3,27 @@ $minPrice = \App\Models\Product::min('price_sale'); // Lấy giá trị min
 $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 ?>
 @extends('client.layouts.app')
+@section('style_css')
+    <style>
+        .add-cart{
+            background-color: #f4f4f4;
+        }
+
+        /* Css modal */
+        .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* height: 100%; Để modal ở giữa chiều dọc */
+            /* margin: 0; Loại bỏ khoảng cách mặc định */
+        }
+
+        .modal-content {
+            max-height: calc(100vh - 3rem); /* Đảm bảo modal không vượt quá chiều cao màn hình */
+            overflow-y: auto; /* Cuộn nếu nội dung quá dài */
+        }
+    </style>
+@endsection
 @section('content')
     @include('client.layouts.nav')
     <div class="container">
@@ -76,41 +97,72 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                         </div>
                         <!-- End .toolbox-item -->
 
-                        <div class="toolbox-item layout-modes">
+                        {{-- <div class="toolbox-item layout-modes">
                             <a href="category.html" class="layout-btn btn-grid active" title="Grid">
                                 <i class="icon-mode-grid"></i>
                             </a>
                             <a href="category-list.html" class="layout-btn btn-list" title="List">
                                 <i class="icon-mode-list"></i>
                             </a>
-                        </div>
+                        </div> --}}
                         <!-- End .layout-modes -->
                     </div>
                     <!-- End .toolbox-right -->
                 </nav>
 
+                @php
+                    // dd($products)
+                @endphp
                 <div class="row">
                     @foreach ($products as $item)
                         <div class="col-6 col-sm-4">
                             <div class="product-default">
                                 <figure>
-                                    @foreach ($item->galleries as $value)
-                                        <a href="">
-                                            <img src="{{ \Storage::url('' . $value->image_gallery) }}" width="205"
-                                                height="205" alt="{{ $item->name }}" />
-                                        </a>
-                                    @endforeach
-                                    <div class="label-group">
-                                        <div class="product-label label-hot">{{ $item->tags }}</div>
-                                        @if ($item->price_sale < $item->price_regular)
+                                    {{-- @foreach ($item->galleries as $value) --}}
+                                        <a href="{{route('client.showProduct',$item->id)}}">
                                             @php
-                                                $discountPercentage = round(
-                                                    (($item->price_regular - $item->price_sale) /
-                                                        $item->price_regular) *
-                                                        100,
-                                                );
+                                                $mainImage = $item->galleries->where('is_main', true)->first();
+                                                $otherImages = $item->galleries->where('is_main', false)->take(1);
                                             @endphp
-                                            <div class="product-label label-sale">SALE - {{ $discountPercentage }}%</div>
+                                        
+                                            @if ($mainImage)
+                                                <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
+                                            @endif
+                                            
+                                            @foreach ($otherImages as $value)
+                                                <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
+                                            @endforeach
+                                        </a>
+                                    {{-- @endforeach --}}
+                                    <div class="label-group">
+                                        @if ($item->is_hot_deal == 1)
+                                            <div class="product-label label-hot">HOT</div> 
+                                        @endif
+                                            {{-- <div class="product-label label-hot">HOT</div> --}}
+
+                                        @php
+                                            // Xác định giá sản phẩm
+                                            if (isset($item->productVariant)) {
+                                                // Nếu có product_variant, lấy giá từ biến thể  
+                                                $price = $item->productVariant->price_modifier;
+                                            } else {
+                                                // Nếu không có product_variant, kiểm tra giá sale của sản phẩm
+                                                $price = ($item->price_sale !== null && $item->price_sale < $item->price_regular)
+                                                    ? $item->price_sale // Lấy giá sale nếu có
+                                                    : $item->price_regular; // Nếu không có giá sale, lấy giá thường
+                                            }
+
+                                            // Tính toán phần trăm giảm giá nếu có giá sale hợp lệ
+                                            $discountPercentage = null;
+                                            if ($item->price_sale !== null && $item->price_sale < $item->price_regular) {
+                                                $discountPercentage = round(
+                                                    (($item->price_regular - $item->price_sale) / $item->price_regular) * 100
+                                                );
+                                            }
+                                        @endphp
+
+                                        @if ($discountPercentage !== null)
+                                            <div class="product-label label-sale">- {{ $discountPercentage }}%</div>
                                         @endif
                                     </div>
                                 </figure>
@@ -123,7 +175,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                         </div>
                                     </div>
 
-                                    <h3 class="product-title"> <a href="product.">{{ $item->name }}</a> </h3>
+                                    <h3 class="product-title"> <a href="{{route('client.showProduct',$item->id)}}">{{ $item->name }}</a> </h3>
 
                                     <div class="ratings-container">
                                         <div class="product-ratings">
@@ -135,28 +187,22 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     <!-- End .product-container -->
 
                                     <div class="price-box">
-                                        @if ($item->price_sale < $item->price_regular)
-                                            <span class="product-price" style="color: #08c;">{{ $item->price_sale }}
-                                                VNĐ</span>
-                                            <span class="old-price"
-                                                style="text-decoration: line-through; font-size: 0.8em;">{{ $item->price_regular }}
-                                                VNĐ</span>
+                                        @if ($item->price_sale == null)
+                                            <span class="new-price" style="color: #08c; font-size: 1.2em;">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
                                         @else
-                                            <span class="product-price" style="color: #08c;">{{ $item->price_regular }}
-                                                VNĐ</span>
-                                        @endif
+                                            <span class="new-price" style="color: #08c;  font-size: 1.2em;">{{ number_format($item->price_sale, 0, ',', '.') }} ₫</span>
+                                            <span class="old-price">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
+                                        @endif                                 
                                     </div>
 
                                     <!-- End .price-box -->
 
                                     <div class="product-action">
-                                        <a href="wishlist.html" class="btn-icon-wish" title="wishlist"><i
-                                                class="icon-heart"></i></a>
-                                        <a href="product.html" class="btn-icon btn-add-cart"><i
-                                                class="fa fa-arrow-right"></i><span>SELECT
-                                                OPTIONS</span></a>
-                                        <a href="ajax/product-quick-view.html" class="btn-quickview"
-                                            title="Quick View"><i class="fas fa-external-link-alt"></i></a>
+                                        <a href="#" class="btn-icon-wish" title="wishlist" data-product-id="{{ $item->id }}"><i class="icon-heart"></i></a>
+                                        <a href="#" class="btn-icon btn-add-cart add-cart" data-product-id="{{ $item->id }}" data-toggle="modal" data-target="#addToCart"><i class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span></a>
+                                        <a href="{{route('client.showProduct', $item->id)}}" class="btn-quickview" title="Quick View">
+                                            <button style="border: none; color: #4d4c4a; cursor: pointer;"><i class="fas fa-external-link-alt"></i></button>
+                                        </a>
                                     </div>
                                 </div>
                                 <!-- End .product-details -->
@@ -165,7 +211,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     @endforeach
                 </div>
                 <!-- End .row -->
-                <nav class="toolbox toolbox-pagination">
+                {{-- <nav class="toolbox toolbox-pagination">
                     <div class="toolbox-item toolbox-show">
                         <label>Show:</label>
                         <form action="{{ url()->current() }}" method="GET">
@@ -183,7 +229,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     <ul class="pagination toolbox-item">
                         {{ $products->links('pagination::bootstrap-5') }}
                     </ul>
-                </nav>
+                </nav> --}}
             </div>
             <!-- End .col-lg-9 -->
 
@@ -193,7 +239,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     <div class="widget">
                         <h3 class="widget-title">
                             <a data-toggle="collapse" href="#widget-body-2" role="button" aria-expanded="true"
-                                aria-controls="widget-body-2">Categories</a>
+                                aria-controls="widget-body-2">Danh mục</a>
                         </h3>
 
                         <div class="collapse show" id="widget-body-2">
@@ -237,10 +283,10 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     </div>
                     <!-- End .widget -->
 
-                    <div class="widget">
+                    <div class="widget border border-bottom">
                         <h3 class="widget-title">
                             <a data-toggle="collapse" href="#widget-body-3" role="button" aria-expanded="true"
-                                aria-controls="widget-body-3">Price</a>
+                                aria-controls="widget-body-3">Giá</a>
                         </h3>
 
                         <div class="collapse show" id="widget-body-3">
@@ -275,105 +321,8 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
                     <!-- End .widget -->
 
-                    <div class="widget widget-color">
-                        <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-body-4" role="button" aria-expanded="true"
-                                aria-controls="widget-body-4">Color</a>
-                        </h3>
-
-                        <div class="collapse show" id="widget-body-4">
-                            <div class="widget-body pb-0">
-                                <ul class="config-swatch-list">
-                                    <li class="active">
-                                        <a href="#" style="background-color: #000;"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#" style="background-color: #0188cc;"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#" style="background-color: #81d742;"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#" style="background-color: #6085a5;"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#" style="background-color: #ab6e6e;"></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <!-- End .widget-body -->
-                        </div>
-                        <!-- End .collapse -->
-                    </div>
-                    <!-- End .widget -->
-
-                    <div class="widget widget-size">
-                        <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-body-5" role="button" aria-expanded="true"
-                                aria-controls="widget-body-5">Size</a>
-                        </h3>
-
-                        <div class="collapse show" id="widget-body-5">
-                            <div class="widget-body pb-0">
-                                <ul class="config-size-list">
-                                    <li class="active"><a href="#">XL</a></li>
-                                    <li><a href="#">L</a></li>
-                                    <li><a href="#">M</a></li>
-                                    <li><a href="#">S</a></li>
-                                </ul>
-                            </div>
-                            <!-- End .widget-body -->
-                        </div>
-                        <!-- End .collapse -->
-                    </div>
-                    <!-- End .widget -->
-                    <div class="widget widget-memory">
-                        <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-body-memory" role="button" aria-expanded="true"
-                                aria-controls="widget-body-memory">Bộ Nhớ</a>
-                        </h3>
-
-                        <div class="collapse show" id="widget-body-memory">
-                            <div class="widget-body pb-0">
-                                <ul class="config-size-list">
-                                    <li class="active"><a href="#">128GB</a></li>
-                                    <li><a href="#">256GB</a></li>
-                                    <li><a href="#">512GB</a></li>
-                                    <li><a href="#">1TB</a></li>
-                                </ul>
-                            </div>
-                            <!-- End .widget-body -->
-                        </div>
-                        <!-- End .collapse -->
-                    </div>
-                    <!-- End .widget -->
-                    <div class="widget widget-ram">
-                        <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-body-ram" role="button" aria-expanded="true"
-                                aria-controls="widget-body-ram">RAM</a>
-                        </h3>
-
-                        <div class="collapse show" id="widget-body-ram">
-                            <div class="widget-body pb-0">
-                                <ul class="config-size-list">
-                                    <li class="active"><a href="#">8GB</a></li>
-                                    <li><a href="#">16GB</a></li>
-                                    <li><a href="#">32GB</a></li>
-                                    <li><a href="#">64GB</a></li>
-                                </ul>
-                            </div>
-                            <!-- End .widget-body -->
-                        </div>
-                        <!-- End .collapse -->
-                    </div>
-
-                    {{-- <div class="widget widget-block">
-                        <h3 class="widget-title">Custom HTML Block</h3>
-                        <h5>This is a custom sub-title.</h5>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non placerat mi. Etiam non tellus
-                        </p>
-                    </div> --}}
-                    <!-- End .widget -->
+                    <div style="margin-bottom: 50px"></div>
+                    
                 </div>
                 <!-- End .sidebar-wrapper -->
             </aside>
@@ -381,8 +330,27 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
         </div>
         <!-- End .row -->
     </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="addToCart" tabindex="-1" role="dialog" aria-labelledby="addToCartLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="max-width: 550px">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addToCartLabel">Thông báo </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
+        </div>
+        </div>
+    </div>
+</div>
 @endsection
-@section('script_logic')
+@section('scripte_logic')
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -410,6 +378,135 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
         document.getElementById('sort-options').addEventListener('change', function() {
             this.form.submit();
         });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Thêm vào giỏ hàng
+        const addToCartButtons = document.querySelectorAll('.btn-add-cart');
+        addToCartButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Ngăn chặn chuyển trang
+                const productId = button.getAttribute('data-product-id');
+
+                // Gọi AJAX để thêm sản phẩm vào giỏ hàng
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('addCart') }}", // Thay bằng route tương ứng
+                    data: {
+                        product_id: productId,
+                        quantity: 1, // Thiết lập số lượng mặc định là 1
+                        _token: '{{ csrf_token() }}' // CSRF token
+                    },
+                    success: function(response) {
+
+                        // alert("Sản phẩm đã được thêm vào giỏ hàng thành công!");
+                        updateCartDisplay(response);
+                       
+                        
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 401) {
+                            alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
+                        } else {
+                            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+                        }
+                    }
+                });
+            });
+        });
+
+        // Thêm vào wishlist
+        const wishlistButtons = document.querySelectorAll('.btn-icon-wish');
+        wishlistButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Ngăn chặn chuyển trang
+                const productId = button.getAttribute('data-product-id');
+                
+                // Gọi AJAX để thêm sản phẩm vào wishlist
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('addWishList') }}", // Thay bằng route tương ứng
+                    data: {
+                        product_id: productId,
+                        _token: '{{ csrf_token() }}' // CSRF token
+                    },
+                    success: function(response) {
+                        // Xử lý khi thêm vào wishlist thành công
+                        // alert("Sản phẩm đã được thêm vào danh sách yêu thích!");
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 401) {
+                            alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
+                        } else {
+                            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+                        }
+                    }
+                });
+            });
+        });
+    });
+
+    function updateCartDisplay(data) {
+    // Đặt lại nội dung của phần sản phẩm trong giỏ hàng
+        let cartContent = '';
+        let subTotal = 0;
+
+        // Duyệt qua các sản phẩm trong giỏ hàng
+        data.carts.forEach(item => {
+            let price = item.product.price_sale > 0 ? item.product.price_sale : item.product.price_regular;
+            if (item.productVariant) {
+                price = item.productVariant.price_modifier;
+            }
+            const sub = price * item.quantity;
+            subTotal += sub;
+
+            // Kiểm tra và lấy ảnh chính từ galleries
+            let mainImage = item.product.galleries.find(gallery => gallery.is_main); 
+            let imageUrl = mainImage && mainImage.image_gallery 
+                ? `/storage/${mainImage.image_gallery}` 
+                : '/images/default-image.jpg'; // Nếu không có ảnh chính, dùng ảnh mặc định
+
+            // Xây dựng HTML cho từng sản phẩm
+            cartContent += `
+                <div class="product">
+                    <div class="product-details">
+                        <h4 class="product-title">
+                            <a href="/product/${item.product.id}">${item.product.name}</a>
+                        </h4>
+                        <span class="cart-product-info">
+                                <span class="cart-product-qty">${item.quantity}</span> × 
+                                ${price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} ₫
+                        </span>
+                    </div>
+                    <figure class="product-image-container">
+                        <a href="/product/${item.product.id}" class="product-image">
+                            <img src="${imageUrl}" width="80" height="80" alt="${item.product.name}">
+                        </a>
+                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="${item.id}" onclick="removeFromCart(this)"></a>
+                    </figure>
+                </div>
+            `;
+        });
+        // console.log(data.totalQuantity);
+        
+        document.querySelector(".cart-count").innerHTML=data.totalQuantity
+
+        // Cập nhật HTML giỏ hàng
+        document.querySelector('.dropdown-cart-products').innerHTML = cartContent;
+        document.querySelector('.cart-total-price').innerText = `${subTotal.toLocaleString('vi-VN')}₫`;
+    }
+
+    // Giả sử đây là JSON nhận được từ server
+    const cartData = {
+        totalQuantity: 18,
+        carts: [
+            // Array sản phẩm
+        ]
+    };
+
+
+    // Modal thông báo thêm giỏ hàng
+    document.querySelector("#addToCart .modal-body").innerHTML= `<p style="">Thêm vào giỏ hàng thành công</p>`
     </script>
 @endsection
 </style>

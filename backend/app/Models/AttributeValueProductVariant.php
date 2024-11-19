@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class AttributeValueProductVariant extends Model
 {
     use HasFactory;
-
     protected $table = 'attribute_value_product_variant'; // Tên bảng
 
     protected $fillable = [

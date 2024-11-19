@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('libray_css')
-    
+
 @endsection
 
 
@@ -38,7 +38,7 @@
                                 <a href="apps-invoices-details.html" class="btn btn-success btn-sm me-2"><i class="ri-download-2-fill align-middle me-1"></i> Invoice</a>
                             </div> --}}
                             <div class="flex-shrink-0">
-                                <a href="{{ route('orders.listOrder') }}" class="btn btn-primary btn-sm"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
+                                <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary btn-sm"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
                             </div>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <h5 class="fs-15"><a href="#" class="link-primary">{{ $value->product->name }}</a></h5>
-                                                    @if ($value->productVariant)
+                                                    @if (isset($value->productVariant) && !empty($value->productVariant->attributeValue))
                                                        <div>
                                                         @foreach ($value->productVariant->attributeValue as $attributeValue)
                                                             <p class="text-muted mb-0" >{{ $value->productVariant->attribute->attribute_name }}:
@@ -282,7 +282,7 @@
                             <lord-icon src="https://cdn.lordicon.com/uetqnvvg.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:80px;height:80px"></lord-icon>
                             <h5 class="fs-16 mt-2">RQK Logistics</h5>
                             <p class="text-muted mb-0">ID: {{ $data->id }}</p>
-                            <p class="text-muted mb-0">Payment Mode : {{ $data->payment->paymentGateway->name }}</p>
+                            {{-- <p class="text-muted mb-0">Payment Mode : {{ $data->payment->paymentGateway->name }}</p> --}}
                         </div>
                     </div>
                 </div>
@@ -307,7 +307,7 @@
                                         @else
                                         @endif => logic hiển ảnh --}}
                                         <img src="https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=" class="avatar-sm rounded">
-                                        
+
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h6 class="fs-14 mb-1"></h6>
@@ -415,13 +415,13 @@
 
     </div><!-- container-fluid -->
 </div><!-- End Page-content -->
-    
+
 @endsection
-    
+
 @section('script_libray')
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
 @endsection
-    
+
 @section('scripte_logic')
    <script>
      document.addEventListener('DOMContentLoaded', function() {

@@ -25,7 +25,7 @@ class Address extends Model
         'deleted_at' => 'boolean'
     ];
 
-        /**
+     /**
      * Kiểm tra nếu user_id có địa chỉ active
      *
      * @param int $userId
@@ -38,6 +38,11 @@ class Address extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public static function getActiveAddress($userId)
+    {
+        return self::where('user_id', $userId)->where('active', true)->first();  
     }
 
 }

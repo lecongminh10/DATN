@@ -58,6 +58,12 @@
 
         @include('client.layouts.footer')
         <!-- End .footer -->
+
+        {{-- @vite('resources/js/coupon.js') --}}
+
+       
+
+
     </div>
     <!-- End .page-wrapper -->
 
@@ -230,17 +236,86 @@
     <a id="scroll-top" href="#top" title="Top" role="button"><i class="icon-angle-up"></i></a>
 
     <!-- Plugins JS File -->
-    <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="{{asset('themeclient/assets/js/jquery.min.js')}}"></script>
+    <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="{{asset('themeclient/assets/js/jquery.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/plugins.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.appear.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.plugin.min.js')}}"></script>
     <script src="{{asset('themeclient/assets/js/jquery.countdown.min.js')}}"></script>
+    
+    {{-- Điều hướng đến các đường dẫn bên ở file js --}}
+    <script>
+        var routes = {
+            shoppingCart: "{{ route('shopping-cart') }}",
+            checkout: "{{ route('checkout') }}"
+        }; 
+    </script>
 
+    <script>
+        function removeFromCart(element) {
+        const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
+
+        // Gửi yêu cầu xóa sản phẩm
+        fetch(`/remove/${cartId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'), // CSRF token
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                // Xóa sản phẩm ra khỏi DOM
+                const productElement = element.closest('.product'); // Tìm phần tử sản phẩm tương ứng
+
+                // Tính toán subtotal
+                const cartProductInfo = productElement.querySelector('.cart-product-info'); // Thông tin giá và số lượng
+                const [quantityText, priceText] = cartProductInfo.textContent.split('×').map(item => item.trim());
+                
+                const quantity = parseInt(quantityText.replace(/\D/g, ''), 10); // Lấy số lượng từ text
+                const price = parseInt(priceText.replace(/\./g, '').replace('₫', ''), 10); // Lấy giá từ text
+                const subtotalForProduct = quantity * price; // Tính subtotal cho sản phẩm
+
+                // Cập nhật subtotal tổng
+                const subtotalElement = document.querySelector('.cart-total-price');
+                const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫', ''), 10);
+                const newSubtotal = currentSubtotal - subtotalForProduct;
+
+                // Cập nhật DOM
+                subtotalElement.textContent = `${newSubtotal.toLocaleString('vi-VN')}₫`; // Hiển thị subtotal mới
+                productElement.remove(); // Xóa sản phẩm khỏi giao diện
+            } else {
+                console.error('Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng.');
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi kết nối hoặc xử lý:', error);
+        });
+    }
+    window.addEventListener('beforeunload', function () {
+    // Send a GET request to the '/clear-coupons' route to clear the session
+        fetch('/clear-coupons', {
+            method: 'GET', // Set the request method to GET
+            headers: {
+                'Content-Type': 'application/json', // Set the content type to JSON
+            },
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            console.log('Coupons session cleared:', data); // Log success
+        })
+        .catch(error => {
+            console.error('Error:', error); // Log any error
+        });
+    });
+
+    </script>
+    
     <!-- Main JS File -->
     <script src="{{asset('themeclient/assets/js/main.min.js')}}"></script>
     @yield('script_libray')
-    @yield('script_logic')
+    @yield('scripte_logic')
 {{-- <script>(function(){var js = "window['__CF$cv$params']={r:'8205254108eb1073',t:'MTY5OTAyMDA0OC4zMzMwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/61b90d1d/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";var _0xh = document.createElement('iframe');_0xh.height = 1;_0xh.width = 1;_0xh.style.position = 'absolute';_0xh.style.top = 0;_0xh.style.left = 0;_0xh.style.border = 'none';_0xh.style.visibility = 'hidden';document.body.appendChild(_0xh);function handler() {var _0xi = _0xh.contentDocument || _0xh.contentWindow.document;if (_0xi) {var _0xj = _0xi.createElement('script');_0xj.innerHTML = js;_0xi.getElementsByTagName('head')[0].appendChild(_0xj);}}if (document.readyState !== 'loading') {handler();} else if (window.addEventListener) {document.addEventListener('DOMContentLoaded', handler);} else {var prev = document.onreadystatechange || function () {};document.onreadystatechange = function (e) {prev(e);if (document.readyState !== 'loading') {document.onreadystatechange = prev;handler();}};}})();</script></body> --}}
 
 

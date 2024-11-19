@@ -88,20 +88,6 @@
                                     <div class="mt-4">
                                         <button class="btn btn-success w-100" type="submit">Sign In</button>
                                     </div>
-
-                                    <div class="mt-4 text-center">
-                                        <div class="signin-other-title">
-                                            <h5 class="fs-13 mb-4 title">Sign In with</h5>
-                                        </div>
-
-                                        <div>
-                                            <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><a href="{{ route('auth.facebook') }}"><i class="ri-facebook-fill fs-16" style="color: aliceblue"></i></a></button>
-                                            <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><a href="{{ route('auth.google') }}"><i class="ri-google-fill fs-16" style="color: aliceblue"></i></a></button>
-                                            <button type="button" class="btn btn-dark btn-icon waves-effect waves-light"><a href="{{ route('auth.github') }}"><i class="ri-github-fill fs-16" style="color: aliceblue"></i></a></button>
-                                            <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><a href="{{ route('auth.twitter')}}"><i class="ri-twitter-fill fs-16" style="color: aliceblue"></i></a></button>
-                                        </div>
-                                    </div>
-
                                 </form>
                             </div>
                         </div>

@@ -158,7 +158,7 @@ data-bs-keyboard="false">
         </div>
 
         <!-- Form thêm địa chỉ mới -->
-        <div class="modal-body" id="new-address-form" style="display: none;">
+        <div class="modal-body" id="new-address-form">
             <form id="addAddressForm">
                 <!-- Họ và tên + Số điện thoại cùng hàng -->
                 <div class="row">

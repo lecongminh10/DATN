@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
+use App\Models\Cart;
 use App\Services\AttributeService;
 use App\Services\AttributeValueService;
 use App\Services\CategoryService;
@@ -48,16 +49,41 @@ class ProductController extends Controller
     public function showProduct(int $id)
     {
         $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries']);
-        // dd($data);
-        $variants = $this->productVariantService->getAttributeByProduct($id);
-
+        // Lấy biến thể sản phẩm
+        $variants = $this->productVariantService->getProductVariant($id);
+        // dd($variants);
+        
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $userId)
+            ->get();
+        }
+        $cartCount = $carts->sum('quantity');
+        
+        // Lấy các thuộc tính và giá trị
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
             ->select('id', 'attribute_name')
             ->get();
-        return view('client.product')->with([
+        return view('client.product-detail')->with([
             'data'           => $data,
-            'attribute'      => $attributesWithValues,
-            'variants'       => $variants
+            'attributes'     => $attributesWithValues,
+            'variants'       => $variants,
+            'carts'          => $carts,
+            'cartCount'      => $cartCount
         ]);
     }
+    public function search(Request $request)
+{
+    // Lấy từ khóa tìm kiếm và danh mục (nếu có)
+    $query = $request->input('q');
+    $categoryId = $request->input('cat');
+
+    // Tìm kiếm sản phẩm
+    $products = $this->productService->searchProducts($query, $categoryId);
+
+
+    return view('client.products.search-results', compact('products'));
+}
 }

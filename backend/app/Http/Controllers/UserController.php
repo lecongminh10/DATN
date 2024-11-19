@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Address;
+use App\Models\Cart;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
@@ -73,7 +74,15 @@ class UserController extends Controller
 
         $permissions = $user->permissionsValues;
 
-        return view('admin.users.show', compact('user', 'permissions'));
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+
+        return view('admin.users.show', compact('user', 'permissions', 'carts', 'cartCount'));
     }
 
     public function edit($id)
@@ -143,14 +152,29 @@ class UserController extends Controller
 
     public function indexClient()
     {
-        return view('client.users.index');
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+        return view('client.users.index', compact('carts','cartCount'));
     }
 
     public function showClient($id)
     {
         $user = $this->userService->getById($id);
         $address = Address::where('user_id', $id)->first();
-        return view('client.users.show', compact('user','address'));
+
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+        return view('client.users.show', compact('user','address', 'carts', 'cartCount'));
     }
 
     public function updateClient(Request $request, $id)
@@ -179,8 +203,16 @@ class UserController extends Controller
         }
         $orders = $query->get(); 
         $totalOrders = $orders->count(); 
+
+        // $userId = auth()->id();
+        $carts  = collect();
+        if($id) {
+            $carts = Cart::where('user_id', $id)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
     
-        return view('client.users.show_order', compact('orders', 'totalOrders', 'status'));
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
     }
 
     public function showDetailOrder($id){
@@ -188,7 +220,15 @@ class UserController extends Controller
         $orders = Order::findOrFail($id);
         $locations = OrderLocation::where('order_id', $id)->get();
 
-        return view('client.users.show_detail_order', compact('orders','locations'));
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+
+        return view('client.users.show_detail_order', compact('orders','locations', 'carts', 'cartCount'));
     }
 
   
