@@ -180,11 +180,13 @@
                        
                                    <figure class="product-image-container">
                                        <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
-                                        @php
-                                            $mainImage = $item->product->getMainImage();
-                                            $imageUrl = $mainImage && !empty($mainImage->image_gallery) ? Storage::url($mainImage->image_gallery) : asset('images/default-image.jpg');
-                                        @endphp
-                                        <img src="{{ $imageUrl }}" width="80" height="80" alt="{{ $item->product->name ?? 'No image available' }}" />
+                                           @php
+                                               if($item->product->getMainImage()->image_gallery !==null){
+                                                  $url = $item->product->getMainImage()->image_gallery;
+                                               }
+                                               $url='';
+                                           @endphp
+                                           <img src="{{Storage::url($url)}}" width="80" height="80" alt="{{ $item->product->getMainImage()->image_gallery }}" />
                                        </a>
                        
                                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>

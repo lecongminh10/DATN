@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Coupon;
+use Illuminate\Support\Facades\DB;
 
 class CouponRepository extends BaseRepository
 {
@@ -92,5 +93,31 @@ class CouponRepository extends BaseRepository
     {
         $query = Coupon::onlyTrashed()->find($id);
         return $query;
+    }
+    
+    public function getByCouponUsage(int $oder_id)
+    {
+        return  DB::table('coupons_usage')
+        ->where('order_id',$oder_id)
+        ->join('coupons', 'coupons_usage.coupon_id', '=', 'coupons.id') // JOIN với bảng coupons
+        ->select(
+            'coupons_usage.discount_value as usage_discount_value',
+            'coupons.code as coupon_code',
+            'coupons.discount_value as coupon_discount_value',
+        )
+        ->get();
+    }
+
+    public function updateByOrderCoupon(int $id)
+    {
+        $couponUsages = DB::table('coupons_usage')
+            ->where('order_id', $id)
+            ->get();
+
+        foreach ($couponUsages as $couponUsage) {
+            DB::table('coupons')
+                ->where('id', $couponUsage->coupon_id)
+                ->decrement('usage_limit', 1);
+        }
     }
 }

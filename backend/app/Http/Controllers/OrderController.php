@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiHelper;
 use App\Models\Address;
 use App\Models\Cart;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderLocation;
@@ -11,6 +13,7 @@ use App\Models\Payment;
 use App\Models\PaymentGateways;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\shippingMethods;
 use App\Models\User;
 use App\Models\WishList;
 use App\Services\OrderLocationService;
@@ -224,22 +227,65 @@ class OrderController extends Controller
             ->where('user_id', $userId)
             ->get();
 
-        $carts = collect();
-        if ($userId) {
-            $carts = Cart::where('user_id', $userId)->with('product')->get();
-        }
-
-        $carts = collect();
+        $carts  = collect();
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
         $cartCount = $carts->sum('quantity');
+      
+        $cartCheckout =Cart::with(['product', 'product.variants','productVariant.attributeValues.attribute', 'product.galleries','product.productDimension'])
+                ->where('user_id', $userId)
+                ->get();
+       
+                $productDimensions = [];
+                $items = [];
+                $type = shippingMethods::HANG_NHE;
+                $dataShippingMethod =[];
+                foreach ($cartCheckout as $key => $cart) {
+                
+                    $item = [
+                        'name' => $cart->relationLoaded('productVariant') && !empty($cart->productVariant) ? $cart->productVariant->sku : $cart->product->code,
+                        'quantity' => $cart->quantity,
+                    ];
+                
+                    if ($cart->relationLoaded('product') && $cart->product->relationLoaded('productDimension')) {
+                        $productDimension = $cart->product->productDimension;
+                        $item = array_merge($item, [
+                            'height' => $productDimension->height,
+                            'weight' => $productDimension->weight,
+                            'length' => $productDimension->length,
+                            'width' => $productDimension->width,
+                        ]);
+                
+                        $productDimensions[] = [
+                            'weight' => $productDimension->weight,
+                        ];
+                    }
+                
+                    $items[$key] = $item;
+                }
+                
+                $totalWeight = array_reduce($productDimensions, function ($carry, $item) {
+                    return $carry + $item['weight'];
+                }, 0);
+                
+                if ($totalWeight >= shippingMethods::WEIGHT) {
+                    $type = shippingMethods::HANG_NANG;
+                    $dataShippingMethod['type']=$type;
+                    $dataShippingMethod['value']="ghn";
+                    $dataShippingMethod['message']="Vận chuyển hàng nặng";
+                }else{
+                    $dataShippingMethod['value']="ghn";
+                    $dataShippingMethod['type']=$type;
+                    $dataShippingMethod['message']="Vận chuyển hàng nhẹ";
+                }
+                
+      
+        $shipp = ApiHelper::calculateServiceFee($type, $totalWeight, $items); 
+        $dataShippingMethod['shipp']=$shipp;
 
-        $cartCheckout = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-            ->where('user_id', $userId)
-            ->get();
-        return view('client.orders.checkout', compact('cartCheckout', 'carts', 'cartCount'));
+        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod'));
     }
 
     public function removeFromCart($id)
@@ -469,7 +515,7 @@ class OrderController extends Controller
             ->where('user_id', $userId)
             ->get();
 
-        $carts = collect();
+        $carts  = collect();
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
@@ -532,5 +578,134 @@ class OrderController extends Controller
         $wishlistItem->delete();
 
         return response()->json(['message' => 'Wishlist item deleted successfully'], 200);
+    }
+    public function applyCoupon(Request $request)
+    {
+        $couponCode = $request->input('coupon_code'); // Mã giảm giá người dùng nhập
+        $userId = auth()->id(); // Lấy ID người dùng hiện tại
+
+        // Lấy giỏ hàng từ cơ sở dữ liệu
+        $cartItems = Cart::where('user_id', $userId)->get();
+
+        // Kiểm tra giỏ hàng có sản phẩm không
+        if ($cartItems->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Giỏ hàng không có sản phẩm.',
+            ]);
+        }
+
+        // Tính tổng phụ và số lượng sản phẩm
+        $subTotal = 0;
+        $quantity = 0;
+
+        foreach ($cartItems as $item) {
+            $subTotal += $item->total_price;
+            $quantity += $item->quantity;
+        }
+
+        // Kiểm tra mã giảm giá trong cơ sở dữ liệu
+        $coupon = Coupon::where('code', $couponCode)
+            ->where('is_active', true)
+            ->where('start_date', '<=', Carbon::now())
+            ->where('end_date', '>=', Carbon::now())
+            ->first();
+
+        if (!$coupon) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.',
+            ]);
+        }
+        // Kiểm tra phạm vi áp dụng của mã giảm giá
+        if ($coupon->applies_to == 'product') {
+            // Kiểm tra xem mã giảm giá có áp dụng cho sản phẩm trong giỏ hàng không
+            $productIds = $cartItems->pluck('product_id');
+            $validProducts = DB::table('coupons_products')
+                ->where('coupon_id', $coupon->id)
+                ->whereIn('product_id', $productIds)
+                ->count();
+
+            if ($validProducts == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.',
+                ]);
+            }
+        } elseif ($coupon->applies_to == 'category') {
+            // Kiểm tra xem mã giảm giá có áp dụng cho danh mục của sản phẩm trong giỏ hàng không
+            $validCategories = DB::table('coupons_categories')
+                ->where('coupon_id', $coupon->id)
+                ->join('products', 'coupons_categories.category_id', '=', 'products.category_id')
+                ->whereIn('products.id', $cartItems->pluck('product_id'))
+                ->count();
+
+            if ($validCategories == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mã giảm giá không áp dụng cho danh mục sản phẩm trong giỏ hàng.',
+                ]);
+            }
+        } elseif ($coupon->applies_to == 'user') {
+            // Kiểm tra xem người dùng có sử dụng mã giảm giá này không
+            $userCoupon = DB::table('user_coupons')
+                ->where('coupon_id', $coupon->id)
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$userCoupon) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mã giảm giá này không áp dụng cho người dùng hiện tại.',
+                ]);
+            }
+        }
+
+        // Kiểm tra xem tổng đơn hàng có đủ điều kiện áp dụng mã giảm giá không
+        if ($subTotal < $coupon->min_order_value) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tổng đơn hàng chưa đủ điều kiện áp dụng mã giảm giá. Bạn cần mua thêm sản phẩm có giá trị tối thiểu là ' . number_format($coupon->min_order_value, 0, ',', '.') . ' đ.',
+            ]);
+        }
+
+        // Tính toán giảm giá từ coupon
+        $discountAmount = $coupon->discount_type === 'fixed_amount'
+            ? $coupon->discount_value
+            : ($coupon->discount_value / 100) * $subTotal;
+
+        // Đảm bảo giảm giá không vượt quá mức tối đa
+        $discountAmount = min($discountAmount, $coupon->max_discount_amount);
+
+        // Tính tổng sau khi áp dụng giảm giá
+        $totalAfterDiscount = $subTotal - $discountAmount;
+
+        // Lấy phí vận chuyển từ yêu cầu
+        $shippingCost = $request->input('shipping_cost', 30000); // Mặc định là 30,000 đ
+
+        // Tính tổng tiền sau khi thêm phí vận chuyển
+        $total = $totalAfterDiscount + $shippingCost;
+        $coupons = session('coupons', []);
+        $couponData=[
+            'code' => $coupon->code,
+            'discount_type' => $coupon->discount_type,
+            'discount_value' => $coupon->discount_value,
+            'discount_amount' => $discountAmount,
+            'total' => $total,
+        ];
+        $coupons[]=$couponData;
+        session(['coupons'=>$coupons]);
+        return response()->json([
+            'success' => true,
+            'coupon' =>$couponData,
+            'cartSummary' => [
+                'subTotal' => $subTotal,
+                'quantity' => $quantity,
+                'shippingCost' => $shippingCost,
+                'totalAfterDiscount' => $totalAfterDiscount,
+                'total' => $total,
+            ],
+            'message' => 'Thêm mã giảm giá thành công ',
+        ]);
     }
 }

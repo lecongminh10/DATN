@@ -293,6 +293,23 @@
             console.error('Lỗi kết nối hoặc xử lý:', error);
         });
     }
+    window.addEventListener('beforeunload', function () {
+    // Send a GET request to the '/clear-coupons' route to clear the session
+        fetch('/clear-coupons', {
+            method: 'GET', // Set the request method to GET
+            headers: {
+                'Content-Type': 'application/json', // Set the content type to JSON
+            },
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            console.log('Coupons session cleared:', data); // Log success
+        })
+        .catch(error => {
+            console.error('Error:', error); // Log any error
+        });
+    });
+
     </script>
     
     <!-- Main JS File -->
