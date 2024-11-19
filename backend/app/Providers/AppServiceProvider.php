@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
+use App\Observers\OrderObserver;
 use App\Models\Announcement;
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
@@ -20,8 +22,10 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot()
-{
-    // Thiết lập ngôn ngữ mặc định của Carbon là tiếng Việt
-    Carbon::setLocale('vi');
-}
+    {
+        // Thiết lập ngôn ngữ mặc định của Carbon là tiếng Việt
+        Carbon::setLocale('vi');
+        Order::observe(OrderObserver::class);
+    }
+
 }

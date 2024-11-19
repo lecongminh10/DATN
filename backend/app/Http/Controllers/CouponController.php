@@ -57,7 +57,7 @@ class CouponController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $couponRequest)
+    public function store(CouponRequest $couponRequest)
     {
         $validatedData = $couponRequest->all();
 
@@ -76,6 +76,7 @@ class CouponController extends Controller
                 'start_date'          => $validatedData['start_date'] ?? null,
                 'end_date'            => $validatedData['end_date'] ?? null,
                 'usage_limit'         => $validatedData['usage_limit'] ?? null,
+                'per_user_limit'      => $validatedData['per_user_limit'] ?? null,
                 'is_active'           => $validatedData['is_active'] ? 1 : 0,
                 'is_stackable'        => $validatedData['is_stackable'] ? 1 : 0,
                 'eligible_users_only' => $validatedData['eligible_users_only'] ? 1 : 0,

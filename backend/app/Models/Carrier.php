@@ -10,5 +10,7 @@ class Carrier extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['name', 'api_url', 'api_token', 'phone', 'email', 'is_active', 'deleted_by'];
+    public const GHN='Giao Hàng Nhanh';
+    protected $table='carriers';
+    protected $fillable = ['name','code','api_url', 'api_token', 'phone', 'email', 'is_active', 'deleted_by'];
 }

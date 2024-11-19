@@ -179,9 +179,29 @@
                                                             data-id="{{ $item->id }}">
                                                             {{ $item->code }}
                                                         </a></td>
-                                                    <td class="applies_to">{{ $item->applies_to }}</td>
-                                                    <td class="discount_type">{{ $item->discount_type }}</td>
-                                                    <td class="discount_value">{{ $item->discount_value }}</td>
+                                                    <td class="applies_to">
+                                                        @php
+                                                           if($item->applies_to=='all')
+                                                                {
+                                                                    echo 'Toàn cửa hàng';
+                                                                }else if ($item->applies_to=='product')
+                                                                {
+                                                                    echo 'Sản phẩm';
+                                                                } else {
+                                                                    echo 'Danh mục';
+                                                                }
+                                                        @endphp
+                                                    </td>
+                                                    <td class="discount_type">{{ ($item->discount_type=='percentage')?'Phần trăm':'Số tiền cố định' }}</td>
+                                                    <td class="discount_value">
+                                                        @php
+                                                            if ($item->discount_type == 'percentage') {
+                                                                echo $item->discount_value . '%';
+                                                            } else {
+                                                                echo number_format($item->discount_value, 0, ',', '.') . ' đ';
+                                                            }
+                                                        @endphp
+                                                    </td>
                                                     <td class="start_date">{{ $item->start_date }}</td>
                                                     <td class="end_date">{{ $item->end_date }}</td>
                                                     <td class="is_active">

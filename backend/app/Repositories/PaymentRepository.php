@@ -43,5 +43,9 @@ class PaymentRepository extends BaseRepository
         $payment->delete();
     }
 
+    public function getCheckOrderById(int $id)
+    {
+        return Payment::where('order_id', $id)->exists();
+    }
    
 }
