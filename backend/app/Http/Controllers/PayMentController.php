@@ -328,7 +328,9 @@ class PayMentController extends Controller
                 $this->couponService->updateByOrderCoupon($order->id);
             }else
             {
+                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=>$order->total_price ,'status'=>Payment::Failed , 'transaction_id'=>$order->code]);
                 Order::where('code', $order->code)->update(['status' =>Order::DA_HUY]);
+                shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id,'status'=>shippingMethods::FAILED]);
             }
         }
         $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])

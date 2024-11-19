@@ -126,11 +126,20 @@
                                                     @php
                                                         if($order->payment !==null){
                                                             $status =$order->payment->status;
-                                                        }else{
+                                                            if($status=='failed'){
+                                                                $status='Đã hủy';
+                                                                $style="bg-danger-subtle text-danger";
+                                                            }
+                                                            if( $status=='completed'){
+                                                                $status='Thanh toán thành công';
+                                                                $style="bg-success-subtle text-success";
+                                                            }
+                                                         }else{
                                                             $status='Đã hủy khi thanh toán ';
+                                                            $style="bg-success-subtle text-success";
                                                         }
                                                     @endphp
-                                                    <span class="badge bg-success-subtle text-success fs-11" id="payment-status">{{ $status}}</span>
+                                                    <span class="badge {{$style}} fs-11" id="payment-status">{{ $status}}</span>
                                                 </div>
                                                 <!--end col-->
                                                 <div class="col-lg-3 col-6">
@@ -302,9 +311,8 @@
                                                 @php
                                                     if($order->payment !==null){
                                                         $payment=$order->payment->paymentGateway->name;
-                                                    }
-                                                    else{
-                                                         $payment='Đã hủy';
+                                                    }else{
+                                                        $payment='Đã hủy ';
                                                     }
                                                 @endphp
                                                 <p class="text-muted mb-1">Loại thanh toán : <span class="fw-medium" id="payment-method">{{$payment}}</span></p>
