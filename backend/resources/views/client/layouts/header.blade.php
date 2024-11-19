@@ -1,5 +1,5 @@
 <header class="header home">
-    <div class="header-top bg-primary text-uppercase">
+    {{-- <div class="header-top bg-primary text-uppercase">
         <div class="container">
             <div class="header-left">
                 <div class="header-dropdown mr-auto mr-sm-3 mr-md-0">
@@ -59,7 +59,7 @@
             <!-- End .header-right -->
         </div>
         <!-- End .container -->
-    </div>
+    </div> --}}
     <!-- End .header-top -->
 
     <div class="header-middle text-dark sticky-header">

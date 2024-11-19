@@ -23,6 +23,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\ProfileController;
+
 use App\Http\Controllers\ChatController;
 
 Route::group([
@@ -243,6 +245,17 @@ Route::group([
 
         }
     );
+    // profile
+    Route::group([
+        'prefix' => 'profile',
+        'as' => 'profile.'
+    ],function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::post('/profile/update', [ProfileController::class, 'update'])->name('update');
+        Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
+    }
+);
 });
 
 
@@ -313,6 +326,7 @@ Route::prefix('/')->group(function () {
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 
+
     //Chat
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
 
@@ -321,4 +335,5 @@ Route::prefix('/')->group(function () {
 
         // routes/web.php
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
+
 });
