@@ -65,6 +65,21 @@
                                     </ul>
                                 </div>
                             </li>
+                            {{-- Quản lý bình luận --}}
+                            <li class="nav-item">
+                                <a href="#sidebarComment" class="nav-link" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarComment" data-key="t-comment">
+                                    Bình luận
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarComment">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.comment.index') }}" class="nav-link"
+                                                data-key="t-main-list">Danh sách</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                             <!-- Quản lý danh mục -->
                             <li class="nav-item">
                                 <a href="#sidebarCategory" class="nav-link" data-bs-toggle="collapse" role="button"
