@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -209,6 +210,18 @@ class ProductController extends Controller
             if($setCoupon){
                 $product->coupons()->attach($setCoupon->id);
             }
+
+            $logDetails = sprintf(
+                'Thêm mới sản phẩm: Mã - %s',
+                $dataProduct['code']
+            );
+    
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
+
         }
         return redirect()->route('admin.products.listProduct')->with(['message'=>'Thêm sản phẩm thành công ']);
     }
@@ -365,6 +378,17 @@ class ProductController extends Controller
             $product->tags()->sync($request->product_tags);
         }
 
+        $logDetails = sprintf(
+            'Sửa sản phẩm: Mã - %s',
+            $dataProduct['code']
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
+
         return back();
     }
 
@@ -379,6 +403,17 @@ class ProductController extends Controller
         if ($data->trashed()) {
             return back()->with(['message'=>'Xóa thành công']);
         }
+
+        $logDetails = sprintf(
+            'Xóa sản phẩm: Mã - %s',
+            $data->code
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
 
         return response()->json(['message' => 'Product permanently deleted and cover file removed'], 200);
     }

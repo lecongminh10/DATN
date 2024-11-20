@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Requests\CarrierRequest;
 use App\Models\Carrier;
 use App\Services\CarrierService;
@@ -57,6 +58,19 @@ class CarrierController extends Controller
             ]);
 
             DB::commit();
+
+            $logDetails = sprintf(
+                'Thêm mới vận chuyển: Tên - %s',
+                $validatedData['name']
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
+
             return redirect()->route('admin.carriers.index')->with('success', 'Thêm mới carrier thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -105,6 +119,18 @@ class CarrierController extends Controller
 
             DB::commit();
 
+            $logDetails = sprintf(
+                'Sửa vận chuyển: Tên - %s',
+                $carrier->name
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Sửa',
+                $logDetails
+            ));
+
             return redirect()->route('admin.carriers.index')->with('success', 'Cập nhật thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -150,6 +176,18 @@ class CarrierController extends Controller
             return redirect()->route('admin.carriers.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
         }
 
+        $logDetails = sprintf(
+            'Xóa vận chuyển: Tên - %s',
+            $data['name']
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+
         return redirect()->route('admin.carriers.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 
@@ -160,6 +198,19 @@ class CarrierController extends Controller
             return redirect()->route('admin.carriers.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
         $data->forceDelete();
+        
+        $logDetails = sprintf(
+            'Xóa vận chuyển: Tên - %s',
+            $data['name']
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+
         return redirect()->route('admin.carriers.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 

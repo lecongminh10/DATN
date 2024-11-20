@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminActivityLogController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -312,4 +313,6 @@ Route::prefix('/')->group(function () {
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 
 });
+
+Route::get('/admin/logs',                       [AdminActivityLogController::class, 'index'])->name('admin.logs.index');
 

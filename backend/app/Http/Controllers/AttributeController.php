@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Requests\AttributeRequest;
 use App\Models\AttributeValue;
 use App\Services\AttributeService;
@@ -62,6 +63,19 @@ class AttributeController extends Controller
                 }
             }
             DB::commit();
+
+            $logDetails = sprintf(
+                'Thêm mới thuộc tính: Tên - %s',
+                $validatedData['attribute_name']
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
+
             return redirect()->route('admin.attributes.index')->with('success', 'Thêm mới Attribute và Attribute Values thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -130,6 +144,18 @@ class AttributeController extends Controller
             }
             DB::commit();
 
+            $logDetails = sprintf(
+                'Sửa thuộc tính: Tên - %s',
+                $validatedData['attribute_name']
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Sửa',
+                $logDetails
+            ));
+
             return redirect()->route('admin.attributes.index')->with('success', 'Cập nhật thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -141,7 +167,7 @@ class AttributeController extends Controller
     {
         $search = $request->input('search');
         $perPage = $request->input('perPage', 10);
-        $data = $this->attributeService->show_soft_delete($search , $perPage);
+        $data = $this->attributeService->show_soft_delete($search, $perPage);
         return view('admin.attributes.deleted', compact('data'));
     }
 
@@ -169,6 +195,18 @@ class AttributeController extends Controller
         if ($data->trashed()) {
             return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
         }
+
+        $logDetails = sprintf(
+            'Xóa thuộc tính: Tên - %s',
+            $data->attribute_name
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
 
         return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
@@ -203,6 +241,21 @@ class AttributeController extends Controller
             return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
         $data->forceDelete();
+
+        
+        $logDetails = sprintf(
+            'Xóa thuộc tính: Tên - %s',
+            $data->attribute_name
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+
+
         return redirect()->route('admin.attributes.attributeshortdeleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 
@@ -275,11 +328,11 @@ class AttributeController extends Controller
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
     }
-   
+
     public function saveAttributes(Request $request)
     {
         session()->forget('product_attributes');
-        $selectedValues = $request->input('attributes', []); 
+        $selectedValues = $request->input('attributes', []);
 
         if (empty($selectedValues)) {
             return response()->json(['message' => 'Không có dữ liệu thuộc tính để lưu.'], 400);
@@ -292,7 +345,4 @@ class AttributeController extends Controller
             'data' => $selectedValues
         ]);
     }
-    
-    
-
 }

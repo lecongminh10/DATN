@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Events\CouponEvent;
 use App\Http\Requests\CouponRequest;
 use App\Models\Category;
@@ -134,6 +135,19 @@ class CouponController extends Controller
             // Phát broadcast coupon
             broadcast(new CouponEvent($coupon));
             DB::commit();
+
+            $logDetails = sprintf(
+                'Thêm mới mã khuyến mãi: Mã - %s',
+                $coupon->code,
+            );
+    
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id, 
+                'Thêm mới',         
+                $logDetails         
+            ));
+
             return redirect()->route('admin.coupons.index', compact('coupon'))->with('success', 'Thêm mới coupon thành công');
         } catch (\Exception $e) {
             Log::error('Đã xảy ra lỗi khi cập nhật coupon: ' . $e->getMessage(), ['trace' => $e->getTrace()]);
@@ -289,6 +303,18 @@ class CouponController extends Controller
                     break;
             }
 
+            $logDetails = sprintf(
+                'Sửa mã khuyến mãi: Mã - %s',
+                $coupon->code,
+            );
+    
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id, 
+                'Sửa',         
+                $logDetails         
+            ));
+
             DB::commit();
             return redirect()->route('admin.coupons.index')->with('success', 'Cập nhật coupon thành công');
         } catch (\Exception $e) {
@@ -350,6 +376,18 @@ class CouponController extends Controller
             return redirect()->route('admin.coupons.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
         }
 
+        $logDetails = sprintf(
+            'Xóa mã khuyến mãi: Mã - %s',
+            $data->code,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id, 
+            'Xóa',         
+            $logDetails         
+        ));
+
         return redirect()->route('admin.coupons.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 
@@ -366,6 +404,18 @@ class CouponController extends Controller
             $data->usage()->forceDelete();
             $data->forceDelete();
         });
+
+        $logDetails = sprintf(
+            'Xóa mã khuyến mãi: Mã - %s',
+            $data->code,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id, 
+            'Xóa',         
+            $logDetails         
+        ));
 
         return redirect()->route('admin.coupons.deleted')->with('success', 'Thuộc tính và các liên kết trung gian đã bị xóa vĩnh viễn');
     }
