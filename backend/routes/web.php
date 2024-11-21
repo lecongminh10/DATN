@@ -24,6 +24,7 @@ use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\EmailController;
 
 Route::group([
     'prefix' => 'admin',
@@ -243,6 +244,15 @@ Route::group([
 
         }
     );
+
+    // Email
+    Route::group([
+        'prefix' => 'email',
+        'as' => 'email.'
+    ], function () {
+        Route::get('/', [EmailController::class, 'viewEmail'])->name('viewEmail');
+        Route::post('send-email', [EmailController::class, 'sendEmail'])->name('sendEmail');
+    });
 });
 
 
@@ -321,4 +331,22 @@ Route::prefix('/')->group(function () {
 
         // routes/web.php
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
+
+
+
+// Route::get('/send-email', function () {
+//     // Địa chỉ email người nhận
+//     $toEmail = 'vudkph37645@fpt.edu.vn';
+//     $subject = 'Test Email from Laravel';
+//     $message = 'This is a simple email sent directly from a route in Laravel!';
+
+//     // Gửi email
+//     Mail::raw($message, function ($message) use ($toEmail, $subject) {
+//         $message->to($toEmail)
+//                 ->subject($subject);
+//     });
+
+//     return 'Email sent successfully';
+// });
+
 });
