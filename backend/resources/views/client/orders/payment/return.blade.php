@@ -248,7 +248,7 @@
                                                                     if(!empty($variant)){
                                                                         $img = $value->productVariant->variant_image;
                                                                     }else{
-                                                                        $img = $value->product->getMainImage->image_gallery;
+                                                                        $img = $value->product->getMainImage()->image_gallery;
                                                                     }
                                                                 @endphp
                                                             <img src="{{Storage::url( $img)}}" alt="" style="max-height: 100px; max-width: 100px;">
