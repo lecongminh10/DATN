@@ -58,7 +58,7 @@ class Order extends Model
         return $this->hasOne(shippingMethods::class, 'order_id');
     }
     public static function getCanceledOrders()
-{
-    return self::where('status', self::DA_HUY)->get();
-}
+    {
+        return self::where('status', self::DA_HUY)->get();
+    }  
 }

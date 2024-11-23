@@ -80,13 +80,7 @@
                                     @error('phone_number')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                </div>
-                    
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">Địa chỉ:</label>
-                                    <input type="text" id="address" name="address" class="form-control" value="{{ $address->address_line }}">
-                                </div>
-                    
+                                </div>               
                                 <div class="mb-3">
                                     <label for="date_of_birth" class="form-label">Ngày sinh:</label>
                                     <input type="date" id="date_of_birth" name="date_of_birth" class="form-control"

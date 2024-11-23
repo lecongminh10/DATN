@@ -64,7 +64,15 @@
                                         <td>
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 avatar-md bg-light rounded p-1">
-                                                    <img src="{{ asset('theme/assets/images/products/img-8.png') }}" alt="" class="img-fluid d-block">
+                                                    @php
+                                                        if ($value->productVariant && !empty($value->productVariant->variant_image)) {
+                                                            $url = $value->productVariant->variant_image; 
+                                                        } else {
+                                                            $mainImage = $value->product->getMainImage(); 
+                                                            $url = $mainImage ? $mainImage->image_gallery : 'default-image-path.jpg';
+                                                        }
+                                                    @endphp
+                                                <img src="{{ Storage::url($url) }}" class="img-fluid d-block" alt="{{ $value->product->name }}">
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <h5 class="fs-15"><a href="#" class="link-primary">{{ $value->product->name }}</a></h5>
