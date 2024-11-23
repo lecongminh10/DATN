@@ -31,16 +31,11 @@ class SendScheduledEmailsCommand extends Command
         // Log thông báo bắt đầu
         Log::info('Bắt đầu gửi email theo lịch trình');
 
-        // Lấy danh sách các email đã được đặt lịch và đến thời gian gửi
-        // $tam = Carbon::now()->toDateTimeString();
-        // Log::info('tam', ['value' => $tam]);
         $scheduledEmails = DB::table('scheduled_emails')
-            ->where('schedule_date', '<', Carbon::now()->toDateTimeString()) // Chuyển đổi Carbon về định dạng DATETIME
-            ->where('status', 'pending') // Email chưa được gửi
+            ->where('schedule_date', '<', Carbon::now()->toDateTimeString()) // Thay dấu = thành <
+            ->where('status', 'pending')
             ->get();
 
-
-        // Kiểm tra nếu không có email nào
         if ($scheduledEmails->isEmpty()) {
             Log::info('Không có email nào cần gửi theo lịch trình.');
         }

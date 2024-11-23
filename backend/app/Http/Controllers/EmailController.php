@@ -32,6 +32,11 @@ class EmailController extends Controller
             $toEmail = array_map('trim', explode(',', $toEmail));
         }
 
+        // Nếu $toEmail là null hoặc không phải mảng, xử lý lỗi
+        if (is_null($toEmail) || !is_array($toEmail)) {
+            return redirect()->back()->with('error', 'Danh sách email không hợp lệ.');
+        }
+        
         if ($scheduleDate) {
             // Lưu vào bảng `scheduled_emails`
             DB::table('scheduled_emails')->insert([

@@ -19,6 +19,11 @@
             cursor: pointer;
         }
 
+        /* Xóa cảnh báo đỏ */
+        .cke_notification {
+            display: none;
+        }
+
     </style>
 @endsection
 
@@ -102,8 +107,9 @@
                             <div class="mb-3">
                                 <label for="message" class="form-label">Tin nhắn:</label>
                                 {{-- <textarea id="message" class="form-control" rows="4" placeholder="Write your message here"></textarea> --}}
-                                <textarea class="ckeditor-classic" id="message" name="message"></textarea>
-                                {{-- <textarea class="snow-editor" style="height: 300px;" id="message" name="message"></textarea> --}}
+                                {{-- <textarea class="ckeditor-classic" id="message" name="message"></textarea> --}}
+                                <br>
+                                <textarea name="message" id="editor-container" style="width: 100%; height: auto" value=""></textarea>
                             </div>
 
                             <input type="hidden" name="scheduleDate" id="hiddenScheduleDate">
@@ -138,8 +144,8 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <label for="scheduleDate" class="form-label">Chọn ngày và giờ:</label>
-                                    <input type="datetime-local" id="scheduleDate" class="form-control">
+                                    <label for="scheduleDate" class="form-label">Chọn ngày</label>
+                                    <input type="date" id="scheduleDate" class="form-control">
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -197,22 +203,22 @@
 @endsection
 
 @section('script_libray')
-    <!--ckeditor js-->
-    {{-- <script src="{{ asset('theme/assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script> --}}
-    <!-- mailbox init -->
-    {{-- <script src="{{ asset('theme/assets/js/pages/mailbox.init.js') }}"></script> --}}
 
-
-    {{-- <script src="https://cdn.ckeditor.com/4.20.2/standard/ckeditor.js"></script> --}}
-
-    <!-- ckeditor -->
-    <script src="{{ asset('theme/assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
 
     <!-- quill js -->
     <script src="{{ asset('theme/assets/libs/quill/quill.min.js') }}"></script>
 
     <!-- init js -->
     <script src="{{ asset('theme/assets/js/pages/form-editor.init.js') }}"></script>
+
+    <script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+    
+    <script>
+        CKEDITOR.replace('editor-container', {
+            filebrowserUploadUrl: "{{ url('admin/email/sendEmail') }}",
+            filebrowserUploadMethod: 'form'
+        });
+    </script>
 @endsection
 
 @section('scripte_logic')

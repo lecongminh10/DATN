@@ -16,7 +16,7 @@ class CreateScheduledEmailsTable extends Migration
             $table->json('to_email'); // Danh sách email (JSON)
             $table->string('subject');
             $table->text('message');
-            $table->timestamp('schedule_date');
+            $table->date('schedule_date');
             $table->enum('status', ['pending', 'sent'])->default('pending');
             $table->timestamps();
         });
