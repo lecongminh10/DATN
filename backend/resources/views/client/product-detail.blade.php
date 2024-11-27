@@ -361,7 +361,7 @@
                             <!-- End .product-single-carousel -->
                             <div class="product-gallery">
                                 <img id="product-image" src="{{ asset('path_to_default_image.jpg') }}"
-                                    alt="Product Image">
+                                    alt="">
                             </div>
 
                             <span class="prod-full-screen">

@@ -25,6 +25,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SeoController;
@@ -345,6 +346,109 @@ Route::group([
         }
     );
 
+    // profile
+    Route::group(
+        [
+            'prefix' => 'profile',
+            'as' => 'profile.'
+        ],
+        function () {
+            Route::get('/', [ProfileController::class, 'index'])->name('index');
+            Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('edit');
+            Route::post('/profile/update', [ProfileController::class, 'update'])->name('update');
+            Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
+        }
+    );
+
+    //footer
+    Route::group(
+        [
+            'prefix' => 'footer',
+            'as' => 'footer.'
+        ],
+        function () {
+            Route::get('footer/edit', [FooterController::class, 'edit'])->name('edit');
+            Route::post('footer/update', [FooterController::class, 'update'])->name('update');
+        }
+    );
+
+    //thongbao(announcement)
+    Route::group(
+        [
+            'prefix' => 'announcement',
+            'as' => 'announcement.'
+        ],
+        function () {
+            Route::get('/announcement/edit', [AnnouncementController::class, 'edit'])->name('edit');
+            Route::post('/announcement/update', [AnnouncementController::class, 'update'])->name('update');
+        }
+    );
+
+    //////info_boxes
+    Route::group(
+        [
+            'prefix' => 'info-boxes',
+            'as' => 'info_boxes.',
+        ],
+        function () {
+            Route::get('info_boxes/edit', [InfoBoxController::class, 'edit'])->name('edit');
+            Route::post('info_boxes/update', [InfoBoxController::class, 'update'])->name('update');
+        }
+    );
+
+    //////popuphome
+    Route::group(
+        [
+            'prefix' => 'popuphome',
+            'as' => 'popuphome.',
+        ],
+        function () {
+            Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
+            Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
+        }
+    );
+    
+    //////comment
+    Route::group(
+        [
+            'prefix' => 'comment',
+            'as' => 'comment.',
+        ],
+        function () {
+            Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
+            Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
+        }
+    );
+
+    // Export Import
+    Route::group([
+        'prefix' => 'export-import',
+        'as' => 'export-import.'
+    ], function() {
+        Route::get('/', [ExportImportController::class, 'exportAndImport'])->name('view-export-import');
+        // export
+        Route::get('export-category', [ExportImportController::class, 'exportCategory'])->name('exportCategory');
+        Route::post('export-categories', [ExportImportController::class, 'exportCategories'])->name('exportCategories');
+        
+        Route::get('export-product', [ExportImportController::class, 'exportProduct'])->name('exportProduct');
+        Route::post('export-products', [ExportImportController::class, 'exportProducts'])->name('exportProducts');
+        
+        Route::get('export-post', [ExportImportController::class, 'exportPost'])->name('exportPost');
+        Route::post('export-posts', [ExportImportController::class, 'exportPosts'])->name('exportPosts');
+
+        // import
+        Route::get('import-category', [ExportImportController::class, 'importCategory'])->name('importCategory');
+        Route::post('import-categories', [ExportImportController::class, 'importCategories'])->name('importCategories');
+
+        Route::get('import-product', [ExportImportController::class, 'importProduct'])->name('importProduct');
+        Route::post('import-products', [ExportImportController::class, 'importProducts'])->name('importProducts');
+        
+        Route::get('import-post', [ExportImportController::class, 'importPost'])->name('importPost');
+        Route::post('import-posts', [ExportImportController::class, 'importPosts'])->name('importPosts');
+
+
+    });
+
     // Email
     Route::group([
         'prefix' => 'email',
@@ -448,112 +552,5 @@ Route::prefix('/')->group(function () {
 
 //     return 'Email sent successfully';
 // });
-
-});
-
-        });
-
-        // profile
-        Route::group(
-            [
-                'prefix' => 'profile',
-                'as' => 'profile.'
-            ],
-            function () {
-                Route::get('/', [ProfileController::class, 'index'])->name('index');
-                Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('edit');
-                Route::post('/profile/update', [ProfileController::class, 'update'])->name('update');
-                Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
-            }
-        );
-
-        //footer
-        Route::group(
-            [
-                'prefix' => 'footer',
-                'as' => 'footer.'
-            ],
-            function () {
-                Route::get('footer/edit', [FooterController::class, 'edit'])->name('edit');
-                Route::post('footer/update', [FooterController::class, 'update'])->name('update');
-            }
-        );
-
-        //thongbao(announcement)
-        Route::group(
-            [
-                'prefix' => 'announcement',
-                'as' => 'announcement.'
-            ],
-            function () {
-                Route::get('/announcement/edit', [AnnouncementController::class, 'edit'])->name('edit');
-                Route::post('/announcement/update', [AnnouncementController::class, 'update'])->name('update');
-            }
-        );
-
-        //////info_boxes
-        Route::group(
-            [
-                'prefix' => 'info-boxes',
-                'as' => 'info_boxes.',
-            ],
-            function () {
-                Route::get('info_boxes/edit', [InfoBoxController::class, 'edit'])->name('edit');
-                Route::post('info_boxes/update', [InfoBoxController::class, 'update'])->name('update');
-            }
-        );
-
-        //////popuphome
-        Route::group(
-            [
-                'prefix' => 'popuphome',
-                'as' => 'popuphome.',
-            ],
-            function () {
-                Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
-                Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
-            }
-        );
-        
-        //////comment
-        Route::group(
-            [
-                'prefix' => 'comment',
-                'as' => 'comment.',
-            ],
-            function () {
-                Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
-                Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
-            }
-        );
-
-    // Export Import
-    Route::group([
-        'prefix' => 'export-import',
-        'as' => 'export-import.'
-    ], function() {
-        Route::get('/', [ExportImportController::class, 'exportAndImport'])->name('view-export-import');
-        // export
-        Route::get('export-category', [ExportImportController::class, 'exportCategory'])->name('exportCategory');
-        Route::post('export-categories', [ExportImportController::class, 'exportCategories'])->name('exportCategories');
-        
-        Route::get('export-product', [ExportImportController::class, 'exportProduct'])->name('exportProduct');
-        Route::post('export-products', [ExportImportController::class, 'exportProducts'])->name('exportProducts');
-        
-        Route::get('export-post', [ExportImportController::class, 'exportPost'])->name('exportPost');
-        Route::post('export-posts', [ExportImportController::class, 'exportPosts'])->name('exportPosts');
-
-        // import
-        Route::get('import-category', [ExportImportController::class, 'importCategory'])->name('importCategory');
-        Route::post('import-categories', [ExportImportController::class, 'importCategories'])->name('importCategories');
-
-        Route::get('import-product', [ExportImportController::class, 'importProduct'])->name('importProduct');
-        Route::post('import-products', [ExportImportController::class, 'importProducts'])->name('importProducts');
-        
-        Route::get('import-post', [ExportImportController::class, 'importPost'])->name('importPost');
-        Route::post('import-posts', [ExportImportController::class, 'importPosts'])->name('importPosts');
-
-
-    });
 
 });
