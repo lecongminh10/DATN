@@ -65,11 +65,11 @@ class PermissionController extends Controller
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
-            auth()->user()->id, 
-            'Thêm mới',         
-            $logDetails         
+            auth()->user()->id,
+            'Thêm mới',
+            $logDetails
         ));
-
+        
         return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
     }
     public function edit($id)
@@ -111,9 +111,9 @@ class PermissionController extends Controller
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
-            auth()->user()->id, 
-            'Sửa',         
-            $logDetails         
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
         ));
 
         return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
@@ -142,9 +142,9 @@ class PermissionController extends Controller
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
-            auth()->user()->id, 
-            'Xóa',         
-            $logDetails         
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
         ));
         return redirect()->route('admin.permissions.index')->with('error', 'An error occurred while deleting the category.');
     }

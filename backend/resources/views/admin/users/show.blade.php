@@ -7,8 +7,8 @@
                 'title' => 'Người dùng  ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Người dùng ', 'url' => '#']
-                ]
+                    ['name' => 'Người dùng ', 'url' => '#'],
+                ],
             ])
             <div class="row">
                 <div class="card">
@@ -18,7 +18,6 @@
                                 <h4 class="fs-18 fw-semibold m-0 text-primary">Chi tiết người dùng</h4>
                             </div>
                         </div>
-
                     </div>
                     <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
                         @csrf
@@ -41,9 +40,34 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
+                                        <label for="phonenumberInput" class="form-label">Ảnh </label>
+                                        <ul class="list-group">
+                                            <img src="{{ Storage::url($user->profile_picture) }}" alt="Ảnh đại diện"
+                                                width="150px" height="150px">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
                                         <label for="phonenumberInput" class="form-label">Số điện thoại</label>
                                         <ul class="list-group">
                                             <li class="list-group-item">{{ $user->phone_number }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="phonenumberInput" class="form-label">Điểm khách hàng thân thiết</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->loyalty_points }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="phonenumberInput" class="form-label">Hạng thành viên</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->membership_level }}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -92,13 +116,14 @@
                             </div>
                             <div class="col-12">
                                 <div class="text-end">
-                                    <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người dùng</a>
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người
+                                        dùng</a>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection

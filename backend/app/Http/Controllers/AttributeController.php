@@ -62,8 +62,6 @@ class AttributeController extends Controller
                     }
                 }
             }
-            DB::commit();
-
             $logDetails = sprintf(
                 'Thêm mới thuộc tính: Tên - %s',
                 $validatedData['attribute_name']
@@ -75,7 +73,7 @@ class AttributeController extends Controller
                 'Thêm mới',
                 $logDetails
             ));
-
+            DB::commit();
             return redirect()->route('admin.attributes.index')->with('success', 'Thêm mới Attribute và Attribute Values thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -142,8 +140,6 @@ class AttributeController extends Controller
                     }
                 }
             }
-            DB::commit();
-
             $logDetails = sprintf(
                 'Sửa thuộc tính: Tên - %s',
                 $validatedData['attribute_name']
@@ -155,7 +151,7 @@ class AttributeController extends Controller
                 'Sửa',
                 $logDetails
             ));
-
+            DB::commit();
             return redirect()->route('admin.attributes.index')->with('success', 'Cập nhật thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -191,23 +187,21 @@ class AttributeController extends Controller
         if (!$data) {
             return abort(404);
         }
-        $data->delete();
-        if ($data->trashed()) {
-            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
-        }
-
         $logDetails = sprintf(
-            'Xóa thuộc tính: Tên - %s',
-            $data->attribute_name
+            'XÓa thuộc tính: Tên - %s',
+            $data['attribute_name']
         );
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
-            'Xóa',
+            'Xóa Mềm',
             $logDetails
         ));
-
+        $data->delete();
+        if ($data->trashed()) {
+            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
+        }
         return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
     public function destroyValue(int $id)
@@ -240,9 +234,6 @@ class AttributeController extends Controller
         if (!$data) {
             return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
-        $data->forceDelete();
-
-        
         $logDetails = sprintf(
             'Xóa thuộc tính: Tên - %s',
             $data->attribute_name
@@ -251,11 +242,10 @@ class AttributeController extends Controller
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
-            'Xóa',
+            'Xóa Cứng',
             $logDetails
         ));
-
-
+        $data->forceDelete();
         return redirect()->route('admin.attributes.attributeshortdeleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 

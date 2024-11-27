@@ -76,6 +76,12 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isClient()
+    {
+        return $this->permissionsValues()
+            ->whereIn('value', [self::TYPE_CLIENT])
+            ->exists();
+    }
     //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
     protected static function boot()
     {
@@ -107,4 +113,25 @@ class User extends Authenticatable
     {
         return DB::table('users_reviews')->where('user_id', $this->id)->get();
     }
+
+    public function getMembershipLevelAttribute()
+    {
+        // Kiểm tra số điểm loyalty và trả về hạng thành viên tương ứng
+        if ($this->loyalty_points < 5000) {
+            return 'Bronze'; 
+        } elseif ($this->loyalty_points <= 10000) {
+            return 'Silver'; 
+        } elseif ($this->loyalty_points <= 20000) {
+            return 'Gold'; 
+        } else {
+            return 'Platinum'; 
+        }
+    }
+    public function scopeClients($query)
+    {
+        return $query->whereHas('permissionsValues', function ($q) {
+            $q->where('value', self::TYPE_CLIENT);
+        });
+    }
+
 }

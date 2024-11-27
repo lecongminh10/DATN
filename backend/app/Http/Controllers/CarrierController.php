@@ -43,12 +43,10 @@ class CarrierController extends Controller
     public function store(CarrierRequest $carrierRequest, $id = null)
     {
         $validatedData = $carrierRequest->validated();
-
         try {
             DB::beginTransaction();
-
             $this->carrierService->update_status($id, $validatedData);
-            $this->carrierService->saveOrUpdate([
+            $data = $this->carrierService->saveOrUpdate([
                 'name' => $validatedData['name'],
                 'api_url' => $validatedData['api_url'],
                 'api_token' => $validatedData['api_token'],
@@ -56,21 +54,17 @@ class CarrierController extends Controller
                 'email' => $validatedData['email'],
                 'is_active' => $validatedData['is_active'],
             ]);
-
-            DB::commit();
-
             $logDetails = sprintf(
                 'Thêm mới vận chuyển: Tên - %s',
-                $validatedData['name']
+                $data->name
             );
 
-            // Ghi nhật ký hoạt động
             event(new AdminActivityLogged(
                 auth()->user()->id,
                 'Thêm mới',
                 $logDetails
             ));
-
+            DB::commit();
             return redirect()->route('admin.carriers.index')->with('success', 'Thêm mới carrier thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -116,9 +110,6 @@ class CarrierController extends Controller
                 'email' => $validatedData['email'],
                 'is_active' => $validatedData['is_active'] === 'active' ? 'active' : 'inactive',
             ]);
-
-            DB::commit();
-
             $logDetails = sprintf(
                 'Sửa vận chuyển: Tên - %s',
                 $carrier->name
@@ -130,7 +121,7 @@ class CarrierController extends Controller
                 'Sửa',
                 $logDetails
             ));
-
+            DB::commit();
             return redirect()->route('admin.carriers.index')->with('success', 'Cập nhật thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -171,22 +162,21 @@ class CarrierController extends Controller
         if (!$data) {
             return abort(404);
         }
-        $data->delete();
-        if ($data->trashed()) {
-            return redirect()->route('admin.carriers.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
-        }
-
         $logDetails = sprintf(
             'Xóa vận chuyển: Tên - %s',
-            $data['name']
+            $data->name
         );
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
-            'Xóa',
+            'Xóa Mềm',
             $logDetails
         ));
+        $data->delete();
+        if ($data->trashed()) {
+            return redirect()->route('admin.carriers.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
+        }
 
         return redirect()->route('admin.carriers.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
@@ -197,20 +187,18 @@ class CarrierController extends Controller
         if (!$data) {
             return redirect()->route('admin.carriers.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
-        $data->forceDelete();
-        
         $logDetails = sprintf(
             'Xóa vận chuyển: Tên - %s',
-            $data['name']
+            $data->name
         );
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
-            'Xóa',
+            'Xóa Cứng',
             $logDetails
         ));
-
+        $data->forceDelete();
         return redirect()->route('admin.carriers.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 

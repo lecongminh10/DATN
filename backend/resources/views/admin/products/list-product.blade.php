@@ -290,17 +290,25 @@
                                             }).join('<br>'); // Sử dụng <br> để ngắt dòng
 
                                         variantsHtml += `
-                            <tr>
-                                <td>${index++}</td>
-                                <td>${attributes}</td>
-                                <td>${variant.sku}</td>
-                                <td>${variant.original_price !== null ? variant.original_price : 'N/A'}</td>
-                                <td>${variant.price_modifier}</td>
-                                <td>${variant.status}</td>
-                                <td>${variant.stock}</td>
-                                <td><img src="/storage/${variant.variant_image}" alt="Variant Image" style="max-width: 70px; max-height: 70px"/></td>
-                            </tr>
-                        `;
+                                            <tr>
+                                                <td>${index++}</td>
+                                                <td>${attributes}</td>
+                                                <td>${variant.sku}</td>
+                                                <td>${variant.original_price !== null ? variant.original_price : 'N/A'}</td>
+                                                <td>${variant.price_modifier}</td>
+                                                <td>
+                                                  ${
+                                                    // Kiểm tra trạng thái của variant và hiển thị bằng tiếng Việt
+                                                    variant.status === 'available' ? 'Có sẵn' :
+                                                    variant.status === 'out_of_stock' ? 'Hết hàng' :
+                                                    variant.status === 'discontinued' ? 'Đã ngừng sản xuất' :
+                                                    'Chưa xác định'  // Nếu không thuộc ba trạng thái trên, hiển thị 'Chưa xác định'
+                                                }    
+                                                </td>
+                                                <td>${variant.stock}</td>
+                                                <td><img src="/storage/${variant.variant_image}" alt="Variant Image" style="max-width: 70px; max-height: 70px"/></td>
+                                            </tr>
+                                        `;
                                     });
 
                                     // Tạo nút phân trang
