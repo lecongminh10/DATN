@@ -118,25 +118,47 @@
         }
 
         .order-container .btn-review {
-            background-color: #ffc107;
-            /* Màu nền vàng */
-            color: white;
-            /* Màu chữ trắng */
-            font-size: 14px;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            margin-top: 20px;
-        }
+    background-color: #ffc107;
+    /* Màu nền vàng */
+    color: white;
+    /* Màu chữ trắng */
+    font-size: 12px; /* Giảm font-size */
+    font-weight: bold;
+    padding: 5px 10px; /* Giảm padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 10px; /* Giảm khoảng cách trên */
+}
 
-        .order-container .btn-review:hover {
-            background-color: #e0a800;
-            /* Màu nền khi hover */
-            transform: scale(1.05);
-        }
+.order-container .btn-review:hover {
+    background-color: #e0a800;
+    /* Màu nền khi hover */
+    transform: scale(1.05);
+}
+
+.order-container .btn-danger {
+    background-color: #dc3545;
+    /* Màu nền đỏ */
+    color: white;
+    /* Màu chữ trắng */
+    font-size: 12px; /* Giảm font-size */
+    font-weight: bold;
+    padding: 5px 10px; /* Giảm padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 10px; /* Giảm khoảng cách trên */
+}
+
+.order-container .btn-danger:hover {
+    background-color: #bb2d3b;
+    /* Màu nền khi hover */
+    transform: scale(1.05);
+}
+
 
         .modal-header {
             background-color: #f8f9fa;
@@ -189,14 +211,17 @@
             color: #ccc;
             /* Đặt màu mặc định khi hover */
         }
+        .cke_notification {
+            display: none;
+        }
     </style>
 @endsection
 
 @section('content')
-    @if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
     @endif
 
 
@@ -220,10 +245,16 @@
                         @endif
 
                         @if ($orders->status === 'Hoàn thành')
-                            <button type="button" class="btn btn-review" data-bs-toggle="modal"
-                                data-bs-target="#reviewModal">
-                                Đánh giá sản phẩm
-                            </button>
+                            <div class="d-flex mb-3">
+                                <button type="button" class="btn btn-review" data-bs-toggle="modal"
+                                    data-bs-target="#reviewModal">
+                                    Đánh giá sản phẩm
+                                </button>
+                                <button type="button" class="btn btn-danger ms-auto" data-bs-toggle="modal"
+                                    data-bs-target="#refundModal">
+                                    Yêu cầu trả hàng/Hoàn tiền
+                                </button>
+                            </div>
                         @endif
 
 
@@ -385,6 +416,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
+
                                 <form action="{{ route('users.submitReview', $orders->id) }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf
@@ -414,9 +446,41 @@
                             </div>
                         </div>
                     </div>
-
-
-
+                    {{-- Hoàn trả Modal --}}
+                    <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form action="{{ route('refunds.store') }}" method="POST">
+                                @csrf
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="refundModalLabel">Yêu cầu trả hàng</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="order_code" class="form-label">Mã đơn hàng</label>
+                                            <input type="text" class="form-control" id="order_code" name="order_code" value="{{ $orders->code }}" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="refund_method" class="form-label">Phương thức hoàn trả</label>
+                                            <select class="form-control" id="refund_method" name="refund_method" required>
+                                                <option value="cash">Tiền mặt</option>
+                                                <option value="payment">Chuyển khoản</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="reason" class="form-label">Lý do hoàn trả</label>
+                                            <textarea class="form-control" id="editor-container" name="reason" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-danger">Gửi yêu cầu</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 @include('client.users.left_menu')
             </div>
@@ -443,6 +507,11 @@
                 }
             });
         });
+        
     </script>
-
+     <script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+<script>
+    
+    CKEDITOR.replace('editor-container');
+</script>
 @endsection

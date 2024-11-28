@@ -36,8 +36,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\ExportImportController;
 use App\Http\Controllers\ChatController;
-
-
+use App\Http\Controllers\RefundController;
 
 Route::group([
         'prefix' => 'admin',
@@ -411,8 +410,8 @@ Route::group([
                 'as' => 'comment.',
             ],
             function () {
-                Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
-                Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
+                Route::get('/', [UserReviewController::class, 'index'])->name('index');
+                Route::post('/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
             }
         );
 
@@ -444,5 +443,10 @@ Route::group([
 
 
     });
-
+    Route::prefix('refunds')->group(function () {
+        Route::get('/', [RefundController::class, 'index'])->name('refunds.index');
+        Route::post('/', [RefundController::class, 'store'])->name('refunds.store');
+        Route::put('/{refund}', [RefundController::class, 'update'])->name('refunds.update');
+        Route::get('/create/{orderId}', [RefundController::class, 'createRefundForm'])->name('refunds.create');
+    });
 });

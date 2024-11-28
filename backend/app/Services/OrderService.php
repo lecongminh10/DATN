@@ -33,4 +33,9 @@ class OrderService extends BaseService
     {
        return  Order::where('code',$code)->first();
     }
+
+    public function getDataOrderRefund($code)
+    {
+        return $this->orderService->getDataOrderRefund($code);
+    }
 }
