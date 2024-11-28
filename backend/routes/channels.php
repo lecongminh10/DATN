@@ -22,14 +22,14 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('broadcast-coupon', function () {
     return true;
 });
+Broadcast::channel('message', function ($user) {
+    return true; // Hoặc điều kiện xác thực người dùng
+});
 
-Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
-    Log::info('Channel access attempt:', [
-        'user_id' => $user->id,
-        'room_id' => $roomId,
-        'is_admin' => $user->isAdmin(),
-        'is_client' => $user->isClient()
-    ]);
+Broadcast::channel('usersonline', function ($user) {
+    return ['id' => $user->id, 'name' => $user->name];
+});
 
-    return $user->isAdmin() || ($user->isClient() && $user->id == $roomId);
+Broadcast::channel('chat.{romId}', function () {
+    return true; 
 });
