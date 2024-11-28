@@ -405,11 +405,6 @@ textarea {
     transition: .2s linear;
 }
 
-.file-group {
-    position: relative;
-    overflow: hidden;
-}
-
 .publisher-btn {
     background-color: transparent;
     border: none;
@@ -421,13 +416,23 @@ textarea {
     transition: .2s linear;
 }
 
-.file-group input[type="file"] {
-    position: absolute;
-    opacity: 0;
-    z-index: -1;
-    width: 20px;
-}
 
 .text-info {
     color: #48b0f7 !important;
+}
+.file-group {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.file-group input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: 1; /* Giữ giá trị dương để nhận sự kiện */
+    width: 100%; /* Phủ toàn bộ vùng cha */
+    height: 100%; /* Đảm bảo tương tác toàn vùng */
+    cursor: pointer; /* Hiển thị con trỏ để dễ nhận biết */
 }

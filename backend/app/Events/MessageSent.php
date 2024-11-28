@@ -17,22 +17,25 @@ class MessageSent implements ShouldBroadcast
     public $sender;
     public $receiver;
     public $message;
+    public $mediaPath;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($roomId, $sender, $receiver, $message)
+    public function __construct($roomId, $sender, $receiver, $message , $mediaPath)
     {
         $this->roomId = $roomId;
         $this->sender = $sender;
         $this->receiver = $receiver;
         $this->message = $message;
+        $this->mediaPath = $mediaPath;
 
         Log::info('Message Sent:', [
             'Room ID' => $roomId,
             'Sender' => $sender->username,
             'Receiver' => $receiver->username,
             'Message' => $message,
+            'Image' =>$mediaPath,
         ]);
     }
 
@@ -72,6 +75,7 @@ class MessageSent implements ShouldBroadcast
                 'profile_picture' => $this->receiver->profile_picture
             ],
             'message' => $this->message,
+            'image' =>$this->mediaPath,
         ];
     }
 }

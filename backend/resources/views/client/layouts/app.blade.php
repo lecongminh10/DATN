@@ -272,10 +272,8 @@
                             <img class="avatar avatar-xs"
                                 src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="...">
                             <input class="publisher-input" type="text" placeholder="Chat " id="message-input">
-                            <span class="publisher-btn file-group">
-                                <i class="fa fa-paperclip file-browser"></i>
-                                <input type="file">
-                            </span>
+                
+                            <span class="publisher-btn file-group"><i class="fa fa-paperclip file-browser"></i><input type="file" id="fileInput" accept="image/*"></span>
                             <a class="publisher-btn text-info" href="#" data-abc="true" id="send-button"><i
                                     class="fa fa-paper-plane"></i></a>
                         </div>
@@ -383,7 +381,9 @@
             axios.post(url, {
                     _token: '{{ csrf_token() }}'
                 })
-                .then(response => {          
+                .then(response => {
+                    console.log(response.data.data);
+                        
                     innerViewChatClient(response.data.data) 
                 })
                 .catch(error => {
@@ -401,6 +401,11 @@
                         <div class="media media-chat media-chat-reverse">
                             <div class="media-body">
                                 <p>${message.message}</p>
+                                    ${message.media_path ? `
+                                        <div class="chat-media">
+                                            <img src="{{ Storage::url('${message.media_path}') }}" alt="Image" style="max-width: 200px; border-radius: 8px;">
+                                         </div>
+                                ` : ''}
                                 <p class="meta" style="color:#9b9b9b"><time datetime="2018">${formatDateTime(message.created_at)}</time></p>
                             </div>
                         </div>`;
@@ -412,6 +417,11 @@
                                 alt="Avatar">
                             <div class="media-body">
                                 <p>${message.message}</p>
+                                   ${message.media_path ? `
+                                        <div class="chat-media">
+                                            <img src="{{ Storage::url('${message.media_path}') }}" alt="Image" style="max-width: 200px; border-radius: 8px;">
+                                         </div>
+                                ` : ''}
                                 <p class="meta" style="color:#9b9b9b"><time datetime="2018">${formatDateTime(message.created_at)}</time></p>
                             </div>
                         </div>`;
@@ -455,7 +465,7 @@
 
         Echo.private(`chat.${userId}`)
             .listen('MessageSent', (e) => {
-                if (e !== null) {
+                if (e !== null) {         
                     renderDataMessage(e)
                 }
             });
@@ -463,28 +473,43 @@
         // Send a message
         sendButton.addEventListener('click', async () => {
             const message = messageInput.value.trim();
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0]; // Lấy tệp được tải lên
 
-            if (message) {
+            // Tạo formData để gửi tệp
+            let formData = new FormData();
+            formData.append('message', message);
+            formData.append('receiver_id', userId);
+
+            if (file) {
+                formData.append('file', file); // Đính kèm tệp nếu có
+            }
+
+            if (message || file) {
                 try {
-                    let response = await axios.post('/chat/send-message', {
-                        message: message,
-                        receiver_id: userId,
+                    let response = await axios.post('/chat/send-message', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data', // Đảm bảo gửi dưới dạng form data
+                        },
                     });
-                    messageInput.value = ''; // Clear input
+
+                    messageInput.value = ''; // Xóa input message
+                    fileInput.value = ''; // Xóa input file
                 } catch (error) {
                     messageInput.value = '';
+                    fileInput.value = ''; // Xóa input file
+
                     let view = document.getElementById('chat-content');
                     let timeElement = document.createElement('p');
-                    timeElement.classList.add('text-center', 'small', 'my-1'); 
-                    timeElement.innerHTML =formatDateTime(new Date());
+                    timeElement.classList.add('text-center', 'small', 'my-1');
+                    timeElement.innerHTML = formatDateTime(new Date());
                     view.appendChild(timeElement);
 
                     let messages = document.createElement('p');
-                    messages.classList.add('text-center', 'text-danger', 'my-4','mb-3');
+                    messages.classList.add('text-center', 'text-danger', 'my-4', 'mb-3');
                     messages.innerHTML = "Đã có lỗi khi gửi";
 
                     view.appendChild(messages);
-
 
                     console.error('Error sending message:', error);
                 }
@@ -500,6 +525,11 @@
                         <div class="media media-chat media-chat-reverse">
                             <div class="media-body">
                                 <p>${data.message}</p>
+                                 ${data.image ? `
+                                        <div class="chat-media">
+                                            <img src="{{ Storage::url('${data.image}') }}" alt="Image" style="max-width: 200px; border-radius: 8px;">
+                                         </div>
+                                ` : ''}
                                 <p class="meta" style="color:#9b9b9b"><time datetime="2018">${formatDateTime(new Date())}</time></p>
                             </div>
                         </div>`;
@@ -511,6 +541,11 @@
                                 alt="Avatar">
                             <div class="media-body">
                                 <p>${data.message}</p>
+                                     ${data.image ? `
+                                        <div class="chat-media">
+                                            <img src="{{ Storage::url('${data.image}') }}" alt="Image" style="max-width: 200px; border-radius: 8px;">
+                                         </div>
+                                ` : ''}
                                 <p class="meta" style="color:#9b9b9b"><time datetime="2018">${formatDateTime(new Date())}</time></p>
                             </div>
                         </div>`;

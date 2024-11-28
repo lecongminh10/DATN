@@ -1,4 +1,52 @@
 @extends('admin.layouts.app')
+@section('style_css')
+    <style>
+        .chat-input-links {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.links-list-item {
+    position: relative;
+}
+
+.emoji-btn {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.emoji-btn:hover {
+    color: #0056b3;
+}
+
+.emoji-btn .fa-paperclip {
+    margin-right: 5px;
+}
+
+.file-browser {
+    font-size: 1.2rem;
+}
+
+#fileInput {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+    </style>
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -226,7 +274,7 @@
                                                         <button type="button"
                                                             class="btn btn-link text-decoration-none emoji-btn"
                                                             id="emoji-btn">
-                                                            <i class="bx bx-smile align-middle"></i>
+                                                            <i class="ri-image-add-fill"></i> <input type="file" id="fileInput" accept="image/*">
                                                         </button>
                                                     </div>
                                                 </div>
@@ -325,13 +373,22 @@
 
                     form.addEventListener('submit', async (event) => {
                         event.preventDefault();
+                        const fileInput = document.getElementById('fileInput');
+                        const file = fileInput.files[0]; // Lấy tệp được tải lên
                         const message = chatInput.value.trim();
+                        let formData = new FormData();
+                        formData.append('message', message);
+                        formData.append('receiver_id', userId);
+                        if(file){
+                            formData.append('file', file); 
+                        }
 
-                        if (message) {
+                        if (message || file) {
                             try {
-                                await axios.post('/chat/send-message', {
-                                    message: message,
-                                    receiver_id: idUser.value,
+                                await axios.post('/chat/send-message',formData ,{
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data', // Đảm bảo gửi dưới dạng form data
+                                    },
                                 });
                                 chatInput.value = ''; // Clear the input field
                             } catch (error) {
@@ -341,6 +398,8 @@
                     });
                     Echo.private(`chat.` + userId)
                         .listen('MessageSent', (e) => {
+                            console.log(e);
+                            
                             renderMessage(e, userIdAdmin, userId)
                         });
                 });
@@ -363,7 +422,7 @@
                     <div class="conversation-list">
                         ${e.sender.id !== userIdAdmin ? `
                                                 <div class="chat-avatar">
-                                                    <img src="${e.sender.profile_picture || 'assets/images/users/avatar-1.jpg'}" alt="">
+                                                    <img src="{{ Storage::url('${e.sender.profile_picture}') }}" alt="">
                                                 </div>
                                             ` : ''}
                         <div class="user-chat-content">
@@ -401,9 +460,62 @@
                 const chatList = document.getElementById('users-conversation'); // Đảm bảo bạn có id này trong DOM
                 chatList.appendChild(messageElement);
 
+                if(e.image!==null){
+                    const messageElementPath = document.createElement('li');
+                    messageElementPath.classList.add('chat-list');
+                    if (e.sender.id === userIdAdmin) {
+                        
+                        messageElementPath.classList.add('right', 'my-2');
+                    } else {
+                        messageElementPath.classList.add('left', 'my-2');
+                    }
+
+                    messageElementPath.innerHTML = `
+                <div class="conversation-list">
+                                        ${e.sender.id !== userIdAdmin ? `
+                                            <div class="chat-avatar">
+                                                <img src="{{ Storage::url('${e.sender.profile_picture}') }}" alt="">
+                                            </div>
+                                        ` : ''}
+                    <div class="user-chat-content">
+                        <div class="ctext-wrap">
+                            <div class="ctext-wrap-content" id="${e.id}">
+                               <img src="{{ Storage::url('${e.image}') }}" alt="message-image" class="img-fluid" width="200px" height="auto"/>
+                            </div>
+                            <div class="dropdown align-self-start message-box-drop">
+                                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="ri-more-2-fill"></i>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item reply-message" href="#"><i class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
+                                    <a class="dropdown-item" href="#"><i class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
+                                    <a class="dropdown-item copy-message" href="#"><i class="ri-file-copy-line me-2 text-muted align-bottom"></i>Copy</a>
+                                    <a class="dropdown-item" href="#"><i class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
+                                    <a class="dropdown-item delete-item" href="#"><i class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="conversation-name">
+                            <span class="d-none name">${e.sender_name || 'Unknown'}</span>
+                            <small class="text-muted time">${formatDateTime(new Date())}</small>
+                            ${e.sender.id === userIdAdmin ? `
+                                                        <span class="text-success check-message-icon">
+                                                            <i class="bx bx-check-double"></i>
+                                                        </span>
+                                                    ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+                    // Gắn phần tử vào danh sách chat
+                    chatList.appendChild(messageElementPath);
+                }
+
                 // Cuộn xuống cuối danh sách
                 chatList.scrollTop = chatList.scrollHeight;
             }
+            
         }
 
         async function getDataChatMessageUserById(userId,avatarUser) {
@@ -477,6 +589,57 @@
 
                     // Gắn phần tử vào danh sách chat
                     chatList.appendChild(messageElement);
+
+                    if(e.media_path!==null){
+                    const messageElementPath = document.createElement('li');
+                    messageElementPath.classList.add('chat-list');
+                    if (e.sender_id === userIdAdmin) {
+                        messageElementPath.classList.add('right', 'my-2');
+                    } else {
+                        messageElementPath.classList.add('left', 'my-2');
+                    }
+
+                    messageElementPath.innerHTML = `
+                <div class="conversation-list">
+                                        ${e.sender_id !== userIdAdmin ? `
+                                            <div class="chat-avatar">
+                                                <img src="${avatarUser || 'assets/images/users/avatar-1.jpg'}" alt="">
+                                            </div>
+                                        ` : ''}
+                    <div class="user-chat-content">
+                        <div class="ctext-wrap">
+                            <div class="ctext-wrap-content" id="${e.id}">
+                               <img src="{{ Storage::url('${e.media_path}') }}" alt="message-image" class="img-fluid" width="200px" height="auto"/>
+                            </div>
+                            <div class="dropdown align-self-start message-box-drop">
+                                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="ri-more-2-fill"></i>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item reply-message" href="#"><i class="ri-reply-line me-2 text-muted align-bottom"></i>Reply</a>
+                                    <a class="dropdown-item" href="#"><i class="ri-share-line me-2 text-muted align-bottom"></i>Forward</a>
+                                    <a class="dropdown-item copy-message" href="#"><i class="ri-file-copy-line me-2 text-muted align-bottom"></i>Copy</a>
+                                    <a class="dropdown-item" href="#"><i class="ri-bookmark-line me-2 text-muted align-bottom"></i>Bookmark</a>
+                                    <a class="dropdown-item delete-item" href="#"><i class="ri-delete-bin-5-line me-2 text-muted align-bottom"></i>Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="conversation-name">
+                            <span class="d-none name">${e.sender_name || 'Unknown'}</span>
+                            <small class="text-muted time">${formatDateTime(e.created_at)}</small>
+                            ${e.sender_id === userIdAdmin ? `
+                                                        <span class="text-success check-message-icon">
+                                                            <i class="bx bx-check-double"></i>
+                                                        </span>
+                                                    ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+                    // Gắn phần tử vào danh sách chat
+                    chatList.appendChild(messageElementPath);
+                }
                 }
             });
 
