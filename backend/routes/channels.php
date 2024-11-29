@@ -33,3 +33,6 @@ Broadcast::channel('usersonline', function ($user) {
 Broadcast::channel('chat.{romId}', function () {
     return true; 
 });
+Broadcast::channel('notification_message', function ($user) {
+    return true;
+});

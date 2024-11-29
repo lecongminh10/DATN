@@ -489,8 +489,6 @@
                 let roomId = response.data.roomId;
                 Echo.private(`chat.` + roomId)
                     .listen('MessageSent', (e) => {
-                        console.log(e);
-
                         renderMessage(e, userIdAdmin, userId)
                     });
             } catch (error) {
@@ -627,6 +625,8 @@
 
         function renderMessageData(data, avatarUser) {
             const chatList = document.getElementById('users-conversation');
+            console.log('đây là data ',data);
+            
             chatList.innerHTML = '';
 
             data.forEach((e) => {
@@ -736,36 +736,18 @@
             // Cuộn xuống cuối danh sách
             chatList.scrollTop = chatList.scrollHeight;
         }
-
         function formatDateTime(dateTime) {
-            const date = new Date(dateTime);
+                    const date = new Date(dateTime);
 
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
 
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
 
-            return `${hours}:${minutes}, ${day}-${month}-${year}`;
-        }
+                    return `${hours}:${minutes}, ${day}-${month}-${year}`;
+                }
 
-
-        // Echo.join('usersonline')
-        //     .here(users => {
-        //         console.log('Users online:', users);
-        //     })
-        //     .joining(user => {
-        //         console.log(`${user.username} joined the chat.`);
-        //     })
-        //     .leaving(user => {
-        //         console.log(`${user.username} left the chat.`);
-        //     })
-        //     .listen('UserOnline', e => {
-        //         console.log('UserOnline event received:', e);
-        //     })
-        //     .listen('UserOffline', e => {
-        //         console.log('UserOffline event received:', e);
-        //     });
     </script>
 @endsection

@@ -9,6 +9,7 @@ use App\Models\ChatMessage;
 
 use Illuminate\Http\Request;
 use App\Services\UserService;
+use App\Events\NotificationMessage;
 use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
@@ -82,7 +83,7 @@ class ChatController extends Controller
 
         // Broadcast event
         broadcast(new MessageSent($roomId, $sender, $receiver, $chatMessage->message ,$mediaPath));
-
+        broadcast(new NotificationMessage($roomId, $sender, $receiver, $chatMessage->message));
         return response()->json([
             'status' => 'Message sent successfully',
             'message' => $chatMessage->message,

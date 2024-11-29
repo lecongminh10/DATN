@@ -46,7 +46,7 @@ class ChatMessage extends Model
                 $query->where('sender_id', $currentUserId)
                     ->orWhere('receiver_id', $currentUserId);
             })
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', direction: 'asc')
             ->get();
 
         return $chatMessages;
