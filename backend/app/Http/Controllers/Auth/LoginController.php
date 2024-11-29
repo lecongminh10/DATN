@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Events\UserOnline;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -26,6 +27,8 @@ class LoginController extends Controller
         ]);
         $action = $request->input('action');
         if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+            $user = Auth::user();
+            event(new UserOnline($user));
             $request->session()->regenerate();
             if ($action == 'admin' && Auth::user()->isAdmin()) {
                 return redirect()->route('admin.dashboard');

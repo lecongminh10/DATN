@@ -64,4 +64,16 @@ class ChatMessage extends Model
 
         return $chatMessages;
     }
+    public static function deleteChatMessageById($id)
+    {
+        $deleted = self::where('sender_id', $id)
+            ->orWhere('receiver_id', $id)
+            ->orWhere('room_id', $id)
+            ->delete();
+        if ($deleted) {
+            Log::info("Deleted $deleted chat message(s) with sender_id, receiver_id, or room_id = $id");
+            return true;
+        }
+        return false;
+    }
 }

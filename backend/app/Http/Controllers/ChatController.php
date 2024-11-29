@@ -171,4 +171,15 @@ class ChatController extends Controller
 
         return $isLoggedInUserAdmin ? $otherUserId : $loggedInUserId;
     }
+
+    public function deleteChatMessageById(Request $request)
+    {
+
+        $id = $request->input('id');
+        $respone = ChatMessage::deleteChatMessageById($id);
+        if($respone){
+            return redirect()->back()->with(['message'=>'Đã xóa thành công' , 'status'=>true]);
+        }
+        return redirect()->back()->with(['message'=>'Đã xóa có lỗi' , 'status'=>true]);
+    }
 }

@@ -2,49 +2,52 @@
 @section('style_css')
     <style>
         .chat-input-links {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-.links-list-item {
-    position: relative;
-}
+        .links-list-item {
+            position: relative;
+        }
 
-.emoji-btn {
-    background-color: transparent;
-    border: none;
-    color: #007bff;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding: 5px;
-    transition: color 0.3s;
-}
+        .emoji-btn {
+            background-color: transparent;
+            border: none;
+            color: #007bff;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.3s;
+        }
 
-.emoji-btn:hover {
-    color: #0056b3;
-}
+        .emoji-btn:hover {
+            color: #0056b3;
+        }
 
-.emoji-btn .fa-paperclip {
-    margin-right: 5px;
-}
+        .emoji-btn .fa-paperclip {
+            margin-right: 5px;
+        }
 
-.file-browser {
-    font-size: 1.2rem;
-}
+        .file-browser {
+            font-size: 1.2rem;
+        }
 
-#fileInput {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
+        #fileInput {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
 
+        .user-chat {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -55,21 +58,17 @@
                     <div class="px-4 pt-4 mb-3">
                         <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
-                                <h5 class="mb-4">Chats</h5>
+                                <h5 class="mb-4">Trò chuyện</h5>
                             </div>
                             <div class="flex-shrink-0">
                                 <div data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom"
                                     title="Add Contact">
-
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-soft-success btn-sm">
-                                        <i class="ri-add-line align-bottom"></i>
-                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="search-box">
-                            <input type="text" class="form-control bg-light border-light" placeholder="Search here...">
+                            <input type="text" class="form-control bg-light border-light" placeholder="Tìm kiếm..."
+                                id="searchInput">
                             <i class="ri-search-2-line search-icon"></i>
                         </div>
                     </div> <!-- .p-4 -->
@@ -77,7 +76,7 @@
                     <ul class="nav nav-tabs nav-tabs-custom nav-success nav-justified" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#chats" role="tab">
-                                Khách hàng 
+                                Khách hàng
                             </a>
                         </li>
                         <li class="nav-item">
@@ -203,7 +202,6 @@
                                                                 class="flex-shrink-0 chat-user-img online user-own-img align-self-center me-3 ms-0">
                                                                 <img src="" class="rounded-circle avatar-xs"
                                                                     id="avartar-xs" alt="">
-                                                                <span class="user-status"></span>
                                                             </div>
                                                             <div class="flex-grow-1 overflow-hidden">
                                                                 <h5 class="text-truncate mb-0 fs-16"><a
@@ -214,7 +212,6 @@
                                                                         id="usernampo">
                                                                     </a></h5>
                                                                 <p class="text-truncate text-muted fs-14 mb-0 userStatus">
-                                                                    <small>Online</small>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -226,9 +223,9 @@
                                                 <ul class="list-inline user-chat-nav text-end mb-0">
                                                     <li class="list-inline-item m-0">
                                                         <div class="dropdown">
-                                                            <button class="btn btn-ghost-secondary btn-icon" type="button"
-                                                                data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
+                                                            <button class="btn btn-ghost-secondary btn-icon"
+                                                                type="button" data-bs-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="false">
                                                                 <i data-feather="search" class="icon-sm"></i>
                                                             </button>
                                                             <div
@@ -263,19 +260,10 @@
                                                                 <i data-feather="more-vertical" class="icon-sm"></i>
                                                             </button>
                                                             <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item d-block d-lg-none user-profile-show"
-                                                                    href="#"><i
-                                                                        class="ri-user-2-fill align-bottom text-muted me-2"></i>
-                                                                    View Profile</a>
-                                                                <a class="dropdown-item" href="#"><i
-                                                                        class="ri-inbox-archive-line align-bottom text-muted me-2"></i>
-                                                                    Archive</a>
-                                                                <a class="dropdown-item" href="#"><i
-                                                                        class="ri-mic-off-line align-bottom text-muted me-2"></i>
-                                                                    Muted</a>
-                                                                <a class="dropdown-item" href="#"><i
+                                                                <a class="dropdown-item" href="#" data-id=""
+                                                                    id="deleteById"><i
                                                                         class="ri-delete-bin-5-line align-bottom text-muted me-2"></i>
-                                                                    Delete</a>
+                                                                    Xóa</a>
                                                             </div>
                                                         </div>
                                                     </li>
@@ -310,7 +298,8 @@
                                                         <button type="button"
                                                             class="btn btn-link text-decoration-none emoji-btn"
                                                             id="emoji-btn">
-                                                            <i class="ri-image-add-fill"></i> <input type="file" id="fileInput" accept="image/*">
+                                                            <i class="ri-image-add-fill"></i> <input type="file"
+                                                                id="fileInput" accept="image/*">
                                                         </button>
                                                     </div>
                                                 </div>
@@ -381,6 +370,52 @@
 
 @section('scripte_logic')
     <script type="module">
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            const userList = document.querySelectorAll('#userList li');
+            userList.forEach((li) => {
+                const name = li.getAttribute('data-name').toLowerCase();
+                if (name.includes(query)) {
+                    li.style.display = '';
+                } else {
+                    li.style.display = 'none';
+                }
+            });
+
+            // Lọc nhân sự
+            const subList = document.querySelectorAll('#subList li');
+            subList.forEach((li) => {
+                const name = li.getAttribute('data-name').toLowerCase();
+                if (name.includes(query)) {
+                    li.style.display = '';
+                } else {
+                    li.style.display = 'none';
+                }
+            });
+        });
+
+        let deleteById = document.getElementById('deleteById');
+        deleteById.addEventListener('click', async function() {
+            const userId = deleteById.getAttribute('data-id');
+            let url = '{{ route('chat.message.delete') }}';
+            
+            try {
+                const response = await axios.post(url, {
+                    id: userId, // Truyền ID cần xóa
+                    _token: '{{ csrf_token() }}' 
+                });
+                if(response){
+                    window.location.reload();
+                } 
+            } catch (error) {
+                console.error('Error fetching chat messages:', error);
+            }
+        });
+
+        Echo.channel('usersonline')
+            .listen('UserOnline', (e) => {
+                console.log('User Online:', e.user);
+            });
         const form = document.getElementById('chatinput-form');
         const chatInput = document.getElementById('chat-input');
         const idUser = document.getElementById('idUser');
@@ -393,16 +428,20 @@
 
             listItems.forEach(item => {
                 item.addEventListener('click', () => {
-                    const chatList = document.getElementById('users-conversation'); 
-                    chatList.innerHTML = ''; 
+                    const chatList = document.getElementById('users-conversation');
+                    const userChat = document.querySelector('.user-chat');
+                    userChat.style.display = "block";
+                    chatList.innerHTML = '';
                     const userId = item.getAttribute('data-id');
                     const userName = item.getAttribute('data-name');
                     const avatarUser = item.getAttribute('data-avatar');
+                    const deleteById = document.getElementById("deleteById");
+                    deleteById.setAttribute('data-id', userId);
                     fetchRoomId(userId)
                     document.getElementById("avartar-xs").src = avatarUser
                     idUser.value = userId;
                     userDisplayName.textContent = userName;
-                    getDataChatMessageUserById(userId ,avatarUser);
+                    getDataChatMessageUserById(userId, avatarUser);
 
                     if (currentChannel) {
                         currentChannel.stopListening('MessageSent');
@@ -416,22 +455,24 @@
                         let formData = new FormData();
                         formData.append('message', message);
                         formData.append('receiver_id', userId);
-                        if(file){
-                            formData.append('file', file); 
+                        if (file) {
+                            formData.append('file', file);
                         }
 
                         if (message || file) {
                             try {
-                                const response = await axios.post('/chat/send-message', formData, {
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data', // Đảm bảo gửi dưới dạng form data
-                                    },
-                                });
+                                const response = await axios.post('/chat/send-message',
+                                    formData, {
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data', // Đảm bảo gửi dưới dạng form data
+                                        },
+                                    });
 
-                                chatInput.value = '';                  
+                                chatInput.value = '';
                                 if (fileInput) fileInput.value = '';
                             } catch (error) {
-                                if (fileInput) fileInput.value = ''; // Reset input file khi có lỗi
+                                if (fileInput) fileInput.value =
+                                    ''; // Reset input file khi có lỗi
                                 console.error('Error sending message:', error);
                             }
                         }
@@ -443,15 +484,15 @@
         const fetchRoomId = async (userId) => {
             try {
                 const response = await axios.post('/chat/get-room-id', {
-                    user_id: userId, 
+                    user_id: userId,
                 });
                 let roomId = response.data.roomId;
                 Echo.private(`chat.` + roomId)
-                        .listen('MessageSent', (e) => {
-                            console.log(e);
-                            
-                            renderMessage(e, userIdAdmin, userId)
-                        });
+                    .listen('MessageSent', (e) => {
+                        console.log(e);
+
+                        renderMessage(e, userIdAdmin, userId)
+                    });
             } catch (error) {
                 console.error('Error fetching room ID:', error.response?.data?.message || error.message);
             }
@@ -472,10 +513,10 @@
                 messageElement.innerHTML = `
                     <div class="conversation-list">
                         ${e.sender.id !== userIdAdmin ? `
-                                                <div class="chat-avatar">
-                                                    <img src="{{ Storage::url('${e.sender.profile_picture}') }}" alt="">
-                                                </div>
-                                            ` : ''}
+                                                        <div class="chat-avatar">
+                                                            <img src="{{ Storage::url('${e.sender.profile_picture}') }}" alt="">
+                                                        </div>
+                                                    ` : ''}
                         <div class="user-chat-content">
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content" id="${e.id}">
@@ -498,10 +539,10 @@
                                 <span class="d-none name">${e.sender.name}</span>
                                 <small class="text-muted time">${formatDateTime(new Date())}</small>
                                 ${e.sender.id === userIdAdmin ? `
-                                                        <span class="text-success check-message-icon">
-                                                            <i class="bx bx-check-double"></i>
-                                                        </span>
-                                                    ` : ''}
+                                                                <span class="text-success check-message-icon">
+                                                                    <i class="bx bx-check-double"></i>
+                                                                </span>
+                                                            ` : ''}
                             </div>
                         </div>
                     </div>
@@ -511,11 +552,11 @@
                 const chatList = document.getElementById('users-conversation'); // Đảm bảo bạn có id này trong DOM
                 chatList.appendChild(messageElement);
 
-                if(e.image!==null){
+                if (e.image !== null) {
                     const messageElementPath = document.createElement('li');
                     messageElementPath.classList.add('chat-list');
                     if (e.sender.id === userIdAdmin) {
-                        
+
                         messageElementPath.classList.add('right', 'my-2');
                     } else {
                         messageElementPath.classList.add('left', 'my-2');
@@ -524,10 +565,10 @@
                     messageElementPath.innerHTML = `
                 <div class="conversation-list">
                                         ${e.sender.id !== userIdAdmin ? `
-                                            <div class="chat-avatar">
-                                                <img src="{{ Storage::url('${e.sender.profile_picture}') }}" alt="">
-                                            </div>
-                                        ` : ''}
+                                                    <div class="chat-avatar">
+                                                        <img src="{{ Storage::url('${e.sender.profile_picture}') }}" alt="">
+                                                    </div>
+                                                ` : ''}
                     <div class="user-chat-content">
                         <div class="ctext-wrap">
                             <div class="ctext-wrap-content" id="${e.id}">
@@ -550,10 +591,10 @@
                             <span class="d-none name">${e.sender_name || 'Unknown'}</span>
                             <small class="text-muted time">${formatDateTime(new Date())}</small>
                             ${e.sender.id === userIdAdmin ? `
-                                                        <span class="text-success check-message-icon">
-                                                            <i class="bx bx-check-double"></i>
-                                                        </span>
-                                                    ` : ''}
+                                                                <span class="text-success check-message-icon">
+                                                                    <i class="bx bx-check-double"></i>
+                                                                </span>
+                                                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -566,10 +607,10 @@
                 // Cuộn xuống cuối danh sách
                 chatList.scrollTop = chatList.scrollHeight;
             }
-            
+
         }
 
-        async function getDataChatMessageUserById(userId,avatarUser) {
+        async function getDataChatMessageUserById(userId, avatarUser) {
             let url = '{{ route('chat.getDataChatAdmin') }}';
             try {
                 const response = await axios.post(url, {
@@ -577,16 +618,16 @@
                     _token: '{{ csrf_token() }}'
                 });
 
-                const data = response.data[1]; 
-                renderMessageData(data,avatarUser);
+                const data = response.data[1];
+                renderMessageData(data, avatarUser);
             } catch (error) {
                 console.error('Error fetching chat messages:', error);
             }
         }
 
-        function renderMessageData(data,avatarUser) {
-            const chatList = document.getElementById('users-conversation');  
-            chatList.innerHTML = ''; 
+        function renderMessageData(data, avatarUser) {
+            const chatList = document.getElementById('users-conversation');
+            chatList.innerHTML = '';
 
             data.forEach((e) => {
                 if (e !== null) {
@@ -601,10 +642,10 @@
                     messageElement.innerHTML = `
                 <div class="conversation-list">
                     ${e.sender_id !== userIdAdmin ? `
-                                            <div class="chat-avatar">
-                                                <img src="${avatarUser || 'assets/images/users/avatar-1.jpg'}" alt="">
-                                            </div>
-                                        ` : ''}
+                                                    <div class="chat-avatar">
+                                                        <img src="${avatarUser || 'assets/images/users/avatar-1.jpg'}" alt="">
+                                                    </div>
+                                                ` : ''}
                     <div class="user-chat-content">
                         <div class="ctext-wrap">
                             <div class="ctext-wrap-content" id="${e.id}">
@@ -627,10 +668,10 @@
                             <span class="d-none name">${e.sender_name || 'Unknown'}</span>
                             <small class="text-muted time">${formatDateTime(e.created_at)}</small>
                             ${e.sender_id === userIdAdmin ? `
-                                                        <span class="text-success check-message-icon">
-                                                            <i class="bx bx-check-double"></i>
-                                                        </span>
-                                                    ` : ''}
+                                                                <span class="text-success check-message-icon">
+                                                                    <i class="bx bx-check-double"></i>
+                                                                </span>
+                                                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -639,22 +680,22 @@
                     // Gắn phần tử vào danh sách chat
                     chatList.appendChild(messageElement);
 
-                    if(e.media_path!==null){
-                    const messageElementPath = document.createElement('li');
-                    messageElementPath.classList.add('chat-list');
-                    if (e.sender_id === userIdAdmin) {
-                        messageElementPath.classList.add('right', 'my-2');
-                    } else {
-                        messageElementPath.classList.add('left', 'my-2');
-                    }
+                    if (e.media_path !== null) {
+                        const messageElementPath = document.createElement('li');
+                        messageElementPath.classList.add('chat-list');
+                        if (e.sender_id === userIdAdmin) {
+                            messageElementPath.classList.add('right', 'my-2');
+                        } else {
+                            messageElementPath.classList.add('left', 'my-2');
+                        }
 
-                    messageElementPath.innerHTML = `
+                        messageElementPath.innerHTML = `
                 <div class="conversation-list">
                                         ${e.sender_id !== userIdAdmin ? `
-                                            <div class="chat-avatar">
-                                                <img src="${avatarUser || 'assets/images/users/avatar-1.jpg'}" alt="">
-                                            </div>
-                                        ` : ''}
+                                                    <div class="chat-avatar">
+                                                        <img src="${avatarUser || 'assets/images/users/avatar-1.jpg'}" alt="">
+                                                    </div>
+                                                ` : ''}
                     <div class="user-chat-content">
                         <div class="ctext-wrap">
                             <div class="ctext-wrap-content" id="${e.id}">
@@ -677,24 +718,25 @@
                             <span class="d-none name">${e.sender_name || 'Unknown'}</span>
                             <small class="text-muted time">${formatDateTime(e.created_at)}</small>
                             ${e.sender_id === userIdAdmin ? `
-                                                        <span class="text-success check-message-icon">
-                                                            <i class="bx bx-check-double"></i>
-                                                        </span>
-                                                    ` : ''}
+                                                                <span class="text-success check-message-icon">
+                                                                    <i class="bx bx-check-double"></i>
+                                                                </span>
+                                                            ` : ''}
                         </div>
                     </div>
                 </div>
             `;
 
-                    // Gắn phần tử vào danh sách chat
-                    chatList.appendChild(messageElementPath);
-                }
+                        // Gắn phần tử vào danh sách chat
+                        chatList.appendChild(messageElementPath);
+                    }
                 }
             });
 
             // Cuộn xuống cuối danh sách
             chatList.scrollTop = chatList.scrollHeight;
         }
+
         function formatDateTime(dateTime) {
             const date = new Date(dateTime);
 
@@ -702,7 +744,7 @@
             const minutes = String(date.getMinutes()).padStart(2, '0');
 
             const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0'); 
+            const month = String(date.getMonth() + 1).padStart(2, '0');
             const year = date.getFullYear();
 
             return `${hours}:${minutes}, ${day}-${month}-${year}`;

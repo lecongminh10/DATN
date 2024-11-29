@@ -27,7 +27,7 @@ Broadcast::channel('message', function ($user) {
 });
 
 Broadcast::channel('usersonline', function ($user) {
-    return ['id' => $user->id, 'name' => $user->name];
+    return true;
 });
 
 Broadcast::channel('chat.{romId}', function () {
