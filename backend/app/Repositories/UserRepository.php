@@ -66,12 +66,14 @@ class UserRepository extends BaseRepository
         return User::onlyTrashed()->with('permissionsValues')->get();
     }
 
-    public function getAllClient($type)
+    public function getAllClient(array $types)
     {
+        $currentUserId = auth()->id();
         return DB::table('users')
             ->join('permissions_value_users', 'users.id', '=', 'permissions_value_users.user_id')
             ->join('permissions_values', 'permissions_value_users.permission_value_id', '=', 'permissions_values.id')
-            ->where('permissions_values.value', $type)
+            ->whereIn('permissions_values.value', $types)
+            ->where('users.id', '!=', $currentUserId) 
             ->select('users.id' , 'users.username','users.profile_picture');
     }
 }

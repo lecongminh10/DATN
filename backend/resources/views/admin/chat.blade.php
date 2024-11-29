@@ -77,12 +77,12 @@
                     <ul class="nav nav-tabs nav-tabs-custom nav-success nav-justified" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#chats" role="tab">
-                                Chats
+                                Khách hàng 
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#contacts" role="tab">
-                                Contacts
+                            <a class="nav-link" data-bs-toggle="tab" href="#subadmin" role="tab">
+                                Nhân sự
                             </a>
                         </li>
                     </ul>
@@ -132,10 +132,46 @@
                                 <!-- End chat-message-list -->
                             </div>
                         </div>
-                        <div class="tab-pane" id="contacts" role="tabpanel">
+                        <div class="tab-pane" id="subadmin" role="tabpanel">
                             <div class="chat-room-list pt-3" data-simplebar>
-                                <div class="sort-contact">
+                                <div class="chat-message-list">
+                                    <ul class="list-unstyled chat-list chat-user-list" id="subList">
+                                        @foreach ($subAdminOrAdmin as $item)
+                                            @php
+                                                if ($item->profile_picture !== null) {
+                                                    $avatar = Storage::url($item->profile_picture);
+                                                } else {
+                                                    $avatar = '/theme/assets/images/users/avatar-3.jpg';
+                                                }
+                                            @endphp
+                                            <li id="contact-id-{{ $item->id }}" class=""
+                                                data-id="{{ $item->id }}" data-name="{{ $item->username }}"
+                                                data-avatar={{ $avatar }}>
+                                                <a href="javascript: void(0);" class="unread-msg-user">
+                                                    <div class="d-flex align-items-center">
+                                                        <div
+                                                            class="flex-shrink-0 chat-user-img online align-self-center me-2 ms-0">
+                                                            <div class="avatar-xxs"> <img src="{{ $avatar }}"
+                                                                    class="rounded-circle img-fluid userprofile"
+                                                                    alt="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-grow-1 overflow-hidden">
+                                                            <p class="text-truncate mb-0">{{ $item->username }}</p>
+                                                        </div>
+
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 </div>
+                                <div class="chat-message-list">
+
+                                    <ul class="list-unstyled chat-list chat-user-list mb-0" id="channelList">
+                                    </ul>
+                                </div>
+                                <!-- End chat-message-list -->
                             </div>
                         </div>
                     </div>
@@ -362,10 +398,11 @@
                     const userId = item.getAttribute('data-id');
                     const userName = item.getAttribute('data-name');
                     const avatarUser = item.getAttribute('data-avatar');
-                    getDataChatMessageUserById(userId ,avatarUser);
+                    fetchRoomId(userId)
                     document.getElementById("avartar-xs").src = avatarUser
                     idUser.value = userId;
                     userDisplayName.textContent = userName;
+                    getDataChatMessageUserById(userId ,avatarUser);
 
                     if (currentChannel) {
                         currentChannel.stopListening('MessageSent');
@@ -385,26 +422,40 @@
 
                         if (message || file) {
                             try {
-                                await axios.post('/chat/send-message',formData ,{
+                                const response = await axios.post('/chat/send-message', formData, {
                                     headers: {
                                         'Content-Type': 'multipart/form-data', // Đảm bảo gửi dưới dạng form data
                                     },
                                 });
-                                chatInput.value = ''; // Clear the input field
+
+                                chatInput.value = '';                  
+                                if (fileInput) fileInput.value = '';
                             } catch (error) {
+                                if (fileInput) fileInput.value = ''; // Reset input file khi có lỗi
                                 console.error('Error sending message:', error);
                             }
                         }
                     });
-                    Echo.private(`chat.` + userId)
+                });
+            });
+        });
+
+        const fetchRoomId = async (userId) => {
+            try {
+                const response = await axios.post('/chat/get-room-id', {
+                    user_id: userId, 
+                });
+                let roomId = response.data.roomId;
+                Echo.private(`chat.` + roomId)
                         .listen('MessageSent', (e) => {
                             console.log(e);
                             
                             renderMessage(e, userIdAdmin, userId)
                         });
-                });
-            });
-        });
+            } catch (error) {
+                console.error('Error fetching room ID:', error.response?.data?.message || error.message);
+            }
+        };
 
         function renderMessage(e, userIdAdmin, idUser) {
             if (e !== null) {
@@ -538,8 +589,6 @@
             chatList.innerHTML = ''; 
 
             data.forEach((e) => {
-                console.log(e);
-                
                 if (e !== null) {
                     const messageElement = document.createElement('li');
                     messageElement.classList.add('chat-list');

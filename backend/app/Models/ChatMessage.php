@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,19 +37,21 @@ class ChatMessage extends Model
         return $query->whereNull('read_at');
     }
 
-    public static function getChatMessages($chatUserId)
+    public static function getChatMessages($roomId)
     {
-        $adminId = Auth::id();
-        $chatMessages = ChatMessage::where(function ($query) use ($adminId, $chatUserId) {
-            $query->where('sender_id', $adminId)
-                  ->orwhere('receiver_id',$adminId)
-                  ->where('room_id', $chatUserId);
-        })
-        ->orderBy('created_at', 'asc')
-        ->get();
+        $currentUserId = Auth::id();
+
+        $chatMessages = ChatMessage::where('room_id', $roomId)
+            ->where(function ($query) use ($currentUserId) {
+                $query->where('sender_id', $currentUserId)
+                    ->orWhere('receiver_id', $currentUserId);
+            })
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         return $chatMessages;
     }
+
 
     public static function getChatMessageClient()
     {

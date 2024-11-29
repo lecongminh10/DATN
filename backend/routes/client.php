@@ -80,4 +80,5 @@ Route::prefix('chat')->name('chat.')->group(function () {
     Route::post('/user-offline/{id}', [ChatController::class, 'userOffline'])->name('userOffline');
     Route::post('/getDataChatAdmin',[ChatController::class ,'getDataChatAdmin'])->middleware(['auth', 'isAdmin'])->name('getDataChatAdmin');
     Route::post('/getDataChatClient',[ChatController::class ,'getDataChatClient'])->name('getDataChatClient');
+    Route::post('/get-room-id', [ChatController::class, 'getRoomId'])->name('getDataChatAdminaNew');
 });
