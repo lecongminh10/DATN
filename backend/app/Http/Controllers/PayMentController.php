@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use App\Helpers\ApiHelper;
+use App\Mail\OrderOnlineMail; //
+use App\Mail\OrderPlacedMail; // 
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Coupon;
@@ -10,7 +12,6 @@ use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\OrderItem;
-use App\Helpers\ApiHelper;
 use App\Events\OrderPlaced;
 use App\Models\CouponUsage;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ use App\Services\CarrierService;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail; //
 use Illuminate\Support\Facades\Auth;
 use App\Services\OrderLocationService;
 
@@ -148,6 +150,10 @@ class PayMentController extends Controller
         $this->createNewCouponeUsage($couponCode, $order->id);
         $couponUsage = $this->couponService->getByCouponUsage($order->id);
         $this->couponService->updateByOrderCoupon($order->id);
+
+        // Gửi mail xác nhận
+        Mail::to($order->user->email)->send(new OrderPlacedMail($order));
+
         $responseData= [
             'bank_code'    =>'',
             'vnp_CardType' =>'Thanh toán sau khi nhận hàng'
@@ -329,6 +335,9 @@ class PayMentController extends Controller
                 shippingMethods::where('transaction_id',$order->code)->update(['transaction_id'=> $payment->transaction_id]);
                 $this->couponService->updateByOrderCoupon($order->id);
                 $this->placeOrder($order ,3);
+
+                // Gửi email xác nhận
+                Mail::to($order->user->email)->send(new OrderOnlineMail($order));
             }else
             {
                 $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=>$order->total_price ,'status'=>Payment::Failed , 'transaction_id'=>$order->code]);

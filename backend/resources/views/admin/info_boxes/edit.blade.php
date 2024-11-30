@@ -59,7 +59,7 @@
                                 <input type="text" name="description_support" id="description_support"
                                     class="form-control" value="{{ $infoBox->description_support ?? '' }}">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="margin-left: 16px">
                             <label for="active">Kích Hoạt</label>
                             <input type="checkbox" name="active" id="active"
                                 {{ $infoBox->active ? 'checked' : '' }}>

@@ -174,8 +174,15 @@
                         aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
 
-                            <img class="rounded-circle header-profile-user"
-                                src="{{Storage::url(Auth::user()->profile_picture) }}" alt="Header Avatar">
+                            @if(Auth::user()->profile_picture)
+                                <img class="rounded-circle header-profile-user"
+                                    src="{{ Storage::url(Auth::user()->profile_picture) }}" 
+                                    alt="Header Avatar">
+                            @else
+                                <img class="rounded-circle header-profile-user"
+                                    src="https://img.myloview.com/stickers/default-avatar-profile-icon-vector-social-media-user-image-700-205124837.jpg" 
+                                    alt="Default Avatar">
+                            @endif
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
