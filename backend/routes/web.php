@@ -25,6 +25,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SeoController;
@@ -36,6 +37,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\ExportImportController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\EmailController;
 
 
 
@@ -340,81 +342,83 @@ Route::group([
         // statistic
         Route::prefix('statistics')->as('statistics.')->group(function () {
             Route::get('/', [StatsController::class, 'index'])->name('index');
-        });
 
-        // profile
-        Route::group(
-            [
-                'prefix' => 'profile',
-                'as' => 'profile.'
-            ],
-            function () {
-                Route::get('/', [ProfileController::class, 'index'])->name('index');
-                Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('edit');
-                Route::post('/profile/update', [ProfileController::class, 'update'])->name('update');
-                Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
-            }
-        );
+        }
+    );
 
-        //footer
-        Route::group(
-            [
-                'prefix' => 'footer',
-                'as' => 'footer.'
-            ],
-            function () {
-                Route::get('footer/edit', [FooterController::class, 'edit'])->name('edit');
-                Route::post('footer/update', [FooterController::class, 'update'])->name('update');
-            }
-        );
+    // profile
+    Route::group(
+        [
+            'prefix' => 'profile',
+            'as' => 'profile.'
+        ],
+        function () {
+            Route::get('/', [ProfileController::class, 'index'])->name('index');
+            Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('edit');
+            Route::post('/profile/update', [ProfileController::class, 'update'])->name('update');
+            Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
+        }
+    );
 
-        //thongbao(announcement)
-        Route::group(
-            [
-                'prefix' => 'announcement',
-                'as' => 'announcement.'
-            ],
-            function () {
-                Route::get('/announcement/edit', [AnnouncementController::class, 'edit'])->name('edit');
-                Route::post('/announcement/update', [AnnouncementController::class, 'update'])->name('update');
-            }
-        );
+    //footer
+    Route::group(
+        [
+            'prefix' => 'footer',
+            'as' => 'footer.'
+        ],
+        function () {
+            Route::get('footer/edit', [FooterController::class, 'edit'])->name('edit');
+            Route::post('footer/update', [FooterController::class, 'update'])->name('update');
+        }
+    );
 
-        //////info_boxes
-        Route::group(
-            [
-                'prefix' => 'info-boxes',
-                'as' => 'info_boxes.',
-            ],
-            function () {
-                Route::get('info_boxes/edit', [InfoBoxController::class, 'edit'])->name('edit');
-                Route::post('info_boxes/update', [InfoBoxController::class, 'update'])->name('update');
-            }
-        );
+    //thongbao(announcement)
+    Route::group(
+        [
+            'prefix' => 'announcement',
+            'as' => 'announcement.'
+        ],
+        function () {
+            Route::get('/announcement/edit', [AnnouncementController::class, 'edit'])->name('edit');
+            Route::post('/announcement/update', [AnnouncementController::class, 'update'])->name('update');
+        }
+    );
 
-        //////popuphome
-        Route::group(
-            [
-                'prefix' => 'popuphome',
-                'as' => 'popuphome.',
-            ],
-            function () {
-                Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
-                Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
-            }
-        );
-        
-        //////comment
-        Route::group(
-            [
-                'prefix' => 'comment',
-                'as' => 'comment.',
-            ],
-            function () {
-                Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
-                Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
-            }
-        );
+    //////info_boxes
+    Route::group(
+        [
+            'prefix' => 'info-boxes',
+            'as' => 'info_boxes.',
+        ],
+        function () {
+            Route::get('info_boxes/edit', [InfoBoxController::class, 'edit'])->name('edit');
+            Route::post('info_boxes/update', [InfoBoxController::class, 'update'])->name('update');
+        }
+    );
+
+    //////popuphome
+    Route::group(
+        [
+            'prefix' => 'popuphome',
+            'as' => 'popuphome.',
+        ],
+        function () {
+            Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
+            Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
+        }
+    );
+    
+    //////comment
+    Route::group(
+        [
+            'prefix' => 'comment',
+            'as' => 'comment.',
+        ],
+        function () {
+            Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
+            Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
+        }
+    );
 
     // Export Import
     Route::group([
@@ -444,5 +448,109 @@ Route::group([
 
 
     });
+
+    // Email
+    Route::group([
+        'prefix' => 'email',
+        'as' => 'email.'
+    ], function () {
+        Route::get('/', [EmailController::class, 'viewEmail'])->name('viewEmail');
+        Route::post('send-email', [EmailController::class, 'sendEmail'])->name('sendEmail');
+    });
+});
+
+
+
+Route::prefix('auth')->group(function () {
+    Route::get('admin/login',                             [LoginController::class, 'showFormLoginAdmin'])->name('admin.login');
+    Route::get('login',                                  [LoginController::class, 'showFormLogin'])->name('client.login');
+    Route::post('login',                                  [LoginController::class, 'login'])->name('auth.login');
+    Route::get('logout',                                  [LoginController::class, 'logout'])->name('auth.logout');
+    Route::get('register',                                [RegisterController::class, 'showFormRegister'])->name('show.register');
+    Route::post('register',                               [RegisterController::class, 'register'])->name('register');
+
+    // Route::get('password/confirm',                     [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.showconfirm');
+    // Route::post('password/confirm',                    [ConfirmPasswordController::class, 'confirm'])->name('password.confirm');
+    Route::post('password/email',                         [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset',                          [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('password/reset',                         [ResetPasswordController::class, 'reset'])->name('password.update');
+    Route::get('password/reset/{token}',                  [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+    Route::get('google',                                  [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('google/callback',                         [SocialiteController::class, 'handleGoogleCallback']);
+
+    Route::get('facebook',                                [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
+    Route::get('facebook/callback',                       [SocialiteController::class, 'handleFacebookCallback']);
+    Route::get('github',                                  [SocialiteController::class, 'redirectToGitHub'])->name('auth.github');
+    Route::get('github/callback',                         [SocialiteController::class, 'handleGitHubCallback']);
+
+    Route::get('twitter',                                 [SocialiteController::class, 'redirectToTwitter'])->name('auth.twitter');
+    Route::get('twitter/callback',                        [SocialiteController::class, 'handleTwitterCallback']);
+});
+
+Route::prefix('/')->group(function () {
+    Route::get('',[HomeController::class, 'index'])->name('client');
+  //profile
+    Route::get('/user',                                     [UserController::class, 'indexClient'])->name('users.indexClient');
+    Route::get('profile/{id}',                              [UserController::class, 'showClient'])->name('users.showClient');
+    Route::put('update-profile/{id}',                       [UserController::class, 'updateClient'])->name('users.updateClient');
+    Route::get('show-order',                                [UserController::class, 'showOrder'])->name('users.showOrder');
+    Route::get('show-order-detail/{id}',                    [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
+
+  //product
+    Route::get('/products',                                 [HomeController::class, 'showProducts'])->name('client.products');
+    Route::get('/products/sort',                            [HomeController::class, 'sortProducts'])->name('client.products.sort');
+    Route::get('/product/{id}',                             [ClientProductController::class, 'showProduct'])->name('client.showProduct');
+    Route::get('/products/category/{id}',                   [HomeController::class, 'getByCategory'])->name('client.products.Category');
+    Route::get('/products/filter-by-price',                 [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
+
+  //Oder
+    Route::get('wishlist',                                  [OrderController::class, 'wishList'])->name('wishList');
+    Route::post('add-wishlist',                             [OrderController::class, 'addWishList'])->name('addWishList');
+    Route::delete('wishlist/{id}',                          [OrderController::class, 'destroyWishlist'])->name('wishlistDelete');
+
+    Route::post('add-cart',                                 [OrderController::class, 'addToCart'])->name('addCart');
+    Route::get('shopping-cart',                             [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
+    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout')->middleware('check-cart');
+    Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
+    Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
+    Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
+    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder');// tahnh toán 
+    Route::delete('remove/{id}',                            [OrderController::class, 'removeFromCart'])->name('removeFromCart');
+    Route::post('update-cart',                              [OrderController::class, 'updateCart'])->name('updateCart');
+
+    //Counpon
+    Route::post('/apply-discount',                          [CouponController::class, 'applyDiscount']);
+
+    // //PayMent
+    Route::get('/vnpay-return',                            [PayMentController::class, 'vnpayReturn'])->name('vnpay.return');
+
+    // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
+
+    //Chat
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
+
+    // Route để gửi tin nhắn
+    Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
+
+        // routes/web.php
+    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+
+
+
+// Route::get('/send-email', function () {
+//     // Địa chỉ email người nhận
+//     $toEmail = 'vudkph37645@fpt.edu.vn';
+//     $subject = 'Test Email from Laravel';
+//     $message = 'This is a simple email sent directly from a route in Laravel!';
+
+//     // Gửi email
+//     Mail::raw($message, function ($message) use ($toEmail, $subject) {
+//         $message->to($toEmail)
+//                 ->subject($subject);
+//     });
+
+//     return 'Email sent successfully';
+// });
 
 });

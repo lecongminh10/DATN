@@ -61,4 +61,9 @@ class Order extends Model
     {
         return self::where('status', self::DA_HUY)->get();
     }  
+
+    public function couponUsage()
+    {
+        return $this->hasOne(CouponUsage::class, 'order_id');
+    }
 }
