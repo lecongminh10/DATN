@@ -22,6 +22,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\CategoryStatisticsController;
+use App\Http\Controllers\DashboardController;
 
 Route::group([
     'prefix' => 'admin',
@@ -31,6 +33,7 @@ Route::group([
     Route::get('dashboard', function () {
         return view('admin/dashboard');
     })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::group([
         'prefix' => 'products',
         'as' => 'products.',
@@ -207,7 +210,7 @@ Route::group([
         Route::post('/values/destroy-multiple',              [PermissionController::class, 'destroyMultipleValues'])->name('destroyMultipleValues');
     });
 
-    //Oder
+    //Order
     Route::group(
         [
             'prefix' => 'orders',
@@ -234,11 +237,12 @@ Route::group([
     // statistic
     Route::group(
         [
-            'prefix' => 'statistics',
-            'as' => 'statistics.'
+            'prefix' => 'statistics', 
+            'as' => 'statistics.'      
         ],
         function () {
             Route::get('/', [StatsController::class, 'index'])->name('index');
+            Route::get('/categories', [CategoryStatisticsController::class, 'index'])->name('categories');
         }
     );
 });
