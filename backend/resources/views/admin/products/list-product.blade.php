@@ -117,8 +117,8 @@
                                                             </td>
                                                             <td>{{ $value->category_name }}</td>
                                                             <td>{{ $value->slug }}</td>
-                                                            <td>{{ $value->price_regular }}</td>
-                                                            <td>{{ $value->price_sale }}</td>
+                                                            <td>{{ number_format($value->price_regular, 0, ',', '.') }} ₫</td>
+                                                            <td>{{ number_format($value->price_sale, 0, ',', '.') }} ₫</td>
                                                             <td>
                                                                 <div class="dropdown d-inline-block">
                                                                     <button class="btn btn-soft-secondary btn-sm dropdown"
@@ -168,9 +168,9 @@
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
-
                                             </table>
                                         </div>
+                                        @include('admin.components.pagination', ['data' => $products])
                                     </div>
                                 </div><!--end col-->
                             </div>
@@ -183,7 +183,7 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="myExtraLargeModalLabel">Product Variants</h5>
+                            <h5 class="modal-title" id="myExtraLargeModalLabel">Danh sách biến thể</h5>
                             <div class="ms-auto d-flex align-items-center">
                                 <input type="text" id="search" placeholder="Search variants..."
                                     class="form-control me-2" style="width: 250px;" />
@@ -211,7 +211,7 @@
                         </div>
                         <div class="modal-footer">
                             <button id="closeModalVariant" type="button" class="btn btn-primary"
-                                data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Close</button>
+                                data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Đóng</button>
                         </div>
                     </div>
                 </div>
@@ -230,7 +230,7 @@
                             @if (session('message'))
                                 <p>{{ session('message') }}</p>
                             @else
-                                <p>No message available.</p>
+                                <p>Không có thông báo .</p>
                             @endif
                         </div>
                         <div class="modal-footer">
@@ -294,8 +294,8 @@
                                                 <td>${index++}</td>
                                                 <td>${attributes}</td>
                                                 <td>${variant.sku}</td>
-                                                <td>${variant.original_price !== null ? variant.original_price : 'N/A'}</td>
-                                                <td>${variant.price_modifier}</td>
+                                                <td>${variant.original_price !== null ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(variant.original_price) : 'N/A'}</td>
+                                                <td>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(variant.price_modifier)}</td>
                                                 <td>
                                                   ${
                                                     // Kiểm tra trạng thái của variant và hiển thị bằng tiếng Việt

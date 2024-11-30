@@ -27,6 +27,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('libray_css')
     @yield('style_css')
+    <style>
+        .empty-notification-elem{
+            display: none;
+        }
+    </style>
 
 </head>
 
@@ -101,15 +106,26 @@
             const totalNotification = document.getElementById('totalNotification');
             Echo.private('notification_message')
                 .listen('NotificationMessage', (e) => {
+                    const notificationContainer = document.querySelector('#messages-tab .pe-2');
                     if (e) {
                         count += 1;
                         countTotal +=1;
                         counNotification.innerHTML= count;
                         totalNotification.innerHTML=countTotal;
                     }
-                    displayMessage(e)
+                    displayMessage(e ,notificationContainer)
+                })
+                .listen('OrderPlaced', (e) => {
+                    const notificationContainer = document.querySelector('#alerts-tab .pe-2');
+                    if (e) {
+                        count += 1;
+                        countTotal +=1;
+                        counNotification.innerHTML= count;
+                        totalNotification.innerHTML=countTotal;
+                    }
+                    displayMessage(e ,notificationContainer)
                 });
-            function displayMessage(e) {
+            function displayMessage(e , notificationContainer) {
                     if (e !== null && e.sender && e.sender.id !== userIdAdmin) {
                         // Tạo thông báo HTML
                         const notificationHTML = `
@@ -127,19 +143,13 @@
                                             <span><i class="mdi mdi-clock-outline"></i> ${formatDateTime(new Date())}</span>
                                         </p>
                                     </div>
-                                    <div class="px-2 fs-15">
-                                        <div class="form-check notification-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="messages-notification-check01">
-                                            <label class="form-check-label" for="messages-notification-check01"></label>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         `;
                         const allNotiTab = document.querySelector('#all-noti-tab .pe-2');
                               allNotiTab.innerHTML = notificationHTML + allNotiTab.innerHTML;
-                        const notificationContainer = document.querySelector('#messages-tab .pe-2');
-                              notificationContainer.innerHTML = notificationHTML + notificationContainer.innerHTML;
+
+                        notificationContainer.innerHTML = notificationHTML + notificationContainer.innerHTML;
                     }
                 }
 

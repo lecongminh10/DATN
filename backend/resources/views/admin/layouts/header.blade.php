@@ -147,33 +147,24 @@
 
                         <div class="tab-content position-relative" id="notificationItemsTabContent">
                             <div class="tab-pane fade show active py-2 ps-2" id="all-noti-tab" role="tabpanel">
-                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                <div data-simplebar style="max-height: 300px; overflow-y: auto;" class="pe-2">
                                     
                                 </div>
                             </div>
 
                             <div class="tab-pane fade py-2 ps-2" id="messages-tab" role="tabpanel" aria-labelledby="messages-tab">
-                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                <div data-simplebar style="max-height: 300px; overflow-y: auto;" class="pe-2">
                          
-                                </div>
-                                <div class="my-3 text-center view-all">
-                                    <button type="button" class="btn btn-soft-success waves-effect waves-light">
-                                        View All Messages <i class="ri-arrow-right-line align-middle"></i>
-                                    </button>
                                 </div>
                             </div>
                             
                             <div class="tab-pane fade p-4" id="alerts-tab" role="tabpanel"
-                                aria-labelledby="alerts-tab"></div>
-
-                            <div class="notification-actions" id="notification-actions">
-                                <div class="d-flex text-muted justify-content-center">
-                                    Select <div id="select-content" class="text-body fw-semibold px-1">0</div>
-                                    Result <button type="button" class="btn btn-link link-danger p-0 ms-3"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#removeNotificationModal">Remove</button>
+                                aria-labelledby="alerts-tab">
+                                <div data-simplebar style="max-height: 300px; overflow-y: auto;" class="pe-2">
+                         
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
