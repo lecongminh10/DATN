@@ -20,11 +20,12 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
     }
 
+  
     public function index(Request $request)
     {
-      $perPage = 5;
-      $parentCategories = Category::whereNull('parent_id')->paginate($perPage);
-      return view(self::PATH_VIEW . __FUNCTION__,  compact('parentCategories'));
+        $perPage = 5;
+        $parentCategories = Category::whereNull('parent_id')->paginate($perPage);
+        return view(self::PATH_VIEW . __FUNCTION__, compact('parentCategories'));
     }
 
     public function create()
@@ -48,14 +49,14 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
         $data = $this->categoryService->getById($id);
         return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
     }
 
     public function edit($id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
         $data = $this->categoryService->getById($id);
         $parentCategories = $this->categoryService->getParent();
         return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'parentCategories'));
@@ -63,7 +64,7 @@ class CategoryController extends Controller
 
     public function update(CategoryRequest $request, $id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
         $model = $this->categoryService->getById($id);
         $data = $request->except('image');
         $data['is_active'] ??= 0;
@@ -83,7 +84,7 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
         $data = $this->categoryService->getById($id);
         $data->delete();
         return redirect()->route('admin.categories.index');
@@ -91,12 +92,12 @@ class CategoryController extends Controller
     public function deleteMultiple(Request $request)
     {
         $categoryIds = $request->input('category_ids', []);
-    if (empty($categoryIds)) {
-        return redirect()->route('admin.categories.index')->with('error', 'No categories selected for deletion.');
-    }
+        if (empty($categoryIds)) {
+            return redirect()->route('admin.categories.index')->with('error', 'No categories selected for deletion.');
+        }
 
-    Category::whereIn('id', $categoryIds)->delete();
-    return redirect()->route('admin.categories.index')->with('success', 'Selected categories deleted successfully.');
+        Category::whereIn('id', $categoryIds)->delete();
+        return redirect()->route('admin.categories.index')->with('success', 'Selected categories deleted successfully.');
     }
     public function trashed()
     {
@@ -173,4 +174,99 @@ class CategoryController extends Controller
         }
         return $parentCategories; // Trả về danh mục cha với danh mục con
     }
+
+    // public function statistics($categoryId)
+    // {
+    //     $category = Category::findOrFail($categoryId);
+
+    //     // Các thông tin thống kê
+    //     $statistics = [
+    //         'name' => $category->name,
+    //         'total_products' => $category->productCount(),
+    //         'total_revenue' => $category->totalRevenue(),
+    //         'best_selling_product' => $category->bestSellingProduct()->name ?? 'No product',
+    //         'active_status' => $category->is_active ? 'Active' : 'Inactive',
+    //     ];
+
+    //     // Trả về view với dữ liệu thống kê
+    //     return view('categories.statistics', compact('statistics'));
+    // }
+
+    // public function allStatistics()
+    // {
+    //     $categories = Category::all();
+
+    //     // Lấy thống kê cho tất cả các danh mục
+    //     $statistics = $categories->map(function ($category) {
+    //         return [
+    //             'category_name' => $category->name,
+    //             'total_products' => $category->productCount(),
+    //             'total_revenue' => $category->totalRevenue(),
+    //             'best_selling_product' => $category->bestSellingProduct()->name ?? 'No product',
+    //             'active_status' => $category->is_active ? 'Active' : 'Inactive',
+    //         ];
+    //     });
+
+    //     // Trả về view với tất cả thống kê danh mục
+    //     return view('categories.all_statistics', compact('statistics'));
+    // }
+
+    // // Phương thức thống kê danh mục
+    // public function category()
+    // {
+    //     // Lấy tất cả danh mục
+    //     $categories = Category::all();
+
+    //     // Lấy thống kê cho tất cả các danh mục
+    //     $statistics = $categories->map(function ($category) {
+    //         return [
+    //             'category_name' => $category->name,
+    //             'total_products' => $category->productCount(),
+    //             'total_revenue' => $category->totalRevenue(),
+    //             'best_selling_product' => $category->bestSellingProduct()->name ?? 'No product',
+    //             'active_status' => $category->is_active ? 'Active' : 'Inactive',
+    //         ];
+    //     });
+
+    //     // Trả về view thống kê danh mục
+    //     return view('categories.statistics', compact('statistics'));
+    // }
+
+
+    // protected $categoryStatisticsService;
+
+    // public function __construct(CategoryStatisticsService $categoryStatisticsService)
+    // {
+    //     $this->categoryStatisticsService = $categoryStatisticsService;
+    // }
+
+    //   public function statistics($categoryId)
+    // {
+    //     $category = Category::findOrFail($categoryId);
+    //     $statistics = $this->categoryService->getStatistics($category);
+
+    //     return view('admin.statistics.statistics', compact('statistics'));
+    // }
+
+    // public function allStatistics()
+    // {
+    //     $statistics = $this->categoryService->getAllStatistics();
+
+    //     return view('admin.statistics.all_statistics', compact('all_statistics'));
+    // }
+
+    public function allStatistics()
+    {
+        // Lấy danh sách danh mục với các trường cần thiết
+        $all_statistics = Category::all()->map(function ($category) {
+            return [
+                'name' => $category->name,
+                'active_status' => $category->is_active ? 'Active' : 'Inactive',
+            ];
+        });
+    
+        // Trả về view với danh sách
+        return view('admin.categories.all_statistics', compact('all_statistics'));
+    }
+   
 }

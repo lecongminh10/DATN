@@ -222,6 +222,11 @@
                     <div class="collapse menu-dropdown" id="sidebarStatistic">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
+                                <a href="#" class="nav-link" >
+                                    Thống kê danh mục
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('admin.statistics.index') }}" class="nav-link" >
                                     Thống kê sản phẩm 
                                 </a>
@@ -257,20 +262,20 @@
                 <li class="nav-item">
                     <a href="#sidebar-comments-questions" class="nav-link" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebar-comments-questions" data-key="t-product">
-                        <i class="ri-rocket-line"></i>  <span data-key="t-landing">Gớp ý và câu hỏi</span>
+                        <i class="ri-rocket-line"></i>  <span data-key="t-landing">Góp ý và phản hồi</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebar-comments-questions">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link" >
-                                    Góp ý 
+                                <a href="{{ route('admin.feedbacks.index') }}" class="nav-link" >
+                                    Danh sách
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="" class="nav-link" >
                                     Câu hỏi 
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </div>
                 </li>

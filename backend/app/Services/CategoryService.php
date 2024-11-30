@@ -89,4 +89,34 @@ class CategoryService extends BaseService
         return $parentCategories;
     }
     
+    //thong ke
+    public function allStatistics()
+{
+    // Lấy danh sách danh mục với các trường cần thiết
+    $all_statistics = Category::all()->map(function ($category) {
+        return [
+            'name' => $category->name,
+            'active_status' => $category->is_active ? 'Active' : 'Inactive',
+        ];
+    });
+
+    // Trả về view với danh sách
+    return view('admin.categories.all_statistics', compact('all_statistics'));
+}
+
+
+    
+
+    // private function calculateTotalRevenue(Category $category)
+    // {
+    //     return $category->products->sum(function ($product) {
+    //         return $product->price * $product->sold_quantity;
+    //     });
+    // }
+
+    // private function getBestSellingProduct(Category $category)
+    // {
+    //     $bestSellingProduct = $category->products()->orderBy('sold_quantity', 'desc')->first();
+    //     return $bestSellingProduct ? $bestSellingProduct->name : null;
+    // }
 }

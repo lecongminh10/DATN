@@ -74,4 +74,41 @@ class Category extends Model
         });
     }
 
+
+    // Một danh mục có nhiều sản phẩm
+    // public function products()
+    // {
+    //     return $this->hasMany(Product::class);
+    // }
+
+    // Phương thức tính tổng số sản phẩm trong danh mục
+    // public function productCount()
+    // {
+    //     return $this->products()->count();
+    // }
+
+    // // Phương thức tính tổng doanh thu của danh mục
+    // public function totalRevenue()
+    // {
+    //     // Giả sử trong bảng `products` có cột `price` và bạn muốn tính tổng doanh thu
+    //     return $this->products()->sum('price');
+    // }
+
+    // // Phương thức lấy sản phẩm bán chạy nhất trong danh mục
+    // public function bestSellingProduct()
+    // {
+    //     // Giả sử trong bảng `products` có cột `sales` hoặc cột theo dõi số lượng bán ra
+    //     return $this->products()->orderBy('sales', 'desc')->first();
+    // }
+
+    public function getStatistics()
+    {
+        // Lấy tất cả các danh mục với thông tin cần thiết
+        return Category::all()->map(function ($category) {
+            return [
+                'name' => $category->name,
+                'active_status' => $category->is_active ? 'Active' : 'Inactive',
+            ];
+        });
+    }
 }
