@@ -68,5 +68,10 @@ class Order extends Model
     public function carrier()
     {
         return $this->belongsTo(Carrier::class);
+    }  
+
+    public function couponUsage()
+    {
+        return $this->hasOne(CouponUsage::class, 'order_id');
     }
 }

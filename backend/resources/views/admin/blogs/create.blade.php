@@ -1,5 +1,11 @@
 @extends('admin.layouts.app')
-
+@section('style_css')
+    <style>
+        .cke_notification {
+            display: none;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -88,7 +94,7 @@
                                 <!-- Blog Content -->
                                 <div class="mb-3">
                                     <label class="form-label" for="content">Nội dung </label>
-                                    <textarea class="form-control" id="content" name="content" placeholder="Nhập nội dung bài viết" required></textarea>
+                                    <textarea class="form-control" id="editor-container" name="content" placeholder="Nhập nội dung bài viết" required></textarea>
                                     @error('content')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -133,6 +139,10 @@
 @endsection
 
 @section('scripte_logic')
+<script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('editor-container');
+</script>
     <script>
         function addTag() {
             const tagsDiv = document.getElementById('blog-tags');

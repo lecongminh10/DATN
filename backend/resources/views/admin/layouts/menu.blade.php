@@ -473,8 +473,8 @@
                     <div class="collapse menu-dropdown" id="sidebar-message">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Email
+                                <a href="{{ route('admin.email.viewEmail') }}" class="nav-link" >
+                                   Email
                                 </a>
                             </li>
                             <li class="nav-item">
