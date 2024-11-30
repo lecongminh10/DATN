@@ -76,9 +76,9 @@ class Product extends Model
     }
 
     public function getMainImage(){
-        return $this->galleries()->where('is_main', operator: true)->first();
+        return $this->galleries()->where('is_main', true)->first();
     }
-
+    
     public function coupons()
     {
         return $this->belongsToMany(Coupon::class, 'coupons_products')

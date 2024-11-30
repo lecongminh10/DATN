@@ -36,6 +36,8 @@ use App\Http\Controllers\PopuphomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\ExportImportController;
+use App\Http\Controllers\CategoryStatisticsController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\EmailController;
 

@@ -40,6 +40,10 @@
                     <div class="collapse menu-dropdown" id="sidebarDashboards">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
+                                <a href="{{ route('admin.dashboard') }}" class="nav-link" role="button" aria-expanded="false"
+                                    aria-controls="sidebarCalendar" data-key="t-calender">
+                                    Dashboard
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -301,6 +305,12 @@
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarStatistic">
                         <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.statistics.categories') }}" class="nav-link">
+                                    Thống kê danh mục
+                                </a>
+                                
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.statistics.index') }}" class="nav-link">
                                     Thống kê sản phẩm
