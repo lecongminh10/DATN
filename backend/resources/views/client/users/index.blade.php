@@ -177,8 +177,7 @@
                                 </div>
                                 <div class="widget-card">
                                     <h4 style="font-size: 17px">Hạng thành viên</h4>
-                                    <p style="font-size: 15px">Hạng 1</p>
-                                    <a href="#profile" class="view-details">Cập nhật hạng</a>
+                                    <p style="font-size: 15px">Hạng {{ Auth::user()->membership_level }}</p>
                                 </div>
                             </div>
                         </div>
@@ -192,7 +191,7 @@
                                             <p><strong>Tên:</strong> {{ Auth::user()->username }}</p>
                                             <p><strong>Email:</strong> {{ Auth::user()->email }}</p>
                                             <p><strong>Số điện thoại:</strong> {{ Auth::user()->phone_number }}</p>
-                                            <p><strong>Điểm khách hàng thân thiết:</strong> {{ Auth::user()->loyalty_points }}</p>
+                                            <p><strong>Hạng thành viên: </strong> {{ Auth::user()->membership_level }}</p>
                                         </div>
                                     </div>
                                 @endif
@@ -213,7 +212,7 @@
                                     <span class="label">Mã giảm giá</span>
                                     <span class="badge badge-hot">HOT</span>
                                 </a>
-                                <a href="#membership" class="icon-item">
+                                <a href="{{ route('users.showRank', Auth::user()->id) }}" class="icon-item">
                                     <div class="icon"><i class="fas fa-medal"></i></div>
                                     <span class="label">Hạng thành viên</span>
                                     <span class="badge badge-new">MỚI</span>

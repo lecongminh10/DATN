@@ -232,13 +232,8 @@ class OrderController extends Controller
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
 
-        $carts  = collect();
-        if ($userId) {
-            $carts = Cart::where('user_id', $userId)->with('product')->get();
-        }
-
         $cartCount = $carts->sum('quantity');
-
+      
         $cartCheckout =Cart::with(['product', 'product.variants','productVariant.attributeValues.attribute', 'product.galleries','product.productDimension'])
                 ->where('user_id', $userId)
                 ->get();
@@ -504,9 +499,12 @@ class OrderController extends Controller
                 'total_price' => $quantity * $price,
             ]);
         }
-
+        $totalQuantity = Cart::where('user_id', $userId)->sum('quantity');
+        $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+        ->where('user_id', $userId)
+        ->get();
         // Trả về phản hồi JSON
-        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng']);
+        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng', 'totalQuantity' => $totalQuantity , 'carts'=>$carts]);
     }
 
     public function wishList()
@@ -687,23 +685,27 @@ class OrderController extends Controller
 
         // Tính tổng tiền sau khi thêm phí vận chuyển
         $total = $totalAfterDiscount + $shippingCost;
-
+        $coupons = session('coupons', []);
+        $couponData=[
+            'code' => $coupon->code,
+            'discount_type' => $coupon->discount_type,
+            'discount_value' => $coupon->discount_value,
+            'discount_amount' => $discountAmount,
+            'total' => $total,
+        ];
+        $coupons[]=$couponData;
+        session(['coupons'=>$coupons]);
         return response()->json([
             'success' => true,
-            'coupon' => [
-                'code' => $coupon->code,
-                'discount_type' => $coupon->discount_type,
-                'discount_value' => $coupon->discount_value,
-                'discount_amount' => $discountAmount,
-                'total' => $total,
-            ],
+            'coupon' =>$couponData,
             'cartSummary' => [
                 'subTotal' => $subTotal,
                 'quantity' => $quantity,
                 'shippingCost' => $shippingCost,
                 'totalAfterDiscount' => $totalAfterDiscount,
                 'total' => $total,
-            ]
+            ],
+            'message' => 'Thêm mã giảm giá thành công ',
         ]);
     }
 }

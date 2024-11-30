@@ -12,8 +12,10 @@ use App\Models\Category;
 use  App\Models\Attribute;
 use Illuminate\Support\Str;
 use App\Models\AttributeValue;
+use App\Models\Carrier;
 use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -31,9 +33,21 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-       // $faker = \Faker\Factory::create();
+        Carrier::create([
+            'name' => 'Giao Hàng Nhanh',
+            'code' =>'ghn',
+            'api_url' => 'https://khachhang.ghn.vn/account',
+            'api_token' => '9c2ba30b-7838-11ef-982b-925a46f29b5a',
+            'phone' => '0123456789',
+            'email' => 'abc@example.com',
+            'is_active' => 'active',
+            'deleted_by' => null, // Không có người xóa
+        ]);
+       $faker = \Faker\Factory::create();
 
+        // DB::table('carriers')->create([
 
+        // ]);
 
         // for ($i = 0; $i < 100; $i++) {
         //     User::create([
