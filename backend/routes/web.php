@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\CategoryStatisticsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ChatController;
 
 Route::group([
     'prefix' => 'admin',
@@ -298,7 +300,7 @@ Route::prefix('/')->group(function () {
 
     Route::post('add-cart',                                 [OrderController::class, 'addToCart'])->name('addCart');
     Route::get('shopping-cart',                             [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
-    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout');
+    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout')->middleware('check-cart');
     Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
     Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
     Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
@@ -314,9 +316,18 @@ Route::prefix('/')->group(function () {
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
 
-});
+    //Chat
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
+
+    // Route để gửi tin nhắn
+    Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
 
 // Route kiểm tra mã giảm giá
-Route::post('/check-coupon', [OrderController::class, 'checkCoupon'])->name('check.coupon');
-// Route áp dụng mã giảm giá vào đơn hàng
-Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply.coupon');
+    Route::post('/check-coupon', [OrderController::class, 'checkCoupon'])->name('check.coupon');
+    // Route áp dụng mã giảm giá vào đơn hàng
+    Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply.coupon');
+
+        // routes/web.php
+    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+});
+

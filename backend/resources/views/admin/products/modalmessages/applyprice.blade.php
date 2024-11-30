@@ -24,10 +24,9 @@
                 <div class="mb-3">                    
                     <label for="salePrice" class="form-label">Trạng thái </label>
                     <select class="form-control" id="stockStatus">
-                        <option value="none">None</option>
-                        <option value="available">Available</option>
-                        <option value="out_of_stock">Out of Stock</option>
-                        <option value="discontinued">Discontinued</option>
+                        <option value="available">Có sẵn</option>
+                        <option value="out_of_stock">Hết hàng </option>
+                        <option value="discontinued">Đã ngừng sản xuất</option>
                     </select>
                 </div>
             </div>

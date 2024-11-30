@@ -393,7 +393,7 @@
                                                     </div>
                                                     <div class="mt-3">
                                                         <label for="product_tags"
-                                                            class="form-label text-muted">Thẻ  </label>
+                                                            class="form-label ">Thẻ  </label>
                                                         <select class="form-control" name="product_tags[]"
                                                             id="choices-multiple-remove-button"
                                                             placeholder="This is a placeholder" multiple>
@@ -404,6 +404,21 @@
                                                         </label>
                                                         <input type="number" class="form-control" name="warranty_period" value="{{old('warranty_period')}}"
                                                             id="warranty_period">
+                                                    </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="height" id="height"  value="{{old('height')}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="length" id="length"  value="{{old('length')}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="width" id="width"  value="{{old('width')}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="weight" id="weight"  value="{{old('weight')}}" placeholder="Cân nặng (gr)">
+                                                            </div>
                                                     </div>
                                                     <div class="row">
                                                         @php
@@ -416,7 +431,7 @@
                                                             ];
                                                         @endphp
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Trạng thái</h4>
+                                                            <label for="price_sale" class="form-label">Trạng thái </label>
                                                         </div>
                                                         <div class="card">
                                                             <div class="card-body">
@@ -554,6 +569,7 @@
                                                             <table class="table table-bordered" id="attributeTable">
                                                                 <thead>
                                                                     <tr>
+                                                                        <th>Mã </th>
                                                                         <th>Giá trị</th>
                                                                         <th>Giá Gốc</th>
                                                                         <th>Giá Mới</th>
@@ -598,6 +614,13 @@
                                                                                         value="{{ $attributeValueString }}"
                                                                                         class="product_variants">
                                                                                     {!! $attributeString !!}
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input type="text"
+                                                                                        name="product_variants[{{ $i }}][sku]"
+                                                                                        value="{{ strtoupper(\Str::random(8)) }}"
+                                                                                        class="form-control sku"
+                                                                                        id="sku_{{ $i }}" />
                                                                                 </td>
                                                                                 <td>
                                                                                     <input type="number"
@@ -1025,7 +1048,9 @@
 
                                 // Construct attribute strings
                                 for (const [key, item] of Object.entries(attribute)) {
-                                    attributeString += `${key}: ${item}<br>`;
+                                    attributeString += `<strong style="font-size: 12px; color: #888;">${key}:</strong> 
+                                                       <span style="font-size: 11px;">${item}</span>
+                                                       <br>`;
                                     attributeValueString += `${item},`;
                                 }
 
@@ -1036,6 +1061,15 @@
                                 // Build the HTML for the row
                                 htmlContent += `
                                 <tr>
+                                    <td>
+                                      <input type="text"
+                                        name="
+                                        product_variants[${index + 1}][sku]
+                                        "
+                                        value="{{ strtoupper(\Str::random(8)) }}_${index + 1}"
+                                        class="form-control sku"
+                                        id="sku_${index + 1}" />
+                                    </td>
                                     <td>
                                         <input type="hidden" name="product_variants[${index + 1}][attributes_values]" value="${attributeValueString}" class="product_variants">
                                         ${attributeString}
@@ -1051,10 +1085,9 @@
                                     </td>
                                     <td>
                                         <select class="form-control status_attribute" name="product_variants[${index + 1}][status]">
-                                            <option value="none">None</option>
-                                            <option value="available">Available</option>
-                                            <option value="out_of_stock">Out of Stock</option>
-                                            <option value="discontinued">Discontinued</option>
+                                            <option value="available">Có sẵn</option>
+                                            <option value="out_of_stock">Hết hàng </option>
+                                            <option value="discontinued">Đã ngừng sản xuất</option>
                                         </select>
                                     </td>
                                     <td>
