@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\AdminActivityLogged;
+use App\Http\Controllers\Controller;
 use App\Events\UserOnline;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -30,6 +32,19 @@ class LoginController extends Controller
             $user = Auth::user();
             event(new UserOnline($user));
             $request->session()->regenerate();
+
+            $logDetails = sprintf(
+                'Đăng nhập %s thành công: Email - %s',
+                $action == 'admin' ? 'Admin' : 'Client',
+                $credentials['email']
+            );
+    
+            event(new AdminActivityLogged(
+                Auth::id(), // ID người dùng đăng nhập
+                'Đăng nhập',
+                $logDetails
+            ));
+
             if ($action == 'admin' && Auth::user()->isAdmin()) {
                 return redirect()->route('admin.dashboard');
             } elseif ($action == 'client'&& !Auth::user()->isAdmin()) {
@@ -46,6 +61,18 @@ class LoginController extends Controller
     {
         if (Auth::check()) {
             $user = Auth::user();
+
+            $logDetails = sprintf(
+                'Đăng xuất thành công: Email - %s',
+                $user->email
+            );
+    
+            event(new AdminActivityLogged(
+                $user->id, // ID người dùng đăng xuất
+                'Đăng xuất',
+                $logDetails
+            ));
+
             Auth::logout();
             \request()->session()->invalidate();
             if ($user->isAdmin()) {

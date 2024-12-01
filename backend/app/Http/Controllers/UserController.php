@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Cart;
@@ -46,6 +47,7 @@ class UserController extends Controller
         return view('admin.users.store', compact('permissionsValues'));
     }
 
+
     public function store(Request $request)
     {
         $request->validate([
@@ -67,6 +69,19 @@ class UserController extends Controller
             }
 
             $user = $this->userService->createUser($data);
+
+            //nhật ký
+            $logDetails = sprintf(
+                'Thêm người dùng: Tên - %s',
+                $user->username,
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
 
             if ($user && $request->has('permissions')) {
                 $user->permissionsValues()->attach($request->permissions);
@@ -126,6 +141,19 @@ class UserController extends Controller
 
         $user = $this->userService->updateUser($id, $data);
 
+        //nhật ký
+        $logDetails = sprintf(
+            'Sửa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
+
         if ($request->hasFile('profile_picture')) {
             // Xóa ảnh cũ nếu có
             if ($user->profile_picture && Storage::exists('public/' . $user->profile_picture)) {
@@ -155,6 +183,32 @@ class UserController extends Controller
         } else {
             $user->delete();
         }
+
+        //nhật ký
+        $logDetails = sprintf(
+            'Xóa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+
+        //nhật ký
+        $logDetails = sprintf(
+            'Xóa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
@@ -223,35 +277,28 @@ class UserController extends Controller
 
     public function showOrder(Request $request)
     {
-        $userId = Auth::id();
+        $id = Auth::user()->id;
         $status = $request->input('status', 'all');
+        $query = Order::query();
 
-        $query = Order::with([
-            'items.product',
-            'items.productVariant.attributeValues.attribute',
-            'payment.paymentGateway',
-            'shippingMethod'
-        ])->where('user_id', $userId); 
         if ($status !== 'all') {
             $query->where('status', $status);
         }
+        $orders = $query->get();
+        $totalOrders = $orders->count();
 
-        $orders = $query->simplePaginate(5);
-
-        $totalOrders = $query->count();
-
-        $carts = Cart::where('user_id', $userId)
-            ->with('product')
-            ->get();
+        // $userId = auth()->id();
+        $carts  = collect();
+        if($id) {
+            $carts = Cart::where('user_id', $id)->with('product')->get();
+        }
 
         $cartCount = $carts->sum('quantity');
 
         return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
     }
 
-
-    public function showDetailOrder($id)
-    {
+    public function showDetailOrder($id){
 
         $orders = Order::with([
             'items.product',
@@ -273,16 +320,8 @@ class UserController extends Controller
         }
 
         $cartCount = $carts->sum('quantity');
-        $address = Address::getActiveAddress(Auth::user()->id);
 
-        $orderItems = $orders->items;
-        $firstProduct = $orderItems->first()->product;
-        $similarProducts = Product::where('category_id', $firstProduct->category_id)
-            ->where('id', '!=', $firstProduct->id)
-            ->take(5)
-            ->get();
-
-        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts'));
+        return view('client.users.show_detail_order', compact('orders','locations', 'carts', 'cartCount'));
     }
 
 

@@ -111,8 +111,8 @@
                                                     <td class="description">{{ $item->description }}</td>
                                                     <td class="content">{{ $item->content }}</td>
                                                     <td class="is_active">
-                                                        <span class="badge {{ $item->status == 1 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} text-uppercase">
-                                                            {{ $item->status == 1 ? 'active' : 'inactive' }}
+                                                        <span class="badge {{ $item->is_active == 1 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} text-uppercase">
+                                                            {{ $item->is_active == 1 ? 'active' : 'inactive' }}
                                                         </span>
                                                     </td>
                                                     <td class="template">{{ $item->template }}</td>

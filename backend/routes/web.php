@@ -1,27 +1,37 @@
 <?php
 
-use App\Http\Controllers\AnnouncementController;
 use App\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SeoController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\FooterController;
 use App\Http\Controllers\CarrierController;
+use App\Http\Controllers\InfoBoxController;
 use App\Http\Controllers\PayMentController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\PopuphomeController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Client\PostController;
-use App\Http\Controllers\OrderStatisticsController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\ExportImportController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
@@ -456,7 +466,6 @@ Route::group([
         Route::get('/', [EmailController::class, 'viewEmail'])->name('viewEmail');
         Route::post('send-email', [EmailController::class, 'sendEmail'])->name('sendEmail');
     });
-
     Route::prefix('feedbacks')->group(function () {
         Route::get('/', [FeedbackController::class, 'index'])->name('feedbacks.index');
         Route::get('/{feedback_id}', [FeedbackController::class, 'show'])->name('feedbacks.show');
@@ -470,5 +479,4 @@ Route::group([
         Route::post('/delete-multiple', [FeedbackController::class, 'deleteMultiple'])->name('feedbacks.deleteMultiple');
     });
 });
-
-
+Route::get('/admin/logs',                       [AdminActivityLogController::class, 'index'])->name('admin.logs.index');

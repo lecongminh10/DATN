@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Models\PaymentGateway;
 use App\Services\PaymentGatewayService;
 use Illuminate\Http\Request;
@@ -42,6 +43,18 @@ class PaymentGatewayController extends Controller
 
             $paymentGateway = $this->paymentGatewayService->createPaymentGateway($data);
 
+            $logDetails = sprintf(
+                'Thêm mới cổng thanh toán: Tên - %s',
+                $paymentGateway->name,
+            );
+    
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id, 
+                'Thêm mới',         
+                $logDetails         
+            ));
+
             return redirect()->route('admin.paymentgateways.index')->with([
                 'paymentGateway' => $paymentGateway
             ]);
@@ -71,6 +84,18 @@ class PaymentGatewayController extends Controller
 
         $paymentGateway = $this->paymentGatewayService->updatePaymentGateway($id, $data);
 
+        $logDetails = sprintf(
+            'Sửa cổng thanh toán: Tên - %s',
+            $paymentGateway->name,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id, 
+            'Sửa',         
+            $logDetails         
+        ));
+
         return redirect()->route('admin.paymentgateways.index')->with([
             'paymentGateway' => $paymentGateway
         ]);
@@ -86,6 +111,18 @@ class PaymentGatewayController extends Controller
             $paymentGateway->delete();
         }
         
+        $logDetails = sprintf(
+            'Xóa cổng thanh toán: Tên - %s',
+            $paymentGateway->name,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id, 
+            'Xóa',         
+            $logDetails         
+        ));
+
         return redirect()->route('admin.paymentgateways.index');
     }
 
