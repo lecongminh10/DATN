@@ -2,7 +2,7 @@
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Dark Logo-->
-        <a href="index.html" class="logo logo-dark">
+        <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
                 <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
             </span>
@@ -11,7 +11,7 @@
             </span>
         </a>
         <!-- Light Logo-->
-        <a href="index.html" class="logo logo-light">
+        <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
             <span class="logo-sm">
                 <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
             </span>
@@ -33,20 +33,10 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
+                    <a class="nav-link menu-link" href="{{ route('admin.dashboard') }}" 
                         aria-expanded="false" aria-controls="sidebarDashboards">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Chính</span>
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Trang chủ</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarDashboards">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.dashboard') }}" class="nav-link" role="button" aria-expanded="false"
-                                    aria-controls="sidebarCalendar" data-key="t-calender">
-                                    Dashboard
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li> <!-- end Dashboard Menu -->
                 @php
                     $check='';
@@ -450,19 +440,10 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#sidebar-diary" class="nav-link" data-bs-toggle="collapse" role="button"
+                    <a href="{{route('admin.logs.index')}}" class="nav-link {{ Route::is('admin.logs.index') ? 'active' : '' }}" 
                         aria-expanded="false" aria-controls="sidebar-diary" data-key="t-product">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing">Nhật ký </span>
+                        <i class="ri-drive-line"></i> <span data-key="t-landing">Nhật ký </span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebar-diary">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{route('admin.logs.index')}}" class="nav-link">
-                                    Danh sách
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
                 <div>
             </ul>

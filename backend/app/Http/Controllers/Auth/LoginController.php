@@ -6,7 +6,6 @@ use App\Events\AdminActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Events\UserOnline;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
