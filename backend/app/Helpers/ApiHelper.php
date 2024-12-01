@@ -73,7 +73,6 @@ class ApiHelper {
 
         $responseData = json_decode($response, true);
         if (isset($responseData['code']) && $responseData['code'] !== 200) {
-            echo "Error from API: " . $responseData['message'];
             return null;
         }
         return $responseData;
@@ -112,7 +111,6 @@ class ApiHelper {
 
     
         if (isset($responseData['code']) && $responseData['code'] !== 200) {
-            echo "Error from API: " . $responseData['message'];
             return null;
         }
 
@@ -149,13 +147,13 @@ class ApiHelper {
         $address = Address::getActiveAddress($id);
         
         if (!$address || empty($address->city)) {
-            return response()->json(['message' => 'Address not found or city information is missing'], 404);
+            return null;
         }
     
         $provinceData = self::getApiCity();
     
         if (!$provinceData || !isset($provinceData['data'])) {
-            return response()->json(['message' => 'Failed to fetch province data'], 500);
+            return null;
         }
         $dataApi = [];
         foreach ($provinceData['data'] as $province) {
@@ -219,10 +217,15 @@ class ApiHelper {
                 
             }
         }
-
-        $toDistrictId = $customerInfo['DistrictID'];
-        $toWardCode = $customerInfo['WardID'];
-        
+        if($customerInfo !==null)
+        {
+            $toDistrictId = $customerInfo['DistrictID'];
+            $toWardCode = $customerInfo['WardID'];
+        } else
+        {
+            $toDistrictId = 0;
+            $toWardCode = 0;
+        }
 
         $weight = $totalWeight;
         $data = [

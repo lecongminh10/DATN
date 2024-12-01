@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Helpers\ApiHelper;
+use App\Mail\OrderCompletedMail;
+use App\Mail\OrderPlacedMail;
+use App\Models\Address;
 use App\Models\Cart;
 use App\Models\User;
 use App\Models\Order;
@@ -26,7 +30,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\OrderRepository;
 use App\Services\OrderLocationService;
 use Illuminate\Support\Facades\Artisan;
-
+use Illuminate\Support\Facades\Mail;
 class OrderController extends Controller
 {
 
@@ -339,17 +343,38 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
+ 
     public function updateOrder(Request $req, int $id)
     {
-        Log::info($req->all());
+        // Log::info($req->all());
         // Xác thực yêu cầu (nếu cần thiết)
         // $req->validate([
         //     'status' => 'required|string|in:Chờ xác nhận,Đã xác nhận,Đang giao,Hoàn thành,Hàng thất lạc,Đã hủy',
         // ]);
         // Tìm order bằng id
 
+        // Ghi log thông tin yêu cầu
+
+        // Lấy trạng thái từ request
         $status = $req->input('status');
+
+        // Gọi service để kiểm tra trạng thái
         $response = $this->orderService->checkStatus($status, $id);
+        if ($response && $status === 'Hoàn thành') {
+            // Lấy thông tin đơn hàng
+            $order = $this->orderService->getOrderById($id); // Đảm bảo phương thức này trả về đối tượng đơn hàng đầy đủ
+
+            if ($order && $order->user && $order->user->email) {
+                try {
+                    // Gửi email cho khách hàng
+                    Mail::to($order->user->email)->send(new OrderCompletedMail($order));
+
+                    // Log::info("Email đã được gửi tới: " . $order->user->email);
+                } catch (\Exception $e) {
+                    // Log::error("Không thể gửi email: " . $e->getMessage());
+                }
+            }
+        }
         return response()->json(['status' => $response]);
     }
 

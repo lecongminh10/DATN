@@ -40,4 +40,9 @@ class UserService extends BaseService
     public function getAllTrashedUsers(){
         return $this->userService->getAllTrashedUsers();
     }
+
+    public function getAllClient($type)
+    {
+        return $this->userService->getAllClient($type);
+    }
 }

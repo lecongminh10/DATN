@@ -19,6 +19,9 @@ use App\Http\Controllers\PayMentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PermissionController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\PopuphomeController;
 use App\Http\Controllers\Auth\LoginController;
@@ -32,22 +35,31 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
-use App\Http\Controllers\OrderStatisticsController;
-use App\Http\Controllers\AdminActivityLogController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\SeoController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\FooterController;
+use App\Http\Controllers\InfoBoxController;
+use App\Http\Controllers\PopuphomeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserReviewController;
+use App\Http\Controllers\ExportImportController;
+use App\Http\Controllers\CategoryStatisticsController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\FeedbackController;
 
 
 Route::group([
-        'prefix' => 'admin',
-        'as' => 'admin.',
-        'middleware' => ['auth', 'isAdmin']
-    ], function () {
-    Route::get('dashboard', function () {
-        return view('admin/dashboard');
-    })->name('dashboard');
+    'prefix' => 'admin',
+    'as' => 'admin.',
+    'middleware' => ['auth', 'isAdmin']
+], function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::group([
         'prefix' => 'products',
         'as' => 'products.',
@@ -107,8 +119,9 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple', [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
     });
-     //tags
-     Route::prefix('tags')->group(function () {
+
+    //tags
+    Route::prefix('tags')->group(function () {
         Route::get('/',                                     [TagController::class, 'index'])->name('tags.index');
         Route::get('/create',                               [TagController::class, 'create'])->name('tags.create');
         Route::post('/',                                    [TagController::class, 'store'])->name('tags.store');
@@ -123,8 +136,9 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [TagController::class, 'deleteMuitpalt'])->name('tags.deleteMultiple');
     });
-     //pages
-     Route::prefix('pages')->group(function () {
+
+    //pages
+    Route::prefix('pages')->group(function () {
         Route::get('/',                                     [PageController::class, 'index'])->name('pages.index');
         Route::get('/create',                               [PageController::class, 'create'])->name('pages.create');
         Route::post('/',                                    [PageController::class, 'store'])->name('pages.store');
@@ -139,8 +153,9 @@ Route::group([
         // Xóa nhiều
         Route::post('/delete-multiple',                     [PageController::class, 'deleteMuitpalt'])->name('pages.deleteMultiple');
     });
-     //seo
-     Route::prefix('seo')->group(function () {
+
+    //seo
+    Route::prefix('seo')->group(function () {
         Route::get('/',                                     [SeoController::class, 'index'])->name('seo.index');
         Route::get('/create',                               [SeoController::class, 'create'])->name('seo.create');
         Route::post('/',                                    [SeoController::class, 'store'])->name('seo.store');
@@ -199,6 +214,7 @@ Route::group([
     Route::get('/attributeshortdeleted', [AttributeController::class, 'showSotfDelete'])->name('attributes.attributeshortdeleted');
 
     Route::post('/save-attributes', [AttributeController::class, 'saveAttributes']);
+
     Route::prefix('categories')->group(function () {
         Route::get('/',                                    [CategoryController::class, 'index'])->name('categories.index');
         Route::get('create',                               [CategoryController::class, 'create'])->name('categories.create');
@@ -288,55 +304,59 @@ Route::group([
             Route::put('update-order/{id}', [OrderController::class, 'updateOrder'])->name('updateOrder');
             Route::delete('soft-delete/{id}', [OrderController::class, 'destroy'])->name('soft_delete');
             Route::delete('multi-soft-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_soft_delete');
-            Route::put('restore/{id}', [OrderController::class, 'restore'])->name('restore');// một cái được rồi đúng khoong  ô thử lại caid
+            Route::put('restore/{id}', [OrderController::class, 'restore'])->name('restore'); // một cái được rồi đúng khoong  ô thử lại caid
             Route::put('restore_selected', [OrderController::class, 'muitpathRestore'])->name('restore_selected');
             Route::delete('hard-delete/{id}', [OrderController::class, 'hardDelete'])->name('hard_delete');
             Route::delete('multi-hard-delete', [OrderController::class, 'deleteMuitpalt'])->name('multi_hard_delete');
+
+            Route::get('canceled', [OrderController::class, 'canceledOrders'])->name('canceledOrders');
+            Route::get('completed', [OrderController::class, 'completedOrders'])->name('completedOrders');
+            Route::get('lost', [OrderStatisticsController::class, 'lostOrders'])->name('lostOrders');
+            Route::get('statistics', [OrderStatisticsController::class, 'index'])->name('statistics');
         }
     );
+
     // Blogs
     Route::prefix('blogs')->group(function () {
-          Route::get('/', [BlogController::class, 'index'])->name('blogs.index');
-          Route::get('/create', [BlogController::class, 'create'])->name('blogs.create');
-          Route::post('/', [BlogController::class, 'store'])->name('blogs.store');
-          Route::get('{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
-          Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update'); // Route để cập nhật blog
-          Route::get('/{id}', [BlogController::class, 'show'])->name('blogs.show');
-          Route::delete('/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
-          Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
-          Route::get('/trash', [BlogController::class, 'trash'])->name('blogs.trash'); // Route để hiển thị danh sách blog đã xóa
-          Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); // Khôi phục blog đã xóa
-          // Route cho danh sách blog đã bị xóa mềm
-          // Route::get('/listsotfdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
+        Route::get('/', [BlogController::class, 'index'])->name('blogs.index');
+        Route::get('/create', [BlogController::class, 'create'])->name('blogs.create');
+        Route::post('/', [BlogController::class, 'store'])->name('blogs.store');
+        Route::get('{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+        Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update'); // Route để cập nhật blog
+        Route::get('/{id}', [BlogController::class, 'show'])->name('blogs.show');
+        Route::delete('/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+        Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
+        Route::get('/trash', [BlogController::class, 'trash'])->name('blogs.trash'); // Route để hiển thị danh sách blog đã xóa
+        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); // Khôi phục blog đã xóa
+        // Route cho danh sách blog đã bị xóa mềm
+        // Route::get('/listsotfdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
 
-          // Route khôi phục blog đã xóa mềm
-          Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore');
+        // Route khôi phục blog đã xóa mềm
+        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore');
 
-          // Route cho xóa cứng blog
-          Route::delete('/{id}/hard-delete', [BlogController::class, 'hardDeleteBlog'])->name('blogs.hardDelete');
+        // Route cho xóa cứng blog
+        Route::delete('/{id}/hard-delete', [BlogController::class, 'hardDeleteBlog'])->name('blogs.hardDelete');
 
-          // Route cho xóa mềm blog values (nếu có blog values)
-          Route::delete('/values/{id}', [BlogController::class, 'destroyValue'])->name('blogValues.destroy');
+        // Route cho xóa mềm blog values (nếu có blog values)
+        Route::delete('/values/{id}', [BlogController::class, 'destroyValue'])->name('blogValues.destroy');
 
-          // Route cho xóa cứng blog values (nếu có blog values)
-          Route::delete('/values/{id}/hard-delete', [BlogController::class, 'hardDeleteBlogValue'])->name('blogValues.hardDelete');
+        // Route cho xóa cứng blog values (nếu có blog values)
+        Route::delete('/values/{id}/hard-delete', [BlogController::class, 'hardDeleteBlogValue'])->name('blogValues.hardDelete');
 
-          // Route cho xóa nhiều blog
-          Route::post('/delete-multiple', [BlogController::class, 'deleteMultiple'])->name('blogs.deleteMultiple');
-          });
-          Route::get('/blogshortdeleted', [BlogController::class, 'showSotfDelete'])->name('blogs.blogshortdeleted');
+        // Route cho xóa nhiều blog
+        Route::post('/delete-multiple', [BlogController::class, 'deleteMultiple'])->name('blogs.deleteMultiple');
 
-      });
+        Route::get('/blogshortdeleted', [BlogController::class, 'showSotfDelete'])->name('blogs.blogshortdeleted');
+    });
+
     // statistic
-    Route::group(
-        [
-            'prefix' => 'statistics',
-            'as' => 'statistics.'
-        ],
+    Route::prefix('statistics')->as('statistics.')->group(
         function () {
             Route::get('/', [StatsController::class, 'index'])->name('index');
+            Route::get('/categories', [CategoryStatisticsController::class, 'index'])->name('categories');
         }
     );
+
     // profile
     Route::group(
         [
@@ -350,6 +370,7 @@ Route::group([
             Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
         }
     );
+
     //footer
     Route::group(
         [
@@ -361,6 +382,7 @@ Route::group([
             Route::post('footer/update', [FooterController::class, 'update'])->name('update');
         }
     );
+
     //thongbao(announcement)
     Route::group(
         [
@@ -372,6 +394,7 @@ Route::group([
             Route::post('/announcement/update', [AnnouncementController::class, 'update'])->name('update');
         }
     );
+
     //////info_boxes
     Route::group(
         [
@@ -383,6 +406,7 @@ Route::group([
             Route::post('info_boxes/update', [InfoBoxController::class, 'update'])->name('update');
         }
     );
+
     //////popuphome
     Route::group(
         [
@@ -394,6 +418,7 @@ Route::group([
             Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
         }
     );
+
     //////comment
     Route::group(
         [
@@ -410,7 +435,7 @@ Route::group([
     Route::group([
         'prefix' => 'export-import',
         'as' => 'export-import.'
-    ], function() {
+    ], function () {
         Route::get('/', [ExportImportController::class, 'exportAndImport'])->name('view-export-import');
         // export
         Route::get('export-category', [ExportImportController::class, 'exportCategory'])->name('exportCategory');
@@ -431,79 +456,27 @@ Route::group([
 
         Route::get('import-post', [ExportImportController::class, 'importPost'])->name('importPost');
         Route::post('import-posts', [ExportImportController::class, 'importPosts'])->name('importPosts');
-
-
     });
 
-
-Route::prefix('/')->group(function () {
-    Route::get('', [HomeController::class, 'index'])->name('client');
-    //profile
-    Route::get('/user',                                     [UserController::class, 'indexClient'])->name('users.indexClient');
-    Route::get('profile/{id}',                              [UserController::class, 'showClient'])->name('users.showClient');
-    Route::put('update-profile/{id}',                       [UserController::class, 'updateClient'])->name('users.updateClient');
-    Route::get('show-order',                                [UserController::class, 'showOrder'])->name('users.showOrder');
-    Route::get('show-order-detail/{id}',                    [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
-    Route::get('show-rank/{id}',                            [UserController::class, 'showRank'])->name('users.showRank');
-    Route::post('/order/{orderId}/cancel',                  [UserController::class, 'cancelOrder'])->name('users.cancel');
-    Route::post('/order/{order}/review',                    [UserController::class, 'submitReview'])->name('users.submitReview');
-
-
-    //product
-    Route::get('/products',                                 [HomeController::class, 'showProducts'])->name('client.products');
-    Route::get('/products/sort',                            [HomeController::class, 'sortProducts'])->name('client.products.sort');
-    Route::get('/product/{id}',                             [ClientProductController::class, 'showProduct'])->name('client.showProduct');
-    Route::get('/products/category/{id}',                   [HomeController::class, 'getByCategory'])->name('client.products.Category');
-    Route::get('/products/filter-by-price',                 [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
-    Route::get('/search',                                   [ClientProductController::class, 'search'])->name('search');
-
-    //Oder
-    Route::get('wishlist',                                  [OrderController::class, 'wishList'])->name('wishList');
-    Route::post('add-wishlist',                             [OrderController::class, 'addWishList'])->name('addWishList');
-    Route::delete('wishlist/{id}',                          [OrderController::class, 'destroyWishlist'])->name('wishlistDelete');
-
-    Route::post('add-cart',                                 [OrderController::class, 'addToCart'])->name('addCart');
-    Route::get('shopping-cart',                             [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
-    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout')->middleware('check-cart');
-    Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
-    Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
-    Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
-    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder'); // tahnh toán
-    Route::delete('remove/{id}',                            [OrderController::class, 'removeFromCart'])->name('removeFromCart');
-    Route::post('update-cart',                              [OrderController::class, 'updateCart'])->name('updateCart');
-    Route::get('/blog',                                     [PostController::class, 'index'])->name('client.blogs.index');
-    Route::get('/blogs/{id}',                               [PostController::class, 'show'])->name('client.blogs.show');
-    //Counpon
-    Route::post('/apply-discount',                          [CouponController::class, 'applyDiscount']);
-
-    // //PayMent
-    Route::get('/vnpay-return',                            [PayMentController::class, 'vnpayReturn'])->name('vnpay.return');
-
-    // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
-
-    //Chat
-    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
-
-    // Route để gửi tin nhắn
-    Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
-
-    // Route kiểm tra mã giảm giá
-    Route::post('/check-coupon', [OrderController::class, 'checkCoupon'])->name('check.coupon');
-    // Route áp dụng mã giảm giá vào đơn hàng
-    Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply.coupon');
-
-        // routes/web.php
-    Route::post('/send-message', [ChatController::class, 'sendMessage']);
-
-    Route::get('/clear-coupons', function() {
-        $currentUrl = url()->current();
-        if($currentUrl=="http://localhost:8000/checkout"){
-            return response()->json(['success' => false]);
-        }
-        session()->forget('coupons'); // Clear the coupons session
-        return response()->json(['success' => true]);
+    // Email
+    Route::group([
+        'prefix' => 'email',
+        'as' => 'email.'
+    ], function () {
+        Route::get('/', [EmailController::class, 'viewEmail'])->name('viewEmail');
+        Route::post('send-email', [EmailController::class, 'sendEmail'])->name('sendEmail');
     });
-    Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
+    Route::prefix('feedbacks')->group(function () {
+        Route::get('/', [FeedbackController::class, 'index'])->name('feedbacks.index');
+        Route::get('/{feedback_id}', [FeedbackController::class, 'show'])->name('feedbacks.show');
+        Route::patch('/{feedback_id}/update-status', [FeedbackController::class, 'updateStatus'])->name('feedbacks.updateStatus');
+        Route::delete('/{id}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
+        Route::get('/soft-deleted', [FeedbackController::class, 'showSoftDeleted'])->name('feedbacks.deleted');
+        Route::patch('/restore/{id}', [FeedbackController::class, 'restore'])->name('feedbacks.restore');
+        Route::delete('/{id}/hard-delete', [FeedbackController::class, 'hardDelete'])->name('feedbacks.hardDelete');
+        Route::delete('/content/{id}', [FeedbackController::class, 'destroyContent'])->name('feedbackContent.destroy');
+        Route::delete('/content/{id}/hard-delete', [FeedbackController::class, 'hardDeleteContent'])->name('feedbackContent.hardDelete');
+        Route::post('/delete-multiple', [FeedbackController::class, 'deleteMultiple'])->name('feedbacks.deleteMultiple');
+    });
 });
-// Route::post('/reviews', [UserReviewController::class, 'store'])->name('reviews.store');
 Route::get('/admin/logs',                       [AdminActivityLogController::class, 'index'])->name('admin.logs.index');

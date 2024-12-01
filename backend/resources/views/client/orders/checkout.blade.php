@@ -899,7 +899,12 @@
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
                                                     <input type="radio" class="custom-control-input shipp-fe" name="shipp[{{$dataShippingMethod['value']}}]" value="{{$dataShippingMethod['shipp']}}" checked onchange="updateTotal()">
-                                                    <label class="custom-control-label">{{$dataShippingMethod['message']}}({{ number_format($dataShippingMethod['shipp'], 0, ',', '.') }} đ)</label>
+                                                    <label class="custom-control-label">
+                                                        {{$dataShippingMethod['message']}}
+                                                        (
+                                                        {{ is_numeric($dataShippingMethod['shipp']) ? number_format((float)$dataShippingMethod['shipp'], 0, ',', '.') : 'N/A' }} đ
+                                                        )
+                                                    </label>                                                    
                                                 </div>
                                             </div>
                                                
@@ -1440,23 +1445,25 @@
             newDistrictSelect.disabled = true;
             newWardSelect.disabled = true;
 
-            // Function to update address input
             function updateAddressInput() {
-                const city = newCitySelect.options[newCitySelect.selectedIndex].text;
-                const district = newDistrictSelect.options[newDistrictSelect.selectedIndex].text;
-                const ward = newWardSelect.options[newWardSelect.selectedIndex].text;
-                newAddressInput.value = '';
+                const city = newCitySelect.options[newCitySelect.selectedIndex]?.text || '';
+                const district = newDistrictSelect.options[newDistrictSelect.selectedIndex]?.text || '';
+                const ward = newWardSelect.options[newWardSelect.selectedIndex]?.text || '';
+                newAddressInput.value = ''
             }
 
-            // Event listeners for city selection
-            newCitySelect.addEventListener("change", function() {
+
+            newCitySelect.addEventListener("change", function () {
                 const cityCode = this.value;
                 if (cityCode) {
-                    // Fetch districts based on selected city
-                    getDistricts(cityCode, newDistrictSelect, newWardSelect);
+                    // Chỉ fetch khi giá trị thay đổi
+                    if (newDistrictSelect.getAttribute('data-city') !== cityCode) {
+                        newDistrictSelect.setAttribute('data-city', cityCode);
+                        getDistricts(cityCode, newDistrictSelect, newWardSelect);
+                    }
                 } else {
                     resetDistrictAndWard(newDistrictSelect, newWardSelect);
-                    updateAddressInput(); // Clear input if no city is selected
+                    updateAddressInput();
                 }
             });
 

@@ -178,7 +178,6 @@
                                 <div class="widget-card">
                                     <h4 style="font-size: 17px">Hạng thành viên</h4>
                                     <p style="font-size: 15px">Hạng {{ Auth::user()->membership_level }}</p>
-                                    <a href="{{ route('users.showRank', Auth::user()->id) }}" class="view-details">Cập nhật hạng</a>
                                 </div>
                             </div>
                         </div>
