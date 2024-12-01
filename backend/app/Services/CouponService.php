@@ -44,4 +44,12 @@ class CouponService extends BaseService
     {
         return $this->couponRepository->show_soft_delete_id($id);
     }
+    public function getByCouponUsage($id)
+    {
+        return $this->couponRepository->getByCouponUsage($id);
+    }
+    public function updateByOrderCoupon($id)
+    {
+         $this->couponRepository->updateByOrderCoupon($id);
+    }
 }

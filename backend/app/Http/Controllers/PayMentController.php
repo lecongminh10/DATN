@@ -3,23 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiHelper;
-use App\Models\Address;
+use App\Mail\OrderOnlineMail; //
+use App\Mail\OrderPlacedMail; // 
 use App\Models\Cart;
-use Illuminate\Http\Request;
 use App\Models\Order;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\OrderItem;
+use App\Models\Coupon;
+use App\Models\Address;
 use App\Models\Payment;
+use App\Models\Product;
+use App\Models\OrderItem;
+use App\Events\OrderPlaced;
+use App\Models\CouponUsage;
+use Illuminate\Http\Request;
 use App\Models\PaymentGateway;
+use App\Models\ProductVariant;
+use App\Services\OrderService;
 use App\Models\PaymentGateways;
 use App\Models\shippingMethods;
+use App\Services\CouponService;
 use App\Services\CarrierService;
-use App\Services\OrderLocationService;
-use App\Services\OrderService;
 use App\Services\PaymentService;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail; //
+use Illuminate\Support\Facades\Auth;
+use App\Services\OrderLocationService;
 
 class PayMentController extends Controller
 {
@@ -29,20 +37,34 @@ class PayMentController extends Controller
     protected $paymentService;
     protected $paymentRepository;
     protected $carrierService;
+
+    protected $couponService;
     
     public function __construct(
         OrderService $orderService,
         OrderLocationService $orderLocationService,
         PaymentService $paymentService,
-        CarrierService $carrierService
+        CarrierService $carrierService,
+        CouponService $couponService
     ) {
         $this->orderService = $orderService;
         $this->orderLocationService = $orderLocationService;
         $this->paymentService = $paymentService;
         $this->carrierService = $carrierService;
+        $this->couponService = $couponService;
     }
     public function addOrder(Request $request)
     {
+        $couponCode=[];
+        $priceCoupone=0;
+        if($request->has('coupons'))
+        {
+            $couponCode=$request->coupons;
+            foreach($couponCode as $key=>$val)
+            {
+                $priceCoupone  +=$val['discount_amount'];
+            }
+        }
         // Validate request data
         $subTotal = 0;
         if ($request->has('order_item')) {
@@ -75,7 +97,7 @@ class PayMentController extends Controller
             }
             $carrier_id =null;
         }
-        $totalPrice = $subTotal + $shippingCost;
+        $totalPrice = $subTotal + $shippingCost-$priceCoupone;
         $dataOrder = [
             'user_id' => Auth::id(),
             'code' => 'ORDER-' . strtoupper(uniqid()),
@@ -103,6 +125,7 @@ class PayMentController extends Controller
                     'shipping_fee'      =>$shippingCost
                 ];
                 shippingMethods::create($dataShipFe);
+                $this->createNewCouponeUsage($couponCode, $order->id);
                 return $this->createOrder($dataOrder);
             } else {
                 $dataOrder['payment_id'] = $payment->id;
@@ -124,6 +147,13 @@ class PayMentController extends Controller
         $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])
             ->where('code', $data['code'])
             ->first();
+        $this->createNewCouponeUsage($couponCode, $order->id);
+        $couponUsage = $this->couponService->getByCouponUsage($order->id);
+        $this->couponService->updateByOrderCoupon($order->id);
+
+        // Gửi mail xác nhận
+        Mail::to($order->user->email)->send(new OrderPlacedMail($order));
+
         $responseData= [
             'bank_code'    =>'',
             'vnp_CardType' =>'Thanh toán sau khi nhận hàng'
@@ -145,7 +175,7 @@ class PayMentController extends Controller
         } else {
             $addressShop = null; 
         }
-        return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop'));
+        return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop','couponUsage'));
     }
 
     private function saveOrderItemAndOrderLocation($dataOrder , $request , $check){
@@ -181,6 +211,7 @@ class PayMentController extends Controller
             'longitude' => null,
         ];
         $this->orderLocationService->saveOrUpdate($dataOrderLocation);
+        $this->placeOrder($order,1);
         return $order;
     }
 
@@ -299,18 +330,26 @@ class PayMentController extends Controller
         if(!$check){
             // Save order information to the database if the transaction was successful
             if ($responseData['result'] == 'GD Thanh cong') {
-                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=> substr($responseData['amount'], 0, -2) ,'status'=>Payment::Completed , 'transaction_id'=> $responseData['transaction_no']]);
-                shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id ,'status'=>shippingMethods::COMPLETED]);
+                $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=> substr($responseData['amount'], 0, -2) ,'status'=>Payment::Pending , 'transaction_id'=> $responseData['transaction_no']]);
+                Payment::where('id',$payment->id)->update(['status'=>Payment::Completed]);
+                shippingMethods::where('transaction_id',$order->code)->update(['transaction_id'=> $payment->transaction_id]);
+                $this->couponService->updateByOrderCoupon($order->id);
+                $this->placeOrder($order ,3);
+
+                // Gửi email xác nhận
+                Mail::to($order->user->email)->send(new OrderOnlineMail($order));
             }else
             {
                 $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=>$order->total_price ,'status'=>Payment::Failed , 'transaction_id'=>$order->code]);
                 Order::where('code', $order->code)->update(['status' =>Order::DA_HUY]);
                 shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id,'status'=>shippingMethods::FAILED]);
+                $this->placeOrder($order ,2);
             }
         }
         $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])
             ->where('code', $responseData['order_code'])
             ->first();
+        $couponUsage = $this->couponService->getByCouponUsage($order->id);
         $addressResponse = ApiHelper::getAddressShop();
         $address = Address::getActiveAddress(Auth::user()->id);
         $addressShop=[];
@@ -329,7 +368,7 @@ class PayMentController extends Controller
             $addressShop = null; 
         }
         $check=true;
-        return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop'));
+        return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop','couponUsage'));
     }
 
 
@@ -437,4 +476,45 @@ class PayMentController extends Controller
     
             return response()->json(['success' => true, 'message' => 'Người dùng đã được xóa.']);
         }
+
+        private function createNewCouponeUsage($couponCode=[], $id)
+        {
+            try {
+                if (count($couponCode) > 0) {
+                    foreach ($couponCode as $value) {
+                        $coupone = $this->couponService->findByCode($value['code']);
+                        if ($coupone) {
+                            CouponUsage::create([
+                                'coupon_id'       => $coupone->id,
+                                'user_id'         => Auth::id(),
+                                'order_id'        => $id,
+                                'discount_value'  => $value['discount_amount']
+                            ]);
+                        } else {
+                            // Log hoặc xử lý khi không tìm thấy coupon
+                            Log::warning("Coupon not found for code: $value");
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error("Error creating CouponUsage: " . $e->getMessage());
+            }
+            
+        }
+        private function placeOrder($order, $status)
+        {
+            $user = auth()->user();
+        
+            if ($order) {
+                if ($status == 1) {
+                    $message = "Đơn hàng đã được đặt! Mã: $order->code";
+                } elseif ($status == 2) {
+                    $message = "Đơn hàng đã hủy! Mã: $order->code";
+                } elseif ($status == 3) {
+                    $message = "Đơn hàng $order->code | thanh toán thành công với số tiền " . number_format($order->total_price, 0, ',', '.') . "₫";
+                }
+        
+                broadcast(new OrderPlaced($order, $user, $message));
+            }
+        }        
 }

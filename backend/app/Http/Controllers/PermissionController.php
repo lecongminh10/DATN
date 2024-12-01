@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use Log;
 use App\Models\Permission;
 use Illuminate\Http\Request;
@@ -56,6 +57,19 @@ class PermissionController extends Controller
                 'description' => $request->description[$key],
             ]);
         }
+
+        $logDetails = sprintf(
+            'Thêm quyền: Tên - %s',
+            $permission->permission_name,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Thêm mới',
+            $logDetails
+        ));
+        
         return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
     }
     public function edit($id)
@@ -89,6 +103,19 @@ class PermissionController extends Controller
                 ]);
             }
         }
+
+        $logDetails = sprintf(
+            'Sửa quyền: Tên - %s',
+            $permission->permission_name,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
+
         return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
     }
     public function destroyPermission($id)
@@ -105,8 +132,20 @@ class PermissionController extends Controller
         }
         $permission->delete();
         if ($permission->trashed()) {
-            return redirect()->route('permissions.index')->with('success', 'Permission soft deleted successfully.');
+            return redirect()->route('admin.permissions.index')->with('success', 'Permission soft deleted successfully.');
         }
+
+        $logDetails = sprintf(
+            'Xóa quyền: Tên - %s',
+            $permission->permission_name,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
         return redirect()->route('admin.permissions.index')->with('error', 'An error occurred while deleting the category.');
     }
     public function destroyPermissionHard($id)

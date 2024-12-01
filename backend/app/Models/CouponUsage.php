@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CouponUsage extends Model
 {
     use HasFactory;
     protected $table = 'coupons_usage';
-    protected $fillable = ['coupon_id', 'user_id', 'order_id', 'product_id', 'category_id', 'deleted_by'];
+    protected $fillable = ['coupon_id', 'user_id', 'order_id', 'discount_value', 'deleted_by'];
 
     public function coupon()
     {
-        return $this->belongsTo(Coupon::class);
+        return $this->belongsTo(Coupon::class, 'coupon_id');
     }
 
     public function user()
@@ -36,4 +35,10 @@ class CouponUsage extends Model
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
 }

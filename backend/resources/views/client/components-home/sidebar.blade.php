@@ -6,7 +6,7 @@
             <ul class="menu menu-vertical sf-arrows">
                 <li class="active"><a href="/"><i class="icon-home"></i>Home</a></li>
                 <li>
-                    <a href="#" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
+                    <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
                     <div class="megamenu megamenu-fixed-width megamenu-3cols">
                         <div class="row">
                             @foreach ($categories as $parent)
@@ -15,7 +15,7 @@
                                     @if($parent->children->isNotEmpty())
                                         <ul class="submenu">
                                             @foreach ($parent->children as $child)
-                                                <li><a href="#">{{ $child->name }}</a></li>
+                                                <li><a href="{{ route('client.products.Category',$child->id) }}">{{ $child->name }}</a></li>
                                             @endforeach
                                         </ul>
                                     @endif
@@ -107,7 +107,7 @@
                         <li><a href="forgot-password.html">Forgot Password</a></li>
                     </ul>
                 </li>
-                <li><a href="blog.html"><i class="sicon-book-open"></i>Blog</a></li>
+                <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Blog</a></li>
                 <li><a href="demo1-about.html"><i class="sicon-users"></i>About Us</a></li>
                 <li><a href="#"><i class="icon-cat-gift"></i>Special Offer!</a></li>
                 <li><a href="https://1.envato.market/DdLk5" target="_blank"><i

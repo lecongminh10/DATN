@@ -303,6 +303,7 @@
         document.getElementById('applies-to-input').addEventListener('change', function() {
             const selectedOption = this.value;
             const inputMessage = document.getElementById('search-input');
+            document.getElementById("selected-values").innerHTML="";
             let url = '';
             if (selectedOption === 'all') {
                 if (inputMessage.value === '') {

@@ -29,7 +29,7 @@ class CheckCartQuantity
 
             return redirect()->route('client.products');
         }
-        return redirect()->route('login')->with('error', 'Please log in to continue.');
+        return redirect()->route('client.login')->with('error', 'Please log in to continue.');
     }
     
 }

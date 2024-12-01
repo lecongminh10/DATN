@@ -30,6 +30,13 @@ class PermissionsValueSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'permissions_id' => $permission->id,
+                'value' => 'sub_admin_role',
+                'description' => 'Vai trò hỗ trợ Admin',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
