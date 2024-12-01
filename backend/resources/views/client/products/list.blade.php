@@ -22,6 +22,14 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             max-height: calc(100vh - 3rem); /* Đảm bảo modal không vượt quá chiều cao màn hình */
             overflow-y: auto; /* Cuộn nếu nội dung quá dài */
         }
+
+        .view-detail{
+            border: none;
+            color: #4d4c4a;
+            cursor: pointer;
+            margin-top: 9px;
+            background-color: transparent;
+        }
     </style>
 @endsection
 @section('content')
@@ -201,7 +209,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                         <a href="#" class="btn-icon-wish" title="wishlist" data-product-id="{{ $item->id }}"><i class="icon-heart"></i></a>
                                         <a href="#" class="btn-icon btn-add-cart add-cart" data-product-id="{{ $item->id }}" data-toggle="modal" data-target="#addToCart"><i class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span></a>
                                         <a href="{{route('client.showProduct', $item->id)}}" class="btn-quickview" title="Quick View">
-                                            <button style="border: none; color: #4d4c4a; cursor: pointer;"><i class="fas fa-external-link-alt"></i></button>
+                                            <button class="view-detail"><i class="fas fa-external-link-alt"></i></button>
                                         </a>
                                     </div>
                                 </div>

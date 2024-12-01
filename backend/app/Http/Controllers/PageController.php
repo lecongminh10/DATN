@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use Illuminate\Http\Request;
 use App\Services\PageService;
+use App\Events\AdminActivityLogged;
 
 class PageController extends Controller
 {
@@ -45,7 +46,7 @@ class PageController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'content' => 'required|string',
-            'status' => 'required|in:1,0',
+            'is_active' => 'required|in:1,0',
             'template' => 'required|string|in:default,coming_soon,blog',
             'permalink' => 'required|string|max:255|unique:pages,permalink',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -58,6 +59,16 @@ class PageController extends Controller
             $page->image = $request->file('image')->store('pages', 'public');
             $page->save();
         }
+        $logDetails = sprintf(
+            'Thêm Trang: Tên - %s',
+            $page->name
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Thêm',
+            $logDetails
+        ));
         // dd($page);
         return redirect()->route('admin.pages.index')->with('success', 'Page created successfully');
     }
@@ -96,7 +107,7 @@ class PageController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'permalink' => 'required|string|max:255|unique:pages,permalink,' . $id,
-            'status' => 'required|in:0,1',
+            'is_active' => 'required|in:0,1',
             'template' => 'required|string',
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -110,8 +121,17 @@ class PageController extends Controller
         if ($request->hasFile('image')) {
             $page->image = $request->file('image')->store('images', 'public');
         }
-
         $page->save();
+        $logDetails = sprintf(
+            'Sủa Trang: Tên - %s',
+            $page->name
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
 
         return redirect()->route('admin.pages.index')->with('success', 'Page updated successfully!');
     }
@@ -123,6 +143,16 @@ class PageController extends Controller
             return abort(404);
         }
         $data->delete();
+        $logDetails = sprintf(
+            'Xóa Trang: Tên - %s',
+            $data->name
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Mềm',
+            $logDetails
+        ));
         if ($data->trashed()) {
             return redirect()->route('admin.pages.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
         }
@@ -138,7 +168,7 @@ class PageController extends Controller
     public function restore($id)
     {
         try {
-            $this->pageService->restore_delete($id);
+        $this->pageService->restore_delete($id);
             return redirect()->route('admin.pages.deleted')->with('success', 'Khôi phục thuộc tính thành công!');
         } catch (\Exception $e) {
             return redirect()->route('admin.pages.deleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
@@ -151,6 +181,16 @@ class PageController extends Controller
             return redirect()->route('admin.pages.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
         $data->forceDelete();
+        $logDetails = sprintf(
+            'Xóa vĩnh viễn Trang: Tên - %s',
+            $data->name
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Cứng',
+            $logDetails
+        ));
         return redirect()->route('admin.pages.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 

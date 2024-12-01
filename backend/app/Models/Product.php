@@ -66,15 +66,19 @@ class Product extends Model
         return $this->hasMany(ProductGallery::class);
     }
 
+    public function gallery(){
+        return $this->hasOne(ProductGallery::class);
+    }
+
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);
     }
 
     public function getMainImage(){
-        return $this->galleries()->where('is_main', operator: true)->first();
+        return $this->galleries()->where('is_main', true)->first();
     }
-
+    
     public function coupons()
     {
         return $this->belongsToMany(Coupon::class, 'coupons_products')

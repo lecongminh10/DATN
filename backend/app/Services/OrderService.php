@@ -33,4 +33,10 @@ class OrderService extends BaseService
     {
        return  Order::where('code',$code)->first();
     }
+
+    public function getOrderById($id)
+    {
+        return Order::with(['user', 'items.product', 'items.productVariant', 'items.product.gallery', 'locations'])
+        ->findOrFail($id);
+    }
 }

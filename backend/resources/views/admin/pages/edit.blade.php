@@ -111,12 +111,12 @@
                                                             <h4 class="card-title mb-0">Trạng thái <span class="text-danger">*</span></h4>
                                                         </div>
                                                         <div class="card-body">
-                                                            <select class="form-select @error('status') is-invalid @enderror" id="statusSelect" name="status">
+                                                            <select class="form-select @error('is_active') is-invalid @enderror" id="statusSelect" name="is_active">
                                                                 <option value="" disabled selected>-- Chọn Trạng thái --</option>
-                                                                <option value="1" {{ old('status', $pages->status) == '1' ? 'selected' : '' }}>Active</option>
-                                                                <option value="0" {{ old('status', $pages->status) == '0' ? 'selected' : '' }}>Inactive</option>
+                                                                <option value="1" {{ old('is_active', $pages->is_active) == '1' ? 'selected' : '' }}>Active</option>
+                                                                <option value="0" {{ old('is_active', $pages->is_active) == '0' ? 'selected' : '' }}>Inactive</option>
                                                             </select>
-                                                            @error('status')
+                                                            @error('is_active')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                             @enderror
                                                         </div>

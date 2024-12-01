@@ -2,30 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Helpers\ApiHelper;
+use App\Mail\OrderCompletedMail;
+use App\Mail\OrderPlacedMail;
 use App\Models\Address;
 use App\Models\Cart;
-use App\Models\Coupon;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\OrderLocation;
-use App\Models\Payment;
-use App\Models\PaymentGateways;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\shippingMethods;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Coupon;
+use App\Models\Payment;
+use App\Models\Product;
 use App\Models\WishList;
-use App\Services\OrderLocationService;
-use App\Services\OrderService;
-use App\Repositories\OrderRepository;
-use Carbon\Carbon;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
+use App\Models\OrderLocation;
+use App\Models\ProductVariant;
+use App\Services\OrderService;
+use App\Models\PaymentGateways;
+use App\Models\shippingMethods;
 use Illuminate\Support\Facades\DB;
+use App\Events\AdminActivityLogged;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\OrderRepository;
+use App\Services\OrderLocationService;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Mail;
 class OrderController extends Controller
 {
 
@@ -233,22 +236,22 @@ class OrderController extends Controller
         }
 
         $cartCount = $carts->sum('quantity');
-      
+
         $cartCheckout =Cart::with(['product', 'product.variants','productVariant.attributeValues.attribute', 'product.galleries','product.productDimension'])
                 ->where('user_id', $userId)
                 ->get();
-       
+
                 $productDimensions = [];
                 $items = [];
                 $type = shippingMethods::HANG_NHE;
                 $dataShippingMethod =[];
                 foreach ($cartCheckout as $key => $cart) {
-                
+
                     $item = [
                         'name' => $cart->relationLoaded('productVariant') && !empty($cart->productVariant) ? $cart->productVariant->sku : $cart->product->code,
                         'quantity' => $cart->quantity,
                     ];
-                
+
                     if ($cart->relationLoaded('product') && $cart->product->relationLoaded('productDimension')) {
                         $productDimension = $cart->product->productDimension;
                         $item = array_merge($item, [
@@ -257,19 +260,19 @@ class OrderController extends Controller
                             'length' => $productDimension->length,
                             'width' => $productDimension->width,
                         ]);
-                
+
                         $productDimensions[] = [
                             'weight' => $productDimension->weight,
                         ];
                     }
-                
+
                     $items[$key] = $item;
                 }
-                
+
                 $totalWeight = array_reduce($productDimensions, function ($carry, $item) {
                     return $carry + $item['weight'];
                 }, 0);
-                
+
                 if ($totalWeight >= shippingMethods::WEIGHT) {
                     $type = shippingMethods::HANG_NANG;
                     $dataShippingMethod['type']=$type;
@@ -280,9 +283,9 @@ class OrderController extends Controller
                     $dataShippingMethod['type']=$type;
                     $dataShippingMethod['message']="Vận chuyển hàng nhẹ";
                 }
-                
-      
-        $shipp = ApiHelper::calculateServiceFee($type, $totalWeight, $items); 
+
+
+        $shipp = ApiHelper::calculateServiceFee($type, $totalWeight, $items);
         $dataShippingMethod['shipp']=$shipp;
 
         return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod'));
@@ -338,18 +341,38 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
+ 
     public function updateOrder(Request $req, int $id)
     {
-        Log::info($req->all());
+        // Log::info($req->all());
         // Xác thực yêu cầu (nếu cần thiết)
         // $req->validate([
         //     'status' => 'required|string|in:Chờ xác nhận,Đã xác nhận,Đang giao,Hoàn thành,Hàng thất lạc,Đã hủy',
         // ]);
         // Tìm order bằng id
 
-        $status = $req->input('status');
-        $response = $this->orderService->checkStatus($status, $id);
+        // Ghi log thông tin yêu cầu
 
+        // Lấy trạng thái từ request
+        $status = $req->input('status');
+
+        // Gọi service để kiểm tra trạng thái
+        $response = $this->orderService->checkStatus($status, $id);
+        if ($response && $status === 'Hoàn thành') {
+            // Lấy thông tin đơn hàng
+            $order = $this->orderService->getOrderById($id); // Đảm bảo phương thức này trả về đối tượng đơn hàng đầy đủ
+
+            if ($order && $order->user && $order->user->email) {
+                try {
+                    // Gửi email cho khách hàng
+                    Mail::to($order->user->email)->send(new OrderCompletedMail($order));
+
+                    // Log::info("Email đã được gửi tới: " . $order->user->email);
+                } catch (\Exception $e) {
+                    // Log::error("Không thể gửi email: " . $e->getMessage());
+                }
+            }
+        }
         return response()->json(['status' => $response]);
     }
 
@@ -364,6 +387,16 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
+        $logDetails = sprintf(
+            'Xóa Order: Tên - %s',
+             $order->code
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
 
         // Xóa mềm đơn hàng
         $order->delete();

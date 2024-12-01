@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Blog;
-use App\Services\BlogService;
-use DB;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Services\BlogService;
+use Illuminate\Support\Facades\DB;
+use App\Events\AdminActivityLogged;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -48,8 +49,7 @@ class BlogController extends Controller
 
         $slug = Str::slug($request->title);
         $isPublished = $request->input('is_published', 1);
-
-        Blog::create([
+        $blog = Blog::create([
             'title' => $request->title,
             'content' => $request->content,
             'slug' => $slug,
@@ -60,6 +60,17 @@ class BlogController extends Controller
             'is_published' => $isPublished,
             'published_at' => $isPublished == 1 ? now() : null,
         ]);
+        $logDetails = sprintf(
+            'Thêm bài viết: Tiêu Đề - %s',
+            $blog->title
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Thêm Mới',
+            $logDetails
+        ));
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
     }
@@ -129,6 +140,17 @@ class BlogController extends Controller
             'is_published' => $isPublished,
             'published_at' => $publishedAt,
         ]);
+        $logDetails = sprintf(
+            'Sửa bài viết: Tiêu Đề - %s',
+            $blog->title
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog updated successfully.');
     }
@@ -142,7 +164,7 @@ class BlogController extends Controller
     //     $data = $this->blogService->show_soft_delete($search, $perPage);
     //     return view('admin.blogs.deleted', compact('data'));
     // }
-    
+
     public function showSotfDelete(Request $request)
 {
     // Lấy giá trị tìm kiếm và số lượng trên mỗi trang
@@ -162,7 +184,7 @@ class BlogController extends Controller
     try {
         // Kiểm tra xem blog có tồn tại hay không
         $blog = $this->blogService->findDeletedBlogById($id);
-        
+
         if (!$blog) {
             return redirect()->route('admin.blogs.deleted')->with('error', 'Blog không tồn tại hoặc đã bị khôi phục trước đó.');
         }
@@ -177,7 +199,7 @@ class BlogController extends Controller
     }
 }
 
-    
+
 
     public function destroy($id)
     {
@@ -189,7 +211,17 @@ class BlogController extends Controller
             return redirect()->route('admin.blogs.index')->with('error', 'Blog không tồn tại!');
         }
 
-        // Xóa mềm blog
+         $logDetails = sprintf(
+            'Xóa bài viết: Tiêu Đề - %s',
+            $blog->title
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Mềm',
+            $logDetails
+        ));
         $blog->delete();
 
         // Kiểm tra nếu blog đã bị xóa mềm
@@ -208,6 +240,17 @@ class BlogController extends Controller
             if (!$data) {
                 return response()->json(['message' => 'Blog Values not found'], 404);
             }
+            $logDetails = sprintf(
+                'Xóa Value bài viết: Tiêu Đề - %s',
+                $data->title
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Xóa Mềm',
+                $logDetails
+            ));
             $data->delete();
             if ($data->trashed()) {
                 return response()->json(['message' => 'Giá trị blog đã được xóa thành công'], 200);
@@ -230,6 +273,17 @@ class BlogController extends Controller
         if (!$data) {
             return redirect()->route('admin.blogs.index')->with('success', 'Blog đã được xóa không thành công');
         }
+        $logDetails = sprintf(
+            'Xóa bài viết: Tiêu Đề - %s',
+            $data->title
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Cứng',
+            $logDetails
+        ));
         $data->forceDelete();
         return redirect()->route('admin.blogs.blogshortdeleted')->with('success', 'Blog đã bị xóa vĩnh viễn');
     }
@@ -240,6 +294,17 @@ class BlogController extends Controller
         if (!$data) {
             return response()->json(['message' => 'Blog Value not found.'], 404);
         }
+        $logDetails = sprintf(
+            'Xóa Value bài viết: Tiêu Đề - %s',
+            $data->title
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Cứng',
+            $logDetails
+        ));
         $data->forceDelete();
         return response()->json(['message' => 'Delete with success'], 200);
     }
