@@ -10,6 +10,7 @@ use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController; 
 
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
@@ -82,4 +83,11 @@ Route::prefix('chat')->name('chat.')->group(function () {
     Route::post('/getDataChatClient',[ChatController::class ,'getDataChatClient'])->name('getDataChatClient');
     Route::post('/get-room-id', [ChatController::class, 'getRoomId'])->name('getDataChatAdminaNew');
     Route::post('/chat-message/delete', [ChatController::class, 'deleteChatMessageById'])->middleware(['auth', 'isAdmin'])->name('message.delete');
+});
+
+Route::get('/feedbacks/create', [ClientFeedbackController::class, 'create'])->name('feedbacks.create');
+Route::post('/feedbacks', [ClientFeedbackController::class, 'store'])->name('feedbacks.store');
+
+Route::get('/getForm' , function(){
+    return view('welcome');
 });

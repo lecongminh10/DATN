@@ -48,12 +48,24 @@
                         </ul>
                     </div>
                 </li> <!-- end Dashboard Menu -->
+                @php
+                    $check='';
+                    $check2='';
+                    if(Route::is('admin.orders.listOrder','admin.comment.index','admin.categories.*',
+                    'admin.products.*','admin.attributes.*','admin.carriers.*','admin.coupons.*',
+                    'admin.users.*','admin.permissions.*','admin.paymentgateways.*','admin.tags.*',
+                    'admin.footer.edit' ,'admin.pages.*',
+                    )){
+                        $check="active";
+                        $check2="show";
+                    }
+                @endphp
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button"
+                    <a class="nav-link menu-link {{$check}}" href="#sidebarApps" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarApps">
                         <i class="ri-apps-2-line"></i> <span data-key="t-apps">Quản lí </span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarApps">
+                    <div class="collapse menu-dropdown  {{$check2}}" id="sidebarApps">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="#sidebarCalendar" class="nav-link" data-bs-toggle="collapse" role="button"
@@ -63,9 +75,10 @@
                                 <div class="collapse menu-dropdown" id="sidebarCalendar">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.orders.listOrder') }}" class="nav-link"
-                                                data-key="t-main-calender">Danh sách</a>
-                                        </li>
+                                            <a href="{{ route('admin.orders.listOrder') }}" class="nav-link {{ request()->routeIs('admin.orders.listOrder') ? 'active' : '' }}" data-key="t-main-calender">
+                                                Danh sách
+                                            </a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -78,9 +91,10 @@
                                 <div class="collapse menu-dropdown" id="sidebarComment">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.comment.index') }}" class="nav-link"
-                                                data-key="t-main-list">Danh sách</a>
-                                        </li>
+                                            <a href="{{ route('admin.comment.index') }}" class="nav-link {{ request()->routeIs('admin.comment.index') ? 'active' : '' }}" data-key="t-main-list">
+                                                Danh sách
+                                            </a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -93,13 +107,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarCategory">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.categories.index') }}" class="nav-link"
-                                                data-key="t-category-list">Danh sách</a>
+                                            <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.index') ? 'active' : '' }}" data-key="t-category-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.categories.create') }}" class="nav-link"
-                                                data-key="t-category-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.categories.create') }}" class="nav-link {{ request()->routeIs('admin.categories.create') ? 'active' : '' }}" data-key="t-category-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -113,13 +125,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarProduct">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.products.listProduct') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.products.listProduct') }}" class="nav-link {{ request()->routeIs('admin.products.listProduct') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.products.addProduct') }}" class="nav-link"
-                                                data-key="t-product-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.products.addProduct') }}" class="nav-link {{ request()->routeIs('admin.products.addProduct') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -132,13 +142,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarAttribute">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.attributes.index') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.attributes.index') }}" class="nav-link {{ request()->routeIs('admin.attributes.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.attributes.create') }}" class="nav-link"
-                                                data-key="t-product-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.attributes.create') }}" class="nav-link {{ request()->routeIs('admin.attributes.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -150,13 +158,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarCarrier">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.carriers.index') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.carriers.index') }}" class="nav-link {{ request()->routeIs('admin.carriers.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.carriers.create') }}" class="nav-link"
-                                                data-key="t-product-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.carriers.create') }}" class="nav-link {{ request()->routeIs('admin.carriers.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -168,29 +174,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarCoupon">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.coupons.index') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.coupons.index') }}" class="nav-link {{ request()->routeIs('admin.coupons.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.coupons.create') }}" class="nav-link"
-                                                data-key="t-product-add">Thêm mới</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#sidebarBlog" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebarBlog" data-key="t-product">
-                                    Bài viết
-                                </a>
-                                <div class="collapse menu-dropdown" id="sidebarBlog">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="{{ route('admin.blogs.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="{{ route('admin.blogs.create') }}" class="nav-link" data-key="t-product-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.coupons.create') }}" class="nav-link {{ request()->routeIs('admin.coupons.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -202,13 +190,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarAccount">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.users.index') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.users.add') }}" class="nav-link"
-                                                data-key="t-product-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.users.add') }}" class="nav-link {{ request()->routeIs('admin.users.add') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -221,13 +207,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarPermission">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.permissions.index') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.permissions.index') }}" class="nav-link {{ request()->routeIs('admin.permissions.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.permissions.create') }}" class="nav-link"
-                                                data-key="t-product-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.permissions.create') }}" class="nav-link {{ request()->routeIs('admin.permissions.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -239,13 +223,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarPayment">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link {{ request()->routeIs('admin.paymentgateways.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.paymentgateways.add') }}" class="nav-link"
-                                                data-key="t-product-add">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.paymentgateways.add') }}" class="nav-link {{ request()->routeIs('admin.paymentgateways.add') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -257,10 +239,8 @@
                                 <div class="collapse menu-dropdown" id="sidebarTag">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.tags.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
-                                            <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link"
-                                                data-key="t-product-list">Danh sách</a>
-                                        </li>
+                                            <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -273,9 +253,8 @@
                                 <div class="collapse menu-dropdown" id="sidebarinterface">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.paymentgateways.index') }}" class="nav-link"
-                                                data-key="t-product-list">Footer</a>
-                                        </li>
+                                            <a href="{{ route('admin.footer.edit') }}" class="nav-link {{ request()->routeIs('admin.footer.edit') ? 'active' : '' }}" data-key="t-product-list">Footer</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -287,11 +266,11 @@
                                 <div class="collapse menu-dropdown" id="sidebarPage">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.pages.index') }}" class="nav-link" data-key="t-product-list">Danh sách</a>
+                                            <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.pages.create') }}" class="nav-link" data-key="t-product-list">Thêm mới</a>
-                                        </li>
+                                            <a href="{{ route('admin.pages.create') }}" class="nav-link {{ request()->routeIs('admin.pages.create') ? 'active' : '' }}" data-key="t-product-list">Thêm mới</a>
+                                        </li>                                        
                                     </ul>
                                 </div>
                             </li>
@@ -299,63 +278,57 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="#sidebarStatistic" class="nav-link" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebarStatistic" data-key="t-product">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing"> Thống kê</span>
+                    <a href="#sidebarStatistic" class="nav-link {{ Route::is('admin.statistics.*','admin.orders.statistics') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{ Route::is('admin.statistics.*') ? 'true' : 'false' }}" aria-controls="sidebarStatistic" data-key="t-product">
+                        <i class="ri-numbers-line"></i> <span data-key="t-landing"> Thống kê</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarStatistic">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.statistics.*','admin.orders.statistics') ? 'show' : '' }}" id="sidebarStatistic">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.statistics.categories') }}" class="nav-link">
+                                <a href="{{ route('admin.statistics.categories') }}" class="nav-link {{ Route::is('admin.statistics.categories') ? 'active' : '' }}">
                                     Thống kê danh mục
                                 </a>
-                                
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.statistics.index') }}" class="nav-link">
+                                <a href="{{ route('admin.statistics.index') }}" class="nav-link {{ Route::is('admin.statistics.index') ? 'active' : '' }}">
                                     Thống kê sản phẩm
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.orders.statistics') }}" class="nav-link">
+                                <a href="{{ route('admin.orders.statistics') }}" class="nav-link {{ Route::is('admin.orders.statistics') ? 'active' : '' }}">
                                     Thống kê đơn hàng
                                 </a>
                             </li>
                         </ul>
                     </div>
-                </li>
-                {{-- hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh --}}
+                </li>                
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebar-display-management" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="#sidebar-display-management">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing">Quản lí hiển thị</span>
+                    <a class="nav-link menu-link {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'active' : '' }}" href="#sidebar-display-management" data-bs-toggle="collapse"
+                        role="button" aria-expanded="{{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'true' : 'false' }}" aria-controls="#sidebar-display-management">
+                        <i class="ri-aspect-ratio-line"></i> <span data-key="t-landing">Quản lí hiển thị</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebar-display-management">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-display-management">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="#sidebar-client" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebar-client" data-key="t-client">
+                                <a href="#sidebar-client" class="nav-link {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="{{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'true' : 'false' }}" aria-controls="sidebar-client" data-key="t-client">
                                     Giao diện người dùng
                                 </a>
-                                <div class="collapse menu-dropdown" id="sidebar-client">
+                                <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-client">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="#sidebar-header" class="nav-link" data-bs-toggle="collapse"
-                                                role="button" aria-expanded="false" aria-controls="sidebar-header"
-                                                data-key="t-header">
+                                            <a href="#sidebar-header" class="nav-link {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'active' : '' }}" data-bs-toggle="collapse"
+                                                role="button" aria-expanded="false" aria-controls="sidebar-header" data-key="t-header">
                                                 Header
                                             </a>
-                                            <div class="collapse menu-dropdown" id="sidebar-header">
-                                                <!-- Thay đổi ID ở đây -->
-                                                <a href="{{ route('admin.announcement.edit') }}" class="nav-link" data-key="t-client">Thông báo</a>
-                                                <a href="{{ route('admin.info_boxes.edit') }}" class="nav-link" data-key="t-client">Hộp thông tin</a>
-                                                <a href="{{ route('admin.popuphome.edit') }}" class="nav-link" data-key="t-client">Popup home</a>
-
+                                            <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-header">
+                                                <a href="{{ route('admin.announcement.edit') }}" class="nav-link {{ Route::is('admin.announcement.edit') ? 'active' : '' }}" data-key="t-client">Thông báo</a>
+                                                <a href="{{ route('admin.info_boxes.edit') }}" class="nav-link {{ Route::is('admin.info_boxes.edit') ? 'active' : '' }}" data-key="t-client">Hộp thông tin</a>
+                                                <a href="{{ route('admin.popuphome.edit') }}" class="nav-link {{ Route::is('admin.popuphome.edit') ? 'active' : '' }}" data-key="t-client">Popup home</a>
                                             </div>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.footer.edit') }}" class="nav-link"
-                                                data-key="t-client">Footer</a>
+                                            <a href="{{ route('admin.footer.edit') }}" class="nav-link {{ Route::is('admin.footer.edit') ? 'active' : '' }}" data-key="t-client">Footer</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -369,66 +342,31 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-
-
-                {{-- <li class="nav-item">
-                    <a href="#sidebar-display-management" class="nav-link" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebar-display-management" data-key="t-product">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing"> Quản lí hiển thị </span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebar-display-management">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Giao diện người dùng
-                                </a>
-                                <div class="collapse menu-dropdown" id="sidebarCalendar">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="{{ route('admin.orders.listOrder') }}" class="nav-link"
-                                                data-key="t-main-calender">Danh sách</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Giao diện người quản lí
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li> --}}
+                </li>                
                 <li class="nav-item">
                     <a href="#sidebar-comments-questions" class="nav-link" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebar-comments-questions" data-key="t-product">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing">Gớp ý và câu hỏi</span>
+                        <i class="ri-chat-1-line"></i> <span data-key="t-landing">Gớp ý và đóng góp</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebar-comments-questions">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Góp ý
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Câu hỏi
+                                <a href="https://bom.so/HNXsK3" class="nav-link">
+                                    Câu hỏi và Góp ý
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="#sidebar-sale-seo" class="nav-link" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebar-sale-seo" data-key="t-product">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing">Quảng cáo</span>
+                    <a href="#sidebar-sale-seo" class="nav-link {{ Route::is('admin.seo.index') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{ Route::is('admin.seo.index') ? 'true' : 'false' }}" aria-controls="sidebar-sale-seo" data-key="t-product">
+                        <i class="ri-google-play-line"></i> <span data-key="t-landing">Quảng cáo</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebar-sale-seo">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.seo.index') ? 'show' : '' }}" id="sidebar-sale-seo">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{route('admin.seo.index')}}" class="nav-link" >
+                                <a href="{{ route('admin.seo.index') }}" class="nav-link {{ Route::is('admin.seo.index') ? 'active' : '' }}">
                                     SEO
                                 </a>
                             </li>
@@ -439,13 +377,13 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li>                
                 <li class="nav-item">
-                    <a href="#sidebar-post" class="nav-link" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebar-post" data-key="t-product">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing">Bài viết </span>
+                    <a href="#sidebar-post" class="nav-link {{ Route::is('admin.blogs.index') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{ Route::is('admin.blogs.index') ? 'true' : 'false' }}" aria-controls="sidebar-post" data-key="t-product">
+                        <i class="ri-currency-line"></i> <span data-key="t-landing">Bài viết </span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebar-post">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.blogs.index') ? 'show' : '' }}" id="sidebar-post">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="" class="nav-link">
@@ -458,59 +396,59 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="" class="nav-link">
+                                <a href="{{ route('admin.blogs.index') }}" class="nav-link {{ Route::is('admin.blogs.index') ? 'active' : '' }}">
                                     Tin tức
                                 </a>
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li>                
                 <li class="nav-item">
-                    <a href="#sidebar-message" class="nav-link" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebar-message" data-key="t-product">
-                        <i class="ri-rocket-line"></i> <span data-key="t-landing">Thông báo </span>
+                    <a href="#sidebar-message" class="nav-link {{ Route::is('admin.email.viewEmail', 'chat.index') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{ Route::is('admin.email.viewEmail', 'chat.index') ? 'true' : 'false' }}" aria-controls="sidebar-message" data-key="t-product">
+                        <i class="ri-notification-2-fill"></i> <span data-key="t-landing">Thông báo </span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebar-message">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.email.viewEmail', 'chat.index') ? 'show' : '' }}" id="sidebar-message">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.email.viewEmail') }}" class="nav-link" >
-                                   Email
+                                <a href="{{ route('admin.email.viewEmail') }}" class="nav-link {{ Route::is('admin.email.viewEmail') ? 'active' : '' }}">
+                                    Email
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="" class="nav-link">
+                                <a href="{{ route('chat.index') }}" class="nav-link {{ Route::is('chat.index') ? 'active' : '' }}">
                                     Trò chuyện
                                 </a>
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li>                
                 <li class="nav-item">
-                    <a href="#sidebar-profile" class="nav-link" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebar-profile" data-key="t-product">
+                    <a href="#sidebar-profile" class="nav-link {{ Route::is('admin.profile.index', 'admin.profile.edit') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{ Route::is('admin.profile.index', 'admin.profile.edit') ? 'true' : 'false' }}" aria-controls="sidebar-profile" data-key="t-product">
                         <i class="ri-pages-line"></i> <span data-key="t-landing">Hồ sơ </span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebar-profile">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.profile.index', 'admin.profile.edit') ? 'show' : '' }}" id="sidebar-profile">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.profile.index') }}" class="nav-link">
+                                <a href="{{ route('admin.profile.index') }}" class="nav-link {{ Route::is('admin.profile.index') ? 'active' : '' }}">
                                     Thông tin
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.profile.edit') }}" class="nav-link">
+                                <a href="{{ route('admin.profile.edit') }}" class="nav-link {{ Route::is('admin.profile.edit') ? 'active' : '' }}">
                                     Cài đặt
                                 </a>
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li>                
                 <li class="nav-item">
-                    <a href="{{ route('admin.export-import.view-export-import') }}" class="nav-link"  role="button"
+                    <a href="{{ route('admin.export-import.view-export-import') }}" class="nav-link {{ Route::is('admin.export-import.view-export-import') ? 'active' : '' }}" role="button"
                         aria-expanded="false" aria-controls="sidebar-message" data-key="t-product">
-                        <i class="ri-rocket-line"></i><span>Xuất và Nhập</span>
+                        <i class="ri-upload-cloud-fill"></i><span>Xuất và Nhập</span>
                     </a>
-                </li>
+                </li>                
                 <div>
             </ul>
 
