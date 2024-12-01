@@ -360,7 +360,6 @@ Route::group([
             Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
         }
     );
-
     //footer
     Route::group(
         [

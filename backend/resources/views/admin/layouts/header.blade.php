@@ -173,7 +173,6 @@
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
-
                             @if(Auth::user()->profile_picture)
                                 <img class="rounded-circle header-profile-user"
                                     src="{{ Storage::url(Auth::user()->profile_picture) }}" 
