@@ -443,10 +443,15 @@ Route::group([
 
 
     });
-    Route::prefix('refunds')->group(function () {
-        Route::get('/', [RefundController::class, 'index'])->name('refunds.index');
-        Route::post('/', [RefundController::class, 'store'])->name('refunds.store');
-        Route::put('/{refund}', [RefundController::class, 'update'])->name('refunds.update');
-        Route::get('/create/{orderId}', [RefundController::class, 'createRefundForm'])->name('refunds.create');
+    
+    Route::group([
+        'prefix' => 'refunds',
+        'as' => 'refunds.'
+    ], function(){
+        Route::get('/', [RefundController::class, 'index'])->name('index');
+        // Route::get('refund-detail/{code}', [RefundController::class, 'detailRefund'])->name('detailRefund');
+        Route::post('/', [RefundController::class, 'store'])->name('store');
+        Route::put('/{refund}', [RefundController::class, 'update'])->name('update');
+        Route::get('/create/{orderId}', [RefundController::class, 'createRefundForm'])->name('create');
     });
 });

@@ -63,7 +63,7 @@
                                                 data-key="t-main-calender">Danh sách</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ route('admin.refunds.index') }}" class="nav-link"
+                                            <a href="{{ route('refunds.index') }}" class="nav-link"
                                                 data-key="t-main-refund">Hoàn trả</a>
                                         </li>
                                     </ul>

@@ -22,11 +22,16 @@ class Refund extends Model
         'amount',
         'refund_method',
         'reason',
+        'image',
         'status',
         'requested_at',
         'processed_at',
         'rejection_reason',
         'deleted_by',
+    ];
+
+    protected $casts = [
+        'image' => 'array', // Tự động chuyển đổi sang mảng
     ];
 
     // Quan hệ
