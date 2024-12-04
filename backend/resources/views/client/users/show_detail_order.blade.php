@@ -107,8 +107,10 @@
             background-color: #f44336;
             color: white;
             border: none;
+            margin-top: -20px;
+            margin-bottom: 20px;
             padding: 10px 20px;
-            border-radius: 50px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
         }

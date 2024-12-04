@@ -87,7 +87,7 @@ class UserController extends Controller
                 $user->permissionsValues()->attach($request->permissions);
             }
 
-            return redirect()->route('users.index')->with([
+            return redirect()->route('admin.users.index')->with([
                 'user' => $user
             ]);
         } catch (\Exception $e) {
@@ -130,7 +130,6 @@ class UserController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'password' => 'required',
             'phone_number' => 'required|string|max:15',
             'email' => 'required|email|max:255|unique:users,email',
             'date_of_birth' => 'required|date',
@@ -171,7 +170,7 @@ class UserController extends Controller
         if ($request->has('id_permissions')) {
             $user->permissionsValues()->sync($request->id_permissions);
         }
-        return redirect()->route('users.index');
+        return redirect()->route('admin.users.index');
     }
 
     public function destroy($id, Request $request)
@@ -279,17 +278,21 @@ class UserController extends Controller
     {
         $id = Auth::user()->id;
         $status = $request->input('status', 'all');
+
+        // Tạo query
         $query = Order::query();
 
         if ($status !== 'all') {
             $query->where('status', $status);
         }
-        $orders = $query->get();
-        $totalOrders = $orders->count();
 
-        // $userId = auth()->id();
-        $carts  = collect();
-        if($id) {
+        // Sử dụng paginate để phân trang
+        $orders = $query->paginate(5);
+        $totalOrders = $query->count();
+
+        // Lấy giỏ hàng
+        $carts = collect();
+        if ($id) {
             $carts = Cart::where('user_id', $id)->with('product')->get();
         }
 
@@ -298,7 +301,9 @@ class UserController extends Controller
         return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
     }
 
-    public function showDetailOrder($id){
+
+    public function showDetailOrder($id)
+    {
 
         $orders = Order::with([
             'items.product',
@@ -320,8 +325,16 @@ class UserController extends Controller
         }
 
         $cartCount = $carts->sum('quantity');
+        $address = Address::getActiveAddress(Auth::user()->id);
 
-        return view('client.users.show_detail_order', compact('orders','locations', 'carts', 'cartCount'));
+        $orderItems = $orders->items;
+        $firstProduct = $orderItems->first()->product;
+        $similarProducts = Product::where('category_id', $firstProduct->category_id)
+            ->where('id', '!=', $firstProduct->id)
+            ->take(5)
+            ->get();
+
+        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts'));
     }
 
 
