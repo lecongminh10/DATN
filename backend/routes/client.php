@@ -11,6 +11,8 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController; 
+use App\Http\Controllers\RefundController;
+use App\Http\Controllers\ReturnController;
 
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
@@ -70,6 +72,13 @@ Route::prefix('/')->group(function () {
         return response()->json(['success' => true]); 
     });
     Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
+        Route::post('/refunds', [RefundController::class, 'store'])->name('refunds.store');
+        Route::put('/refunds/{refund}', [RefundController::class, 'update'])->name('refunds.update');
+        Route::get('/refunds/create/{orderId}', [RefundController::class, 'createRefundForm'])->name('refunds.create');
+    });
 });
 // Route::post('/reviews', [UserReviewController::class, 'store'])->name('reviews.store');
 

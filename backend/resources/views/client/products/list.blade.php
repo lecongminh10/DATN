@@ -30,6 +30,18 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             margin-top: 9px;
             background-color: transparent;
         }
+
+        .btn-icon-wish{
+            margin-top: 10px;
+        }
+
+        .btn-detail{
+            border: none;
+            background-color: transparent;
+            color: #4d4c4a;
+            cursor: pointer;
+            margin-top: 10px;
+        }
     </style>
 @endsection
 @section('content')

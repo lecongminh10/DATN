@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\OrderLocation;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Refund;
 use App\Models\UserReview;
 use App\Services\AddressServices;
 use App\Services\UserService;
@@ -87,7 +88,7 @@ class UserController extends Controller
                 $user->permissionsValues()->attach($request->permissions);
             }
 
-            return redirect()->route('users.index')->with([
+            return redirect()->route('admin.users.index')->with([
                 'user' => $user
             ]);
         } catch (\Exception $e) {
@@ -279,26 +280,46 @@ class UserController extends Controller
     {
         $id = Auth::user()->id;
         $status = $request->input('status', 'all');
-        $query = Order::query();
 
+        // Query cơ bản để lấy tất cả đơn hàng của người dùng
+        $baseQuery = Order::where('user_id', $userId);
+
+        // Lọc theo trạng thái nếu có
         if ($status !== 'all') {
-            $query->where('status', $status);
+            $baseQuery->where('status', $status);
         }
-        $orders = $query->get();
-        $totalOrders = $orders->count();
 
-        // $userId = auth()->id();
-        $carts  = collect();
-        if($id) {
-            $carts = Cart::where('user_id', $id)->with('product')->get();
-        }
+        // Tổng số đơn hàng không thay đổi theo phân trang
+        $totalOrders = $baseQuery->count();
+
+        // Lấy dữ liệu với phân trang
+        $orders = $baseQuery->with([
+            'items.product',
+            'items.productVariant.attributeValues.attribute',
+            'payment.paymentGateway',
+            'shippingMethod'
+        ])->simplePaginate(5);
+
+        // Giỏ hàng và số lượng giỏ hàng
+        $carts = Cart::where('user_id', $userId)
+            ->with('product')
+            ->get();
 
         $cartCount = $carts->sum('quantity');
 
         return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
     }
 
-    public function showDetailOrder($id){
+
+    public function showDetailOrder($id)
+    {
+        $statusMapping = [
+            'pending' => 'Đang chờ xử lí',
+            'approved' => 'Đã duyệt',
+            'rejected' => 'Bị từ chối',
+            'completed' => 'Hoàn thành',
+            'cancelled' => 'Đã hủy',
+        ];
 
         $orders = Order::with([
             'items.product',
@@ -307,6 +328,17 @@ class UserController extends Controller
             'shippingMethod'
         ])->findOrFail($id);
 
+        $refund = Refund::where('order_id', $id)->first(); // Lấy thông tin hoàn trả nếu có
+        $refundStatus = $refund->status ?? null; // Lấy trạng thái hoàn trả
+        $timeRefunds = $refund->created_at ??null;
+        // Nếu có trạng thái hoàn trả, ưu tiên hiển thị trạng thái này
+        $orderStatus = $statusMapping[$refundStatus] ?? $orders->status;
+        $dateTimeOrders= $timeRefunds ?? $orders->created_at;
+        $messageStatus='';
+        if( $refundStatus=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
+        // if($statusMapping[$refundStatus]=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
+        // Quy định điều kiện ẩn/hiện nút
+        $showButtons = is_null($refund);
 
         $locations = OrderLocation::where('order_id', $id)->get();
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
@@ -320,8 +352,30 @@ class UserController extends Controller
         }
 
         $cartCount = $carts->sum('quantity');
+        $address = Address::getActiveAddress(Auth::user()->id);
 
-        return view('client.users.show_detail_order', compact('orders','locations', 'carts', 'cartCount'));
+        $orderItems = $orders->items;
+        $firstProduct = $orderItems->first()->product;
+        $similarProducts = Product::where('category_id', $firstProduct->category_id)
+            ->where('id', '!=', $firstProduct->id)
+            ->take(5)
+            ->get();
+
+        return view('client.users.show_detail_order', compact(
+            'orders', 
+            'locations', 
+            'carts', 
+            'cartCount', 
+            'address', 
+            'payments', 
+            'orderItems', 
+            'similarProducts', 
+            'refundStatus', 
+            'orderStatus',
+            'showButtons',
+            'dateTimeOrders',
+            'messageStatus'
+        ));
     }
 
 

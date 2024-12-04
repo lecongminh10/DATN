@@ -19,6 +19,8 @@ class PostController extends Controller
         $cartCount = $carts->sum('quantity');
         $user = Auth::user();
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+        $carts  = collect();
+        $cartCount = $carts->sum('quantity');
 
         return view('client.blogs.index', compact('posts','carts', 'cartCount'));
     }
