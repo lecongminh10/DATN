@@ -60,7 +60,33 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
             'date_of_birth' => 'required|date',
             'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ], [
+            'username.required' => 'Tên người dùng không được để trống.',
+            'username.string' => 'Tên người dùng phải là một chuỗi ký tự.',
+            'username.max' => 'Tên người dùng không được vượt quá 255 ký tự.',
+            
+            'password.required' => 'Mật khẩu không được để trống.',
+            'password.string' => 'Mật khẩu phải là một chuỗi ký tự.',
+            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
+            
+            'phone_number.required' => 'Số điện thoại không được để trống.',
+            'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự.',
+            'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
+            
+            'email.required' => 'Email không được để trống.',
+            'email.email' => 'Địa chỉ email không hợp lệ.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'email.unique' => 'Email đã tồn tại trong hệ thống.',
+            
+            'date_of_birth.required' => 'Ngày sinh không được để trống.',
+            'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
+            
+            'profile_picture.nullable' => 'Ảnh đại diện là tùy chọn.',
+            'profile_picture.image' => 'Ảnh đại diện phải là một hình ảnh.',
+            'profile_picture.mimes' => 'Ảnh đại diện phải có định dạng jpg, jpeg hoặc png.',
+            'profile_picture.max' => 'Ảnh đại diện không được vượt quá 2048 KB.'
         ]);
+        
         try {
             $data = $request->except('permissions');
 
@@ -134,8 +160,29 @@ class UserController extends Controller
         $request->validate([
             'username' => 'required|string|max:255',
             'phone_number' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:users,email',
+            'email' => 'required|email|max:255',
             'date_of_birth' => 'required|date',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ], [
+            'username.required' => 'Tên người dùng không được để trống.',
+            'username.string' => 'Tên người dùng phải là một chuỗi ký tự.',
+            'username.max' => 'Tên người dùng không được vượt quá 255 ký tự.',
+            
+            'phone_number.required' => 'Số điện thoại không được để trống.',
+            'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự.',
+            'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
+            
+            'email.required' => 'Email không được để trống.',
+            'email.email' => 'Địa chỉ email không hợp lệ.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            
+            'date_of_birth.required' => 'Ngày sinh không được để trống.',
+            'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
+            
+            'profile_picture.nullable' => 'Ảnh đại diện là tùy chọn.',
+            'profile_picture.image' => 'Ảnh đại diện phải là một hình ảnh.',
+            'profile_picture.mimes' => 'Ảnh đại diện phải có định dạng jpg, jpeg hoặc png.',
+            'profile_picture.max' => 'Ảnh đại diện không được vượt quá 2048 KB.'
         ]);
         $data = $request->all();
 

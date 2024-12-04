@@ -32,7 +32,7 @@
                                     <label for="phonenumberInput" class="form-label">Ảnh </label>
                                     <ul class="list-group">
                                         <img src="{{ Storage::url($user->profile_picture) }}" alt="Ảnh đại diện"
-                                            width="150px" height="150px">
+                                            width="70px" height="70px">
                                     </ul>
                                 </div>
                             </div>
