@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\AdminActivityLogged;
-use App\Http\Controllers\Controller;
-use App\Models\Address;
+use Carbon\Carbon;
 use App\Models\Cart;
-use App\Models\Permission;
-use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
-use App\Models\OrderLocation;
+use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Permission;
 use App\Models\UserReview;
-use App\Services\AddressServices;
-use App\Services\UserService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\OrderLocation;
+use App\Services\UserService;
+use App\Services\ProductService;
+use App\Services\AddressServices;
+use App\Events\AdminActivityLogged;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,10 +26,12 @@ class UserController extends Controller
 {
     protected $userService;
     protected $userRepository;
+    protected $productService;
 
-    public function __construct(UserService $userService, AddressServices $addressServices)
+    public function __construct(UserService $userService, AddressServices $addressServices,ProductService $productService,)
     {
         $this->userService = $userService;
+        $this->productService = $productService;
     }
 
 
@@ -316,6 +319,7 @@ class UserController extends Controller
         $locations = OrderLocation::where('order_id', $id)->get();
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
             ->select('payments.*', 'payment_gateways.name as gateway_name')
+            ->where('order_id',$id)
             ->get();
 
         $userId = auth()->id();
@@ -333,8 +337,8 @@ class UserController extends Controller
             ->where('id', '!=', $firstProduct->id)
             ->take(5)
             ->get();
-
-        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts'));
+        $bestSellingProducts = $this->productService->bestSellingProducts();
+        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts','bestSellingProducts'));
     }
 
 

@@ -222,7 +222,7 @@
                         @endif
 
                         @if ($orders->status === 'Hoàn thành')
-                            <button type="button" class="btn btn-review" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-review mb-3" data-bs-toggle="modal"
                                 data-bs-target="#reviewModal">
                                 Đánh giá sản phẩm
                             </button>
@@ -335,7 +335,13 @@
                                 @foreach ($payments as $key => $value)
                                     <tr>
                                         <td>Loại thanh toán:</td>
-                                        <td>{{ $value->gateway_name }}</td>
+                                        <td>
+                                            @if ($value->gateway_name == 'cash')
+                                                Thanh toán tiền mặt
+                                            @else
+                                                {{ $value->gateway_name }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Giá:</td>
@@ -345,14 +351,7 @@
 
                             </table>
                         </div>
-
-
-                        @include('client.components-home.products', [
-                            'title' => 'Sản phẩm tương tự',
-                            'products' => $similarProducts,
-                        ])
                     </div>
-
                     <!-- Modal xác nhận hủy đơn hàng -->
                     <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel"
                         aria-hidden="true">
@@ -422,6 +421,14 @@
                 </div>
                 @include('client.users.left_menu')
             </div>
+            @include('client.components-home.products', [
+                'title' => 'Sản phẩm tương tự',
+                'products' => $similarProducts,
+            ])
+            @include('client.components-home.products', [
+                'title' => 'Sản phẩm nhiều lượt mua nhẩt',
+                'products' => $bestSellingProducts,
+             ])
         </div>
     </main>
 

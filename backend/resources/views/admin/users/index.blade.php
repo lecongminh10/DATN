@@ -141,7 +141,7 @@
                                                         <span class="badge bg-secondary">Khác</span>
                                                     @endif
                                                 </td>
-                                                <td class="due_date">{{ $value->date_of_birth }}</td>
+                                                <td class="due_date">{{ \Carbon\Carbon::parse($value->date_of_birth)->format('d-m-Y') }}</td>
                                                 <td class="status">
                                                     <span
                                                         class="badge bg-secondary-subtle text-secondary text-uppercase">{{ $value->phone_number }}</span>
