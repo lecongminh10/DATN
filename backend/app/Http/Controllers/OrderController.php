@@ -286,7 +286,11 @@ class OrderController extends Controller
 
 
         $shipp = ApiHelper::calculateServiceFee($type, $totalWeight, $items);
-        $dataShippingMethod['shipp']=$shipp;
+        if($shipp!==null){
+            $dataShippingMethod['shipp']=$shipp;
+        }else{
+            $dataShippingMethod['shipp']=0;
+        }
 
         return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod'));
     }

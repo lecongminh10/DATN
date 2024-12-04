@@ -288,7 +288,7 @@
                                 <a href="{{ route('admin.orders.statistics') }}" class="nav-link {{ Route::is('admin.orders.statistics') ? 'active' : '' }}">
                                     Thống kê đơn hàng
                                 </a>
-                            </li> --}}
+                            </li>
                         </ul>
                     </div>
                 </li>                
@@ -444,26 +444,6 @@
                         aria-expanded="false" aria-controls="sidebar-diary" data-key="t-product">
                         <i class="ri-drive-line"></i> <span data-key="t-landing">Nhật ký </span>
                     </a>
-                </li>
-                  <li class="nav-item">
-                    <a href="#sidebar-profile" class="nav-link" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebar-profile" data-key="t-product">
-                        <i class="ri-pages-line"></i>  <span data-key="t-landing">Hồ sơ </span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebar-profile">
-                        <ul class="nav nav-sm flex-column">
-                           <li class="nav-item">
-                                <a href="{{route('admin.profile.index')}}" class="nav-link" >
-                                   Thông tin
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('admin.profile.edit')}}" class="nav-link" >
-                                   Cài đặt
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
                 <div>
             </ul>

@@ -249,7 +249,7 @@ class ApiHelper {
             $shippingFee = $responseData['data']['service_fee'];
             return $shippingFee;
         } else {
-            return "Error: Unable to calculate service fee.";
+            return null;
         }
     }
     
