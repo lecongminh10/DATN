@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Cart;
@@ -47,6 +48,7 @@ class UserController extends Controller
         return view('admin.users.store', compact('permissionsValues'));
     }
 
+
     public function store(Request $request)
     {
         $request->validate([
@@ -68,6 +70,19 @@ class UserController extends Controller
             }
 
             $user = $this->userService->createUser($data);
+
+            //nhật ký
+            $logDetails = sprintf(
+                'Thêm người dùng: Tên - %s',
+                $user->username,
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
 
             if ($user && $request->has('permissions')) {
                 $user->permissionsValues()->attach($request->permissions);
@@ -127,6 +142,19 @@ class UserController extends Controller
 
         $user = $this->userService->updateUser($id, $data);
 
+        //nhật ký
+        $logDetails = sprintf(
+            'Sửa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
+
         if ($request->hasFile('profile_picture')) {
             // Xóa ảnh cũ nếu có
             if ($user->profile_picture && Storage::exists('public/' . $user->profile_picture)) {
@@ -156,6 +184,32 @@ class UserController extends Controller
         } else {
             $user->delete();
         }
+
+        //nhật ký
+        $logDetails = sprintf(
+            'Xóa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+
+        //nhật ký
+        $logDetails = sprintf(
+            'Xóa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
@@ -224,7 +278,7 @@ class UserController extends Controller
 
     public function showOrder(Request $request)
     {
-        $userId = Auth::id();
+        $id = Auth::user()->id;
         $status = $request->input('status', 'all');
 
         // Query cơ bản để lấy tất cả đơn hàng của người dùng

@@ -30,3 +30,14 @@ window.Echo = new Echo({
     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
 });
+
+window.Echo.connector.pusher.connection.bind('connected', () => {
+    console.log('Pusher connected successfully!');
+});
+
+window.Echo.connector.pusher.connection.bind('error', (err) => {
+    console.error('Pusher connection error:', err);
+});
+
+
+

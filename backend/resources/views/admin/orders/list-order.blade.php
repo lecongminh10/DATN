@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>
                         <ul class="list-inline hstack gap-2 mb-0">
                             <li class="list-inline-item">
-                                <a href="/order/${order.id}/detail" class="text-primary d-inline-block">
+                                <a href="order-detail/${order.id}" class="text-primary d-inline-block">
                                     <i class="ri-eye-fill fs-16"></i>
                                 </a>
                             </li>
@@ -518,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </button>
                             </li>
                             <li class="list-inline-item">
-                                <a class="text-danger d-inline-block remove-item-btn" data-bs-toggle="modal" href="#deleteOrder">
+                                <a class="text-danger d-inline-block remove-item-btn" data-bs-toggle="modal" href="#deleteOrder" data-id="${order.id}">
                                     <i class="ri-delete-bin-5-fill fs-16"></i>
                                 </a>
                             </li>
@@ -606,8 +606,10 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
         document.querySelector('#idCode').value = data.code;
         document.querySelector('#customerName').value = data.user.email;
         document.querySelector('#date').value = new Date(data.created_at).toLocaleDateString('en-GB');
-        const statusSelect = document.querySelector('#idStatusEdit');
-        statusSelect.setAttribute('data-current-status', data.status);
+        document.querySelector('#idStatusEdit').value = data.status;
+        // const statusSelect = document.querySelector('#idStatusEdit');
+        
+        // statusSelect.setAttribute('data-current-status', data.status);
 
         Array.from(statusSelect.options).forEach(option => {
             option.selected = (option.value === data.status);

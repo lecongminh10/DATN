@@ -3,28 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiHelper;
-use App\Models\Address;
+use App\Mail\OrderOnlineMail; //
+use App\Mail\OrderPlacedMail; // 
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Coupon;
+use App\Models\Address;
+use App\Models\Payment;
+use App\Models\Product;
+use App\Models\OrderItem;
+use App\Events\OrderPlaced;
 use App\Models\CouponUsage;
 use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\OrderItem;
-use App\Models\Payment;
 use App\Models\PaymentGateway;
+use App\Models\ProductVariant;
+use App\Services\OrderService;
 use App\Models\PaymentGateways;
 use App\Models\shippingMethods;
-use App\Services\CarrierService;
 use App\Services\CouponService;
-use App\Services\OrderLocationService;
-use App\Services\OrderService;
+use App\Services\CarrierService;
 use App\Services\PaymentService;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail; //
+use Illuminate\Support\Facades\Auth;
+use App\Services\OrderLocationService;
 
 class PayMentController extends Controller
 {
@@ -52,6 +55,7 @@ class PayMentController extends Controller
     }
     public function addOrder(Request $request)
     {
+        dd($request->all());
         $couponCode=[];
         $priceCoupone=0;
         if($request->has('coupons'))
@@ -147,6 +151,10 @@ class PayMentController extends Controller
         $this->createNewCouponeUsage($couponCode, $order->id);
         $couponUsage = $this->couponService->getByCouponUsage($order->id);
         $this->couponService->updateByOrderCoupon($order->id);
+
+        // Gửi mail xác nhận
+        Mail::to($order->user->email)->send(new OrderPlacedMail($order));
+
         $responseData= [
             'bank_code'    =>'',
             'vnp_CardType' =>'Thanh toán sau khi nhận hàng'
@@ -204,6 +212,7 @@ class PayMentController extends Controller
             'longitude' => null,
         ];
         $this->orderLocationService->saveOrUpdate($dataOrderLocation);
+        $this->placeOrder($order,1);
         return $order;
     }
 
@@ -326,11 +335,16 @@ class PayMentController extends Controller
                 Payment::where('id',$payment->id)->update(['status'=>Payment::Completed]);
                 shippingMethods::where('transaction_id',$order->code)->update(['transaction_id'=> $payment->transaction_id]);
                 $this->couponService->updateByOrderCoupon($order->id);
+                $this->placeOrder($order ,3);
+
+                // Gửi email xác nhận
+                Mail::to($order->user->email)->send(new OrderOnlineMail($order));
             }else
             {
                 $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=>$order->total_price ,'status'=>Payment::Failed , 'transaction_id'=>$order->code]);
                 Order::where('code', $order->code)->update(['status' =>Order::DA_HUY]);
                 shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id,'status'=>shippingMethods::FAILED]);
+                $this->placeOrder($order ,2);
             }
         }
         $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])
@@ -488,4 +502,20 @@ class PayMentController extends Controller
             }
             
         }
+        private function placeOrder($order, $status)
+        {
+            $user = auth()->user();
+        
+            if ($order) {
+                if ($status == 1) {
+                    $message = "Đơn hàng đã được đặt! Mã: $order->code";
+                } elseif ($status == 2) {
+                    $message = "Đơn hàng đã hủy! Mã: $order->code";
+                } elseif ($status == 3) {
+                    $message = "Đơn hàng $order->code | thanh toán thành công với số tiền " . number_format($order->total_price, 0, ',', '.') . "₫";
+                }
+        
+                broadcast(new OrderPlaced($order, $user, $message));
+            }
+        }        
 }

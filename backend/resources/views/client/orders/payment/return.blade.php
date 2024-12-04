@@ -134,8 +134,12 @@
                                                                 $status='Thanh toán thành công';
                                                                 $style="bg-success-subtle text-success";
                                                             }
-                                                            if( $status=='pending'){
-                                                                $status='Thanh toán thành công';
+                                                            if( $status=="pending"){
+                                                                $status='Thanh toán sau khi nhận hàng';
+                                                                $style="bg-success-subtle text-success";
+                                                            }
+                                                            if( $status=="refunded"){
+                                                                $status='Đơn hàng hoàn trả';
                                                                 $style="bg-success-subtle text-success";
                                                             }
                                                          }else{
@@ -244,7 +248,7 @@
                                                                     if(!empty($variant)){
                                                                         $img = $value->productVariant->variant_image;
                                                                     }else{
-                                                                        $img = $value->product->getMainImage->image_gallery;
+                                                                        $img = $value->product->getMainImage()->image_gallery;
                                                                     }
                                                                 @endphp
                                                             <img src="{{Storage::url( $img)}}" alt="" style="max-height: 100px; max-width: 100px;">
