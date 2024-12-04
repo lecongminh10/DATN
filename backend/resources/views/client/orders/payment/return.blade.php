@@ -134,6 +134,10 @@
                                                                 $status='Thanh toán thành công';
                                                                 $style="bg-success-subtle text-success";
                                                             }
+                                                            if( $status=='pending'){
+                                                                $status='Thanh toán thành công';
+                                                                $style="bg-success-subtle text-success";
+                                                            }
                                                          }else{
                                                             $status='Đã hủy khi thanh toán ';
                                                             $style="bg-success-subtle text-success";

@@ -73,7 +73,7 @@ class UserController extends Controller
                 $user->permissionsValues()->attach($request->permissions);
             }
 
-            return redirect()->route('users.index')->with([
+            return redirect()->route('admin.users.index')->with([
                 'user' => $user
             ]);
         } catch (\Exception $e) {
@@ -260,7 +260,7 @@ class UserController extends Controller
     public function showDetailOrder($id)
     {
         $statusMapping = [
-            'pending' => 'Đang chờ',
+            'pending' => 'Đang chờ xử lí',
             'approved' => 'Đã duyệt',
             'rejected' => 'Bị từ chối',
             'completed' => 'Hoàn thành',
@@ -276,10 +276,13 @@ class UserController extends Controller
 
         $refund = Refund::where('order_id', $id)->first(); // Lấy thông tin hoàn trả nếu có
         $refundStatus = $refund->status ?? null; // Lấy trạng thái hoàn trả
-
+        $timeRefunds = $refund->created_at ??null;
         // Nếu có trạng thái hoàn trả, ưu tiên hiển thị trạng thái này
         $orderStatus = $statusMapping[$refundStatus] ?? $orders->status;
-
+        $dateTimeOrders= $timeRefunds ?? $orders->created_at;
+        $messageStatus='';
+        if( $refundStatus=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
+        // if($statusMapping[$refundStatus]=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
         // Quy định điều kiện ẩn/hiện nút
         $showButtons = is_null($refund);
 
@@ -315,7 +318,9 @@ class UserController extends Controller
             'similarProducts', 
             'refundStatus', 
             'orderStatus',
-            'showButtons'
+            'showButtons',
+            'dateTimeOrders',
+            'messageStatus'
         ));
     }
 

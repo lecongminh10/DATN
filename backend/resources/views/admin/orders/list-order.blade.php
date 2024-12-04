@@ -43,12 +43,12 @@ if (!function_exists('isStatus')) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Orders</h4>
+                        <h4 class="mb-sm-0">Đơn hàng</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                                <li class="breadcrumb-item active">Orders</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Quản lí </a></li>
+                                <li class="breadcrumb-item active">Đơn hàng</li>
                             </ol>
                         </div>
 
@@ -63,7 +63,7 @@ if (!function_exists('isStatus')) {
                         <div class="card-header border-0">
                             <div class="row align-items-center gy-3">
                                 <div class="col-sm">
-                                    <h5 class="card-title mb-0">Order</h5>
+                                    <h5 class="card-title mb-0">Đơn hàng</h5>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
@@ -80,7 +80,7 @@ if (!function_exists('isStatus')) {
                                     <!-- Search -->
                                     <div class="col-xxl-5 col-sm-6">
                                         <div class="search-box">
-                                            <input type="text" name="search" class="form-control search" placeholder="Search for order ID, customer, order status or something..." value="{{ request('search') }}">
+                                            <input type="text" name="search" class="form-control search" placeholder="Tìm kiểm ..." value="{{ request('search') }}">
                                             <i class="ri-search-line search-icon"></i>
                                         </div>
                                     </div>
@@ -120,7 +120,7 @@ if (!function_exists('isStatus')) {
                                     <div class="col-xxl-1 col-sm-4">
                                         <div>
                                             <button type="submit" class="btn btn-primary w-100">
-                                                <i class="ri-equalizer-fill fs-13 align-bottom"></i> Filters
+                                                <i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm
                                             </button>
                                         </div>
                                     </div>
@@ -178,14 +178,14 @@ if (!function_exists('isStatus')) {
                                                     </div>
                                                 </th>
                                                 <th class="sort" data-sort="stt">STT</th>
-                                                <th class="sort" data-sort="customer_email">Customer</th>
-                                                <th class="sort" data-sort="code">CODE</th>
-                                                <th class="sort" data-sort="total_price">Price total</th>
-                                                <th class="sort" data-sort="payment">Payment Method</th>
-                                                <th class="sort" data-sort="transport">Transport</th>
-                                                <th class="sort" data-sort="status">Status</th>
-                                                <th class="sort" data-sort="created_at">Order date</th>
-                                                <th class="sort" data-sort="action">Action</th>
+                                                <th class="sort" data-sort="customer_email">Khách hàng </th>
+                                                <th class="sort" data-sort="code">Mã</th>
+                                                <th class="sort" data-sort="total_price">Tổng giá</th>
+                                                <th class="sort" data-sort="payment">Phương thức thanh toán</th>
+                                                <th class="sort" data-sort="transport">Mã giao dịch</th>
+                                                <th class="sort" data-sort="status">Trạng thái</th>
+                                                <th class="sort" data-sort="created_at">Ngày mua</th>
+                                                <th class="sort" data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -199,12 +199,12 @@ if (!function_exists('isStatus')) {
                                                 <td class="stt">{{ $key + 1 }}</td>
                                                 <td class="customer_email">{{ $order->user->email }}</td>
                                                 <td class="code">{{ $order->code }}</td>
-                                                <td class="total_price">{{ $order->total_price }}</td>
+                                                <td class="total_price">{{ number_format($order->total_price, 0, ',', '.') }} ₫</td>
                                                 <td class="payment">
                                                     @if ($order->payment && $order->payment->paymentGateway)
                                                         {{ $order->payment->paymentGateway->name }}
                                                     @else
-                                                        <span class="text-muted">No Payment</span>
+                                                        <span class="text-muted">Không có </span>
                                                     @endif
                                                 </td>
                                                 <td class="transport">{{ $order->tracking_number }}</td>
@@ -236,8 +236,7 @@ if (!function_exists('isStatus')) {
                                     <div class="noresult" style="display: none">
                                         <div class="text-center">
                                             <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:75px;height:75px"></lord-icon>
-                                            <h5 class="mt-2">Sorry! No Result Found</h5>
-                                            <p class="text-muted">We've searched more than 150+ Orders We did not find any orders for you search.</p>
+                                            <h5 class="mt-2">Không tìm thấy đơn hàng nào </h5>
                                         </div>
                                     </div>
                                 </div>
@@ -245,7 +244,7 @@ if (!function_exists('isStatus')) {
                                 <div class="d-flex justify-content-end">
                                     <div class="pagination-wrap hstack gap-2">
                                         <a class="page-item pagination-prev {{ $orders->onFirstPage() ? 'disabled' : '' }}" href="{{ $orders->previousPageUrl() }}">
-                                            Previous
+                                            Trước
                                         </a>
                                         <ul class="pagination listjs-pagination mb-0">
                                             @for ($i = 1; $i <= $orders->lastPage(); $i++)
@@ -255,7 +254,7 @@ if (!function_exists('isStatus')) {
                                             @endfor
                                         </ul>
                                         <a class="page-item pagination-next {{ $orders->hasMorePages() ? '' : 'disabled' }}" href="{{ $orders->nextPageUrl() }}">
-                                            Next
+                                            Sau
                                         </a>
                                     </div>
                                 </div>
@@ -264,7 +263,7 @@ if (!function_exists('isStatus')) {
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header bg-light p-3">
-                                            <h5 class="modal-title" id="modalEditLabel">Update</h5>
+                                            <h5 class="modal-title" id="modalEditLabel">Cập nhật</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                                         </div>
                                         <form  method="post">
@@ -273,38 +272,21 @@ if (!function_exists('isStatus')) {
                                                 <input type="hidden" id="idOrder" />
 
                                                 <div class="mb-3">
-                                                    <label for="code" class="form-label">CODE</label>
+                                                    <label for="code" class="form-label">Mã </label>
                                                     <input type="text" name="code" id="idCode" class=" form-control" disabled  />
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="customername-field" class="form-label">Customer Name</label>
+                                                    <label for="customername-field" class="form-label">Khách hàng </label>
                                                     <input type="text" name="customerName" id="customerName" class="form-control" disabled  />
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="date-field" class="form-label">Order Date</label>
+                                                    <label for="date-field" class="form-label">Ngày tạo</label>
                                                     <input type="text" id="date" name="date" class="form-control" data-provider="flatpickr" required data-date-format="d-m-Y" data-enable-time disabled />
                                                 </div>
-
-                                                {{-- <div class="row gy-4 mb-3">
-                                                    {{-- <div class="col-md-6">
-                                                        <div>
-                                                            <label for="amount-field" class="form-label">Amount</label>
-                                                            <input type="text" id="amount-field" class="form-control" placeholder="Total amount" required />
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <label for="payment-field" class="form-label">Payment Method</label>
-                                                        <select class="form-control" data-trigger name="payment" required id="payment" disabled>
-                                                            <option value="Stripe">Stripe</option>
-                                                            <option value="Paypal">Paypal</option>
-                                                        </select>
-                                                    </div>
-                                                </div> --}}
-
                                                 <div>
-                                                    <label for="delivered-status" class="form-label">Delivery Status</label>
+                                                    <label for="delivered-status" class="form-label">Trạng thái</label>
                                                     <select class="form-control" name="status" data-choices data-choices-search-false id="idStatusEdit" data-current-status="">
                                                         <option value="Chờ xác nhận">Chờ xác nhận</option>
                                                         <option value="Đã xác nhận">Đã xác nhận</option>
@@ -317,8 +299,8 @@ if (!function_exists('isStatus')) {
                                             </div>
                                             <div class="modal-footer">
                                                 <div class="hstack gap-2 justify-content-end">
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-success" id="edit-btn">Update</button>
+                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                                                    <button type="submit" class="btn btn-success" id="edit-btn">Lưu</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -337,9 +319,9 @@ if (!function_exists('isStatus')) {
                                                 <p class="text-muted fs-15 mb-4">Khi bạn chuyển vào thùng rác bạn vẫn có thể khôi phục lại!</p>
                                                 <div class="hstack gap-2 justify-content-center remove">
                                                     <button class="btn btn-link link-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal">
-                                                        <i class="ri-close-line me-1 align-middle"></i> Close
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
                                                     </button>
-                                                    <button class="btn btn-danger" id="delete-record">Yes, Delete It</button>
+                                                    <button class="btn btn-danger" id="delete-record">Đúng , Tôi muốn xóa </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -359,9 +341,9 @@ if (!function_exists('isStatus')) {
                                                 <p class="text-muted fs-15 mb-4">Khi bạn chuyển vào thùng rác bạn vẫn có thể khôi phục lại!</p>
                                                 <div class="hstack gap-2 justify-content-center remove">
                                                     <button class="btn btn-link link-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal">
-                                                        <i class="ri-close-line me-1 align-middle"></i> Close
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
                                                     </button>
-                                                    <button class="btn btn-danger" id="deleteManyrecord">Yes, Delete It</button>
+                                                    <button class="btn btn-danger" id="deleteManyrecord">Đúng , Tôi muốn xóa</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -446,7 +428,7 @@ if (!function_exists('isStatus')) {
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 @endsection
-@section('script_logic')
+@section('scripte_logic')
     <script>
     $(document).ready(function() {
     $('#demo-datepicker').flatpickr({
@@ -619,7 +601,7 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
         },
     })
     .then((response) => response.json())
-    .then((data) => {
+    .then((data) => {     
         document.querySelector('#idOrder').value = data.id;
         document.querySelector('#idCode').value = data.code;
         document.querySelector('#customerName').value = data.user.email;
@@ -627,9 +609,9 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
         const statusSelect = document.querySelector('#idStatusEdit');
         statusSelect.setAttribute('data-current-status', data.status);
 
-        // Array.from(statusSelect.options).forEach(option => {
-        //     option.selected = (option.value === data.status);
-        // });
+        Array.from(statusSelect.options).forEach(option => {
+            option.selected = (option.value === data.status);
+        });
 
         // document.querySelector('#payment').value = data.payment.paymentGateway.name;
     })

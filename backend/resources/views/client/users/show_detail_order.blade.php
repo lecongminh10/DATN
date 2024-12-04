@@ -317,8 +317,15 @@
                     <div class="container pl-5   pr-5 order-container">
                         <div class="order-header">
                             <div>
-                                <h2>Mã đơn hàng: {{ $orders->code }}</h2>
-                                <p>Thời gian: {{ $orders->created_at->format('d M, Y h:i A') }}</p>
+                                <h2>Đơn hàng: {{ $orders->code }}</h2>
+                                    @if (!$showButtons)
+                                        <strong>Trạng thái : Hoàn trả</strong>
+                                    @endif
+                                <br>
+                                    @if (!empty($messageStatus))
+                                    <p class="mt-2"> <strong>Lí do :{{$messageStatus}}</strong></p>
+                                    @endif
+                                <p class="mt-2">Thời gian: {{ $dateTimeOrders->format('d M, Y h:i A') }}</p>
                             </div>
                             <div class="order-status {{ 'refund-' . Str::slug($refundStatus) }}">{{ $orderStatus }}</div>
                         </div>

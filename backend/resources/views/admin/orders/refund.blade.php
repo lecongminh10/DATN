@@ -190,12 +190,16 @@
                     <form id="refund-form" method="POST">
                         @csrf
                         @method('PUT')
-                        <select name="status" class="form-control">
+                        <select name="status" class="form-control" id="status-select">
                             <option value="pending">Đang chờ</option>
                             <option value="approved">Đã duyệt</option>
                             <option value="rejected">Bị từ chối</option>
                             <option value="completed">Hoàn thành</option>
                         </select>
+                        <div id="reason-container" style="display: none; margin-top: 15px;">
+                            <label for="reason-textarea">Lý do từ chối:</label>
+                            <textarea class="form-control" id="reason-textarea" name="rejection_reason" rows="3" placeholder="Nhập lý do từ chối..."></textarea>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -233,6 +237,20 @@
 
 @section('scripte_logic')
 <script>
+       document.addEventListener('DOMContentLoaded', function () {
+        const statusSelect = document.getElementById('status-select');
+        const reasonContainer = document.getElementById('reason-container');
+        const reasonTextarea = document.getElementById('reason-textarea');
+        statusSelect.addEventListener('change', function () {
+            if (this.value === 'rejected') {
+                reasonContainer.style.display = 'block';
+                reasonTextarea.setAttribute('required', 'required'); 
+            } else {
+                reasonContainer.style.display = 'none';
+                reasonTextarea.removeAttribute('required');
+            }
+        });
+    });
     // Khi nhấn nút "Cập nhật"
     document.querySelectorAll('button[data-bs-target="#refundModal"]').forEach(button => {
         button.addEventListener('click', function () {

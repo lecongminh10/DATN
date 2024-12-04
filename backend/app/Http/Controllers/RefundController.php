@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Refund;
+use Illuminate\Http\Request;
 use App\Services\OrderService;
 use App\Services\RefundService;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RefundController extends Controller
 {
@@ -73,7 +74,7 @@ class RefundController extends Controller
 
     public function update(Request $request, Refund $refund)
     {
-        $refund->update($request->only(['status']));
+        $refund->update($request->all());
         return redirect()->back()->with('success', 'Yêu cầu đã được cập nhật.');
     }
     public function createRefundForm($orderId)
