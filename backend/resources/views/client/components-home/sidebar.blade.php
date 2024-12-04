@@ -1,12 +1,12 @@
 <aside class="sidebar-home col-lg-3 order-lg-first mobile-sidebar">
     <div class="side-menu-wrapper text-uppercase mb-2 d-none d-lg-block">
-        <h2 class="side-menu-title bg-gray ls-n-25">Browse Categories</h2>
+        {{-- <h2 class="side-menu-title bg-gray ls-n-25">Browse Categories</h2> --}}
 
         <nav class="side-nav">
             <ul class="menu menu-vertical sf-arrows">
-                <li class="active"><a href="/"><i class="icon-home"></i>Home</a></li>
+                <li class="active"><a href="/"><i class="icon-home"></i>Trang chủ</a></li>
                 <li>
-                    <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
+                    <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Danh mục</a>
                     <div class="megamenu megamenu-fixed-width megamenu-3cols">
                         <div class="row">
                             @foreach ($categories as $parent)
@@ -23,9 +23,10 @@
                             @endforeach
                         </div>
                     </div>
+                </li>
                 <li>
                     <a href="{{route('client.products')}}" class="sf-with-ul"><i
-                            class="sicon-basket"></i>Products</a>
+                            class="sicon-basket"></i>Sản phẩm</a>
                     <div class="megamenu megamenu-fixed-width">
                         <div class="row">
                             <div class="col-lg-4">
@@ -65,7 +66,7 @@
                             </div>
                             <!-- End .col-lg-4 -->
 
-                            <div class="col-lg-4 p-0">
+                            {{-- <div class="col-lg-4 p-0">
                                 <div class="menu-banner menu-banner-2">
                                     <figure>
                                         <img src="{{asset('themeclient/assets/images/menu-banner-1.jpg')}}" alt="Menu banner" class="product-promo">
@@ -80,7 +81,7 @@
                                     <a href="demo1-shop.html" class="btn btn-sm btn-dark">SHOP
                                         NOW</a>
                                 </div>
-                            </div>
+                            </div> --}}
                             <!-- End .col-lg-4 -->
                         </div>
                         <!-- End .row -->
@@ -88,7 +89,7 @@
                     <!-- End .megamenu -->
                 </li>
                 <li>
-                    <a href="#" class="sf-with-ul"><i class="sicon-envelope"></i>Pages</a>
+                    <a href="#" class="sf-with-ul"><i class="sicon-envelope"></i>Trang</a>
 
                     <ul>
                         <li><a href="wishlist.html">Wishlist</a></li>
@@ -107,12 +108,11 @@
                         <li><a href="forgot-password.html">Forgot Password</a></li>
                     </ul>
                 </li>
-                <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Blog</a></li>
-                <li><a href="demo1-about.html"><i class="sicon-users"></i>About Us</a></li>
-                <li><a href="#"><i class="icon-cat-gift"></i>Special Offer!</a></li>
-                <li><a href="https://1.envato.market/DdLk5" target="_blank"><i
-                            class="sicon-star"></i>Buy Porto!<span
-                            class="tip tip-hot">Hot</span></a></li>
+                <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Bài viết</a></li>
+                <li><a href="demo1-about.html"><i class="sicon-users"></i>Chúng tôi</a></li>
+                <li><a href="#"><i class="sicon-star"></i>Đánh giá</a></li>
+                {{-- <li><a href="https://1.envato.market/DdLk5" target="_blank"><i class="icon-cat-gift"></i>Buy Porto!<span
+                            class="tip tip-hot">Hot</span></a></li> --}}
             </ul>
         </nav>
     </div>

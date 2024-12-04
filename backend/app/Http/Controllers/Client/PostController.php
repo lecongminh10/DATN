@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Models\Blog;
 use App\Models\Cart;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -19,8 +20,9 @@ class PostController extends Controller
         $cartCount = $carts->sum('quantity');
         $user = Auth::user();
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+        $categories = Category::with('children')->whereNull('parent_id')->get();
 
-        return view('client.blogs.index', compact('posts','carts', 'cartCount'));
+        return view('client.blogs.index', compact('posts', 'categories', 'carts', 'cartCount'));
     }
 
 
@@ -32,8 +34,15 @@ class PostController extends Controller
 
         // Lấy 5 bài viết gần đây có trạng thái đã xuất bản cho sidebar
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+        $userId = auth()->id();
+        $carts  = collect();
+        if ($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
 
-        return view('client.blogs.show', compact('post', 'posts'));
+        $cartCount = $carts->sum('quantity');
+
+        return view('client.blogs.show', compact('post', 'posts', 'cartCount'));
     }
 
 }

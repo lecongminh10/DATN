@@ -23,6 +23,7 @@ use App\Models\PaymentGateways;
 use App\Models\shippingMethods;
 use Illuminate\Support\Facades\DB;
 use App\Events\AdminActivityLogged;
+use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\OrderRepository;
@@ -219,8 +220,9 @@ class OrderController extends Controller
             ->get();
 
         $cartCount = $carts->sum('quantity');
+        $categories = Category::with('children')->whereNull('parent_id')->get();
 
-        return view('client.orders.shoppingcart', compact('carts', 'cartCount'));
+        return view('client.orders.shoppingcart', compact('categories', 'carts', 'cartCount'));
     }
 
     public function showCheckOut()
@@ -552,6 +554,7 @@ class OrderController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
+        $categories = Category::with('children')->whereNull('parent_id')->get();
 
         $cartCount = $carts->sum('quantity');
 
@@ -561,7 +564,7 @@ class OrderController extends Controller
         // dd($wishLists);
 
 
-        return view('client.products.wishlist', compact('wishLists', 'carts', 'cartCount'));
+        return view('client.products.wishlist', compact('wishLists', 'categories', 'carts', 'cartCount'));
     }
 
     public function addWishList(Request $request)

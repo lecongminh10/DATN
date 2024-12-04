@@ -101,6 +101,7 @@ class ProductService extends BaseService
     public function latestProducts()
     {
         return Product::with(['galleries', 'category'])
+        ->whereNotNull('rating')
         ->orderByDesc('id')
         ->limit(10)
         ->get();
@@ -118,4 +119,13 @@ class ProductService extends BaseService
 
     return $products;
 }
+
+    public function ratingProducts()
+    {
+        return Product::with(['galleries', 'category'])
+            ->whereNotNull('rating')
+            ->orderByDesc('rating')
+            ->limit(10)
+            ->get();
+    }
 }
