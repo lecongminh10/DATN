@@ -17,9 +17,10 @@ class Page extends Model
         'permalink',
         'description',
         'content',
-        'status',
+        'is_active',
         'template',
         'seo_title',
-        'seo_description'
+        'seo_description',
+        'deleted_at',
     ];
 }

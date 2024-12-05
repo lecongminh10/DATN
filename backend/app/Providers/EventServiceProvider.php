@@ -33,6 +33,9 @@ class EventServiceProvider extends ServiceProvider
         UserEvent::class => [
             UsersJson::class,
         ],
+        'App\Events\AdminActivityLogged' => [
+            'App\Listeners\LogAdminActivity',
+        ],
     ];
 
     /**

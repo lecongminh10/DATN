@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Cart;
+use App\Models\Address;
 use App\Models\Product;
 use App\Models\Category;
+use App\Events\TestEvent;
 use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Services\ProductService;
 use App\Services\CategoryService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Address;
 use App\Services\AttributeValueService;
 use App\Services\ProductGalleryService;
 use App\Services\ProductVariantService;

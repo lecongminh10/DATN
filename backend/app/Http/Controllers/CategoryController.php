@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Services\CategoryService;
@@ -43,6 +44,20 @@ class CategoryController extends Controller
         }
         // $result = $this->categoryService->saveOrUpdate($data);
         $this->categoryService->saveOrUpdate($data);
+
+        $logDetails = sprintf(
+            'Thêm mới danh mục: Tên - %s',
+            $data['name']
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id, 
+            'Thêm mới',         
+            $logDetails         
+        ));
+
+
         return redirect()->route('admin.categories.index');
     }
 
@@ -78,6 +93,19 @@ class CategoryController extends Controller
         if ($request->hasFile('image') && $filename && Storage::exists(self::PATH_UPLOAD . '/' . $filename)) {
             Storage::delete(self::PATH_UPLOAD . '/' . $filename);
         }
+
+        $logDetails = sprintf(
+            'Sửa danh mục: Tên - %s',
+            $data['name']
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id, 
+            'Sửa',         
+            $logDetails         
+        ));
+
         return redirect()->route('admin.categories.index')->with('success', 'Update successful');
     }
 
@@ -86,6 +114,19 @@ class CategoryController extends Controller
         $id = (int)$id;
         $data = $this->categoryService->getById($id);
         $data->delete();
+
+        $logDetails = sprintf(
+            'Xóa danh mục: Tên - %s',
+            $data->name
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id, 
+            'Xóa',         
+            $logDetails         
+        ));
+
         return redirect()->route('admin.categories.index');
     }
     public function deleteMultiple(Request $request)

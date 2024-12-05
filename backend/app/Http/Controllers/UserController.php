@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Cart;
@@ -12,6 +13,7 @@ use App\Models\Order;
 use App\Models\OrderLocation;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Refund;
 use App\Models\UserReview;
 use App\Services\AddressServices;
 use App\Services\UserService;
@@ -46,6 +48,7 @@ class UserController extends Controller
         return view('admin.users.store', compact('permissionsValues'));
     }
 
+
     public function store(Request $request)
     {
         $request->validate([
@@ -68,11 +71,24 @@ class UserController extends Controller
 
             $user = $this->userService->createUser($data);
 
+            //nhật ký
+            $logDetails = sprintf(
+                'Thêm người dùng: Tên - %s',
+                $user->username,
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
+
             if ($user && $request->has('permissions')) {
                 $user->permissionsValues()->attach($request->permissions);
             }
 
-            return redirect()->route('users.index')->with([
+            return redirect()->route('admin.users.index')->with([
                 'user' => $user
             ]);
         } catch (\Exception $e) {
@@ -126,6 +142,19 @@ class UserController extends Controller
 
         $user = $this->userService->updateUser($id, $data);
 
+        //nhật ký
+        $logDetails = sprintf(
+            'Sửa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
+
         if ($request->hasFile('profile_picture')) {
             // Xóa ảnh cũ nếu có
             if ($user->profile_picture && Storage::exists('public/' . $user->profile_picture)) {
@@ -155,6 +184,32 @@ class UserController extends Controller
         } else {
             $user->delete();
         }
+
+        //nhật ký
+        $logDetails = sprintf(
+            'Xóa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+
+        //nhật ký
+        $logDetails = sprintf(
+            'Xóa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
@@ -223,23 +278,29 @@ class UserController extends Controller
 
     public function showOrder(Request $request)
     {
-        $userId = Auth::id();
+        $id = Auth::user()->id;
         $status = $request->input('status', 'all');
 
-        $query = Order::with([
+        // Query cơ bản để lấy tất cả đơn hàng của người dùng
+        $baseQuery = Order::where('user_id', $userId);
+
+        // Lọc theo trạng thái nếu có
+        if ($status !== 'all') {
+            $baseQuery->where('status', $status);
+        }
+
+        // Tổng số đơn hàng không thay đổi theo phân trang
+        $totalOrders = $baseQuery->count();
+
+        // Lấy dữ liệu với phân trang
+        $orders = $baseQuery->with([
             'items.product',
             'items.productVariant.attributeValues.attribute',
             'payment.paymentGateway',
             'shippingMethod'
-        ])->where('user_id', $userId); 
-        if ($status !== 'all') {
-            $query->where('status', $status);
-        }
+        ])->simplePaginate(5);
 
-        $orders = $query->simplePaginate(5);
-
-        $totalOrders = $query->count();
-
+        // Giỏ hàng và số lượng giỏ hàng
         $carts = Cart::where('user_id', $userId)
             ->with('product')
             ->get();
@@ -252,6 +313,13 @@ class UserController extends Controller
 
     public function showDetailOrder($id)
     {
+        $statusMapping = [
+            'pending' => 'Đang chờ xử lí',
+            'approved' => 'Đã duyệt',
+            'rejected' => 'Bị từ chối',
+            'completed' => 'Hoàn thành',
+            'cancelled' => 'Đã hủy',
+        ];
 
         $orders = Order::with([
             'items.product',
@@ -260,6 +328,17 @@ class UserController extends Controller
             'shippingMethod'
         ])->findOrFail($id);
 
+        $refund = Refund::where('order_id', $id)->first(); // Lấy thông tin hoàn trả nếu có
+        $refundStatus = $refund->status ?? null; // Lấy trạng thái hoàn trả
+        $timeRefunds = $refund->created_at ??null;
+        // Nếu có trạng thái hoàn trả, ưu tiên hiển thị trạng thái này
+        $orderStatus = $statusMapping[$refundStatus] ?? $orders->status;
+        $dateTimeOrders= $timeRefunds ?? $orders->created_at;
+        $messageStatus='';
+        if( $refundStatus=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
+        // if($statusMapping[$refundStatus]=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
+        // Quy định điều kiện ẩn/hiện nút
+        $showButtons = is_null($refund);
 
         $locations = OrderLocation::where('order_id', $id)->get();
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
@@ -282,7 +361,21 @@ class UserController extends Controller
             ->take(5)
             ->get();
 
-        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts'));
+        return view('client.users.show_detail_order', compact(
+            'orders', 
+            'locations', 
+            'carts', 
+            'cartCount', 
+            'address', 
+            'payments', 
+            'orderItems', 
+            'similarProducts', 
+            'refundStatus', 
+            'orderStatus',
+            'showButtons',
+            'dateTimeOrders',
+            'messageStatus'
+        ));
     }
 
 

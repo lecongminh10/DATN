@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TagRequest;
 use App\Models\Tag;
 use App\Services\TagService;
 use Illuminate\Http\Request;
+use App\Http\Requests\TagRequest;
 use Illuminate\Support\Facades\DB;
+use App\Events\AdminActivityLogged;
 
 class TagController extends Controller
 {
@@ -45,10 +46,19 @@ class TagController extends Controller
         try {
             DB::beginTransaction();
 
-            $this->tagService->saveOrUpdate([
+           $data = $this->tagService->saveOrUpdate([
                 'name' => $validatedData['name'],
             ]);
+            $logDetails = sprintf(
+                'Thêm Tag: Tên - %s',
+                 $data['name']
+            );
 
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm Mới',
+                $logDetails
+            ));
             DB::commit();
             return redirect()->route('admin.tags.index')->with('success', 'Thêm mới tag thành công');
         } catch (\Exception $e) {
@@ -88,9 +98,17 @@ class TagController extends Controller
             $tags->update([
                 'name' => $validatedData['name'],
             ]);
+            $logDetails = sprintf(
+                'Sửa Tag: Tên - %s',
+                $tags['name']
+            );
 
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Sửa',
+                $logDetails
+            ));
             DB::commit();
-
             return redirect()->route('admin.tags.index')->with('success', 'Cập nhật thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -108,6 +126,16 @@ class TagController extends Controller
         if (!$data) {
             return abort(404);
         }
+        $logDetails = sprintf(
+            'Xóa Tag: Tên - %s',
+            $data['name']
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
         $data->delete();
         if ($data->trashed()) {
             return redirect()->route('admin.tags.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
@@ -118,7 +146,17 @@ class TagController extends Controller
     public function restore($id)
     {
         try {
-            $this->tagService->restore_delete($id);
+            $data = $this->tagService->restore_delete($id);
+            $logDetails = sprintf(
+                'Khôi phục Tag: Tên - %s',
+                $data['name']
+            );
+
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Khôi phục',
+                $logDetails
+            ));
             return redirect()->route('admin.tags.deleted')->with('success', 'Khôi phục thuộc tính thành công!');
         } catch (\Exception $e) {
             return redirect()->route('admin.tags.deleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
@@ -137,6 +175,16 @@ class TagController extends Controller
         if (!$data) {
             return redirect()->route('admin.tags.index')->with('success', 'Thuộc tính đã được xóa không thành công');
         }
+        $logDetails = sprintf(
+            'Xóa Tag: Tên - %s',
+            values: $data->name
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
         $data->forceDelete();
         return redirect()->route('admin.tags.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }

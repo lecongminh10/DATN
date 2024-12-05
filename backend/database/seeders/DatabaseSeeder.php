@@ -15,6 +15,7 @@ use App\Models\AttributeValue;
 use App\Models\Carrier;
 use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -30,7 +31,6 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             PaymentGatewaysSeeder::class
         ]);
-
         Carrier::create([
             'name' => 'Giao Hàng Nhanh',
             'code' =>'ghn',
@@ -42,9 +42,11 @@ class DatabaseSeeder extends Seeder
             'deleted_by' => null, // Không có người xóa
         ]);
 
-       $faker = \Faker\Factory::create();
+        $faker = \Faker\Factory::create();
 
+        // DB::table('carriers')->create([
 
+        // ]);
 
         for ($i = 0; $i < 100; $i++) {
             User::create([

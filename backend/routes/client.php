@@ -10,6 +10,7 @@ use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController; 
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\ReturnController;
 
@@ -57,20 +58,10 @@ Route::prefix('/')->group(function () {
     Route::get('/vnpay-return',                            [PayMentController::class, 'vnpayReturn'])->name('vnpay.return');
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
-
-    //Chat
-    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index') ->middleware(['auth', 'isAdmin']);
-
-    // Route để gửi tin nhắn
-    Route::post('/chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
-
     // Route kiểm tra mã giảm giá
     Route::post('/check-coupon', [OrderController::class, 'checkCoupon'])->name('check.coupon');
     // Route áp dụng mã giảm giá vào đơn hàng
     Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply.coupon');
-
-        // routes/web.php
-    Route::post('/send-message', [ChatController::class, 'sendMessage']);
 
     Route::get('/clear-coupons', function() {
         $currentUrl = url()->current();
@@ -90,3 +81,22 @@ Route::prefix('/')->group(function () {
     });
 });
 // Route::post('/reviews', [UserReviewController::class, 'store'])->name('reviews.store');
+
+
+Route::prefix('chat')->name('chat.')->group(function () {
+    Route::get('/', [ChatController::class, 'index'])->name('index')->middleware(['auth', 'isAdmin']);
+    Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('sendMessage');
+    Route::post('/user-online/{id}', [ChatController::class, 'userOnline'])->name('userOnline');
+    Route::post('/user-offline/{id}', [ChatController::class, 'userOffline'])->name('userOffline');
+    Route::post('/getDataChatAdmin',[ChatController::class ,'getDataChatAdmin'])->middleware(['auth', 'isAdmin'])->name('getDataChatAdmin');
+    Route::post('/getDataChatClient',[ChatController::class ,'getDataChatClient'])->name('getDataChatClient');
+    Route::post('/get-room-id', [ChatController::class, 'getRoomId'])->name('getDataChatAdminaNew');
+    Route::post('/chat-message/delete', [ChatController::class, 'deleteChatMessageById'])->middleware(['auth', 'isAdmin'])->name('message.delete');
+});
+
+Route::get('/feedbacks/create', [ClientFeedbackController::class, 'create'])->name('feedbacks.create');
+Route::post('/feedbacks', [ClientFeedbackController::class, 'store'])->name('feedbacks.store');
+
+Route::get('/getForm' , function(){
+    return view('welcome');
+});

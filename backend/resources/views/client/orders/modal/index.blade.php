@@ -147,7 +147,7 @@ data-bs-backdrop="static" data-bs-keyboard="false">
 
 {{-- Modal Thêm địa chỉ --}}
 <div class="modal fade" id="addAddressModal" tabindex="-1"
-aria-labelledby="addAddressModalLabel" aria-hidden="true" data-bs-backdrop="static"
+aria-labelledby="addAddressModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true"
 data-bs-keyboard="false">
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
