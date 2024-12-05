@@ -43,6 +43,8 @@ class PostController extends Controller
 
         // Lấy 5 bài viết gần đây có trạng thái đã xuất bản cho sidebar
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+        $carts  = collect();
+        $cartCount = $carts->sum('quantity');
 
         return view('client.blogs.show', compact('post', 'posts', 'cartCount'));
     }
@@ -57,7 +59,10 @@ class PostController extends Controller
         // Lấy các bài viết liên quan đến tag này
         $posts = $tag->posts;  // Giả sử có mối quan hệ 'posts' trong mô hình Tag
 
+        $carts  = collect();
+        $cartCount = $carts->sum('quantity');
+
         // Trả về view 'tag.blade.php' kèm theo dữ liệu
-        return view('client.blogs.tag', compact('tag', 'posts'));
+        return view('client.blogs.tag', compact('tag', 'posts', 'cartCount'));
     }
 }

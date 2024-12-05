@@ -131,9 +131,8 @@ class UserController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'password' => 'required',
             'phone_number' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:users,email',
+            'email' => 'required|email|max:255',
             'date_of_birth' => 'required|date',
         ]);
         $data = $request->all();
@@ -265,10 +264,33 @@ class UserController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:15|unique:users,phone_number',
-            'email' => 'required|email|max:255|unique:users,email',
-            'date_of_birth' => 'required|date',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|email|max:255',
+            'date_of_birth' => 'required|date|before:today',
+        ], [
+            // Custom messages for username
+            'username.required' => 'Tên không được bỏ trống.',
+            'username.string' => 'Tên phải là một chuỗi ký tự hợp lệ.',
+            'username.max' => 'Tên không được vượt quá 255 ký tự.',
+        
+            // Custom messages for phone_number
+            'phone_number.required' => 'Số điện thoại không được bỏ trống.',
+            'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự hợp lệ.',
+            'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
+            'phone_number.regex' => 'Số điện thoại không đúng định dạng. Ví dụ: +84123456789 hoặc 0123456789.',
+        
+            // Custom messages for email
+            'email.required' => 'Email không được bỏ trống.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+        
+            // Custom messages for date_of_birth
+            'date_of_birth.required' => 'Ngày sinh không được bỏ trống.',
+            'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
+            'date_of_birth.before' => 'Ngày sinh phải trước ngày hôm nay.',
         ]);
+
+
         $data = $request->all();
 
         $user = $this->userService->updateUser($id, $data);

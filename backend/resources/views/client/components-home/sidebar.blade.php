@@ -24,7 +24,7 @@
                         </div>
                     </div>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="#" class="sf-with-ul"><i class="sicon-envelope"></i>Trang</a>
 
                     <ul>
@@ -43,9 +43,10 @@
                         <li><a href="login.html">Login</a></li>
                         <li><a href="forgot-password.html">Forgot Password</a></li>
                     </ul>
-                </li>
+                </li> --}}
                 <li>
-                    <a href="{{route('client.products')}}" ><i class="sicon-basket"></i>Sản phẩm</a>
+                    <a href="{{route('client.products')}}" ><i
+                            class="sicon-basket"></i>Sản phẩm</a>
                 </li>
                 <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Bài viết</a></li>
                 <li><a href="demo1-about.html"><i class="sicon-users"></i>Chúng tôi</a></li>

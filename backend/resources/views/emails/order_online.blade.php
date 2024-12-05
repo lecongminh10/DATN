@@ -257,8 +257,8 @@
                 <tr>
                     <th>Ảnh</th>
                     <th>Sản phẩm</th>
-                    <th>Số lượng</th>
                     <th>Giá</th>
+                    <th>Số lượng</th>
                     <th>Thành tiền</th>
                 </tr>
             </thead>
