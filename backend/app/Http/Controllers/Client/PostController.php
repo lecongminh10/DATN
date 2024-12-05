@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Client;
 use App\Models\Blog;
 use App\Models\Cart;
 use App\Http\Controllers\Controller;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     public function index()
     {
+
+
         $userId = auth()->id();
         $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
             ->where('user_id', $userId)
@@ -19,9 +22,14 @@ class PostController extends Controller
         $cartCount = $carts->sum('quantity');
         $user = Auth::user();
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+        $tags = Tag::all();
+        return view('client.blogs.index', compact('posts', 'carts', 'cartCount', 'tags')); {
 
-        return view('client.blogs.index', compact('posts','carts', 'cartCount'));
+        }
+
     }
+
+
 
 
 
@@ -35,5 +43,23 @@ class PostController extends Controller
 
         return view('client.blogs.show', compact('post', 'posts'));
     }
+
+    // app/Http/Controllers/BlogController.php
+
+    public function showTagPosts($id)
+    {
+        // Lấy tag theo ID
+        $tag = Tag::findOrFail($id);
+
+        // Lấy các bài viết liên quan đến tag này
+        $posts = $tag->posts;  // Giả sử có mối quan hệ 'posts' trong mô hình Tag
+
+        // Trả về view 'tag.blade.php' kèm theo dữ liệu
+        return view('client.blogs.tag', compact('tag', 'posts'));
+    }
+
+
+
+
 
 }
