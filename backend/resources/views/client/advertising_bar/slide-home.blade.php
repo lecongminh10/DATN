@@ -7,7 +7,7 @@
             <h2 class="m-b-3" style="color: #fff">{{ $banner->title }}</h2>
             <h5 class="d-inline-block mb-0 align-top mr-5 mb-2" style="color: #fff">Giá {{  number_format($banner->price, 0, ',', '.') }} ₫
             </h5>
-            <a href="demo1-shop.html" class="btn btn-dark btn-md ls-10">{{  $banner->title_button }}</a>
+            <a href="{{route('client.products')}}" class="btn btn-dark btn-md ls-10">{{  $banner->title_button }}</a>
         </div>
         <!-- End .banner-layer -->
     </div> 

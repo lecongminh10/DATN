@@ -132,37 +132,37 @@ if (!function_exists('isStatus')) {
                             <div>
                                 <ul class="nav nav-tabs nav-tabs-custom nav-success mb-3" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active py-3" data-bs-toggle="tab" id="All" href="#all" role="tab" aria-selected="true">
+                                        <a class="nav-menu nav-link active py-3" data-bs-toggle="tab" id="All" href="#all" role="tab" aria-selected="true">
                                             <i class="ri-store-2-fill me-1 align-bottom"></i> All Orders
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Chờ xác nhận" href="#choxacnhan" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Chờ xác nhận" href="#choxacnhan" role="tab" aria-selected="false">
                                             <i class="ri-file-list-3-line me-1 align-bottom"></i> Chờ xác nhận
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đã xác nhận" href="#daxacnhan" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đã xác nhận" href="#daxacnhan" role="tab" aria-selected="false">
                                             <i class="ri-checkbox-line me-1 align-bottom"></i> Đã xác nhận
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đang giao" href="#danggiao" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đang giao" href="#danggiao" role="tab" aria-selected="false">
                                             <i class="ri-truck-line me-1 align-bottom"></i> Đang giao
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Hoàn thành" href="#hoanthanh" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Hoàn thành" href="#hoanthanh" role="tab" aria-selected="false">
                                             <i class="ri-checkbox-circle-line me-1 align-bottom"></i> Hoàn thành
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Hàng thất lạc" href="#hangthatlac" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Hàng thất lạc" href="#hangthatlac" role="tab" aria-selected="false">
                                             <i class="ri-spam-3-line me-1 align-bottom"></i> Hàng thất lạc
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đã hủy" href="#dahuy" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đã hủy" href="#dahuy" role="tab" aria-selected="false">
                                             <i class="ri-close-circle-line me-1 align-bottom"></i> Đã hủy
                                         </a>
                                     </li>
@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Bắt sự kiện khi nhấp tab
-    document.querySelectorAll('.nav-link').forEach(tab => {
+    document.querySelectorAll('.nav-menu').forEach(tab => {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
             let status = this.id; // Lấy status từ ID của tab

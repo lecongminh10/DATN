@@ -33,15 +33,6 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="lastNameinput" class="form-label">Mật khẩu</label>
-                                        <input type="password" class="form-control" placeholder="Nhập mật khẩu" name="password">
-                                        @error('password')
-                                            <span class="text-danger">Mật khẩu phải có ít nhất 6 ký tự.</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="mb-3">
                                         <label for="phonenumberInput" class="form-label">Số điện thoại</label>
                                         <input type="tel" class="form-control" placeholder="Nhập số điện thoại" value="{{ $user->phone_number }}" name="phone_number">
                                         @error('phone_number')

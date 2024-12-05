@@ -394,16 +394,6 @@
                     <div class="collapse menu-dropdown {{ Route::is('admin.blogs.index') ? 'show' : '' }}" id="sidebar-post">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Danh mục
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Sản phẩm
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="{{ route('admin.blogs.index') }}" class="nav-link {{ Route::is('admin.blogs.index') ? 'active' : '' }}">
                                     Tin tức
                                 </a>

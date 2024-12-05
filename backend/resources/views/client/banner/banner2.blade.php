@@ -8,7 +8,7 @@
     <div class="banner-layer">
         <h3 class="m-b-2" style="color: #fff">{{ $bannerExtra->title_1 }}</h3>
         <h4 class="text-light fs-4" >{{ number_format($bannerExtra->price_1, 0,',', '.') }} ₫</h4>
-        <a href="#" class="text-light text-uppercase ls-10" style="color: #fff">{{ $bannerExtra->title_button_1 }}</a>
+        <a href="{{route('client.products')}}" class="text-light text-uppercase ls-10" style="color: #fff">{{ $bannerExtra->title_button_1 }}</a>
     </div>
 </div>
 <!-- End .banner -->
@@ -19,7 +19,7 @@
     <div class="banner-layer text-center">
         <h3 class="m-b-1 ls-n-20" style="color: #fff">{{ $bannerExtra->title_2 }}</h3>
         <h4 class="text-light" style="color: #fff">{{ number_format($bannerExtra->price_2, 0,',', '.') }} ₫</h4>
-        <a href="#" class="text-light text-uppercase ls-10" style="color: #fff">{{ $bannerExtra->title_button_2 }}</a>
+        <a href="{{route('client.products')}}" class="text-light text-uppercase ls-10" style="color: #fff">{{ $bannerExtra->title_button_2 }}</a>
     </div>
 </div>
 <!-- End .banner -->
@@ -30,6 +30,6 @@
     <div class="banner-layer text-right">
         <h3 class="m-b-2" style="color: #fff">{{ $bannerExtra->title_3 }}</h3>
         <h4 class="mb-3 text-light text-uppercase">{{ number_format($bannerExtra->price_3, 0,',', '.') }} ₫</h4>
-        <a href="#" class="text-light text-uppercase ls-10" style="color: #fff">{{ $bannerExtra->title_button_3 }}</a>
+        <a href="{{route('client.products')}}" class="text-light text-uppercase ls-10" style="color: #fff">{{ $bannerExtra->title_button_3 }}</a>
     </div>
 </div>
