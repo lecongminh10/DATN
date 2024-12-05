@@ -177,15 +177,15 @@ if (!function_exists('isStatus')) {
                                                         <input class="form-check-input" type="checkbox" id="checkAll" value="0">
                                                     </div>
                                                 </th>
-                                                <th class="sort" data-sort="stt">STT</th>
-                                                <th class="sort" data-sort="customer_email">Khách hàng </th>
-                                                <th class="sort" data-sort="code">Mã</th>
-                                                <th class="sort" data-sort="total_price">Tổng giá</th>
-                                                <th class="sort" data-sort="payment">Phương thức thanh toán</th>
-                                                <th class="sort" data-sort="transport">Mã giao dịch</th>
-                                                <th class="sort" data-sort="status">Trạng thái</th>
-                                                <th class="sort" data-sort="created_at">Ngày mua</th>
-                                                <th class="sort" data-sort="action">Hành động</th>
+                                                <th data-sort="stt">STT</th>
+                                                <th data-sort="customer_email">Khách hàng </th>
+                                                <th data-sort="code">Mã</th>
+                                                <th data-sort="total_price">Tổng giá</th>
+                                                <th data-sort="payment">Phương thức thanh toán</th>
+                                                <th data-sort="transport">Mã giao dịch</th>
+                                                <th data-sort="status">Trạng thái</th>
+                                                <th data-sort="created_at">Ngày mua</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">

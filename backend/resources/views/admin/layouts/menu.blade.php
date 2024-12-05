@@ -314,10 +314,25 @@
                                                 role="button" aria-expanded="false" aria-controls="sidebar-header" data-key="t-header">
                                                 Header
                                             </a>
-                                            <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-header">
+                                            <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.info_boxes_footer.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-header">
                                                 <a href="{{ route('admin.announcement.edit') }}" class="nav-link {{ Route::is('admin.announcement.edit') ? 'active' : '' }}" data-key="t-client">Thông báo</a>
                                                 <a href="{{ route('admin.info_boxes.edit') }}" class="nav-link {{ Route::is('admin.info_boxes.edit') ? 'active' : '' }}" data-key="t-client">Hộp thông tin</a>
+                                                <a href="{{ route('admin.info_boxes_footer.edit') }}" class="nav-link {{ Route::is('admin.info_boxes_footer.edit') ? 'active' : '' }}" data-key="t-client">Hộp thông tin footer</a>
                                                 <a href="{{ route('admin.popuphome.edit') }}" class="nav-link {{ Route::is('admin.popuphome.edit') ? 'active' : '' }}" data-key="t-client">Popup home</a>
+                                            </div>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#sidebar-banner" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.banner_main_edit') ? 'active' : '' }}" 
+                                               data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar-banner" data-key="t-banner">
+                                                Banner
+                                            </a>
+                                            <div class="collapse menu-dropdown {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.list_banner_main') ? 'show' : '' }}" 
+                                                 id="sidebar-banner">
+                                                <a href="{{ route('admin.banner.list_banner_main') }}" class="nav-link {{ Route::is('admin.banner.list_banner_main') ? 'active' : '' }}" 
+                                                    data-key="t-client">Banner chính</a>
+                                                <a href="{{ route('admin.banner.banner_extra_edit') }}" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') ? 'active' : '' }}" 
+                                                    data-key="t-client">Banner phụ</a>
+                                                
                                             </div>
                                         </li>
                                         <li class="nav-item">
@@ -339,7 +354,7 @@
                 <li class="nav-item">
                     <a href="#sidebar-comments-questions" class="nav-link" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebar-comments-questions" data-key="t-product">
-                        <i class="ri-chat-1-line"></i> <span data-key="t-landing">Gớp ý và đóng góp</span>
+                        <i class="ri-chat-1-line"></i> <span data-key="t-landing">Góp ý và đóng góp</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebar-comments-questions">
                         <ul class="nav nav-sm flex-column">

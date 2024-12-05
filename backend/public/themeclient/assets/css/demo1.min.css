@@ -4095,6 +4095,8 @@ a:focus {
 }
 .icon-heart:before {
     content: "";
+    /* Cách khoảng trên của icon */
+    margin-top: 10px;
 }
 .icon-heart-1:before {
     content: "";
@@ -11023,7 +11025,7 @@ footer .contact-info-label {
 #scroll-top:hover {
     background-color: #3a4045;
 }
-#scroll-top.fixed {
+/* #scroll-top.fixed {
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
@@ -11036,7 +11038,7 @@ footer .contact-info-label {
     z-index: 996;
     transition: background 0.3s ease-out;
     background: rgba(64, 64, 64, 0.75);
-}
+} */
 #scroll-top.fixed:hover {
     color: #08c;
 }

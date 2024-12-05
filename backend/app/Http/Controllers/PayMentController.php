@@ -55,7 +55,7 @@ class PayMentController extends Controller
     }
     public function addOrder(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $couponCode=[];
         $priceCoupone=0;
         if($request->has('coupons'))

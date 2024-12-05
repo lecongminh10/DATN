@@ -95,18 +95,17 @@
                                        </span>
                                    </div>
                                    <!-- End .product-details -->
-                       
-                                   <figure class="product-image-container">
-                                        <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
+                                    <figure class="product-image-container">
+                                            <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
                                             @php
-                                                $url = $item->product->getMainImage() && $item->product->getMainImage()->image_gallery
-                                                    ? $item->product->getMainImage()->image_gallery
-                                                    : 'path/to/default-image.jpg'; // Đường dẫn tới ảnh mặc định
+                                            $url = $item->product->getMainImage() && $item->product->getMainImage()->image_gallery
+                                            ? $item->product->getMainImage()->image_gallery
+                                            : 'path/to/default-image.jpg'; // Đường dẫn tới ảnh mặc định
                                             @endphp
-                                            <img src="{{ Storage::url($url)}}" style="width:80px; height: 80px" alt="{{ $item->product->name }}" />
-                                        </a>
-                                    
-                                        <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>
+                                            <img src="{{ Storage::url($url)}}" style="width: 80px; height: 70px" alt="{{ $item->product->name }}" />
+                                            </a>
+                                                                            
+                                            <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>
                                     </figure>
                                </div>
                                @endforeach

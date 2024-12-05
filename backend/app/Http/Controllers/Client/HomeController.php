@@ -13,6 +13,7 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\BannerMain;
 use App\Services\AttributeValueService;
 use App\Services\ProductGalleryService;
 use App\Services\ProductVariantService;
@@ -58,8 +59,10 @@ class HomeController extends Controller
         $topRatedProducts = $this->productService->topRatedProducts();
         $bestSellingProducts = $this->productService->bestSellingProducts();
         $latestProducts = $this->productService->latestProducts();
+        $ratingProducts = $this->productService->ratingProducts();
         $categories = $this->getCategoriesForMenu();
-        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'carts', 'cartCount'));
+        $bannerMain = BannerMain::all();
+        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'ratingProducts', 'carts', 'cartCount', 'bannerMain'));
     }
 
     public function showProducts(Request  $request)
