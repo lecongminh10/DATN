@@ -25,70 +25,6 @@
                     </div>
                 </li>
                 <li>
-                    <a href="{{route('client.products')}}" class="sf-with-ul"><i
-                            class="sicon-basket"></i>Sản phẩm</a>
-                    <div class="megamenu megamenu-fixed-width">
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <a href="#" class="nolink pl-0">PRODUCT PAGES</a>
-                                <ul class="submenu">
-                                    <li><a href="product.html">SIMPLE PRODUCT</a></li>
-                                    <li><a href="product-variable.html">VARIABLE PRODUCT</a></li>
-                                    <li><a href="product.html">SALE PRODUCT</a></li>
-                                    <li><a href="product.html">FEATURED & ON SALE</a></li>
-                                    <li><a href="product-custom-tab.html">WITH CUSTOM TAB</a></li>
-                                    <li><a href="product-sidebar-left.html">WITH LEFT SIDEBAR</a>
-                                    </li>
-                                    <li><a href="product-sidebar-right.html">WITH RIGHT SIDEBAR</a>
-                                    </li>
-                                    <li><a href="product-addcart-sticky.html">ADD CART STICKY</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <!-- End .col-lg-4 -->
-
-                            <div class="col-lg-4">
-                                <a href="#" class="nolink pl-0">PRODUCT LAYOUTS</a>
-                                <ul class="submenu">
-                                    <li><a href="product-extended-layout.html">EXTENDED LAYOUT</a>
-                                    </li>
-                                    <li><a href="product-grid-layout.html">GRID IMAGE</a></li>
-                                    <li><a href="product-full-width.html">FULL WIDTH LAYOUT</a></li>
-                                    <li><a href="product-sticky-info.html">STICKY INFO</a></li>
-                                    <li><a href="product-sticky-both.html">LEFT & RIGHT STICKY</a>
-                                    </li>
-                                    <li><a href="product-transparent-image.html">TRANSPARENT
-                                            IMAGE</a></li>
-                                    <li><a href="product-center-vertical.html">CENTER VERTICAL</a>
-                                    </li>
-                                    <li><a href="#">BUILD YOUR OWN</a></li>
-                                </ul>
-                            </div>
-                            <!-- End .col-lg-4 -->
-
-                            {{-- <div class="col-lg-4 p-0">
-                                <div class="menu-banner menu-banner-2">
-                                    <figure>
-                                        <img src="{{asset('themeclient/assets/images/menu-banner-1.jpg')}}" alt="Menu banner" class="product-promo">
-                                    </figure>
-                                    <i>OFF</i>
-                                    <div class="banner-content">
-                                        <h4>
-                                            <span class="">UP TO</span><br />
-                                            <b class="">50%</b>
-                                        </h4>
-                                    </div>
-                                    <a href="demo1-shop.html" class="btn btn-sm btn-dark">SHOP
-                                        NOW</a>
-                                </div>
-                            </div> --}}
-                            <!-- End .col-lg-4 -->
-                        </div>
-                        <!-- End .row -->
-                    </div>
-                    <!-- End .megamenu -->
-                </li>
-                <li>
                     <a href="#" class="sf-with-ul"><i class="sicon-envelope"></i>Trang</a>
 
                     <ul>
@@ -107,6 +43,9 @@
                         <li><a href="login.html">Login</a></li>
                         <li><a href="forgot-password.html">Forgot Password</a></li>
                     </ul>
+                </li>
+                <li>
+                    <a href="{{route('client.products')}}" ><i class="sicon-basket"></i>Sản phẩm</a>
                 </li>
                 <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Bài viết</a></li>
                 <li><a href="demo1-about.html"><i class="sicon-users"></i>Chúng tôi</a></li>

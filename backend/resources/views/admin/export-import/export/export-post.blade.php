@@ -210,6 +210,7 @@
 
                         <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
                             <div class="">
+                                <a href="{{ route('admin.export-import.view-export-import') }}"><button class="btn btn-primary me-2" >Quay lại</button></a>
                                 <button class="btn btn-primary" id="exportButton" disabled>Xuất</button>
                             </div>
                         </div>
