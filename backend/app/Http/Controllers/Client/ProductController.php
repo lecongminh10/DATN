@@ -52,6 +52,9 @@ class ProductController extends Controller
         $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries','seos']);
         // Lấy biến thể sản phẩm
         $variants = $this->productVariantService->getProductVariant($id);
+        $topRatedProducts = $this->productService->topRatedProducts();
+        $bestSellingProducts = $this->productService->bestSellingProducts();
+        $latestProducts = $this->productService->latestProducts();
         // dd($variants);
         $seo = $data->seos->first();
         if ($seo) {
@@ -76,6 +79,7 @@ class ProductController extends Controller
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
             ->select('id', 'attribute_name')
             ->get();
+        $categories = $this->getCategoriesForMenu();
         return view('client.product-detail')->with([
             'data'           => $data,
             'attributes'     => $attributesWithValues,
@@ -85,18 +89,46 @@ class ProductController extends Controller
             'meta_title'       => $meta_title,
             'meta_description' => $meta_description,
             'meta_keywords'    => $meta_keywords,
+            'topRatedProducts'=>$topRatedProducts,
+            'bestSellingProducts'=>$bestSellingProducts,
+            'latestProducts'    =>$latestProducts,
+            'categories'     =>$categories
         ]);
     }
     public function search(Request $request)
-{
-    // Lấy từ khóa tìm kiếm và danh mục (nếu có)
-    $query = $request->input('q');
-    $categoryId = $request->input('cat');
+    {
+        // Lấy từ khóa tìm kiếm và danh mục (nếu có)
+        $query = $request->input('q');
+        $categoryId = $request->input('cat');
 
-    // Tìm kiếm sản phẩm
-    $products = $this->productService->searchProducts($query, $categoryId);
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $userId)
+            ->get();
+        }
+        $cartCount = $carts->sum('quantity');
+        $products = $this->productService->searchProducts($query, $categoryId);
+        $categories = $this->getCategoriesForMenu();
 
-
-    return view('client.products.search-results', compact('products'));
-}
+        return view('client.products.search-results',
+        [
+            'carts'          => $carts,
+            'cartCount'      => $cartCount,
+            'products'       => $products,
+            'categories'     =>$categories
+        ]);
+    }
+    public function getCategoriesForMenu()
+    {
+        // Lấy tất cả danh mục cha
+        $parentCategories = $this->categoryService->getParent()->take(9);
+        // Lấy danh mục con cho từng danh mục cha
+        foreach ($parentCategories as $parent) {
+            // Lấy danh mục con bằng cách sử dụng parent_id của danh mục cha
+            $parent->children = $this->categoryService->getChildCategories($parent->id);
+        }
+        return $parentCategories; // Trả về danh mục cha với danh mục con
+    }
 }

@@ -27,8 +27,8 @@
 
                 <div class="header-contact d-none d-lg-flex align-items-center pr-xl-5 mr-5 mr-xl-3 ml-5">
                     <i class="icon-phone-2"></i>
-                    <h6 class="pt-1 line-height-1">Call us now<a href="tel:#"
-                            class="d-block text-dark ls-10 pt-1">+123 5678 890</a></h6>
+                    <h6 class="pt-1 line-height-1">Liên hệ<a href="tel:#"
+                            class="d-block text-dark ls-10 pt-1">0392853609</a></h6>
                 </div>
                 <!-- End .header-contact -->
                 <a href="{{ Auth::check() ? route('users.indexClient') : route('client.login') }}"
