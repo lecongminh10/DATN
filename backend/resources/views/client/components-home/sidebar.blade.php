@@ -11,7 +11,7 @@
                         <div class="row">
                             @foreach ($categories as $parent)
                                 <div class="col-lg-4">
-                                    <a href="#" class="nolink pl-0">{{ $parent->name }}</a>
+                                    <a href="{{ route('client.products.Category',$parent->id) }}" class="nolink pl-0">{{ $parent->name }}</a>
                                     @if($parent->children->isNotEmpty())
                                         <ul class="submenu">
                                             @foreach ($parent->children as $child)
@@ -61,13 +61,11 @@
         <div class="owl-carousel owl-theme dots-small">
             <div class="banner d-flex flex-column align-items-center">
                 <h3 class="badge-sale bg-primary d-flex flex-column align-items-center justify-content-center text-uppercase">
-                    <em>Sale</em>Many Item
+                    <em>Mới nhất</em>Nhiều sản phẩm
                 </h3>
 
-                <h4 class="sale-text text-uppercase"><small>UP
-                        TO</small>50<sup>%</sup><sub>off</sub></h4>
-                <p>Bags, Clothing, T-Shirts, Shoes, Watches and much more...</p>
-                <a href="demo1-shop.html" class="btn btn-dark btn-md">View Sale</a>
+                <h4 class="sale-text text-uppercase"><small>Khuyến mãi </small>50<sup>%</sup><sub>off</sub></h4>
+                <p>Nhiều loại sản phẩm khác nhau</p>
             </div>
             <!-- End .banner -->
 
@@ -78,19 +76,16 @@
 
                 <div class="banner-layer">
                     <div class="coupon-sale-content">
-                        <h4>DRONE + CAMERAS</h4>
-                        <h5 class="coupon-sale-text text-gray ls-n-10 p-0 font1"><i>UP
-                                TO</i><b class="text-white bg-dark font1">$100</b> OFF</h5>
-                        <p class="ls-0">Top Brands and Models!</p>
-                        <a href="demo1-shop.html" class="btn btn-inline-block btn-dark btn-black ls-0">VIEW
-                            SALE</a>
+                        <h4>Iphone 16 mới nhất</h4>
+                        <h5 class="coupon-sale-text text-gray ls-n-10 p-0 font1"><i>Giảm ngay</i><b class="text-white bg-dark font1">10%</b> OFF</h5>
+                        <p class="ls-0">Top sản phẩm mới!</p>
                     </div>
                 </div>
             </div>
             <!-- End .banner -->
 
             <div class="banner banner5">
-                <h4>HEADPHONES SALE</h4>
+                <h4>Mới nhất</h4>
 
                 <figure class="m-b-3">
                     <img src="{{asset('themeclient/assets/images/demoes/demo1/banners/banner-8.jpg')}}" alt="banner">
@@ -98,10 +93,7 @@
 
                 <div class="banner-layer">
                     <div class="coupon-sale-content">
-                        <h5 class="coupon-sale-text ls-n-10 p-0 font1"><i>UP
-                                TO</i><b class="text-white bg-secondary font1">50%</b> OFF</h5>
-                        <a href="demo1-shop.html" class="btn btn-inline-block btn-dark btn-black ls-0">VIEW
-                            SALE</a>
+                        <h5 class="coupon-sale-text ls-n-10 p-0 font1"><i>Mua ngay</i><b class="text-white bg-secondary font1">50%</b> OFF</h5>
                     </div>
                 </div>
             </div>
@@ -111,73 +103,9 @@
     </div>
     <!-- End .widget -->
 
-    <div class="widget widget-testimonials">
-        <div class="owl-carousel owl-theme dots-left dots-small">
-            <div class="testimonial">
-                <div class="testimonial-owner">
-                    <figure>
-                        <img src="{{asset('themeclient/assets/images/clients/client-1.jpg')}}" alt="client">
-                    </figure>
-
-                    <div>
-                        <h4 class="testimonial-title">john Smith</h4>
-                        <span>CEO &amp; Founder</span>
-                    </div>
-                </div>
-                <!-- End .testimonial-owner -->
-
-                <blockquote class="ml-4 pr-0">
-                    <p>Lorem ipsum dolor sit amet, consectetur elitad adipiscing Cras non placerat mi.
-                    </p>
-                </blockquote>
-            </div>
-            <!-- End .testimonial -->
-
-            <div class="testimonial">
-                <div class="testimonial-owner">
-                    <figure>
-                        <img src="{{asset('themeclient/assets/images/clients/client-2.jpg')}}" alt="client">
-                    </figure>
-
-                    <div>
-                        <h4 class="testimonial-title">Dae Smith</h4>
-                        <span>CEO &amp; Founder</span>
-                    </div>
-                </div>
-                <!-- End .testimonial-owner -->
-
-                <blockquote class="ml-4 pr-0">
-                    <p>Lorem ipsum dolor sit amet, consectetur elitad adipiscing Cras non placerat mi.
-                    </p>
-                </blockquote>
-            </div>
-            <!-- End .testimonial -->
-
-            <div class="testimonial">
-                <div class="testimonial-owner">
-                    <figure>
-                        <img src="{{asset('themeclient/assets/images/clients/client-3.jpg')}}" alt="client">
-                    </figure>
-
-                    <div>
-                        <h4 class="testimonial-title">John Doe</h4>
-                        <span>CEO &amp; Founder</span>
-                    </div>
-                </div>
-                <!-- End .testimonial-owner -->
-
-                <blockquote class="ml-4 pr-0">
-                    <p>Lorem ipsum dolor sit amet, consectetur elitad adipiscing Cras non placerat mi.
-                    </p>
-                </blockquote>
-            </div>
-            <!-- End .testimonial -->
-        </div>
-        <!-- End .testimonials-slider -->
-    </div>
     <!-- End .widget -->
 
-    <div class="widget widget-posts post-date-in-media media-with-zoom mb-0 mb-lg-2 pb-lg-2">
+    {{-- <div class="widget widget-posts post-date-in-media media-with-zoom mb-0 mb-lg-2 pb-lg-2">
         <div class="owl-carousel owl-theme dots-left dots-m-0 dots-small" data-owl-options="
             { 'margin' : 20,
               'loop': false }">
@@ -200,7 +128,7 @@
 
                 <div class="post-body">
                     <h2 class="post-title">
-                        <a href="single.html">Post Format Standard</a>
+                        <a href="single.html">Bản tin công nghệ </a>
                     </h2>
 
                     <div class="post-content">
@@ -280,6 +208,6 @@
             </article>
         </div>
         <!-- End .posts-slider -->
-    </div>
+    </div> --}}
     <!-- End .widget -->
 </aside>

@@ -13,6 +13,7 @@ use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController; 
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\ReturnController;
+use Illuminate\Support\Facades\Auth;
 
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
@@ -98,7 +99,3 @@ Route::prefix('chat')->name('chat.')->group(function () {
 
 Route::get('/feedbacks/create', [ClientFeedbackController::class, 'create'])->name('feedbacks.create');
 Route::post('/feedbacks', [ClientFeedbackController::class, 'store'])->name('feedbacks.store');
-
-Route::get('/getForm', function () {
-    return view('welcome');
-});

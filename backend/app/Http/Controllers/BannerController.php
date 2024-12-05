@@ -97,7 +97,7 @@ class BannerController extends Controller
         $bannerMain->update();
 
         // Trả về thông báo thành công
-        return redirect()->route('admin.banner.banner_main_edit')->with('success', 'Banner chính cập nhật thành công.');
+        return redirect()->route('admin.banner.list_banner_main')->with('success', 'Banner chính cập nhật thành công.');
     }
 
     // Banner Extra
