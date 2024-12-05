@@ -20,6 +20,7 @@ class Page extends Model
         'is_active',
         'template',
         'seo_title',
-        'seo_description'
+        'seo_description',
+        'deleted_at',
     ];
 }

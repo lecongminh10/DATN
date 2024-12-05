@@ -48,7 +48,7 @@
                                         </form>
                                     </div>
                                 </div>
-                                <table class="table table-bordered align-middle table-nowrap mb-0">
+                                <table class="table table-bordered ">
                                     <thead>
                                         <tr>
                                             <th scope="col">ID</th>
