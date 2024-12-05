@@ -425,8 +425,8 @@
                             </div>
                             <!-- End .product-ratings -->
 
-                            {{-- <a href="#" class="rating-link">( 6 Reviews )</a> --}}
-                        </div>
+                            {{-- <a href="#" class="rating-link">( 6 Reviews )</a>
+                        </div> --}}
                         <!-- End .ratings-container -->
 
                         <hr class="short-divider">
@@ -1201,9 +1201,9 @@
                     <div class="product-default left-details product-widget">
                         <figure>
                             <a href="product.html">
-                                <img src="{{ asset('themeclient/assets/images/products/small/product-2.jpg') }}') }}"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-2.jpg') }}"
                                     width="74" height="74" alt="product">
-                                <img src="{{ asset('themeclient/assets/images/products/small/product-2-2.jpg') }}') }}"
+                                <img src="{{ asset('themeclient/assets/images/products/small/product-2-2.jpg') }}"
                                     width="74" height="74" alt="product">
                             </a>
                         </figure>

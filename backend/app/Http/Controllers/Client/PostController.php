@@ -21,7 +21,6 @@ class PostController extends Controller
         $user = Auth::user();
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
         $categories = Category::with('children')->whereNull('parent_id')->get();
-
         return view('client.blogs.index', compact('posts', 'categories', 'carts', 'cartCount'));
     }
 

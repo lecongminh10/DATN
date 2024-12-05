@@ -95,7 +95,6 @@
                                        </span>
                                    </div>
                                    <!-- End .product-details -->
-                       
                                     <figure class="product-image-container">
                                             <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
                                             @php
