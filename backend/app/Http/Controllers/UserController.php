@@ -278,7 +278,7 @@ class UserController extends Controller
 
     public function showOrder(Request $request)
     {
-        $id = Auth::user()->id;
+        $userId = Auth::user()->id;
         $status = $request->input('status', 'all');
 
         // Query cơ bản để lấy tất cả đơn hàng của người dùng

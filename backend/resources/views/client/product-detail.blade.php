@@ -282,9 +282,9 @@
                             </ul>
                         </li>
                         <li><a href="contact.html">Contact Us</a></li>
-                        <li class="float-right"><a href="https://1.envato.market/DdLk5" class="pl-5"
+                        {{-- <li class="float-right"><a href="https://1.envato.market/DdLk5" class="pl-5"
                                 target="_blank">Buy Porto!</a></li>
-                        <li class="float-right"><a href="#" class="pl-5">Special Offer!</a></li>
+                        <li class="float-right"><a href="#" class="pl-5">Special Offer!</a></li> --}}
                     </ul>
                 </nav>
             </div>
@@ -415,7 +415,7 @@
                                     </span>
                                 </a>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="ratings-container">
                             <div class="product-ratings">

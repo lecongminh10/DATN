@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Models\Blog;
 use App\Models\Cart;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,8 +26,8 @@ class PostController extends Controller
         $carts  = collect();
         $cartCount = $carts->sum('quantity');
         $tags = Tag::all();
-        return view('client.blogs.index', compact('posts', 'carts', 'cartCount', 'tags')); {
-
+        $categories = Category::with('children')->whereNull('parent_id')->get();
+        return view('client.blogs.index', compact('posts', 'categories','carts', 'cartCount', 'tags')); {
         }
 
     }
@@ -43,7 +44,7 @@ class PostController extends Controller
         // Lấy 5 bài viết gần đây có trạng thái đã xuất bản cho sidebar
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
 
-        return view('client.blogs.show', compact('post', 'posts'));
+        return view('client.blogs.show', compact('post', 'posts', 'cartCount'));
     }
 
     // app/Http/Controllers/BlogController.php
@@ -59,9 +60,4 @@ class PostController extends Controller
         // Trả về view 'tag.blade.php' kèm theo dữ liệu
         return view('client.blogs.tag', compact('tag', 'posts'));
     }
-
-
-
-
-
 }

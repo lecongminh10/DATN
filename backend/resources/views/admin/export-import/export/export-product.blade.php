@@ -271,10 +271,8 @@
 
                         <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
                             <div class="">
-                                {{-- <button class="btn btn-primary" id="exportButton" disabled>Xuất</button> --}}
-                                
-                                    {{-- <input type="hidden" name="selected_columns" id="selected_columns"> --}}
-                                    <button class="btn btn-primary" id="exportButton" disabled>Xuất</button>
+                                {{-- <a href="{{ route('admin.export-import.view-export-import') }}"><button class="btn btn-primary me-2">Quay lại</button></a> --}}
+                                <button class="btn btn-primary" id="exportButton" disabled>Xuất</button>
                             </div>
                         </div>
                     </form>

@@ -33,7 +33,7 @@
                             </div><!-- End .post-meta -->
 
                             <div class="post-content">
-                                <p>{{ $post->content }}</p>
+                                <p>{{ strip_tags($post->content) }}</p>
                             </div><!-- End .post-content -->
 
                             <div class="post-share">

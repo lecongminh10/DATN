@@ -16,6 +16,8 @@
     /* Kích thước biểu tượng chat */
     cursor: pointer;
     /* Thay đổi con trỏ khi di chuột qua biểu tượng */
+    border-radius: 100%;
+    /* Bo trong icon */
 }
 
 /* Hộp chat */

@@ -26,7 +26,7 @@
                             <div class="live-preview">
                                 <div class="row g-4 mb-3">
                                     <div class="col-sm d-flex justify-content-end">
-                                        <form action="{{ route('comment.index') }}" method="GET" class="d-flex">
+                                        <form action="{{ route('admin.comment.index') }}" method="GET" class="d-flex">
                                             <!-- Lọc theo tên sản phẩm -->
                                             <div class="me-2">
                                                 <input type="text" class="form-control" name="product_name"
@@ -157,7 +157,7 @@
             // Khi nhấn vào nút "Trả lời"
             $('[data-bs-toggle="modal"]').on('click', function() {
                 var commentId = $(this).data('bs-id'); // Lấy ID của bình luận
-                var formAction = '{{ route('comment.reply', ':id') }}'; // Định dạng URL cho action
+                var formAction = '{{ route('admin.comment.reply', ':id') }}'; // Định dạng URL cho action
                 formAction = formAction.replace(':id', commentId); // Thay thế :id với commentId
 
                 // Cập nhật action của form

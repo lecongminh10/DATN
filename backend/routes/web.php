@@ -40,7 +40,9 @@ use App\Http\Controllers\AdminActivityLogController;
 use App\Http\Controllers\CategoryStatisticsController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\InfoBoxFooterController;
 use App\Http\Controllers\RefundController;
 
 Route::group([
@@ -396,29 +398,63 @@ Route::group([
         }
     );
 
-        //////popuphome
-        Route::group(
-            [
-                'prefix' => 'popuphome',
-                'as' => 'popuphome.',
-            ],
-            function () {
-                Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
-                Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
-            }
-        );
-        
-        //////comment
-        Route::group(
-            [
-                'prefix' => 'comment',
-                'as' => 'comment.',
-            ],
-            function () {
-                Route::get('/', [UserReviewController::class, 'index'])->name('index');
-                Route::post('/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
-            }
-        );
+    //////info_boxes_footer
+    Route::group(
+        [
+            'prefix' => 'info-boxes-footer',
+            'as' => 'info_boxes_footer.',
+        ],
+        function () {
+            Route::get('info_boxes_footer/edit', [InfoBoxFooterController::class, 'edit'])->name('edit');
+            Route::post('info_boxes_footer/update', [InfoBoxFooterController::class, 'update'])->name('update');
+        }
+    );
+
+    //////banner
+    Route::group(
+        [
+            'prefix' => 'banner',
+            'as' => 'banner.',
+        ],
+        function () {
+            // banner chính
+            Route::get('list_banner', [BannerController::class, 'list_banner_main'])->name('list_banner_main');
+
+            Route::get('banner_main_view_add', [BannerController::class, 'banner_main_view_add'])->name('banner_main_view_add');
+            Route::post('banner_main_add', [BannerController::class, 'banner_main_add'])->name('banner_main_add');
+
+            Route::get('banner_main/edit/{id}', [BannerController::class, 'banner_main_edit'])->name('banner_main_edit');
+            Route::post('banner_main/update/{id}', [BannerController::class, 'banner_main_update'])->name('banner_main_update');
+
+            // banner phụ
+            Route::get('banner_extra/edit', [BannerController::class, 'banner_extra_edit'])->name('banner_extra_edit');
+            Route::post('banner_extra/update', [BannerController::class, 'banner_extra_update'])->name('banner_extra_update');
+        }
+    );
+
+    //////popuphome
+    Route::group(
+        [
+            'prefix' => 'popuphome',
+            'as' => 'popuphome.',
+        ],
+        function () {
+            Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
+            Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
+        }
+    );
+
+    //////comment
+    Route::group(
+        [
+            'prefix' => 'comment',
+            'as' => 'comment.',
+        ],
+        function () {
+            Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
+            Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
+        }
+    );
 
     // Export Import
     Route::group([
