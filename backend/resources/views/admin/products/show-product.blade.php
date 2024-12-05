@@ -410,6 +410,21 @@
                                                         <input type="number" class="form-control" name="warranty_period"
                                                             id="warranty_period" value="{{$product->warranty_period}}" disabled>
                                                     </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="height" id="height"  value="{{$product->productDimension->height}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="length" id="length"  value="{{$product->productDimension->length}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="width" id="width"  value="{{$product->productDimension->width}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="weight" id="weight"  value="{{$product->productDimension->weight}}" placeholder="Cân nặng (gr)">
+                                                            </div>
+                                                    </div>
                                                     <div class="row">
                                                         @php
                                                             $status = [
@@ -525,11 +540,6 @@
                                                         href="#v-pills-profile" role="tab"
                                                         aria-controls="v-pills-profile" aria-selected="false">
                                                         Các biến thể
-                                                    </a>
-                                                    <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
-                                                        href="#v-pills-coupons" role="tab"
-                                                        aria-controls="v-pills-coupons" aria-selected="false">
-                                                        Khuyến mãi
                                                     </a>
                                                 </div>
                                             </div>

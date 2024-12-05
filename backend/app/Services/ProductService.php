@@ -25,20 +25,20 @@ class ProductService extends BaseService
     }
     public function getFeaturedProducts()
     {
-        return Product::with(['galleries', 'category'])
+        return Product::with(['galleries', 'category','wishList'])
             ->orderByDesc('view')
             ->take(10)
             ->get();
     }
     public function getTopProducts()
     {
-        return Product::with(['galleries', 'category'])
+        return Product::with(['galleries', 'category','wishList'])
             ->orderByDesc('view')
             ->get();
     }
     public function getAllProducts($count, $minprice = null, $maxprice = null)
     {
-        $query = Product::with(['galleries', 'category']);
+        $query = Product::with(['galleries', 'category','wishList']);
         
         if (!is_null($minprice) && !is_null($maxprice)) {
             $query->whereBetween('price_regular', [$minprice, $maxprice])
@@ -50,7 +50,7 @@ class ProductService extends BaseService
 
     public function getSaleProducts()
     {
-        return Product::with(['galleries', 'category'])
+        return Product::with(['galleries', 'category','wishList'])
             ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
             ->orderBy('discount_percentage', 'desc')
             ->take(4)
@@ -83,7 +83,7 @@ class ProductService extends BaseService
 
     public function topRatedProducts()
     {
-        return Product::with(['galleries', 'category'])
+        return Product::with(['galleries', 'category','wishList'])
         ->orderByDesc('rating')
         ->limit(10)
         ->get();
@@ -91,7 +91,7 @@ class ProductService extends BaseService
 
     public function bestSellingProducts()
     {
-        return Product::with(['galleries', 'category'])
+        return Product::with(['galleries', 'category','wishList'])
             ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
             ->orderBy('discount_percentage', 'desc')
             ->take(10)
@@ -100,29 +100,28 @@ class ProductService extends BaseService
 
     public function latestProducts()
     {
-        return Product::with(['galleries', 'category'])
+        return Product::with(['galleries', 'category','wishList'])
         ->whereNotNull('rating')
         ->orderByDesc('id')
         ->limit(10)
         ->get();
     }
-    public function searchProducts($query, $categoryId = null)
+    public function searchProducts($search, $categoryId = null)
     {
-        $products = Product::query()
-            ->when($query, function ($queryBuilder) use ($query) {
-                return $queryBuilder->where('name', 'like', "%{$query}%");
-            })
-            ->when($categoryId, function ($queryBuilder) use ($categoryId) {
-                return $queryBuilder->where('category_id', $categoryId);
-            })
-            ->paginate(10);
+        $query =Product::with(['galleries', 'category','wishList']);
+              if($search !==null){
+                   $query=$query->where('name', 'like', "%{$search}%");
+              }
+              if($categoryId !==null){
+                 $query= $query->where('category_id', $categoryId);
+              }
 
-        return $products;
+        return $query->paginate(10);
     }
 
     public function ratingProducts()
     {
-        return Product::with(['galleries', 'category'])
+        return Product::with(['galleries', 'category','wishList'])
             ->whereNotNull('rating')
             ->orderByDesc('rating')
             ->limit(10)

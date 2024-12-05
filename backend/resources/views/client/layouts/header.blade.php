@@ -35,9 +35,12 @@
                     class="header-icon header-icon-user">
                     <i class="icon-user-2"></i>
                 </a>
-
-                <a href="{{ route('wishList') }}" class="header-icon"><i class="icon-wishlist-2"></i></a>
-
+                <a href="{{ route('wishList') }}" title="Cart" class="header-icon wishlist" style="  position: relative;">
+                    <i class="icon-wishlist-2"></i>
+                    <span class="wishlist-count badge-circle" style="position: absolute;top: 0;right: -10px; ">
+                        {{($wishlistCount >0) ? $wishlistCount:''}}
+                    </span>
+               </a>
                 <div class="dropdown cart-dropdown">
                     <a href="#" title="Cart" class="dropdown-toggle dropdown-arrow cart-toggle" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">

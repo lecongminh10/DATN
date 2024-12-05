@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Models\Tag;
 use App\Models\Blog;
 use App\Models\Cart;
-use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Tag;
+use App\Models\WishList;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -27,9 +28,7 @@ class PostController extends Controller
         $cartCount = $carts->sum('quantity');
         $tags = Tag::all();
         $categories = Category::with('children')->whereNull('parent_id')->get();
-        return view('client.blogs.index', compact('posts', 'categories','carts', 'cartCount', 'tags')); {
-        }
-
+        return view('client.blogs.index', compact('posts', 'categories','carts', 'cartCount', 'tags','wishlistCount')); 
     }
 
 
@@ -43,10 +42,9 @@ class PostController extends Controller
 
         // Lấy 5 bài viết gần đây có trạng thái đã xuất bản cho sidebar
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
-        $carts  = collect();
-        $cartCount = $carts->sum('quantity');
+        $this->countCartWish();
 
-        return view('client.blogs.show', compact('post', 'posts', 'cartCount'));
+        return view('client.blogs.show', compact('post', 'posts', 'cartCount','wishlistCount'));
     }
 
     // app/Http/Controllers/BlogController.php
@@ -58,11 +56,19 @@ class PostController extends Controller
 
         // Lấy các bài viết liên quan đến tag này
         $posts = $tag->posts;  // Giả sử có mối quan hệ 'posts' trong mô hình Tag
-
-        $carts  = collect();
-        $cartCount = $carts->sum('quantity');
-
+        $this->countCartWish();
         // Trả về view 'tag.blade.php' kèm theo dữ liệu
-        return view('client.blogs.tag', compact('tag', 'posts', 'cartCount'));
+        return view('client.blogs.tag', compact('tag', 'posts', 'cartCount','wishlistCount'));
+    }
+
+    private function countCartWish()
+    {
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+        $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
     }
 }

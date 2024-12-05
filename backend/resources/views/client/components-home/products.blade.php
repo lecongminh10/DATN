@@ -70,10 +70,11 @@
                             {{-- {{ $item->category->name }} --}}
                         </a>
                     </div>
-                    <a href="#" class="btn-icon-wish"
-                    onclick="addToWishlist({{ $item->id }}, {{ $item->product_variant_id }})"
-                    title="{{ $item->isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
-                        <i class="icon-heart {{ $item->isInWishlist ? 'active' : '' }}"></i>
+                    <a href="#" class="btn-icon-wish {{ $item->wishList !== null ? 'added-wishlist' : '' }}"
+                    data-product-id="{{ $item->id }}" 
+                    onclick="addToWishlist(this,{{ $item->id }}, {{ $item->product_variant_id }})"
+                    title="{{ $item->isInWishlist ? 'Đã xóa yêu thích' : 'Đã thêm yêu thích' }}">
+                        <i class="icon-heart"></i>
                     </a>
                 </div>
                 <h3 class="product-title"> <a href="">{{ $item->name }}</a> </h3>

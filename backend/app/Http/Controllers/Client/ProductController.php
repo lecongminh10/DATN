@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Models\Seo;
 use App\Models\Cart;
+use App\Models\WishList;
 use App\Models\Attribute;
 use App\Services\TagService;
 use Illuminate\Http\Request;
@@ -66,14 +67,13 @@ class ProductController extends Controller
             $meta_description = 'Default Description';
             $meta_keywords = 'Default Keywords';
         }
-        $userId = auth()->id();
         $carts  = collect();
+        $userId = auth()->id();
         if($userId) {
-            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-            ->where('user_id', $userId)
-            ->get();
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         // dd($meta_title);
         // Lấy các thuộc tính và giá trị
         $attributesWithValues = Attribute::with('attributeValues:id,id_attributes,attribute_value')
@@ -92,7 +92,8 @@ class ProductController extends Controller
             'topRatedProducts'=>$topRatedProducts,
             'bestSellingProducts'=>$bestSellingProducts,
             'latestProducts'    =>$latestProducts,
-            'categories'     =>$categories
+            'categories'     =>$categories,
+             'wishlistCount'   =>$wishlistCount,
         ]);
     }
     public function search(Request $request)
@@ -101,14 +102,13 @@ class ProductController extends Controller
         $query = $request->input('q');
         $categoryId = $request->input('cat');
 
-        $userId = auth()->id();
         $carts  = collect();
+        $userId = auth()->id();
         if($userId) {
-            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
-            ->where('user_id', $userId)
-            ->get();
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $products = $this->productService->searchProducts($query, $categoryId);
         $categories = $this->getCategoriesForMenu();
 
@@ -117,7 +117,8 @@ class ProductController extends Controller
             'carts'          => $carts,
             'cartCount'      => $cartCount,
             'products'       => $products,
-            'categories'     =>$categories
+            'categories'     =>$categories,
+            'wishlistCount'   =>$wishlistCount,
         ]);
     }
     public function getCategoriesForMenu()

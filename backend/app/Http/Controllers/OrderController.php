@@ -573,6 +573,7 @@ class OrderController extends Controller
 
     public function addWishList(Request $request)
     {
+        Log::info('test',$request->all());
         // Kiểm tra xác thực người dùng
         $userId = auth()->id();
         if (!$userId) {
@@ -594,7 +595,8 @@ class OrderController extends Controller
         if ($wishlist) {
             // Nếu sản phẩm đã tồn tại trong wishlist, thực hiện xóa
             $wishlist->delete();
-            // return response()->json(['success' => 'Product removed from wishlist']);
+            $count=WishList::count();
+            return response()->json(['status' => false,'count'=>$count]);
         } else {
             // Nếu sản phẩm chưa tồn tại trong wishlist, thực hiện thêm mới
             WishList::create([
@@ -602,8 +604,8 @@ class OrderController extends Controller
                 'product_id' => $request->input('product_id'),
                 'product_variants_id' => $request->input('product_variants_id'),
             ]);
-
-            return response()->json(['in_wishlist' => true]);
+            $count=WishList::count();
+            return response()->json(['status' => true ,'count'=>$count]);
         }
     }
 
