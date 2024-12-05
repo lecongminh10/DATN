@@ -172,8 +172,7 @@
                                 </div>
                                 <div class="widget-card">
                                     <h4 style="font-size: 17px">Điểm thưởng</h4>
-                                    <p style="font-size: 15px">500 điểm sẵn có</p>
-                                    <a href="#rewards" class="view-details">Đổi điểm</a>
+                                    <p style="font-size: 15px">{{ Auth::user()->loyalty_points }} điểm có sẳn</p>
                                 </div>
                                 <div class="widget-card">
                                     <h4 style="font-size: 17px">Hạng thành viên</h4>
