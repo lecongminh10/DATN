@@ -12,6 +12,40 @@
             word-wrap: break-word;
             white-space: normal;
         }
+
+        .toggle-subcategories {
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.toggle-subcategories i {
+    transition: transform 0.3s;
+}
+
+.toggle-subcategories[aria-expanded="true"] i {
+    transform: rotate(90deg); /* Xoay mũi tên khi mở rộng */
+}
+
+/* Tên danh mục con */
+.child-prefix {
+    color: #000; 
+    margin-right: 5px;
+}
+
+.child-name {
+    color: #007bff; 
+    font-weight: 500;
+}
+.subchild-name {
+    color: green; 
+    font-weight: 500;
+}
+
+.collapse td {
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+
+}
     </style>
 @endsection
 @section('content')
@@ -68,31 +102,32 @@
                                         </form>
                                     </div>
                                 </div><br>
-                                <form action="{{ route('admin.categories.delete-multiple') }}" method="POST" id="delete-multiple-form">
-                                      @csrf
-                                      @method('DELETE')
-                                     <table class="table table-bordered align-middle table-nowrap mb-0">
-                                              <thead>
-                                                  <tr>
-                                                      <th scope="col"><input type="checkbox" id="checkAll"></th>
-                                                      <!-- Checkbox tổng -->
-                                                      <th scope="col">ID</th>
-                                                      <th scope="col">Tên</th>
-                                                      <th scope="col">Mô tả</th>
-                                                       <th scope="col">Ảnh</th>
-                                                      <th scope="col">Hành động</th>
-                                                  </tr>
-                                              </thead>
-                                              <tbody>
-                                                  @foreach ($parentCategories as $category)
-                                                      @include('admin.categories.partials.category-row', [
-                                                          'category' => $category,
-                                                          'level' => 0,
-                                                      ])
-                                                  @endforeach
-                                              </tbody>
-                                       </table>
-                                    </form>
+                                <form action="{{ route('admin.categories.delete-multiple') }}" method="POST"
+                                    id="delete-multiple-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <table class="table table-bordered align-middle table-nowrap mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"><input type="checkbox" id="checkAll"></th>
+                                                <!-- Checkbox tổng -->
+                                                <th scope="col">STT</th>
+                                                <th scope="col">Tên</th>
+                                                <th scope="col">Mô tả</th>
+                                                <th scope="col">Ảnh</th>
+                                                <th scope="col">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($parentCategories as $category)
+                                            @include('admin.categories.partials.category-row', [
+                                                'category' => $category,
+                                                'level' => 0,
+                                            ])
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </form>
                                 <div class="d-flex justify-content-center mt-3">
                                     {{ $parentCategories->links('vendor.pagination.bootstrap-5') }}
                                 </div>

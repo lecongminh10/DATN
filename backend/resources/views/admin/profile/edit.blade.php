@@ -3,6 +3,25 @@
 @section('title')
     Cập nhật hồ sơ
 @endsection
+@section('style_css')
+    <style>
+      
+
+        /* Căn chỉnh logo */
+        .logo {
+            display: flex;
+            /* Đảm bảo logo nằm gọn trong phần tử */
+            align-items: center;
+            /* Căn giữa logo theo chiều dọc */
+            justify-content: center;
+            /* Căn giữa logo theo chiều ngang */
+            margin: 0 auto;
+            /* Đảm bảo không bị nhảy lên trên */
+            padding: 10px 0;
+            /* Điều chỉnh padding cho phù hợp */
+        }
+    </style>
+@endsection
 @section('content')
     @if (session('success'))
         <div class="alert alert-success">
@@ -19,7 +38,6 @@
         </div>
     @endif
     <div class="page-content">
-        <div id="layout-wrapper">
             <div class="container-fluid">
                 @include('admin.layouts.component.page-header', [
                     'title' => 'Hồ sơ ',
@@ -58,14 +76,9 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div><!-- /.modal -->
-                <!-- ========== App Menu ========== -->
-                <!-- Left Sidebar End -->
-                <!-- Vertical Overlay-->
+
                 <div class="vertical-overlay"></div>
 
-                <!-- ============================================================== -->
-                <!-- Start right Content here -->
-                <!-- ============================================================== -->
                 <div class="main-content">
 
                     <div class="">
@@ -364,6 +377,4 @@
 
             <!-- App js -->
             <script src="assets/js/app.js"></script>
-            </body>
-
-            </html>
+        </div>

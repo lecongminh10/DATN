@@ -21,11 +21,11 @@ class CategoryController extends Controller
     }
 
     public function index(Request $request)
-    {
-      $perPage = 5;
-      $parentCategories = Category::whereNull('parent_id')->paginate($perPage);
-      return view(self::PATH_VIEW . __FUNCTION__,  compact('parentCategories'));
-    }
+{
+    $perPage = 5;
+    $parentCategories = Category::whereNull('parent_id')->with('children.children')->paginate($perPage); // Tải cả danh mục con của danh mục con
+    return view(self::PATH_VIEW . __FUNCTION__, compact('parentCategories'));
+}
 
     public function create()
     {
