@@ -512,12 +512,13 @@ class UserController extends Controller
     public function showRank($id)
     {
         $user = $this->userService->getById($id);
-        $carts  = collect();
-        if ($user) {
-            $carts = Cart::where('user_id', $user)->with('product')->get();
+        if($user) {
+            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $user->id)
+            ->get();
         }
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show_rank', compact('user','cartCount'));
+        return view('client.users.show_rank', compact('user','carts','cartCount'));
     }
 
     public function cancelOrder($orderId)
