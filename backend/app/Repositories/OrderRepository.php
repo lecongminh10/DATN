@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 
 use function Laravel\Prompts\table;
 
@@ -120,6 +121,20 @@ class OrderRepository extends BaseRepository
         }
     }
     
+    public function getDataOrderRefund($code)
+    {
+        return DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->select(
+                'orders.id as order_id',
+                'orders.user_id',
+                'orders.total_price as amount',
+                DB::raw('SUM(order_items.quantity) as quantity') // Tổng số lượng sản phẩm
+            )
+            ->where('orders.code', $code)
+            ->groupBy('orders.id', 'orders.user_id', 'orders.total_price') // Thêm tất cả các cột không sử dụng hàm tổng hợp vào GROUP BY
+            ->first(); // Dùng first() để lấy một kết quả duy nhất
+    }
     
 
 

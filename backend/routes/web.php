@@ -41,7 +41,7 @@ use App\Http\Controllers\CategoryStatisticsController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-
+use App\Http\Controllers\RefundController;
 
 Route::group([
     'prefix' => 'admin',
@@ -396,29 +396,29 @@ Route::group([
         }
     );
 
-    //////popuphome
-    Route::group(
-        [
-            'prefix' => 'popuphome',
-            'as' => 'popuphome.',
-        ],
-        function () {
-            Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
-            Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
-        }
-    );
-
-    //////comment
-    Route::group(
-        [
-            'prefix' => 'comment',
-            'as' => 'comment.',
-        ],
-        function () {
-            Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
-            Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
-        }
-    );
+        //////popuphome
+        Route::group(
+            [
+                'prefix' => 'popuphome',
+                'as' => 'popuphome.',
+            ],
+            function () {
+                Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
+                Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
+            }
+        );
+        
+        //////comment
+        Route::group(
+            [
+                'prefix' => 'comment',
+                'as' => 'comment.',
+            ],
+            function () {
+                Route::get('/', [UserReviewController::class, 'index'])->name('index');
+                Route::post('/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
+            }
+        );
 
     // Export Import
     Route::group([
@@ -466,6 +466,16 @@ Route::group([
         Route::delete('/content/{id}', [FeedbackController::class, 'destroyContent'])->name('feedbackContent.destroy');
         Route::delete('/content/{id}/hard-delete', [FeedbackController::class, 'hardDeleteContent'])->name('feedbackContent.hardDelete');
         Route::post('/delete-multiple', [FeedbackController::class, 'deleteMultiple'])->name('feedbacks.deleteMultiple');
+    });
+    Route::group([
+        'prefix' => 'refunds',
+        'as' => 'refunds.'
+    ], function(){
+        Route::get('/', [RefundController::class, 'index'])->name('index');
+        // Route::get('refund-detail/{code}', [RefundController::class, 'detailRefund'])->name('detailRefund');
+        Route::post('/', [RefundController::class, 'store'])->name('store');
+        Route::put('/{refund}', [RefundController::class, 'update'])->name('update');
+        Route::get('/create/{orderId}', [RefundController::class, 'createRefundForm'])->name('create');
     });
 });
 Route::get('/admin/logs',                       [AdminActivityLogController::class, 'index'])->name('admin.logs.index');

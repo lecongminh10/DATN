@@ -346,15 +346,17 @@
         .checkout-container textarea.form-control {
             min-height: 70px;
         }
+
         #discount-info {
             display: none;
             max-height: 200px;
-            overflow-y: auto; 
+            overflow-y: auto;
             padding: 10px;
-            border: 1px solid #ccc; 
+            border: 1px solid #ccc;
             background-color: #d9e2eb59;
             border: 1px solid #bde1f5
         }
+
         /* Cải thiện giao diện của phần thông tin giảm giá */
         .alert-info {
             box-shadow: inset 0px 0px 1px 0px #0088cc;
@@ -590,7 +592,8 @@
                                         <input type="text" class="form-control form-control-sm w-auto"
                                             placeholder="Nhập mã" required name="coupon_code" id="coupon_code" />
                                         <div class="input-group-append">
-                                            <button class="btn btn-sm mt-0" type="button" onclick="applyCoupon()"  data-toggle="modal" data-target="#applyToCoupon">Nhập
+                                            <button class="btn btn-sm mt-0" type="button" onclick="applyCoupon()"
+                                                data-toggle="modal" data-target="#applyToCoupon" id="messageAlert">Nhập
                                                 mã giảm giá</button>
                                         </div>
                                     </div>
@@ -598,17 +601,19 @@
                             </div>
                             <div class="col-6">
                                 <div id="discount-info" style="display: {{ session('coupons') ? 'block' : 'none' }};">
-                                    @if(session('coupons'))
+                                    @if (session('coupons'))
                                         @foreach (session('coupons') as $coupon)
-                                        <div class="alert-info position-relative">
-                                                <p class="end position-absolute top-0 end-0 m-0" style="right: 10px; color: #b7062ef2;">Đang áp dụng</p>
-                                                <p><strong class="mx-2">Mã giảm giá:</strong>{{$coupon['code']}}</p>
+                                            <div class="alert-info position-relative">
+                                                <p class="end position-absolute top-0 end-0 m-0"
+                                                    style="right: 10px; color: #b7062ef2;">Đang áp dụng</p>
+                                                <p><strong class="mx-2">Mã giảm giá:</strong>{{ $coupon['code'] }}</p>
                                                 <p><strong class="mx-2">Giá trị giảm giá:</strong>
-                                                    {{ $coupon['discount_type'] == 'percentage' 
-                                                        ? $coupon['discount_value'] . ' %' 
+                                                    {{ $coupon['discount_type'] == 'percentage'
+                                                        ? $coupon['discount_value'] . ' %'
                                                         : number_format($coupon['discount_amount'], 0, ',', '.') . ' đ' }}
                                                 </p>
-                                                <p><strong class="mx-2">Số tiền được giảm:</strong>  {{ number_format($coupon['discount_amount'], 0, ',', '.') }}đ</p>
+                                                <p><strong class="mx-2">Số tiền được giảm:</strong>
+                                                    {{ number_format($coupon['discount_amount'], 0, ',', '.') }}đ</p>
                                             </div>
                                         @endforeach
                                     @endif
@@ -682,14 +687,20 @@
                                     <div class="product-container">
                                         <div class="product-image">
                                             @php
-                                            if ($item->productVariant && !empty($item->productVariant->variant_image)) {
-                                                $url = $item->productVariant->variant_image; 
-                                            } else {
-                                                $mainImage = $item->product->getMainImage(); 
-                                                $url = $mainImage ? $mainImage->image_gallery : 'default-image-path.jpg';
-                                            }
-                                             @endphp
-                                            <img src="{{ Storage::url($url) }}" alt="{{ $item->product->name }}" class="img-thumbnail" style="width: 120px;height: 100px;">
+                                                if (
+                                                    $item->productVariant &&
+                                                    !empty($item->productVariant->variant_image)
+                                                ) {
+                                                    $url = $item->productVariant->variant_image;
+                                                } else {
+                                                    $mainImage = $item->product->getMainImage();
+                                                    $url = $mainImage
+                                                        ? $mainImage->image_gallery
+                                                        : 'default-image-path.jpg';
+                                                }
+                                            @endphp
+                                            <img src="{{ Storage::url($url) }}" alt="{{ $item->product->name }}"
+                                                class="img-thumbnail" style="width: 120px;height: 100px;">
                                         </div>
                                         <div class="product-info">
                                             <div class="d-flex justify-content-between mt-1">
@@ -878,36 +889,44 @@
                                     </tr>
                                     <tr id="couponInfo">
                                         @php
-                                         //  dd(session('coupons'));
+                                            //  dd(session('coupons'));
                                         @endphp
-                                        @if(session('coupons'))
-                                            @foreach (session('coupons') as $key=> $coupon)
-                                            <tr>
-                                                <td style="padding-left: 5px;">
-                                                    <h5 style="font-weight: 100; font-size: 11px; padding-left: 20px;margin: 0px;">{{$coupon['code']}}</h5>
-                                                </td>
-                                                <td class="price-col price-coupone" > {{ number_format($coupon['discount_amount'], 0, ',', '.') }}đ</td>
-                                             </tr> 
-                                             <input type="hidden" name="coupons[{{$key}}][code]" value="{{$coupon['code']}}"/>
-                                             <input type="hidden" name="coupons[{{$key}}][discount_amount]" value="{{$coupon['discount_amount']}}"/>
-                                            @endforeach
-                                        @endif
+                                        @if (session('coupons'))
+                                            @foreach (session('coupons') as $key => $coupon)
+                                    <tr>
+                                        <td style="padding-left: 5px;">
+                                            <h5 style="font-weight: 100; font-size: 11px; padding-left: 20px;margin: 0px;">
+                                                {{ $coupon['code'] }}</h5>
+                                        </td>
+                                        <td class="price-col price-coupone">
+                                            {{ number_format($coupon['discount_amount'], 0, ',', '.') }}đ</td>
+                                    </tr>
+                                    <input type="hidden" name="coupons[{{ $key }}][code]"
+                                        value="{{ $coupon['code'] }}" />
+                                    <input type="hidden" name="coupons[{{ $key }}][discount_amount]"
+                                        value="{{ $coupon['discount_amount'] }}" />
+                                    @endforeach
+                                    @endif
                                     </tr>
                                     <tr>
                                         <td colspan="2" class="text-left">
                                             <h4>Vận chuyển</h4>
                                             <div class="form-group form-group-custom-control">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input shipp-fe" name="shipp[{{$dataShippingMethod['value']}}]" value="{{$dataShippingMethod['shipp']}}" checked onchange="updateTotal()">
+                                                    <input type="radio" class="custom-control-input shipp-fe"
+                                                        name="shipp[{{ $dataShippingMethod['value'] }}]"
+                                                        value="{{ $dataShippingMethod['shipp'] }}" checked
+                                                        onchange="updateTotal()">
                                                     <label class="custom-control-label">
-                                                        {{$dataShippingMethod['message']}}
+                                                        {{ $dataShippingMethod['message'] }}
                                                         (
-                                                        {{ is_numeric($dataShippingMethod['shipp']) ? number_format((float)$dataShippingMethod['shipp'], 0, ',', '.') : 'N/A' }} đ
+                                                        {{ is_numeric($dataShippingMethod['shipp']) ? number_format((float) $dataShippingMethod['shipp'], 0, ',', '.') : 'N/A' }}
+                                                        đ
                                                         )
-                                                    </label>                                                    
+                                                    </label>
                                                 </div>
                                             </div>
-                                               
+
                                         </td>
                                     </tr>
                                     <tr class="order-shipping">
@@ -939,7 +958,7 @@
                                             <h4>Tổng </h4>
                                         </td>
                                         <td>
-                                            <b class="total-price"><span id="totalPriceDisplay"
+                                            <b class="total-price"><span id="totalPriceDisplay" style="font-size: 2rem"
                                                     name="price">{{ number_format($subTotal, 0, ',', '.') }}
                                                     đ</span></b>
                                         </td>
@@ -972,26 +991,27 @@
 
 
     </main>
-   {{-- Modal thông báo lỗi khi áp dụng mã giảm giá --}}
+    {{-- Modal thông báo lỗi khi áp dụng mã giảm giá --}}
 
-  <!-- Modal -->
-  <div class="modal fade" id="applyToCoupon" tabindex="-1" role="dialog" aria-labelledby="applyToCouponLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content" style="max-width: 550px">
-        <div class="modal-header">
-          <h5 class="modal-title" id="applyToCouponLabel">Thông báo </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+    <!-- Modal -->
+    <div class="modal fade" id="applyToCoupon" tabindex="-1" role="dialog" aria-labelledby="applyToCouponLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="max-width: 550px">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="applyToCouponLabel">Thông báo </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        </div>
-      </div>
     </div>
-  </div>
 @endsection
 
 
@@ -1005,6 +1025,21 @@
 
 @section('scripte_logic')
     <script>
+        $(document).ready(function() {
+            $('button[data-dismiss="modal"]').on('click', function() {
+                $('#applyToCoupon').modal('hide');  // Đóng modal
+                location.reload();  // Tải lại trang
+            });
+
+            // Khi nhấn ra ngoài modal để đóng modal và tải lại trang
+            $('#applyToCoupon').on('click', function (e) {
+                if ($(e.target).hasClass('modal')) {
+                    $('#applyToCoupon').modal('hide');  // Đóng modal nếu người dùng nhấn ngoài modal
+                    location.reload();  // Tải lại trang
+                }
+            });
+        });
+
         // Chọn checkbox
         function selectPayment(selectedCheckbox) {
             // Lấy tất cả checkbox trong cùng nhóm
@@ -1044,24 +1079,27 @@
         // Hàm cập nhật phí vận chuyển
         function updateShipping() {
             const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked').value);
+            console.log('phí vận chuyển là ',shippingCost);
+            
             const subtotal = parseFloat('{{ $subTotal }}'); // Giá trị tổng phụ từ server
             const discount = parseFloat(document.getElementById('discountAmountInput')?.value ||
                 0); // Lấy giá trị giảm giá từ input (nếu có)
             calculateTotal(subtotal, discount, shippingCost); // Tính tổng với giá trị giảm giá và phí vận chuyển
         }
+
         function updateTotal() {
             const subtotal = parseFloat('{{ $subTotal }}');
             const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
             let discountTotal = 0;
-            @if(session('coupons'))
-                @foreach(session('coupons') as $coupon)
+            @if (session('coupons'))
+                @foreach (session('coupons') as $coupon)
                     discountTotal += {{ $coupon['discount_amount'] }};
                 @endforeach
             @endif
-            let total=0;
+            let total = 0;
             total = subtotal + shippingCost - discountTotal;
-            if(total<0){
-                total=0;
+            if (total < 0) {
+                total = 0;
             }
 
             document.getElementById('totalPriceDisplay').textContent = formatCurrency(total);
@@ -1076,12 +1114,13 @@
         // Hàm áp dụng mã giảm giá
         function applyCoupon() {
             const couponCode = document.getElementById("coupon_code").value.trim();
-            
+
             // Xóa thông báo lỗi nếu có khi người dùng bắt đầu nhập mã mới
             const discountInfo = document.getElementById("discount-info");
             const couponInfo = document.getElementById("couponInfo");
             if (!couponCode) {
-                document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">Vui lòng nhập mã giảm giá</p>`
+                document.querySelector("#applyToCoupon .modal-body").innerHTML =
+                    `<p style="color: red;">Vui lòng nhập mã giảm giá</p>`
                 return;
             }
             // Lấy giá trị của phí vận chuyển được chọn
@@ -1089,7 +1128,8 @@
 
             // Kiểm tra xem mã giảm giá đã được áp dụng hay chưa
             if (appliedCoupons.includes(couponCode)) {
-                document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">Mã giảm giá này đã được áp dụng</p>`
+                document.querySelector("#applyToCoupon .modal-body").innerHTML =
+                    `<p style="color: red;">Mã giảm giá này đã được áp dụng</p>`
                 return;
             }
 
@@ -1211,9 +1251,136 @@
             const btnHuy = document.getElementById('btnHuy');
 
             // Nút thêm địa chỉ mới
-            btnAddAddress.addEventListener('click', function() {
+            btnAddAddress.addEventListener('click', function () {
                 $('#editAddressModal').modal('show');
+                let isUpdating = false;
+                const newCitySelect = document.querySelector("#newCity");
+                const newDistrictSelect = document.querySelector("#newDistrict");
+                const newWardSelect = document.querySelector("#newWard");
+                const newAddressInput = document.querySelector("#newAddress");
+
+                // Disable selects initially
+                [newDistrictSelect, newWardSelect].forEach(select => {
+                    select.disabled = true;
+                });
+
+                // Fetch and populate cities
+                function getCities(selectElement, isSelected = '') {
+                    if (isUpdating) return;
+                    isUpdating = true;
+                    fetch("https://provinces.open-api.vn/api/p/")
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch cities');
+                            return response.json();
+                        })
+                        .then(data => {
+                            selectElement.innerHTML = '<option value="">Tỉnh/Thành phố</option>';
+                            data.forEach(city => {
+                                const selected = city.name === isSelected ? ' selected' : '';
+                                selectElement.innerHTML += `<option value="${city.code}"${selected}>${city.name}</option>`;
+                            });
+                        })
+                        .catch(error => console.error('Error fetching cities:', error))
+                        .finally(() => {
+                            isUpdating = false;
+                        });
+                }
+
+                // Fetch districts based on selected city
+                function getDistricts(cityCode, isSelected = '') {
+                    if (isUpdating) return;
+                    isUpdating = true;
+                    fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch districts');
+                            return response.json();
+                        })
+                        .then(data => {
+                            newDistrictSelect.innerHTML = '<option value="">Quận/Huyện</option>';
+                            data.districts.forEach(district => {
+                                const selected = district.name === isSelected ? ' selected' : '';
+                                newDistrictSelect.innerHTML += `<option value="${district.code}"${selected}>${district.name}</option>`;
+                            });
+                            newDistrictSelect.disabled = false;
+                            newWardSelect.innerHTML = '<option value="">Phường/Xã</option>';
+                            newWardSelect.disabled = true;
+                        })
+                        .catch(error => console.error('Error fetching districts:', error))
+                        .finally(() => {
+                            isUpdating = false;
+                        });
+                }
+
+                // Fetch wards based on selected district
+                function getWards(districtCode, isSelected = '') {
+                    if (isUpdating) return;
+                    isUpdating = true;
+                    fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch wards');
+                            return response.json();
+                        })
+                        .then(data => {
+                            newWardSelect.innerHTML = '<option value="">Phường/Xã</option>';
+                            data.wards.forEach(ward => {
+                                const selected = ward.name === isSelected ? ' selected' : '';
+                                newWardSelect.innerHTML += `<option value="${ward.code}"${selected}>${ward.name}</option>`;
+                            });
+                            newWardSelect.disabled = false;
+                        })
+                        .catch(error => console.error('Error fetching wards:', error))
+                        .finally(() => {
+                            isUpdating = false;
+                        });
+                }
+
+                // Reset district and ward selects
+                function resetDistrictAndWard() {
+                    newDistrictSelect.innerHTML = '<option value="">Quận/Huyện</option>';
+                    newWardSelect.innerHTML = '<option value="">Phường/Xã</option>';
+                    newDistrictSelect.disabled = true;
+                    newWardSelect.disabled = true;
+                }
+
+                // Update address input
+                function updateAddressInput() {
+                    const city = newCitySelect.options[newCitySelect.selectedIndex]?.text || '';
+                    const district = newDistrictSelect.options[newDistrictSelect.selectedIndex]?.text || '';
+                    const ward = newWardSelect.options[newWardSelect.selectedIndex]?.text || '';
+                    newAddressInput.value ='';
+                }
+
+                // Event listener for city selection
+                newCitySelect.addEventListener("change", function () {
+                    const cityCode = this.value;
+                    if (cityCode) {
+                        resetDistrictAndWard();
+                        getDistricts(cityCode);
+                    } else {
+                        resetDistrictAndWard();
+                        updateAddressInput();
+                    }
+                });
+
+                // Event listener for district selection
+                newDistrictSelect.addEventListener("change", function () {
+                    const districtCode = this.value;
+                    if (districtCode) {
+                        newWardSelect.innerHTML = '<option value="">Loading...</option>';
+                        getWards(districtCode);
+                    } else {
+                        resetDistrictAndWard();
+                        updateAddressInput();
+                    }
+                });
+
+                // Event listener for ward selection
+                newWardSelect.addEventListener("change", updateAddressInput);
+
+                // Fetch cities on modal open
+                getCities(newCitySelect);
             });
+
 
             // Nút trở lại
             btnBack.addEventListener('click', function() {
@@ -1231,6 +1398,7 @@
             const updateCitySelect = document.querySelector("#city");
             const updateDistrictSelect = document.querySelector("#district");
             const updateWardSelect = document.querySelector("#ward");
+            const tam = '';
 
             // Disable district and ward selects initially
             [updateDistrictSelect, updateWardSelect].forEach(select => {
@@ -1257,7 +1425,7 @@
             }
 
             // Function to fetch districts based on selected city
-            function getDistricts(cityCode, districtSelect, wardSelect, isSelected = '') {
+            function getDistricts(cityCode, districtSelect, wardSelect, isSelected = '') {                
                 fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
                     .then(response => {
                         if (!response.ok) throw new Error('Failed to fetch districts');
@@ -1271,30 +1439,45 @@
                                 `<option value="${district.code}"${selected}>${district.name}</option>`;
                         });
                         districtSelect.disabled = false;
-                        wardSelect.innerHTML = '<option value="">Phường/Xã</option>'; // Reset wards
-                        wardSelect.disabled = true; // Disable until district is selected
+                        let tam =updateDistrictSelect.value;
+                        if(wardSelect!==''){
+                            updateWardSelect.disabled = false;
+                            getWards(tam,updateWardSelect,wardSelect)
+                        } else{
+                            wardSelect.innerHTML = '<option value="">Phường/Xã</option>'; // Reset wards
+                            updateWardSelect.disabled = false; // Disable until district is selected
+                        }
                     })
                     .catch(error => console.error('Error fetching districts:', error));
             }
 
             // Function to fetch wards based on selected district
-            function getWards(districtCode, wardSelect, isSelected = '') {
+            function getWards(districtCode, updateWardSelect ,isSelected) {    
+
                 fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
                     .then(response => {
                         if (!response.ok) throw new Error('Failed to fetch wards');
                         return response.json();
                     })
                     .then(data => {
-                        wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
+                        
+                        updateWardSelect.innerHTML = '<option value="">Phường/Xã</option>'; // Reset options
                         data.wards.forEach(ward => {
-                            const selected = ward.name === isSelected ? ' selected' : '';
-                            wardSelect.innerHTML +=
+                            const selected = ward.name === isSelected ? ' selected' :
+                            ''; // Set selected
+                            updateWardSelect.innerHTML +=
                                 `<option value="${ward.code}"${selected}>${ward.name}</option>`;
                         });
-                        wardSelect.disabled = false; // Enable wards
+
+                        // Enable dropdown after data is loaded
+                        updateWardSelect.disabled = false;
                     })
-                    .catch(error => console.error('Error fetching wards:', error));
+                    .catch(error => {
+                        console.error('Error fetching wards:', error);
+                        wardSelect.disabled = true; // Disable dropdown if error occurs
+                    });
             }
+
 
             // Reset function for district and ward selects
             function resetDistrictAndWard(districtSelect, wardSelect) {
@@ -1320,18 +1503,17 @@
                     const ward = this.dataset.ward;
                     const district = this.dataset.district;
                     const city = this.dataset.city;
-
                     document.getElementById('id_address').value = id_address
                     document.getElementById('updateName').value = name;
                     document.getElementById('updatePhone').value = phone;
                     document.getElementById('updateAddress').value = specificAddress;
-
+                
                     getCities(updateCitySelect, city); // Update city select
 
                     const cityChangeHandler = function() {
                         const cityCode = this.value;
                         if (cityCode) {
-                            getDistricts(cityCode, updateDistrictSelect, updateWardSelect,
+                            getDistricts(cityCode, updateDistrictSelect,ward,
                                 district);
                         } else {
                             resetDistrictAndWard(updateDistrictSelect, updateWardSelect);
@@ -1349,7 +1531,7 @@
                             resetDistrictAndWard(updateWardSelect);
                         }
                     };
-
+                    
                     // Update event listeners
                     updateCitySelect.removeEventListener("change", cityChangeHandler);
                     updateCitySelect.addEventListener("change", cityChangeHandler);
@@ -1365,140 +1547,6 @@
 
 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const newCitySelect = document.querySelector("#newCity");
-            const newDistrictSelect = document.querySelector("#newDistrict");
-            const newWardSelect = document.querySelector("#newWard");
-            const newAddressInput = document.querySelector("#newAddress");
-            [newDistrictSelect, newWardSelect].forEach(select => {
-                select.disabled = true;
-            });
-
-            // Function to fetch and populate cities
-            function getCities(selectElement, isSelected = '') {
-                fetch("https://provinces.open-api.vn/api/p/")
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to fetch cities');
-                        return response.json();
-                    })
-                    .then(data => {
-                        selectElement.innerHTML = '<option value="">Tỉnh/Thành phố</option>';
-                        data.forEach(city => {
-                            const selected = city.name === isSelected ? ' selected' : '';
-                            selectElement.innerHTML +=
-                                `<option value="${city.code}"${selected}>${city.name}</option>`;
-                        });
-                        selectElement.dispatchEvent(new Event('change')); // Trigger change event after updating
-                    })
-                    .catch(error => console.error('Error fetching cities:', error));
-            }
-
-            // Function to fetch districts based on selected city
-            function getDistricts(cityCode, districtSelect, wardSelect, isSelected = '') {
-                fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to fetch districts');
-                        return response.json();
-                    })
-                    .then(data => {
-                        districtSelect.innerHTML = '<option value="">Quận/Huyện</option>';
-                        data.districts.forEach(district => {
-                            const selected = district.name === isSelected ? ' selected' : '';
-                            districtSelect.innerHTML +=
-                                `<option value="${district.code}"${selected}>${district.name}</option>`;
-                        });
-                        districtSelect.disabled = false;
-                        wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
-                        wardSelect.disabled = true;
-                        districtSelect.dispatchEvent(new Event('change'));
-                    })
-                    .catch(error => console.error('Error fetching districts:', error));
-            }
-
-            // Function to fetch wards based on selected district
-            function getWards(districtCode, wardSelect, isSelected = '') {
-                fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to fetch wards');
-                        return response.json();
-                    })
-                    .then(data => {
-                        wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
-                        data.wards.forEach(ward => {
-                            const selected = ward.name === isSelected ? ' selected' : '';
-                            wardSelect.innerHTML +=
-                                `<option value="${ward.code}"${selected}>${ward.name}</option>`;
-                        });
-                        wardSelect.disabled = false;
-                    })
-                    .catch(error => console.error('Error fetching wards:', error));
-            }
-
-            // Reset function for district and ward selects
-            function resetDistrictAndWard(districtSelect, wardSelect) {
-                districtSelect.innerHTML = '<option value="">Quận/Huyện</option>';
-                wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
-                districtSelect.disabled = true;
-                wardSelect.disabled = true;
-            }
-            // Disable district and ward selects initially
-            newDistrictSelect.disabled = true;
-            newWardSelect.disabled = true;
-
-            function updateAddressInput() {
-                const city = newCitySelect.options[newCitySelect.selectedIndex]?.text || '';
-                const district = newDistrictSelect.options[newDistrictSelect.selectedIndex]?.text || '';
-                const ward = newWardSelect.options[newWardSelect.selectedIndex]?.text || '';
-                newAddressInput.value = ''
-            }
-
-
-            newCitySelect.addEventListener("change", function () {
-                const cityCode = this.value;
-                if (cityCode) {
-                    // Chỉ fetch khi giá trị thay đổi
-                    if (newDistrictSelect.getAttribute('data-city') !== cityCode) {
-                        newDistrictSelect.setAttribute('data-city', cityCode);
-                        getDistricts(cityCode, newDistrictSelect, newWardSelect);
-                    }
-                } else {
-                    resetDistrictAndWard(newDistrictSelect, newWardSelect);
-                    updateAddressInput();
-                }
-            });
-
-            // Event listener for district selection
-            newDistrictSelect.addEventListener("change", function() {
-                const districtCode = this.value;
-                if (districtCode) {
-                    // Fetch wards based on selected district
-                    getWards(districtCode, newWardSelect);
-                } else {
-                    resetWard(newWardSelect);
-                    updateAddressInput(); // Clear input if no district is selected
-                }
-            });
-
-            // Event listener for ward selection
-            newWardSelect.addEventListener("change", updateAddressInput);
-
-            // Function to reset district and ward selects
-            function resetDistrictAndWard(districtSelect, wardSelect) {
-                districtSelect.innerHTML = '<option value="">Quận/Huyện</option>';
-                wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
-                districtSelect.disabled = true;
-                wardSelect.disabled = true;
-            }
-
-            // Function to reset ward selects only
-            function resetWard(wardSelect) {
-                wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
-                wardSelect.disabled = true;
-            }
-
-            // Fetch cities on page load
-            getCities(newCitySelect);
-        });
 
         document.addEventListener("DOMContentLoaded", function() {
             const addAddressForm = document.querySelector("#addAddressForm");
@@ -1538,19 +1586,24 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.address) {
-                            console.log(data.address);
-
-                            alert('Thông báo : ' + data.message);
-                            $('#addAddressModal').modal('hide');
-                            location.reload();
-                        } else {
-                            alert('Có lỗi xảy ra: ' + data.message);
+                        $('#addAddressModal').modal('hide');
+                        document.querySelector("#applyToCoupon .modal-body").innerHTML='';
+                         if (data.message) {
+                            document.querySelector("#applyToCoupon .modal-body").innerHTML =
+                                `<p class='text-primary'>${data.message}</p>`
+                            $('#applyToCoupon').modal('show');
                         }
+                        location.reload();
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert('Có lỗi xảy ra!');
+                        $('#addAddressModal').modal('hide');
+                        document.querySelector("#applyToCoupon .modal-body").innerHTML='';
+                         if (error) {
+                            document.querySelector("#applyToCoupon .modal-body").innerHTML =
+                                `<p style="color: red;">${error}</p>`
+                            $('#applyToCoupon').modal('show');
+                        }
+                        location.reload();
                     });
             });
         });
@@ -1599,7 +1652,6 @@
                 return selectElement.selectedOptions[0].textContent;
             }
             $('#btnConfirmUpdate').on('click', function(e) {
-                console.log(document.getElementById("btnConfirmUpdate"));
 
                 e.preventDefault();
                 let formData = {
@@ -1611,19 +1663,22 @@
                     ward: getSelectedText(document.getElementById('ward')),
                     address: $('#updateAddress').val(),
                 };
-                console.log(formData);
 
                 $.ajax({
                     type: 'POST',
                     url: '/update-address',
                     data: formData,
-                    success: function(response) {
-                        alert("Địa chỉ đã được cập nhật thành công!");
-                        location.reload();
+                    success: function(response) {         
+                        $('#addAddressModal').modal('hide');
+                        document.querySelector("#applyToCoupon .modal-body").innerHTML='';
+                         if (response.success) {
+                            document.querySelector("#applyToCoupon .modal-body").innerHTML =
+                                `<p class='text-primary'>${response.success}</p>`
+                            $('#applyToCoupon').modal('show');
+                        }
                     },
                     error: function(xhr) {
-                        console.error(xhr.responseText);
-                        alert("Có lỗi xảy ra, vui lòng thử lại.");
+                        location.reload();
                     }
                 });
             });
