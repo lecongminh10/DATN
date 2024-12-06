@@ -25,7 +25,7 @@
                             <div class="row g-3">
                                 <div class="card-header d-flex justify-content-between">
                                     <div>
-                                        <h5 class="card-title mb-0">Sửa danh mục</h5>
+                                        <h5 class="card-title mb-0">Cập nhật danh mục</h5>
                                     </div>
                                     <div class="form-check form-switch form-switch-primary mt-3">
                                         <input class="form-check-input" type="checkbox" role="switch"
@@ -74,7 +74,9 @@
 
                                 <div class="col-lg-12">
                                     <div class="text-end">
-                                        <button class="btn btn-primary">Sửa danh mục</button>
+                                        <button class="btn btn-success">Cập nhật</button>
+                                        <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">Quay lại</a>
+
                                     </div>
                                 </div>
                             </div><!--end row-->

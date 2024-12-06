@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-12">
                         <div class="text-end">
-                            <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-info">Danh sách thanh toán</a>
+                            <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-info">Quay lại</a>
                         </div>
                     </div>
                 </div>

@@ -26,8 +26,8 @@
                     <i class="ri-more-2-fill"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ route('admin.categories.show', $category->id) }}" class="dropdown-item">View</a></li>
-                    <li><a class="dropdown-item" href="{{ route('admin.categories.edit', $category->id) }}">Edit</a></li>
+                    <li><a href="{{ route('admin.categories.show', $category->id) }}" class="dropdown-item">Xem</a></li>
+                    <li><a class="dropdown-item" href="{{ route('admin.categories.edit', $category->id) }}">Cập nhật</a></li>
                     <li>
                         <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
                             @csrf

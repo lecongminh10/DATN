@@ -38,7 +38,7 @@
                             <input class="form-control" id="description" name="description1" ></input>
                         </div>
                         <div class="text-end my-1">
-                            <button type="button" class="btn btn-secondary" id="add-more">Add Value</button>
+                            <button type="button" class="btn btn-secondary" id="add-more">Thêm giá trị</button>
                         </div>
                         <div id="permission-values-container">
                             <div class="row mb-3 permission-value-item">

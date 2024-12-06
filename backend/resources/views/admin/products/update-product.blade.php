@@ -774,8 +774,8 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <button class="btn btn-primary" type="submit" id="uploadButton">Save</button>
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                        <button class="btn btn-success" type="submit" id="uploadButton">Cập nhật</button>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Quay lại</a>
                                     </div>
                                 </div>
                             </div>
@@ -790,7 +790,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="viewImageModalLabel">Variant Image</h5>
+          <h5 class="modal-title" id="viewImageModalLabel">Ảnh biến thể</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center">

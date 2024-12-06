@@ -54,8 +54,7 @@
                                                     <i class="ri-add-box-fill"></i> Thêm
                                                 </a> --}}
                                                 <a href="{{ route('admin.products.listProduct') }}"
-                                                    class="btn btn-soft-primary ms-2">
-                                                    <i class="ri-home-6-fill"></i>Quay lại
+                                                    class="btn btn-soft-primary ms-2">Quay lại
                                                 </a>
                                             </div>
                                         </div>

@@ -28,18 +28,18 @@
                             <form action="{{ route('admin.footer.update') }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="about_us" class="form-label">About Us</label>
+                                    <label for="about_us" class="form-label">Chúng tôi</label>
                                     <textarea name="about_us" id="about_us" class="form-control" rows="3">{{ $footer->about_us ?? '' }}</textarea>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="address" class="form-label">Address</label>
+                                    <label for="address" class="form-label">Địa chỉ</label>
                                     <input type="text" name="address" id="address" class="form-control"
                                         value="{{ $footer->address ?? '' }}">
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="phone" class="form-label">Phone</label>
+                                    <label for="phone" class="form-label">Số điện thoại</label>
                                     <input type="tel" name="phone" id="phone" class="form-control"
                                         value="{{ $footer->phone ?? '' }}">
                                 </div>
@@ -51,13 +51,13 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="working_hours" class="form-label">Working Hours</label>
+                                    <label for="working_hours" class="form-label">Giờ làm việc</label>
                                     <input type="text" name="working_hours" id="working_hours" class="form-control"
                                         value="{{ $footer->working_hours ?? '' }}">
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="customer_service" class="form-label">Customer Service</label>
+                                    <label for="customer_service" class="form-label">Dịch vụ khách hàng</label>
                                     <textarea name="customer_service" id="customer_service" class="form-control" rows="5">{{ $footer->customer_service ?? '' }}</textarea>
                                 </div>
 

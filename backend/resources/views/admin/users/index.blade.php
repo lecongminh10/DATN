@@ -10,7 +10,7 @@
                     ['name' => 'Người dùng ', 'url' => '#'],
                 ],
             ])
-            <div class="roư">
+            <div class="row">
                 <div class="col-lg-12">
                     <div class="card" id="tasksList">
                         <div class="card-header border-0">
@@ -50,15 +50,15 @@
                                                         value="option">
                                                 </div>
                                             </th>
-                                            <th class="sort" data-sort="id">ID</th>
-                                            <th class="sort" data-sort="username">Tên</th>
-                                            <th class="sort" data-sort="avatar">Ảnh</th>
-                                            <th class="sort" data-sort="email">Email</th>
-                                            <th class="sort" data-sort="permission">Quyền</th>
-                                            <th class="sort" data-sort="status">Status</th>
-                                            <th class="sort" data-sort="gender">Giới Tính</th>
-                                            <th class="sort" data-sort="date_of_birth">Ngày Sinh</th>
-                                            <th class="sort" data-sort="phone_number">Số Điện Thoại</th>
+                                            <th data-sort="id">ID</th>
+                                            <th data-sort="username">Tên</th>
+                                            <th data-sort="avatar">Ảnh</th>
+                                            <th data-sort="email">Email</th>
+                                            <th data-sort="permission">Quyền</th>
+                                            <th data-sort="status">Status</th>
+                                            <th data-sort="gender">Giới Tính</th>
+                                            <th data-sort="date_of_birth">Ngày Sinh</th>
+                                            <th data-sort="phone_number">Số Điện Thoại</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list form-check-all" id="userTableBody">
@@ -112,10 +112,12 @@
                                                 </td>
                                                 <td>
                                                     <?php
-                                                    $image = $value->profile_picture;
+                                                        // Lấy đường dẫn ảnh từ Storage
+                                                        $image = $value->profile_picture ? Storage::url($value->profile_picture) : null;
+                                                        // Đường dẫn ảnh mặc định từ mạng
+                                                        $defaultImage = 'https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png';
                                                     ?>
-                                                    <img src="{{ Storage::url($image) }}" alt="Ảnh đại diện" width="100px"
-                                                        height="100px">
+                                                    <img src="{{ $image ? $image : $defaultImage }}" alt="Ảnh đại diện"  style="border-radius: 5px" width="80px" height="80px">
                                                 </td>
                                                 <td class="client_name">{{ $value->email }}</td>
                                                 <td class="project_name">
@@ -162,15 +164,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end mt-2">
-                                <div class="pagination-wrap hstack gap-2">
-                                    <a class="page-item pagination-prev disabled" href="#">
-                                        Previous
-                                    </a>
-                                    <ul class="pagination listjs-pagination mb-0"></ul>
-                                    <a class="page-item pagination-next" href="#">
-                                        Next
-                                    </a>
-                                </div>
+                                @include('admin.components.pagination', ['data' => $user])
                             </div>
                         </div>
                     </div>
@@ -232,118 +226,124 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function() {
-                                    const checkboxes = document.querySelectorAll('input[name="chk_child"]');
-                                    const deleteMultipleBtn = document.getElementById('remove-actions');
-                                    const checkAll = document.getElementById('checkAll');
-                                    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-                                    let selectedIds = [];
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkboxes = document.querySelectorAll('input[name="chk_child"]');
+            const deleteMultipleBtn = document.getElementById('remove-actions');
+            const checkAll = document.getElementById('checkAll');
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            let selectedIds = [];
 
-                                    checkboxes.forEach(checkbox => {
-                                        checkbox.addEventListener('change', function() {
-                                            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-                                            deleteMultipleBtn.style.display = anyChecked ? 'block' : 'none';
-                                        });
-                                    });
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                    deleteMultipleBtn.style.display = anyChecked ? 'block' : 'none';
+                });
+            });
 
-                                    checkAll.addEventListener('change', function() {
-                                        checkboxes.forEach(checkbox => {
-                                            checkbox.checked = checkAll.checked;
-                                        });
-                                        deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none';
-                                    });
+            checkAll.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = checkAll.checked;
+                });
+                deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none';
+            });
 
-                                    deleteMultipleBtn.addEventListener('click', function() {
-                                        selectedIds = Array.from(checkboxes)
-                                            .filter(checkbox => checkbox.checked)
-                                            .map(checkbox => checkbox.value);
+            deleteMultipleBtn.addEventListener('click', function() {
+                selectedIds = Array.from(checkboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
 
-                                        if (selectedIds.length === 0) {
-                                            alert('Vui lòng chọn ít nhất một người dùng để xóa.');
-                                            return;
-                                        }
+                if (selectedIds.length === 0) {
+                    alert('Vui lòng chọn ít nhất một người dùng để xóa.');
+                    return;
+                }
 
-                                        document.getElementById('modalUsername').innerText =
-                                            `Người dùng: ${selectedIds.length} người`;
-                                        document.getElementById('modalTitle').innerText =
-                                            'Bạn có chắc chắn muốn xóa những người dùng này?';
+                document.getElementById('modalUsername').innerText =
+                    `Người dùng: ${selectedIds.length} người`;
+                document.getElementById('modalTitle').innerText =
+                    'Bạn có chắc chắn muốn xóa những người dùng này?';
 
-                                        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-                                        const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
+                const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+                const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-                                        confirmDeleteBtn.onclick = function() {
-                                            const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
-                                            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                                'content');
+                confirmDeleteBtn.onclick = function() {
+                    const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content');
 
-                                            fetch('/admin/users/deleteMultiple', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': csrfToken,
-                                                    },
-                                                    body: JSON.stringify({
-                                                        ids: JSON.stringify(selectedIds),
-                                                        forceDelete: forceDeleteValue,
-                                                    }),
-                                                })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        location.reload();
-                                                    } else {
-                                                        alert('Có lỗi xảy ra khi xóa người dùng.');
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error('Error:', error);
-                                                });
-                                        };
+                    fetch('/admin/users/deleteMultiple', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                ids: JSON.stringify(selectedIds),
+                                forceDelete: forceDeleteValue,
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra khi xóa người dùng.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                };
 
-                                        deleteModal.show();
-                                    });
+                deleteModal.show();
+            });
 
-                                    const searchInput = document.getElementById('searchInput');
-                                    searchInput.addEventListener('input', function() {
-                                        const filter = searchInput.value.toLowerCase();
-                                        const rows = document.querySelectorAll('#userTableBody tr');
-                                        let noResults = true;
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const filter = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#userTableBody tr');
+                let noResults = true;
 
-                                        rows.forEach(row => {
-                                            const username = row.querySelector('.tasks_name').innerText.toLowerCase();
-                                            const email = row.querySelector('.client_name').innerText.toLowerCase();
-                                            const phoneNumber = row.querySelector('.status').innerText.toLowerCase();
+                rows.forEach(row => {
+                    const username = row.querySelector('.tasks_name').innerText.toLowerCase();
+                    const email = row.querySelector('.client_name').innerText.toLowerCase();
+                    const phoneNumber = row.querySelector('.status').innerText.toLowerCase();
 
-                                            if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(
-                                                    filter)) {
-                                                row.style.display = '';
-                                                noResults = false;
-                                            } else {
-                                                row.style.display = 'none';
-                                            }
-                                        });
+                    if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(
+                            filter)) {
+                        row.style.display = '';
+                        noResults = false;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
 
-                                        const noResultDiv = document.querySelector('.noresult');
-                                        noResultDiv.style.display = noResults ? 'block' : 'none';
-                                    });
-                                });
+                const noResultDiv = document.querySelector('.noresult');
+                noResultDiv.style.display = noResults ? 'block' : 'none';
+            });
+        });
 
-                                function confirmDelete(userId, username) {
-                                    document.getElementById('modalUsername').innerText = `Người dùng: ${username}`;
-                                    const deleteBtn = document.getElementById('confirmDeleteBtn');
-                                    const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
+        function confirmDelete(userId, username) {
+            document.getElementById('modalUsername').innerText = `Người dùng: ${username}`;
+            const deleteBtn = document.getElementById('confirmDeleteBtn');
+            const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-                                    deleteBtn.onclick = function() {
-                                        const forceDeleteInput = document.getElementById(`forceDeleteInput-${userId}`);
-                                        forceDeleteInput.value = forceDeleteCheckbox.checked ? 'true' : 'false';
+            deleteBtn.onclick = function() {
+                const forceDeleteInput = document.getElementById(`forceDeleteInput-${userId}`);
+                forceDeleteInput.value = forceDeleteCheckbox.checked ? 'true' : 'false';
 
-                                        document.getElementById(`deleteForm-${userId}`).submit();
-                                    };
+                document.getElementById(`deleteForm-${userId}`).submit();
+            };
 
-                                    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-                                    deleteModal.show();
-                                }
-                            </script>
-                        @endsection
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+    </script>
+@endsection

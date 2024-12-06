@@ -74,7 +74,7 @@
                                                 <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                                             </a>
                                             <button type="button" class="btn btn-soft-danger" id="delete-selected">
-                                                <i class="ri-delete-bin-2-line"></i>
+                                                <i class="ri-delete-bin-2-line align-bottom me-1"></i>
                                             </button>
                                             <a href="{{ route('admin.categories.trashed') }}" class="btn btn-warning">
                                                 <i class="ri-delete-bin-5-line align-bottom me-1"></i> Thùng rác
@@ -98,7 +98,7 @@
                                                 placeholder="Tìm kiếm..." value="{{ request('search') }}" id="search-input"
                                                 style="max-width: 150px;">
                                             <button type="submit" class="btn btn-primary btn-sm"
-                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Tìm kiếm</button>
+                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem; width: 80px;"><i class="ri-equalizer-fill fs-13 align-bottom me-1"></i> Tìm</button>
                                         </form>
                                     </div>
                                 </div><br>

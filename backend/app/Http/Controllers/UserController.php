@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Permission;
+use App\Models\WishList;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
@@ -33,9 +34,11 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = $this->userService->getAll();
+        $perPage = $request->input('perPage', 10); // Số lượng mặc định là 10
+        $user = $this->userService->getAll($perPage);
+
         return view('admin.users.index', compact('user'));
     }
 
@@ -134,6 +137,7 @@ class UserController extends Controller
             'phone_number' => 'required|string|max:15',
             'email' => 'required|email|max:255',
             'date_of_birth' => 'required|date',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
         $data = $request->all();
 
@@ -171,7 +175,7 @@ class UserController extends Controller
         if ($request->has('id_permissions')) {
             $user->permissionsValues()->sync($request->id_permissions);
         }
-        return redirect()->route('users.index');
+        return redirect()->route('admin.users.index');
     }
 
     public function destroy($id, Request $request)
@@ -240,9 +244,10 @@ class UserController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
         $cartCount = $carts->sum('quantity');
-        return view('client.users.index', compact('carts', 'cartCount'));
+        return view('client.users.index', compact('carts', 'cartCount', 'userId', 'wishlistCount'));
     }
 
     public function showClient($id)
@@ -255,9 +260,10 @@ class UserController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-
+                
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount'));
+        $wishlistCount = WishList::where('user_id',$user)->count();
+        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount', 'wishlistCount'));
     }
 
     public function updateClient(Request $request, $id)
@@ -289,13 +295,14 @@ class UserController extends Controller
             'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
             'date_of_birth.before' => 'Ngày sinh phải trước ngày hôm nay.',
         ]);
-
-
+        
+        
         $data = $request->all();
 
         $user = $this->userService->updateUser($id, $data);
 
         return redirect()->route('users.showClient', $user->id);
+
     }
 
     public function showOrder(Request $request)
@@ -328,8 +335,9 @@ class UserController extends Controller
             ->get();
 
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
-        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount', 'wishlistCount'));
     }
 
 
@@ -376,6 +384,8 @@ class UserController extends Controller
         $cartCount = $carts->sum('quantity');
         $address = Address::getActiveAddress(Auth::user()->id);
 
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+
         $orderItems = $orders->items;
         $firstProduct = $orderItems->first()->product;
         $similarProducts = Product::where('category_id', $firstProduct->category_id)
@@ -396,7 +406,8 @@ class UserController extends Controller
             'orderStatus',
             'showButtons',
             'dateTimeOrders',
-            'messageStatus'
+            'messageStatus',
+            'wishlistCount'
         ));
     }
 
@@ -518,7 +529,8 @@ class UserController extends Controller
             ->get();
         }
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show_rank', compact('user','carts','cartCount'));
+        $wishlistCount = WishList::where('user_id',$user)->count();
+        return view('client.users.show_rank', compact('user','carts','cartCount','wishlistCount'));
     }
 
     public function cancelOrder($orderId)

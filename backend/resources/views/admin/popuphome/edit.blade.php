@@ -4,8 +4,8 @@
     <div class="page-content">
         <div class="container-fluid">
             @include('admin.layouts.component.page-header', [
-                'title' => 'Quản lý ',
-                'breadcrumb' => [['name' => '', 'url' => 'javascript: void(0);'], ['name' => '', 'url' => '#']],
+                'title' => 'Popuphome',
+                'breadcrumb' => [['name' => 'Quản lí', 'url' => 'javascript: void(0);'], ['name' => 'Popuphome', 'url' => '#']],
             ])
             <div class="row">
                 <div class="col-lg-12">

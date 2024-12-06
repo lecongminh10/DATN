@@ -81,7 +81,7 @@
                                         <div class="live-preview">
                                             <div class="row gy-4">
                                                 <div class="col-md-12">
-                                                    <label for="name" class="form-label">Name <span
+                                                    <label for="name" class="form-label">Tên <span
                                                             class="text-danger">*</span></label>
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
@@ -91,11 +91,11 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Description</label>
+                                                    <label for="description" class="form-label">Mô tả</label>
                                                     <textarea class="form-control" name="description" id="description">{{ old('description') }}</textarea>
                                                 </div>
                                                 <div class="col-md-8 mt-3">
-                                                    <label for="permalink" class="form-label">Permalink <span
+                                                    <label for="permalink" class="form-label">Liên kết cố định <span
                                                             class="text-danger">*</span></label>
                                                     <textarea class="form-control @error('permalink') is-invalid @enderror" name="permalink" id="permalink" readonly>{{ old('permalink') }}</textarea>
                                                     @error('permalink')
@@ -122,14 +122,14 @@
                                                     </div>
                                                     <div class="card mt-3">
                                                         <div class="card-header">
-                                                            <h4 class="card-title mb-0">Template<span
+                                                            <h4 class="card-title mb-0">Bản mẫu<span
                                                                     class="text-danger">*</span></h4>
                                                         </div>
                                                         <div class="card-body">
                                                             <select
                                                                 class="form-select @error('template') is-invalid @enderror"
                                                                 id="templateSelect" name="template">
-                                                                <option value="" disabled selected>-- Chọn Template --
+                                                                <option value="" disabled selected>-- Chọn bản mẫu --
                                                                 </option>
                                                                 <option value="default"
                                                                     {{ old('template') == 'default' ? 'selected' : '' }}>
@@ -156,7 +156,7 @@
                                 <!-- Content -->
                                 <div class="card mt-3">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0">Content <span class="text-danger">*</span></h4>
+                                        <h4 class="card-title mb-0">Nội dung <span class="text-danger">*</span></h4>
                                     </div>
                                     <div class="card-body">
                                         <textarea name="content" id="editor-container" style="height: 300px;">{{ old('content') }}</textarea>
@@ -222,14 +222,14 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="seoTitle" class="form-label">SEO Title</label>
+                        <label for="seoTitle" class="form-label">Tiêu đề SEO</label>
                         <input type="text" class="form-control @error('seo_title') is-invalid @enderror" id="seoTitle" name="seo_title" value="{{ old('seo_title') }}">
                         @error('seo_title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="seoDescription" class="form-label">SEO Description</label>
+                        <label for="seoDescription" class="form-label">Mô tả SEO</label>
                         <textarea class="form-control @error('seo_description') is-invalid @enderror" id="seoDescription" name="seo_description" rows="3">{{ old('seo_description') }}</textarea>
                         @error('seo_description')
                             <div class="invalid-feedback">{{ $message }}</div>

@@ -50,9 +50,6 @@
                 </li>
                 <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Bài viết</a></li>
                 <li><a href="demo1-about.html"><i class="sicon-users"></i>Chúng tôi</a></li>
-                <li><a href="#"><i class="sicon-star"></i>Đánh giá</a></li>
-                {{-- <li><a href="https://1.envato.market/DdLk5" target="_blank"><i class="icon-cat-gift"></i>Buy Porto!<span
-                            class="tip tip-hot">Hot</span></a></li> --}}
             </ul>
         </nav>
     </div>

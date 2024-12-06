@@ -14,12 +14,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Order Details</h4>
+                    <h4 class="mb-sm-0">Đơn hàng</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                            <li class="breadcrumb-item active">Order Details</li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Quản lí</a></li>
+                            <li class="breadcrumb-item active">Đơn hàng</li>
                         </ol>
                     </div>
 
@@ -47,12 +47,12 @@
                             <table class="table table-nowrap align-middle table-borderless mb-0">
                                 <thead class="table-light text-muted">
                                     <tr>
-                                        <th scope="col">Product Details</th>
-                                        <th scope="col">Item Price</th>
-                                        <th scope="col">Price Sale</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Rating</th>
-                                        <th scope="col" class="text-end">Total Amount</th>
+                                        <th scope="col">Chi tiết sản phẩm</th>
+                                        <th scope="col">Giá</th>
+                                        <th scope="col"></th>
+                                        <th scope="col" class="text-center">Số lượng</th>
+                                        {{-- <th scope="col">Đánh giá</th> --}}
+                                        <th scope="col" class="text-end">Tổng</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -76,48 +76,48 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <h5 class="fs-15"><a href="#" class="link-primary">{{ $value->product->name }}</a></h5>
-                                                    @if (isset($value->productVariant) && !empty($value->productVariant->attributeValue))
-                                                       <div>
-                                                        @foreach ($value->productVariant->attributeValue as $attributeValue)
-                                                            <p class="text-muted mb-0" >{{ $value->productVariant->attribute->attribute_name }}:
-                                                                <span class="fw-medium">{{ $attributeValue->attribute_value }}</span>
-                                                            </p>
-                                                        @endforeach
-                                                       </div>
+                                                    <div class="text">Loại: </div>
+                                                    @if ($value->productVariant)
+                                                        <div class="product-details  mt-2" style="font-size: 10px;">
+                                                            <div class="attribute-list">
+                                                                @if ($value->productVariant->attributeValues)
+                                                                    @foreach ($value->productVariant->attributeValues as $attributeValue)
+                                                                        <p class="attribute-value">
+                                                                            <span>{{ $attributeValue->attribute->attribute_name }}:</span>
+                                                                            <strong>{{ $attributeValue->attribute_value }}</strong>
+                                                                        </p>
+                                                                    @endforeach
+                                                                @endif
+                                                            </div>
+                                                        </div>
                                                     @endif
+                                                    
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             @if ($value->productVariant)
-                                                {{ $value->productVariant->price_modifier }}
+                                                {{ number_format($value->productVariant->price_modifier, 0, ',', '.') }} ₫
                                             @else
-                                                {{ $value->product->price_regular }}
+                                                {{ number_format($value->product->price_sale ?? $value->product->price_regular, 0, ',', '.') }} ₫
                                             @endif
                                         </td>
-                                        <td>
-                                            @if ($value->productVariant)
-                                                0
-                                            @else
-                                                @if ($value->product->price_sale == null)
-                                                    0
-                                                @else
-                                                    {{ $value->product->price_sale }}
-                                                @endif
-                                            @endif
-                                        </td>
-                                        <td>{{ $value->quantity }}</td>
-                                        <td>
-                                            <div class="text-warning fs-15">
-                                                <div class="rating" data-rating="{{ $value->product->rating }}"></div>
-                                            </div>
-                                        </td>
+                                        <td></td>
+                                        <td class="text-center">{{ $value->quantity }}</td>
                                         <td class="fw-medium text-end">
                                             @php
-                                            $itemPrice = $value->productVariant ? $value->productVariant->price_modifier * $value->quantity : ($value->product->price_regular - $value->product->price_sale) * $value->quantity;
-                                            $grandTotal += $itemPrice;;
+                                                // Lấy giá cơ bản của sản phẩm
+                                                $basePrice = $value->product->price_sale ?? $value->product->price_regular;
+
+                                                // Tính giá sản phẩm
+                                                $itemPrice = $value->productVariant 
+                                                    ? $value->productVariant->price_modifier * $value->quantity 
+                                                    : $basePrice * $value->quantity;
+
+                                                // Cộng vào tổng giá trị đơn hàng
+                                                $grandTotal += $itemPrice;
                                             @endphp
-                                            ${{ number_format($itemPrice, 2) }}
+                                            {{ number_format($itemPrice, 0, ',', '.') }} ₫
                                         </td>
                                     </tr>
                                     @endforeach
@@ -127,20 +127,25 @@
                                             <table class="table table-borderless mb-0">
                                                 <tbody>
                                                     <tr>
-                                                        <td>Sub Total :</td>
-                                                        <td class="text-end">${{ number_format($subTotal, 2) }}</td>
+                                                        <td>Tổng phụ:</td>
+                                                        <td class="text-end">{{ number_format($grandTotal, 0, ',', '.') }} ₫</td>
                                                     </tr>
+                                                    @if ($discount > 0)
+                                                        <tr>
+                                                            <td>Giảm giá <span class="text-muted">()</span>:</td>
+                                                            <td class="text-end">-{{ number_format($discount, 0, ',', '.') }} ₫</td>
+                                                        </tr>
+                                                    @endif
                                                     <tr>
-                                                        <td>Discount <span class="text-muted">(VELZON15)</span>:</td>
-                                                        <td class="text-end">-${{ number_format($totalDiscount, 2) }}</td>
+                                                        <td>Phí ship:</td>
+                                                        <td class="text-end">{{ number_format($shippingFee, 0, ',', '.') }} ₫</td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>Shipping Charge :</td>
-                                                        <td class="text-end">${{ number_format($shippingCharge, 2) }}</td>
-                                                    </tr>
+                                                    @php
+                                                        $totalPrice = $grandTotal - $discount + $shippingFee
+                                                    @endphp
                                                     <tr class="border-top border-top-dashed">
-                                                        <th scope="row">Total (USD) :</th>
-                                                        <th class="text-end">${{ number_format($total, 2) }} </th>
+                                                        <th scope="row">Tổng:</th>
+                                                        <th class="text-end">{{ number_format($totalPrice, 0, ',', '.') }} ₫</th>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -155,7 +160,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-sm-flex align-items-center">
-                            <h5 class="card-title flex-grow-1 mb-0">Order Status</h5>
+                            <h5 class="card-title flex-grow-1 mb-0">Trạng thái đơn hàng</h5>
                             <div class="flex-shrink-0 mt-2 mt-sm-0">
                                 <a href="javascript:void(0);" class="btn btn-soft-info btn-sm mt-2 mt-sm-0"><i class="ri-map-pin-line align-middle me-1"></i> Change Address</a>
                                 <a href="javascript:void(0);" class="btn btn-soft-danger btn-sm mt-2 mt-sm-0"><i class="mdi mdi-archive-remove-outline align-middle me-1"></i> Cancel Order</a>
@@ -279,7 +284,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex">
-                            <h5 class="card-title flex-grow-1 mb-0"><i class="mdi mdi-truck-fast-outline align-middle me-1 text-muted"></i> Logistics Details</h5>
+                            <h5 class="card-title flex-grow-1 mb-0"><i class="mdi mdi-truck-fast-outline align-middle me-1 text-muted"></i> Trạng thái</h5>
                             <div class="flex-shrink-0">
                                 <a href="javascript:void(0);" class="badge bg-primary text-light fs-11" >{{ $data->status}}</a>
                             </div>
@@ -288,9 +293,9 @@
                     <div class="card-body">
                         <div class="text-center">
                             <lord-icon src="https://cdn.lordicon.com/uetqnvvg.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:80px;height:80px"></lord-icon>
-                            <h5 class="fs-16 mt-2">RQK Logistics</h5>
-                            <p class="text-muted mb-0">ID: {{ $data->id }}</p>
-                            {{-- <p class="text-muted mb-0">Payment Mode : {{ $data->payment->paymentGateway->name }}</p> --}}
+                            {{-- <h5 class="fs-16 mt-2">RQK Logistics</h5> --}}
+                            <p class="text-muted mb-0">Order: {{ $data->code }}</p>
+                            <p class="text-muted mb-0">Phương thức thanh toán : {{ $payment->paymentGateway->name }}</p>
                         </div>
                     </div>
                 </div>
@@ -299,9 +304,9 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex">
-                            <h5 class="card-title flex-grow-1 mb-0">Customer Details</h5>
+                            <h5 class="card-title flex-grow-1 mb-0">Khách hàng</h5>
                             <div class="flex-shrink-0">
-                                <a href="javascript:void(0);" class="link-secondary">View Profile</a>
+                                <a href="#" class="link-secondary">Xem hồ sơ</a>
                             </div>
                         </div>
                     </div>
@@ -319,7 +324,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h6 class="fs-14 mb-1"></h6>
-                                        <p class="text-muted mb-0">Customer</p>
+                                        <p class="text-muted mb-0">{{ $user->username }}</p>
                                     </div>
                                 </div>
                             </li>
@@ -331,7 +336,7 @@
                 <!--end card-->
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Store Address</h5>
+                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Địa chỉ cửa hàng</h5>
                     </div>
                     <div class="card-body">
                         {{-- <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
@@ -354,7 +359,7 @@
                 <!--end card-->
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Shipping Address</h5>
+                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i>Địa chỉ giao hàng</h5>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
@@ -370,49 +375,55 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="ri-secure-payment-line align-bottom me-1 text-muted"></i> Payment Details</h5>
+                        <h5 class="card-title mb-0"><i class="ri-secure-payment-line align-bottom me-1 text-muted"></i>Chi tiết thanh toán</h5>
                     </div>
                     <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="flex-shrink-0">
-                                <p class="text-muted mb-0">Transactions:</p>
+                        @if ($payment)
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="flex-shrink-0">
+                                    <p class="text-muted mb-0">Giao dịch:</p>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <h6 class="mb-0">
+                                        {{ substr($payment->transaction_id, 0, 20) }}...
+                                    </h6>
+                                </div>
                             </div>
-                            <div class="flex-grow-1 ms-2">
-                                <h6 class="mb-0">#VLZ124561278124</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="flex-shrink-0">
+                                    <p class="text-muted mb-0">Phương thức thanh toán:</p>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <h6 class="mb-0">{{ $paymentGateway->name }}</h6>
+                                </div>
                             </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="flex-shrink-0">
-                                <p class="text-muted mb-0">Payment Method:</p>
+                            @if ($paymentGateway->gateway_type == 'online')
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="flex-shrink-0">
+                                        <p class="text-muted mb-0">Tên chủ thẻ:</p>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <h6 class="mb-0">Joseph Parker</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="flex-shrink-0">
+                                        <p class="text-muted mb-0">Số thẻ:</p>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <h6 class="mb-0">xxxx xxxx xxxx 2456</h6>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <p class="text-muted mb-0">Tổng số tiền:</p>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <h6 class="mb-0">{{ number_format($payment->amount, 0, ',', '.') }} ₫</h6>
+                                </div>
                             </div>
-                            <div class="flex-grow-1 ms-2">
-                                <h6 class="mb-0">Debit Card</h6>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="flex-shrink-0">
-                                <p class="text-muted mb-0">Card Holder Name:</p>
-                            </div>
-                            <div class="flex-grow-1 ms-2">
-                                <h6 class="mb-0">Joseph Parker</h6>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="flex-shrink-0">
-                                <p class="text-muted mb-0">Card Number:</p>
-                            </div>
-                            <div class="flex-grow-1 ms-2">
-                                <h6 class="mb-0">xxxx xxxx xxxx 2456</h6>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <p class="text-muted mb-0">Total Amount:</p>
-                            </div>
-                            <div class="flex-grow-1 ms-2">
-                                <h6 class="mb-0">$415.96</h6>
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
                 <!--end card-->

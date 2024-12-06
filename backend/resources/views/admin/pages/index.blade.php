@@ -21,7 +21,7 @@
                                 <div class="col-sm">
                                     <div>
                                         <a href="{{ route('admin.pages.index') }}">
-                                            <h5 class="card-title mb-0">Page List</h5>
+                                            <h5 class="card-title mb-0">Danh sách trang</h5>
                                         </a>
                                     </div>
                                 </div>
@@ -31,9 +31,9 @@
                                             <i class="ri-delete-bin-5-fill"></i>
                                         </button>
                                         <a href="{{ route('admin.pages.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Add Page</a>
+                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Thêm trang</a>
                                         <a href="{{ route('admin.pages.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
+                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
                                     </div>
                                 </div>
                             </div>
@@ -54,7 +54,7 @@
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
                                                     <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm kiếm
                                                     </button>
                                                 </div>
                                             </div>
@@ -85,15 +85,15 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name"> Name</th>
-                                                <th data-sort="api_url">Permalink</th>
-                                                <th data-sort="api_token">Description</th>
-                                                <th data-sort="phone">Content</th>
-                                                <th data-sort="email">Status</th>
-                                                <th data-sort="is_active">template</th>
+                                                <th data-sort="carrier_name"> Tên</th>
+                                                <th data-sort="api_url">Liên kết cố định</th>
+                                                <th data-sort="api_token">Mô tả</th>
+                                                <th data-sort="phone">Nội dung</th>
+                                                <th data-sort="email">Trạng thái</th>
+                                                <th data-sort="is_active">Bản mẫu</th>
                                                 {{-- <th data-sort="is_active">seo_title</th>
                                                 <th data-sort="is_active">seo_description</th> --}}
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         @foreach ($pages as $item)

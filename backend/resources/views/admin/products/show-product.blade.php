@@ -315,7 +315,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin sản phẩm</h4>
                                     </div><!-- end card header -->
                                     <div class="card-body">
                                         <div class="live-preview">
@@ -503,7 +503,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Nội dung</h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
@@ -752,7 +752,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Quay lại</a>
                                     </div>
                                 </div>
                             </div>

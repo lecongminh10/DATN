@@ -52,10 +52,10 @@
                                                         </div>
                                                         <div>
                                                             <a href="{{ route('admin.products.addProduct') }}"
-                                                                class="btn btn-primary">Thêm mới</a>
+                                                                class="btn btn-success"><i class="ri-add-line align-bottom me-"></i> Thêm mới</a>
                                                             <a href="{{ route('admin.products.deleted') }}"
-                                                                class="btn btn-soft-danger ms-2">
-                                                                <i class="ri-delete-bin-2-line"></i> Thùng rác
+                                                                class="btn btn-warning ms-2 align-bottom me-">
+                                                                <i class="ri-delete-bin-2-line align-bottom me-"></i> Thùng rác
                                                             </a>
                                                         </div>
                                                     </div>

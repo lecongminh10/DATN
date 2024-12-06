@@ -44,7 +44,7 @@
                                                     value="{{ request('date_to') }}" style="max-width: 150px;">
                                             </div>
                                             <button type="submit" class="btn btn-primary btn-sm"
-                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Lọc</button>
+                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem; width: 90px;"><i class="ri-equalizer-fill fs-13 align-bottom me-1 "></i> Tìm</button>
                                         </form>
                                     </div>
                                 </div>

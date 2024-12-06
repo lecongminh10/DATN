@@ -46,6 +46,6 @@ class Payment extends Model
     }
 
     public function paymentGateway(){
-        return $this->belongsTo(PaymentGateway::class);
+        return $this->belongsTo(PaymentGateway::class, 'payment_gateway_id');
     }
 }

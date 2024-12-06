@@ -21,8 +21,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.tags.deleted') }}">Tags List
-                                                        SotfDelete</a></h5>
+                                                        href="{{ route('admin.tags.deleted') }}">Danh sách thẻ đã xóa</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -52,8 +51,8 @@
                                                             {{ request()->get('status') == 'inactive' ? 'selected' : '' }}>
                                                             Inactive</option>
                                                     </select>
-                                                </div> --}}
-                                                {{-- <div class="col-3 ms-3">
+                                                </div> 
+                                                <div class="col-3 ms-3">
                                                     <button type="button" class="btn btn-primary w-100"
                                                         onclick="filterData();">
                                                         <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
@@ -72,7 +71,7 @@
                                                     </a>
                                                     <a href="{{ route('admin.tags.index') }}"
                                                         class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Trang list
+                                                        <i class="ri-home-6-fill"></i>Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -90,8 +89,8 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name">Tags Name</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="carrier_name">Tên thẻ</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">

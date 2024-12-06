@@ -43,7 +43,7 @@
                             </div><!--end col-->
 
                             <div class="col-lg-12">
-                                <h5 class="fw-semibold mb-3">Ảnh</h5>
+                                <label class=" mb-3">Ảnh</label>
                                 <input type="file" class="form-control" name="image" data-allow-reorder="true" data-max-file-size="25MB" data-max-files="3">
                             </div><!--end col-->
 
@@ -69,7 +69,8 @@
 
                             <div class="col-lg-12">
                                 <div class="text-end">
-                                    <button class="btn btn-primary">Tạo danh mục</button>
+                                    <button class="btn btn-success">Thêm mới</button>
+                                    <a href="{{ route('admin.categories.index') }}" class="btn btn-primary"> Quay lại</a>
                                 </div>
                             </div>
                         </div><!--end row-->
