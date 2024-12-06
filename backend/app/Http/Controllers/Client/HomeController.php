@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\Address;
 use App\Models\Product;
 use App\Models\Category;
@@ -47,6 +48,7 @@ class HomeController extends Controller
     }
     public function index(Request $request)
     {
+        $pages = Page::where('is_active', 1)->get();
         $userId = auth()->id();
         $carts  = collect();
         if($userId) {
@@ -59,7 +61,7 @@ class HomeController extends Controller
         $bestSellingProducts = $this->productService->bestSellingProducts();
         $latestProducts = $this->productService->latestProducts();
         $categories = $this->getCategoriesForMenu();
-        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'carts', 'cartCount'));
+        return view('client.home', compact('pages','categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'carts', 'cartCount'));
     }
 
     public function showProducts(Request  $request)
@@ -140,13 +142,24 @@ class HomeController extends Controller
 
     public function getCategoriesForMenu()
     {
-        // Lấy tất cả danh mục cha
         $parentCategories = $this->categoryService->getParent()->take(9);
-        // Lấy danh mục con cho từng danh mục cha
         foreach ($parentCategories as $parent) {
-            // Lấy danh mục con bằng cách sử dụng parent_id của danh mục cha
             $parent->children = $this->categoryService->getChildCategories($parent->id);
         }
-        return $parentCategories; // Trả về danh mục cha với danh mục con
+        return $parentCategories;
     }
+    public function show($permalink)
+    {
+        $page = Page::where('is_active', 1)->get();
+        $categories = $this->categoryService->getAll();
+        $pages = Page::where('permalink', $permalink)
+                    ->where('is_active', 1)
+                    ->firstOrFail();
+        $userId = auth()->id();
+        $carts = $userId ? Cart::where('user_id', $userId)->with('product')->get() : collect();
+        $cartCount = $carts->sum('quantity');
+
+        return view('client.pages.show', compact('page','pages','cartCount', 'categories'));
+    }
+
 }

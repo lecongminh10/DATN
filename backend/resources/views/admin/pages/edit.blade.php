@@ -82,7 +82,7 @@
                                         <div class="live-preview">
                                             <div class="row gy-4">
                                                 <div class="col-md-12">
-                                                    <label for="name" class="form-label">Name <span
+                                                    <label for="name" class="form-label">Tên <span
                                                             class="text-danger">*</span></label>
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
@@ -92,11 +92,11 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Description</label>
+                                                    <label for="description" class="form-label">Mô tả</label>
                                                     <textarea class="form-control" name="description" id="description" value="{{ old('description', $pages->description) }}">{{$pages->description}}</textarea>
                                                 </div>
                                                 <div class="col-md-8 mt-3">
-                                                    <label for="permalink" class="form-label">Permalink <span
+                                                    <label for="permalink" class="form-label">Đường Link <span
                                                             class="text-danger">*</span></label>
                                                     <textarea class="form-control @error('permalink') is-invalid @enderror" name="permalink" id="permalink" readonly>{{ old('permalink',$pages->permalink) }}</textarea>
                                                     @error('permalink')
@@ -113,30 +113,30 @@
                                                         <div class="card-body">
                                                             <select class="form-select @error('is_active') is-invalid @enderror" id="statusSelect" name="is_active">
                                                                 <option value="" disabled selected>-- Chọn Trạng thái --</option>
-                                                                <option value="1" {{ old('is_active', $pages->is_active) == '1' ? 'selected' : '' }}>Active</option>
-                                                                <option value="0" {{ old('is_active', $pages->is_active) == '0' ? 'selected' : '' }}>Inactive</option>
+                                                                <option value="1" {{ old('is_active', $pages->is_active) == '1' ? 'selected' : '' }}>Kích hoạt</option>
+                                                                <option value="0" {{ old('is_active', $pages->is_active) == '0' ? 'selected' : '' }}>Không kích hoạt</option>
                                                             </select>
                                                             @error('is_active')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="card mt-3">
+                                                    {{-- <div class="card mt-3">
                                                         <div class="card-header">
-                                                            <h4 class="card-title mb-0">Template <span class="text-danger">*</span></h4>
+                                                            <h4 class="card-title mb-0">Kiểu Trang <span class="text-danger">*</span></h4>
                                                         </div>
                                                         <div class="card-body">
                                                             <select class="form-select @error('template') is-invalid @enderror" id="templateSelect" name="template">
                                                                 <option value="" disabled selected>-- Chọn Template --</option>
-                                                                <option value="default" {{ old('template', $pages->template) == 'default' ? 'selected' : '' }}>Default</option>
-                                                                <option value="coming_soon" {{ old('template', $pages->template) == 'coming_soon' ? 'selected' : '' }}>Coming Soon</option>
-                                                                <option value="blog" {{ old('template', $pages->template) == 'blog' ? 'selected' : '' }}>Blog</option>
+                                                                <option value="default" {{ old('template', $pages->template) == 'default' ? 'selected' : '' }}>Mặc định</option>
+                                                                <option value="coming_soon" {{ old('template', $pages->template) == 'coming_soon' ? 'selected' : '' }}>Sắp ra mắt</option>
+                                                                <option value="blog" {{ old('template', $pages->template) == 'blog' ? 'selected' : '' }}>Trang</option>
                                                             </select>
                                                             @error('template')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                             @enderror
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                             </div>
 
@@ -147,7 +147,7 @@
                                 <!-- Content -->
                                 <div class="card mt-3">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0">Content <span class="text-danger">*</span></h4>
+                                        <h4 class="card-title mb-0">Nội dung <span class="text-danger">*</span></h4>
                                     </div>
                                     <div class="card-body">
                                         <textarea name="content" id="editor-container" style="height: 300px;">{{ old('content',$pages->content) }}</textarea>
@@ -158,7 +158,7 @@
                                 </div>
 
                                 <!-- Image Upload -->
-                                <div class="card mt-3">
+                                {{-- <div class="card mt-3">
                                     <div class="card-header">
                                         <h4 class="card-title mb-0">Mục ảnh Trang <span class="text-danger">*</span></h4>
                                     </div>
@@ -174,7 +174,7 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
                                 {{-- <div class="card mt-3 shadow-sm border-0">
                                     <div class="card-header">
                                         <h5 class="mb-0">SEO</h5>
@@ -275,7 +275,7 @@
     <script>
         document.getElementById('name').addEventListener('input', function() {
             const name = this.value.trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-            document.getElementById('permalink').textContent = `http://127.0.0.1:8000/${name}`;
+            document.getElementById('permalink').textContent = `${name}`;
         });
     </script>
     <script>

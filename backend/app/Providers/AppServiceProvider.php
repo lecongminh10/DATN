@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\Order;
-use App\Observers\OrderObserver;
-use App\Models\Announcement;
 use Carbon\Carbon;
+use App\Models\Page;
+use App\Models\Order;
+use App\Models\Announcement;
+use App\Observers\OrderObserver;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

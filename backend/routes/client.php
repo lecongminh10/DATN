@@ -5,17 +5,18 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\RefundController;
+use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\PayMentController;
 use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController; 
-use App\Http\Controllers\RefundController;
-use App\Http\Controllers\ReturnController;
+use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController;
 
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
+    Route::get('pages/{permalink}', [HomeController::class, 'show'])->name('pages.show');
     //profile
     Route::get('/user',                                     [UserController::class, 'indexClient'])->name('users.indexClient');
     Route::get('profile/{id}',                              [UserController::class, 'showClient'])->name('users.showClient');
@@ -46,7 +47,7 @@ Route::prefix('/')->group(function () {
     Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
     Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
     Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
-    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder'); // tahnh toán 
+    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder'); // tahnh toán
     Route::delete('remove/{id}',                            [OrderController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('update-cart',                              [OrderController::class, 'updateCart'])->name('updateCart');
     Route::get('/blog',                                     [PostController::class, 'index'])->name('client.blogs.index');
@@ -69,7 +70,7 @@ Route::prefix('/')->group(function () {
             return response()->json(['success' => false]);
         }
         session()->forget('coupons'); // Clear the coupons session
-        return response()->json(['success' => true]); 
+        return response()->json(['success' => true]);
     });
     Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
 
