@@ -28,6 +28,7 @@ class PostController extends Controller
         $cartCount = $carts->sum('quantity');
         $tags = Tag::all();
         $categories = Category::with('children')->whereNull('parent_id')->get();
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         return view('client.blogs.index', compact('posts', 'categories','carts', 'cartCount', 'tags','wishlistCount')); 
     }
 

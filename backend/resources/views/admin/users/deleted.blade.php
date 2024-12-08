@@ -55,15 +55,15 @@
                                                 <input class="form-check-input" type="checkbox" id="checkAll" value="option">
                                             </div>
                                         </th>
-                                        <th class="sort" data-sort="id">ID</th>
-                                        <th class="sort" data-sort="username">Tên</th>
-                                        <th class="sort" data-sort="email">Email</th>
-                                        <th class="sort" data-sort="permission">Quyền</th>
-                                        <th class="sort" data-sort="status">Status</th>
-                                        <th class="sort" data-sort="gender">Giới Tính</th>
-                                        <th class="sort" data-sort="date_of_birth">Ngày Sinh</th>
-                                        <th class="sort" data-sort="phone_number">Số Điện Thoại</th>
-                                        <th class="sort" data-sort="actino"></th>
+                                        <th data-sort="id">ID</th>
+                                        <th data-sort="username">Tên</th>
+                                        <th data-sort="email">Email</th>
+                                        <th data-sort="permission">Quyền</th>
+                                        <th data-sort="status">Trạng thái</th>
+                                        <th data-sort="gender">Giới Tính</th>
+                                        <th data-sort="date_of_birth">Ngày Sinh</th>
+                                        <th data-sort="phone_number">Số Điện Thoại</th>
+                                        <th data-sort="actino"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="list form-check-all" id="userTableBody">
@@ -159,7 +159,7 @@
                                 </a>
                             </div>
                         </div>
-                        <a href="/admin/users" class="btn btn-primary float-end">Trở về</a>
+                        <a href="/admin/users" class="btn btn-primary float-end">Quay lại</a>
                     </div>
                 </div>
     

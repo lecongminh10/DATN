@@ -14,10 +14,10 @@
         <div class="container-fluid">
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Chi tiết Blog',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Blogs', 'url' => '#'],
+                    ['name' => 'Chi tiết bài viết', 'url' => '#'],
                 ],
             ])
             <div class="row">

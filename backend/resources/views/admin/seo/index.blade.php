@@ -8,8 +8,8 @@
             @include('admin.layouts.component.page-header', [
                 'title' => 'Seo',
                 'breadcrumb' => [
-                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Seo', 'url' => '#'],
+                    ['name' => 'Seo', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Danh sách Seo', 'url' => '#'],
                 ],
             ])
 
@@ -21,7 +21,7 @@
                                 <div class="col-sm">
                                     <div>
                                         <a href="{{ route('admin.seo.index') }}">
-                                            <h5 class="card-title mb-0">Seo List</h5>
+                                            <h5 class="card-title mb-0">Danh sách Seo</h5>
                                         </a>
                                     </div>
                                 </div>
@@ -31,9 +31,9 @@
                                             <i class="ri-delete-bin-5-fill"></i>
                                         </button>
                                         <a href="{{ route('admin.seo.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Add Seo</a>
+                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Thêm Seo</a>
                                         <a href="{{ route('admin.seo.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
+                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
                                     </div>
                                 </div>
                             </div>
@@ -55,7 +55,7 @@
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
                                                     <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm kiếm
                                                     </button>
                                                 </div>
                                             </div>
@@ -87,12 +87,12 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="meta_title">Meta Title</th>
-                                                <th data-sort="meta_description">Meta Description</th>
-                                                <th data-sort="meta_keywords">Meta Keywords</th>
-                                                <th data-sort="canonical_url">Canonical URL</th>
-                                                <th data-sort="is_active">Trạng thái </th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="meta_title">Tiêu đề meta</th>
+                                                <th data-sort="meta_description">Mô tả Meta</th>
+                                                <th data-sort="meta_keywords">Từ khóa meta</th>
+                                                <th data-sort="canonical_url">URL chuẩn</th>
+                                                <th data-sort="is_active">Trạng thái</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">

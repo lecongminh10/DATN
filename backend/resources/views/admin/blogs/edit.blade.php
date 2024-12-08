@@ -6,10 +6,10 @@
 
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Cập nhật Blog',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Cập nhật Blog', 'url' => '#'],
+                    ['name' => 'Cập nhật bài viết', 'url' => '#'],
                 ],
             ])
 

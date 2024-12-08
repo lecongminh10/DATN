@@ -51,7 +51,7 @@
                                                     <input type="text" class="form-control me-2" name="search"
                                                         placeholder="Tìm kiếm..." value="{{ request('search') }}"
                                                         id="search-input" style="max-width: 150px;">
-                                                    <button type="submit" class="btn btn-primary btn-sm">Tìm kiếm</button>
+                                                    <button type="submit" class="btn btn-primary btn-sm" style="width: 80px"><i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm</button>
                                                 </form>
                                             </div>
                                         </div><br>
@@ -62,12 +62,12 @@
                                                         <input type="checkbox" id="select-all">
                                                     </th>
                                                     <th>ID</th>
-                                                    <th>Name</th>
-                                                    <th>Description</th>
-                                                    <th>Image</th>
-                                                    <th>Is Active</th>
-                                                    <th>Deleted At</th>
-                                                    <th>Action</th>
+                                                    <th>Tên danh mục</th>
+                                                    <th>Mô tả</th>
+                                                    <th>Ảnh</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Ngày xóa</th>
+                                                    <th>Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

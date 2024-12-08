@@ -21,8 +21,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.pages.deleted') }}">Pages List
-                                                        SotfDelete</a></h5>
+                                                        href="{{ route('admin.pages.deleted') }}">Danh sách trang đã xóa</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -90,15 +89,15 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name"> Name</th>
-                                                <th data-sort="api_url">Permalink</th>
-                                                <th data-sort="api_token">Description</th>
-                                                <th data-sort="phone">Content</th>
-                                                <th data-sort="email">Status</th>
-                                                <th data-sort="is_active">template</th>
-                                                <th data-sort="is_active">seo_title</th>
-                                                <th data-sort="is_active">seo_description</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="carrier_name"> Tên</th>
+                                                <th data-sort="api_url">Liên kết cố định</th>
+                                                <th data-sort="api_token">Mô tả</th>
+                                                <th data-sort="phone">Nội dung</th>
+                                                <th data-sort="email">Trạng thái</th>
+                                                <th data-sort="is_active">Bản mẫu</th>
+                                                <th data-sort="is_active">Tiêu đề SEO</th>
+                                                <th data-sort="is_active">Mô tả SEO</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         @foreach ($pages as $item)

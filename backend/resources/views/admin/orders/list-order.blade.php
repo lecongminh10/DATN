@@ -68,7 +68,7 @@ if (!function_exists('isStatus')) {
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16"></i></button>
-                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-danger"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
+                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-warning"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
                                     </div>
                                 </div>
                             </div>
@@ -87,15 +87,15 @@ if (!function_exists('isStatus')) {
                                     <!-- Date Filter -->
                                     <div class="col-xxl-2 col-sm-6">
                                         <div>
-                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Select date" value="{{ request('date') }}">
+                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Chọn ngày" value="{{ request('date') }}">
                                         </div>
                                     </div>
                                     <!-- Status Filter -->
                                     <div class="col-xxl-2 col-sm-4">
                                         <div>
                                             <select class="form-control" name="status" data-choices data-choices-search-false id="idStatus">
-                                                <option class="bg-light" value="" disabled>Status</option>
-                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All</option>
+                                                <option class="bg-light" value="" disabled>Trạng thái</option>
+                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tất cả</option>
                                                 <option value="Chờ xác nhận" {{ request('status') == 'Chờ xác nhận' ? 'selected' : '' }}>Chờ xác nhận</option>
                                                 <option value="Đã xác nhận" {{ request('status') == 'Đã xác nhận' ? 'selected' : '' }}>Đã xác nhận</option>
                                                 <option value="Đang giao" {{ request('status') == 'Đang giao' ? 'selected' : '' }}>Đang giao</option>

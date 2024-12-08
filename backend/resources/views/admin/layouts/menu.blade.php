@@ -4,19 +4,19 @@
         <!-- Dark Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('theme/assets/images/logo-dark.png') }}" alt="" height="17">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
         </a>
         <!-- Light Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('theme/assets/images/logo-light.png') }}" alt="" height="17">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -233,20 +233,6 @@
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
                                             <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
-                                        </li>                                        
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#sidebarinterface" class="nav-link" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarinterface"
-                                    data-key="t-product">
-                                    Giao diện
-                                </a>
-                                <div class="collapse menu-dropdown" id="sidebarinterface">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="{{ route('admin.footer.edit') }}" class="nav-link {{ request()->routeIs('admin.footer.edit') ? 'active' : '' }}" data-key="t-product-list">Footer</a>
                                         </li>                                        
                                     </ul>
                                 </div>

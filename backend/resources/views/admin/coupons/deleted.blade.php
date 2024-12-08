@@ -7,12 +7,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Coupons</h4>
+                        <h4 class="mb-sm-0">Mã Coupons</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">App</a></li>
-                                <li class="breadcrumb-item active">Coupons</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Quản lí</a></li>
+                                <li class="breadcrumb-item active">Mã Coupons</li>
                             </ol>
                         </div>
                     </div>
@@ -53,8 +53,7 @@
                                                     <select class="form-select" aria-label=".form-select-sm example"
                                                         id="idStatus" name="status">
                                                         <option value=""
-                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Select
-                                                            Status</option>
+                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Chọn trạng thái</option>
                                                         <option value="1"
                                                             {{ request()->get('status') == '1' ? 'selected' : '' }}>Active
                                                         </option>
@@ -67,20 +66,20 @@
                                                     <select id="idAppliesTo" name="applies_to" class="form-select">
                                                         <option value=""
                                                             {{ request()->get('applies_to') == '' ? 'selected' : '' }}>
-                                                            Applies To</option>
+                                                            Áp dụng cho</option>
                                                         <option value="product"
                                                             {{ request()->get('applies_to') == 'product' ? 'selected' : '' }}>
-                                                            Products</option>
+                                                            Sản phẩm</option>
                                                         <option value="category"
                                                             {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
-                                                            Categories</option>
+                                                            Danh mục</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <select id="idDiscountType" name="discount_type" class="form-select">
                                                         <option value=""
                                                             {{ request()->get('discount_type') == '' ? 'selected' : '' }}>
-                                                            Discount Type</option>
+                                                            Loại giảm giá</option>
                                                         <option value="percentage"
                                                             {{ request()->get('discount_type') == 'percentage' ? 'selected' : '' }}>
                                                             Percentage</option>
@@ -93,11 +92,11 @@
                                                     <div class="btn-group w-100" role="group" aria-label="Filter buttons">
                                                         <button type="button" class="btn btn-primary"
                                                             onclick="filterData();">
-                                                            <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                            <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm
                                                         </button>
                                                         <button type="button" class="btn btn-secondary"
                                                             onclick="clearFilters();">
-                                                            <i class="ri-close-circle-fill me-2 align-bottom"></i>Clear
+                                                            <i class="ri-close-circle-fill me-2 align-bottom"></i>Hủy
                                                         </button>
                                                     </div>
                                                 </div>

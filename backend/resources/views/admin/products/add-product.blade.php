@@ -316,7 +316,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Thêm sản phẩm</h4>
                                     </div><!-- end card header -->
                                     <div class="card-body">
                                         <div class="live-preview">
@@ -495,7 +495,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content <span class="text-danger">*</span></label></h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Nội dung <span class="text-danger">*</span></label></h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
@@ -749,9 +749,9 @@
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header align-items-center d-flex">
-                                            <button class="btn btn-primary" type="submit"
-                                                id="uploadButton">Save</button>
-                                                <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                            <button class="btn btn-success" style="width:100px; cursor: pointer" type="submit"
+                                                id="uploadButton">Thêm mới</button>
+                                                <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2" style="width:90px; cursor: pointer">Quay lại</a>
                                         </div>
                                     </div>
                                 </div>

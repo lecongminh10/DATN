@@ -68,10 +68,10 @@
     <div class="page-content">
         <div class="container-fluid">
             @include('admin.layouts.component.page-header', [
-                'title' => 'Danh mục ',
+                'title' => 'Hoàn trả ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Danh mục', 'url' => '#'],
+                    ['name' => 'Hoàn trả', 'url' => '#'],
                 ],
             ])
             <div class="row">
@@ -102,7 +102,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                    <button type="submit" class="btn btn-primary"><i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm</button>
                                 </div>
                             </form>
 

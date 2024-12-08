@@ -4,21 +4,21 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Cart;
+use App\Models\Permission;
+use App\Models\WishList;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Refund;
 use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Models\WishList;
-use App\Models\Permission;
 use App\Models\UserReview;
 use Illuminate\Http\Request;
 use App\Models\OrderLocation;
 use App\Services\UserService;
 use App\Services\AddressServices;
 use App\Events\AdminActivityLogged;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -34,9 +34,11 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = $this->userService->getAll();
+        $perPage = $request->input('perPage', 10); // Số lượng mặc định là 10
+        $user = $this->userService->getAll($perPage);
+
         return view('admin.users.index', compact('user'));
     }
 
@@ -135,6 +137,7 @@ class UserController extends Controller
             'phone_number' => 'required|string|max:15',
             'email' => 'required|email|max:255',
             'date_of_birth' => 'required|date',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
         $data = $request->all();
 
@@ -315,6 +318,7 @@ class UserController extends Controller
         $user->save();
     
         return redirect()->route('users.showClient', $user->id);
+
     }
     
 
@@ -348,8 +352,9 @@ class UserController extends Controller
             ->get();
 
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
-        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount', 'wishlistCount'));
     }
 
 
@@ -396,6 +401,8 @@ class UserController extends Controller
         $cartCount = $carts->sum('quantity');
         $address = Address::getActiveAddress(Auth::user()->id);
 
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+
         $orderItems = $orders->items;
         $firstProduct = $orderItems->first()->product;
         $similarProducts = Product::where('category_id', $firstProduct->category_id)
@@ -416,7 +423,8 @@ class UserController extends Controller
             'orderStatus',
             'showButtons',
             'dateTimeOrders',
-            'messageStatus'
+            'messageStatus',
+            'wishlistCount'
         ));
     }
 
@@ -538,7 +546,8 @@ class UserController extends Controller
             ->get();
         }
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show_rank', compact('user','carts','cartCount'));
+        $wishlistCount = WishList::where('user_id',$user)->count();
+        return view('client.users.show_rank', compact('user','carts','cartCount','wishlistCount'));
     }
 
     public function cancelOrder($orderId)

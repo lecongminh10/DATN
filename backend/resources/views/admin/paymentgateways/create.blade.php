@@ -39,7 +39,7 @@
                                         <button type="submit" class="btn btn-primary me-2">Thêm mới</button>
                                     </div>
                                     <div class="text-end">
-                                        <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-info">Danh sách cổng thanh toán</a>
+                                        <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-info">Quay lại</a>
                                     </div>
                                 </div>
                             </div>

@@ -9,7 +9,7 @@
                 'title' => 'thẻ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'thẻ', 'url' => '#'],
+                    ['name' => 'Thẻ', 'url' => '#'],
                 ],
             ])
 
@@ -21,7 +21,7 @@
                                 <div class="col-sm">
                                     <div>
                                         <a href="{{ route('admin.tags.index') }}">
-                                            <h5 class="card-title mb-0">Tags List</h5>
+                                            <h5 class="card-title mb-0">Danh sách thẻ</h5>
                                         </a>
                                     </div>
                                 </div>
@@ -31,9 +31,9 @@
                                             <i class="ri-delete-bin-5-fill"></i>
                                         </button>
                                         <a href="{{ route('admin.tags.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Add Tags</a>
+                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Thêm thẻ</a>
                                         <a href="{{ route('admin.tags.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
+                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
                                     </div>
                                 </div>
                             </div>
@@ -54,7 +54,7 @@
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
                                                     <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm kiếm
                                                     </button>
                                                 </div>
                                             </div>
@@ -86,8 +86,8 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name">Tag Name</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="carrier_name">Tên thẻ</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         @foreach ($tags as $item)

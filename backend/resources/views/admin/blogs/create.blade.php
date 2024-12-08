@@ -15,10 +15,10 @@
 
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Thêm mới Blog',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Thêm mới Blog', 'url' => '#'],
+                    ['name' => 'Thêm mới bài viết', 'url' => '#'],
                 ],
             ])
 

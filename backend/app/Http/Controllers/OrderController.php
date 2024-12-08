@@ -30,19 +30,23 @@ use App\Repositories\OrderRepository;
 use App\Services\OrderLocationService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 class OrderController extends Controller
 {
 
     protected $orderService;
     protected $orderLocationService;
+    public $order;
 
     public function __construct(
         OrderService $orderService,
         OrderLocationService $orderLocationService,
+        Order $order,
 
     ) {
         $this->orderService = $orderService;
         $this->orderLocationService = $orderLocationService;
+        $this->order = $order;
     }
     /**
      * Display a listing of the resource.
@@ -155,45 +159,50 @@ class OrderController extends Controller
     {
         $data = $this->orderService->getById($id);
         $user = $data->user;
-        // $admin = User::join('permissions_value_users', 'users.id', '=', 'permissions_value_users.user_id')
-        // ->join('permissions_values', 'permissions_value_users.permission_value_id', '=', 'permissions_values.id')
-        // ->join('addresses', 'users.id', '=', 'addresses.user_id')
-        // ->where('permissions_values.value', 'admin_role')
-        // ->select('users.username', 'users.email', 'users.phone_number', 'addresses.address_line', 'addresses.address_line1', 'addresses.address_line2')
-        // ->first();
-        // dd($admin);
 
-        // $users = User::with('addresses')->first();
-        // dd($user);
-
+        // Lấy địa chỉ giao hàng của đơn hàng
         $orderLocation = $this->orderLocationService->getAll()->where('order_id', $id)->first();
 
-        $orderItems = $data->items()->with(['product', 'productVariant.attribute', 'productVariant.attributeValue'])->get();
-        // $productVar = ProductVariant::with(['attributes', 'attributes.attributeValues'])->find($idVar);
-        // // dd($productVar);
+        // Lấy danh sách sản phẩm trong đơn hàng
+        $orderItems = $data->items()->with(['product'])->get();
 
-
-        $subTotal = 0;
-        $totalDiscount = 0;
-
-        foreach ($orderItems as $value) {
-            if ($value->productVariant) {
-                $itemPrice = $value->productVariant->price_modifier * $value->quantity;
-                $subTotal += $itemPrice;
+        // Lấy ảnh sản phẩm (ưu tiên ảnh biến thể nếu có, hoặc ảnh chính nếu không có)
+        $images = [];
+        foreach ($orderItems as $item) {
+            if ($item->productVariant && !empty($item->productVariant->variant_image)) {
+                // Lấy ảnh từ biến thể sản phẩm
+                $images[] = Storage::url($item->productVariant->variant_image);
             } else {
-                $itemPrice = ($value->product->price_regular - $value->product->price_sale) * $value->quantity;
-                $subTotal += $itemPrice;
+                // Lấy ảnh chính từ sản phẩm
+                $mainImage = $item->product->getMainImage();
+                $images[] = $mainImage ? Storage::url($mainImage->image_gallery) : asset('images/default-image.jpg');
             }
-
-            $totalDiscount += $value->discount;
         }
 
-        $shippingCharge = $data->shippingMethod->amount ?? 0;
-        $total = $subTotal - $totalDiscount + $shippingCharge;
+        // Lấy phí vận chuyển từ bảng shipping_methods
+        $shippingFee = $data->shippingMethod->shipping_fee ?? 0;
 
-        $paymentGatewayName = $data->payment->paymentGateway->name ?? 'No Payment Gateway';
+        // Lấy giá trị giảm giá từ coupon_usage
+        $discount = 0;
+        if ($data->couponUsage) {
+            $discount = $data->couponUsage->discount_value ?? 0;
+        }
 
-        return view('admin.orders.order-detail', compact('data', 'user', 'orderLocation', 'orderItems', 'subTotal', 'totalDiscount', 'shippingCharge', 'total', 'paymentGatewayName'));
+        // Lấy thông tin thanh toán và cổng thanh toán
+        $payment = $data->payment()->with('paymentGateway')->first(); // Lấy thông tin thanh toán cùng cổng thanh toán
+        $paymentGateway = $payment->paymentGateway ?? null; // Lấy thông tin cổng thanh toán (nếu có)
+
+        return view('admin.orders.order-detail', compact(
+            'data',
+            'user',
+            'orderLocation',
+            'orderItems',
+            'discount',
+            'shippingFee',
+            'images', 
+            'payment',
+            'paymentGateway'
+        ));
     }
 
     public function showModalEdit($code)
@@ -293,6 +302,7 @@ class OrderController extends Controller
         }else{
             $dataShippingMethod['shipp']=0;
         }
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
         return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod','wishlistCount'));
     }
@@ -563,6 +573,7 @@ class OrderController extends Controller
         $categories = Category::with('children')->whereNull('parent_id')->get();
 
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
         // $wishLists = WishList::with(['product', 'productVariant', 'attributeValues.attribute'])
         //     ->where('user_id', $userId)
@@ -570,7 +581,7 @@ class OrderController extends Controller
         // dd($wishLists);
 
 
-        return view('client.products.wishlist', compact('wishLists', 'categories', 'carts', 'cartCount'));
+        return view('client.products.wishlist', compact('wishLists', 'categories', 'carts', 'cartCount', 'wishlistCount'));
     }
 
     public function addWishList(Request $request)

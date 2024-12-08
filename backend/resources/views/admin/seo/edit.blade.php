@@ -5,11 +5,10 @@
         <div class="container-fluid">
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Chỉnh sửa Seo ',
+                'title' => 'Seo ',
                 'breadcrumb' => [
-                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Seo', 'url' => '#'],
-                    ['name' => 'Chỉnh sửa', 'url' => '#'],
+                    ['name' => 'Seo', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Chỉnh sửa Seo', 'url' => '#'],
                 ],
             ])
             <div class="row">
@@ -33,7 +32,7 @@
                                     <div class="card-body">
                                         <!-- Meta Title -->
                                         <div class="mb-3">
-                                            <label class="form-label" for="meta-title-input">Meta Title</label>
+                                            <label class="form-label" for="meta-title-input">Tiêu đề meta</label>
                                             <input type="text" class="form-control" id="meta-title-input"
                                                 name="meta_title" placeholder="Nhập Meta Title"
                                                 value="{{ old('meta_title', $seo->meta_title) }}">
@@ -44,7 +43,7 @@
 
                                         <!-- Meta Description -->
                                         <div class="mb-3">
-                                            <label class="form-label" for="meta-description-input">Meta Description</label>
+                                            <label class="form-label" for="meta-description-input">Mô tả Meta</label>
                                             <textarea class="form-control" id="meta-description-input" name="meta_description" rows="3" placeholder="Nhập Meta Description">{{ old('meta_description', $seo->meta_description) }}</textarea>
                                             @error('meta_description')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -53,7 +52,7 @@
 
                                         <!-- Meta Keywords -->
                                         <div class="mb-3">
-                                            <label class="form-label" for="meta-keywords-input">Meta Keywords</label>
+                                            <label class="form-label" for="meta-keywords-input">Từ khóa meta</label>
                                             <input type="text" class="form-control" id="meta-keywords-input"
                                                 name="meta_keywords" placeholder="Nhập Meta Keywords"
                                                 value="{{ old('meta_keywords', $seo->meta_keywords) }}">
@@ -64,7 +63,7 @@
 
                                         <!-- Canonical URL -->
                                         <div class="mb-3">
-                                            <label class="form-label" for="canonical-url-input">Canonical URL</label>
+                                            <label class="form-label" for="canonical-url-input">URL chuẩn</label>
                                             <input type="text" class="form-control" id="canonical-url-input"
                                                 name="canonical_url" placeholder="Nhập Canonical URL"
                                                 value="{{ old('canonical_url', $seo->canonical_url) }}">
@@ -75,7 +74,7 @@
 
                                         <!-- Chọn Product ID -->
                                         <div class="mb-3">
-                                            <label class="form-label  text-muted" for="choices-multiple-remove-butto">Product</label>
+                                            <label class="form-label  text-muted" for="choices-multiple-remove-butto">Sản phẩm</label>
                                             <select placeholder="This is a placeholder" multiple class="form-control" id="choices-multiple-remove-butto" name="product_id[]">
                                                 @foreach ($products as $product)
                                                     <option value="{{ $product->id }}"
@@ -107,7 +106,7 @@
                                                 <i class="ri-check-double-line me-2"></i>Cập nhật
                                             </button>
                                             <a href="{{ route('admin.seo.index') }}" class="btn btn-secondary w-sm">
-                                                <i class="ri-arrow-left-line"></i> Quay lại danh sách
+                                                <i class="ri-arrow-left-line"></i> Quay lại
                                             </a>
                                         </div>
                                     </div>

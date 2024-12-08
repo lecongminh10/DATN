@@ -24,7 +24,7 @@
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
                                         <button type="button" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</button>
+                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</button>
                                     </div>
                                 </div>
                             </div>

@@ -21,7 +21,7 @@
                                 <div class="col-sm">
                                     <div>
                                         <a href="{{ route('admin.carriers.index') }}">
-                                            <h5 class="card-title mb-0">Carriers List</h5>
+                                            <h5 class="card-title mb-0">Danh sách nhà vận chuyển</h5>
                                         </a>
                                     </div>
                                 </div>
@@ -31,9 +31,9 @@
                                             <i class="ri-delete-bin-5-fill"></i>
                                         </button>
                                         <a href="{{ route('admin.carriers.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Add Carrier</a>
+                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Thêm</a>
                                         <a href="{{ route('admin.carriers.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
+                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
                                     </div>
                                 </div>
                             </div>
@@ -72,7 +72,7 @@
                                                 <div>
                                                     <button type="button" class="btn btn-primary w-100"
                                                         onclick="filterData();">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm kiếm
                                                     </button>
                                                 </div>
                                             </div>
@@ -103,13 +103,13 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name">Carrier Name</th>
+                                                <th data-sort="carrier_name">Tên nhà vận chuyển</th>
                                                 <th data-sort="api_url">API URL</th>
                                                 <th data-sort="api_token">API Token</th>
-                                                <th data-sort="phone">Phone</th>
+                                                <th data-sort="phone">Số điện thoại</th>
                                                 <th data-sort="email">Email</th>
-                                                <th data-sort="is_active">Status</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="is_active">Trạng thái</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         @foreach ($carrier as $item)

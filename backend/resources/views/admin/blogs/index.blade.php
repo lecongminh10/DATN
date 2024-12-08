@@ -20,10 +20,10 @@
         <div class="container-fluid">
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Blogs',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
-                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Blogs', 'url' => '#'],
+                    // ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Bài viết', 'url' => '#'],
                 ],
             ])
             <div class="row">
