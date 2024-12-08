@@ -70,7 +70,16 @@
                             {{-- {{ $item->category->name }} --}}
                         </a>
                     </div>
-                    <a href="#" class="btn-icon-wish {{ $item->wishList !== null ? 'added-wishlist' : '' }}"
+                    @php
+                         $checkHeart = false;
+                        if($item->wishList !== null){
+                            $userID = Auth::check()? Auth::id() :null;
+                            if($userID ==$item->wishList->user_id){
+                                $checkHeart =true;
+                            }
+                        }
+                    @endphp
+                    <a href="#" class="btn-icon-wish {{ $checkHeart ? 'added-wishlist' : '' }}"
                     data-product-id="{{ $item->id }}" 
                     onclick="addToWishlist(this,{{ $item->id }}, {{ $item->product_variant_id }})"
                     title="{{ $item->isInWishlist ? 'Đã xóa yêu thích' : 'Đã thêm yêu thích' }}">

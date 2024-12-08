@@ -231,8 +231,7 @@ class OrderController extends Controller
         $cartCount = $carts->sum('quantity');
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $wishlistCount = WishList::where('user_id',$userId)->count();
-
-        return view('client.orders.shoppingcart', compact('categories', 'carts', 'cartCount', 'wishlistCount'));
+        return view('client.orders.shoppingcart', compact('categories', 'carts', 'cartCount','wishlistCount'));
     }
 
     public function showCheckOut()
@@ -248,7 +247,7 @@ class OrderController extends Controller
         }
 
         $cartCount = $carts->sum('quantity');
-
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCheckout =Cart::with(['product', 'product.variants','productVariant.attributeValues.attribute', 'product.galleries','product.productDimension'])
                 ->where('user_id', $userId)
                 ->get();
@@ -305,16 +304,18 @@ class OrderController extends Controller
         }
         $wishlistCount = WishList::where('user_id',$userId)->count();
 
-        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod', 'wishlistCount'));
+        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod','wishlistCount'));
     }
 
     public function removeFromCart($id)
     {
-        $cartItem = Cart::find($id);
+        $userId = Auth::check() ? Auth::id() : '';
+        $cartItem = Cart::where('user_id',$userId)->findOrFail($id);
 
         if ($cartItem) {
             $cartItem->delete(); // Xóa sản phẩm khỏi giỏ hàng
-            return response()->json(['message' => 'Product removed successfully']);
+            $total = Cart::where('user_id',$userId)->sum('total_price');
+            return response()->json(['message' => 'Product removed successfully' ,'total'=> $total]);
         }
 
         return response()->json(['message' => 'Product not found'], 404);

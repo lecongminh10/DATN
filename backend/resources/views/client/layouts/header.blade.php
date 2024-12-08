@@ -61,7 +61,7 @@
                         <a href="#" title="Close (Esc)" class="btn-close">×</a>
 
                         <div class="dropdownmenu-wrapper custom-scrollbar">
-                            <div class="dropdown-cart-header">Shopping Cart</div>
+                            <div class="dropdown-cart-header">Giỏ hàng</div>
                             <!-- End .dropdown-cart-header -->
 
                             <div class="dropdown-cart-products">
@@ -76,25 +76,19 @@
                                            <a href="{{ route('client.showProduct', $item->product->id ) }}">{{ $item->product->name }}</a>
                                        </h4>
                                        @php
-                                           
-                                            if ($item->product && is_null($item->productVariant)) {
-                                                // Nếu có sản phẩm và không có biến thể, kiểm tra giá sale
+                                            if ($item->product) {
                                                 if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
-                                                    $price = $item->product->price_sale; // Lấy giá sale nếu có
+                                                    $price = $item->product->price_sale;
                                                 } else {
-                                                    $price = $item->product->price_regular; // Nếu không có giá sale, lấy giá thường
+                                                    $price = $item->product->price_regular; 
                                                 }
                                                 $sub = $price * $item->quantity; 
-                                            } elseif ($item->product && $item->productVariant) {
-                                                // Nếu có sản phẩm và có biến thể, lấy giá biến thể
-                                                $price = $item->productVariant->price_modifier;
-                                                $sub = $price * $item->quantity; 
                                             }
-                                           $subTotal += $sub; // Cộng dồn vào tổng phụ
+                                           $subTotal += $sub; 
                                        @endphp
                                        <span class="cart-product-info">
                                            {{-- <input type="hidden" name="" value="{{ number_format($item->total_price, 0, ',', '.') }}"> --}}
-                                           <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format($sub, 0, ',', '.') }}₫
+                                           <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format( $price, 0, ',', '.') }}₫
                                        </span>
                                    </div>
                                    <!-- End .product-details -->
@@ -118,16 +112,15 @@
                             <!-- End .cart-product -->
 
                             <div class="dropdown-cart-total">
-                                <span>SUBTOTAL:</span>
+                                <span>Tổng giá:</span>
                                 <span
                                     class="cart-total-price float-right">{{ number_format($subTotal, 0, ',', '.') }}₫</span>
                             </div>
                             <!-- End .dropdown-cart-total -->
 
                             <div class="dropdown-cart-action">
-                                <a href="{{ route('shopping-cart') }}" class="btn btn-gray btn-block view-cart">View
-                                    Cart</a>
-                                <a href="{{ route('checkout') }}" class="btn btn-dark btn-block">Checkout</a>
+                                <a href="{{ route('shopping-cart') }}" class="btn btn-gray btn-block view-cart">Giỏ hàng</a>
+                                <a href="{{ route('checkout') }}" class="btn btn-dark btn-block">Mua ngay</a>
                             </div>
                             <!-- End .dropdown-cart-total -->
                         </div>

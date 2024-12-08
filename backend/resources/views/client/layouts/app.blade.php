@@ -180,17 +180,55 @@
                         _token: '{{ csrf_token() }}' // Đừng quên CSRF token
                     },
                     success: function(response) {
+                        console.log(response);
+                        
+                        if (response.carts && response.carts.length > 0) {
+                            let cartHTML = '';
+                            let subTotal = 0;
+                            response.carts.forEach(item => {
+                                let price = 0;
+                                let sub = 0;
+
+                                if (item.product) {
+                                    price = item.product.price_sale > 0 ? item.product.price_sale : item.product.price_regular;
+                                    sub = price * item.quantity; 
+                                }
+                                subTotal += sub;
+                                const mainImage = item.product.galleries.find(gallery => gallery.is_main);
+                                cartHTML += `
+                                    <div class="product">
+                                        <div class="product-details">
+                                            <h4 class="product-title">
+                                                <a href="/product/${item.product.id}">${item.product.name}</a>
+                                            </h4>
+                                            <span class="cart-product-info">
+                                                <span class="cart-product-qty">${item.quantity}</span> × ${new Intl.NumberFormat().format(price)}₫
+                                            </span>
+                                        </div>
+                                        <figure class="product-image-container">
+                                            <a href="/product/${item.product.id}" class="product-image">
+                                                <img src="${mainImage ? '/storage/' + mainImage.image_gallery : ''}" style="width: 80px; height: 70px" alt="${item.product.name}" />
+                                            </a>
+                                            <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="${item.id}" onclick="removeFromCart(this)"></a>
+                                        </figure>
+                                    </div>
+                                `;
+                            });
+                            $('.dropdown-cart-products').html(cartHTML);
+                            $('.dropdown-cart-total .cart-total-price').text(new Intl.NumberFormat().format(subTotal) + '₫');
+                        } else {
+                            $('.dropdown-cart-products').html('<p>Trống.</p>');
+                            $('.dropdown-cart-total .cart-total-price').text('0₫');
+                        }
+
                         cart_count.innerHTML=response.totalQuantity
                     },
                     error: function(xhr) {
-                        // Xử lý lỗi
                         var errors = xhr.responseJSON.errors;
                         if (errors) {
                             $.each(errors, function(key, value) {
-                                alert(value[0]); // Hiển thị thông báo lỗi đầu tiên
+                                alert(value[0]); 
                             });
-                        } else {
-                            // alert('Có lỗi xảy ra. Vui lòng thử lại.');
                         }
                     }
                 });
@@ -218,50 +256,31 @@
     </script>
     <script>
         function removeFromCart(element) {
-            const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
-
-            // Gửi yêu cầu xóa sản phẩm
-            fetch(`/remove/${cartId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'), // CSRF token
-                    },
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Xóa sản phẩm ra khỏi DOM
-                        const productElement = element.closest('.product'); // Tìm phần tử sản phẩm tương ứng
-
-                        // Tính toán subtotal
-                        const cartProductInfo = productElement.querySelector(
-                            '.cart-product-info'); // Thông tin giá và số lượng
-                        const [quantityText, priceText] = cartProductInfo.textContent.split('×').map(item => item
-                            .trim());
-
-                        const quantity = parseInt(quantityText.replace(/\D/g, ''), 10); // Lấy số lượng từ text
-                        const price = parseInt(priceText.replace(/\./g, '').replace('₫', ''), 10); // Lấy giá từ text
-                        const subtotalForProduct = quantity * price; // Tính subtotal cho sản phẩm
-
-                        // Cập nhật subtotal tổng
-                        const subtotalElement = document.querySelector('.cart-total-price');
-                        const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫',
-                            ''), 10);
-                        const newSubtotal = currentSubtotal - subtotalForProduct;
-
-                        // Cập nhật DOM
-                        subtotalElement.textContent =
-                            `${newSubtotal.toLocaleString('vi-VN')}₫`; // Hiển thị subtotal mới
-                        productElement.remove(); // Xóa sản phẩm khỏi giao diện
+            const cartId = element.getAttribute('data-id');
+            $.ajax({
+                url: `/remove/${cartId}`, 
+                type: 'DELETE', 
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') 
+                },
+                success: function (response) {
+                    if (response.message === 'Product removed successfully') {
+                        const productElement = $(element).closest('.product'); 
+                        const totalCart = response.total; 
+                        const subtotalElement = $('.cart-total-price');
+                        subtotalElement.text(new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalCart)); 
+                        productElement.remove();
                     } else {
-                        console.error('Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng.');
+                        console.error(response.message);
                     }
-                })
-                .catch(error => {
-                    console.error('Lỗi kết nối hoặc xử lý:', error);
-                });
+                },
+                error: function (xhr) {
+                    console.error('Có lỗi xảy ra:', xhr.responseText);
+                }
+            });
         }
+
         window.addEventListener('beforeunload', function() {
             // Send a GET request to the '/clear-coupons' route to clear the session
             fetch('/clear-coupons', {
