@@ -11,7 +11,7 @@
     <meta content="Theme/sbrand" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('theme/assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
     <!-- Layout config Js -->
     <script src="{{ asset('theme/assets/js/layout.js') }}"></script>
     <!-- Bootstrap Css -->

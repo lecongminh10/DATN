@@ -6,8 +6,8 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <a href="{{ route('client') }}" class="logo">
-                    <img src="{{ asset('themeclient/assets/images/logo.png') }}" width="111" height="44"
-                        alt="Porto Logo">
+                    <img src="{{ asset('logo.png') }}" width="200" height="120"
+                        alt="ZonMart">
                 </a>
             </div>
             <!-- End .header-left -->
@@ -16,7 +16,7 @@
                 <div class="header-search header-icon header-search-inline header-search-category w-lg-max">
                     <a href="/" class="search-toggle" role="button"><i class="icon-search-3"></i></a>
                     <form action="{{ route('search') }}" method="get">
-                        <div class="header-search-wrapper">
+                        <div class="header-search-wrapper" style="border: 1px solid #08c;">
                             <input type="search" class="form-control" name="q" id="q"
                                 placeholder="Search..." required>
                             <button class="btn icon-magnifier" type="submit" aria-label="Search"></button>
