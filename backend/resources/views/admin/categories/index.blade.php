@@ -66,6 +66,11 @@
                         </div>
 
                         <div class="card-body">
+                            @if (session('success'))
+                                <div class="w-full alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
                             <div class="live-preview">
                                 <div class="row g-4 mb-3">
                                     <div class="col-sm-auto">
@@ -114,12 +119,13 @@
                                                 <th scope="col">STT</th>
                                                 <th scope="col">Tên</th>
                                                 <th scope="col">Mô tả</th>
+                                                <th scope="col">Trạng thái</th>
                                                 <th scope="col">Ảnh</th>
                                                 <th scope="col">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($parentCategories as $category)
+                                            @foreach ($data as $category)
                                             @include('admin.categories.partials.category-row', [
                                                 'category' => $category,
                                                 'level' => 0,
@@ -129,7 +135,7 @@
                                     </table>
                                 </form>
                                 <div class="d-flex justify-content-center mt-3">
-                                    {{ $parentCategories->links('vendor.pagination.bootstrap-5') }}
+                                    {{ $data->links('vendor.pagination.bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
