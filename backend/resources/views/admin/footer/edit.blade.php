@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Footer
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -61,7 +64,7 @@
                                     <textarea name="customer_service" id="customer_service" class="form-control" rows="5">{{ $footer->customer_service ?? '' }}</textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Cập nhật Footer</button>
+                                <button type="submit" class="btn btn-success">Cập nhật</button>
                             </form>
                         </div>
                     </div>

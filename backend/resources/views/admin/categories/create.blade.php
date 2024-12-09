@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    Thêm Danh Mục
+    Thêm Mới Danh Mục
 @endsection
 
 @section('content')
@@ -23,7 +23,7 @@
                         @csrf
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="card-title mb-0">Tạo danh mục mới</h5>
+                                <h5 class="card-title mb-0">Thêm mới danh mục</h5>
                             </div>
                             <div class="form-check form-switch justify-content-between form-switch-primary mt-3">
                                 <input class="form-check-input" type="checkbox" role="switch" name="is_active" id="is_active" checked value="1">
@@ -68,8 +68,8 @@
                             </div><!--end col-->
 
                             <div class="col-lg-12">
-                                <div class="text-end">
-                                    <button class="btn btn-success">Thêm mới</button>
+                                <div class="text-start">
+                                    <button class="btn btn-success me-2">Thêm mới</button>
                                     <a href="{{ route('admin.categories.index') }}" class="btn btn-primary"> Quay lại</a>
                                 </div>
                             </div>

@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Thùng Rác
+@endsection
 @section('style_css')
     <style>
         #confirmAction{
@@ -31,13 +35,8 @@
                                     <div class="">
                                         <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm người dùng...">
                                     </div>
-                                    <a href="{{ route('admin.users.add') }}">
-                                        <button class="btn btn-danger add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
-                                            <i class="ri-add-line align-bottom me-1"></i>Thêm mới
-                                        </button>
-                                    </a>
                                     <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
-                                        <i class="ri-delete-bin-2-line"></i> Xóa Nhiều
+                                        <i class="ri-delete-bin-2-line align-bottom"></i>
                                     </button>
                                 </div>
                             </div>
@@ -159,7 +158,7 @@
                                 </a>
                             </div>
                         </div>
-                        <a href="/admin/users" class="btn btn-primary float-end">Quay lại</a>
+                        <a href="/admin/users" class="btn btn-primary float-start">Quay lại</a>
                     </div>
                 </div>
     

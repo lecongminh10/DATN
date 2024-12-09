@@ -1,11 +1,14 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Cổng Thanh Toán
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
             <div class="card">
-                <div class="p-4" style="min-height: 800px;">
-                    <h4 class="text-primary mb-4">Thêm mới thanh toán</h4>
+                <div class="p-4">
+                    <h4 class="text-primary mb-4">Thêm mới cổng thanh toán</h4>
                     <form action="{{ route('admin.paymentgateways.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
@@ -33,15 +36,10 @@
                                     <input type="text" class="form-control" placeholder="Nhập loại cổng"  id="gateway_type" name="gateway_type" value="{{ old('gateway_type')}}">
                                 </div>
                             </div>
-                            <div class="col-12 mt-4">
-                                <div class="d-flex justify-content">
-                                    <div class="text-start">
-                                        <button type="submit" class="btn btn-primary me-2">Thêm mới</button>
-                                    </div>
-                                    <div class="text-end">
-                                        <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-info">Quay lại</a>
-                                    </div>
-                                </div>
+                            <div class="col-12">
+                                <div class="text-start">
+                                    <button type="submit" class="btn btn-success me-2">Thêm mới</button>
+                                    <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-primary">Quay lại</a>
                             </div>
                             
                         </div>

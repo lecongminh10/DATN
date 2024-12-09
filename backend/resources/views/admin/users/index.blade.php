@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Tài Khoản
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -18,20 +21,19 @@
                                 <h5 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h5>
                                 <div class="flex-shrink-0">
                                     <div class="d-flex flex-wrap gap-2">
-                                        <div class="">
-                                            <input type="text" id="searchInput" class="form-control"
+                                        <div class="me-2">
+                                            <input type="text" id="searchInput" class="form-control "
                                                 placeholder="Tìm kiếm người dùng...">
                                         </div>
                                         <a href="{{ route('admin.users.add') }}">
-                                            <button class="btn btn-danger add-btn" data-bs-toggle="modal"
+                                            <button class="btn btn-success me-2 add-btn" data-bs-toggle="modal"
                                                 data-bs-target="#showModal">
-                                                <i class="ri-add-line align-bottom me-1"></i>Thêm mới
+                                                <i class="ri-add-line align-bottom "></i> Thêm mới
                                             </button>
                                         </a>
-                                        <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-primary">Đã
-                                            xóa</a>
+                                        <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-warning me-2"><i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác</a>
                                         <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
-                                            <i class="ri-delete-bin-2-line"></i> Xóa Nhiều
+                                            <i class="ri-delete-bin-2-line align-bottom"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -55,7 +57,7 @@
                                             <th data-sort="avatar">Ảnh</th>
                                             <th data-sort="email">Email</th>
                                             <th data-sort="permission">Quyền</th>
-                                            <th data-sort="status">Status</th>
+                                            <th data-sort="status">Trạng thái</th>
                                             <th data-sort="gender">Giới Tính</th>
                                             <th data-sort="date_of_birth">Ngày Sinh</th>
                                             <th data-sort="phone_number">Số Điện Thoại</th>
@@ -158,8 +160,7 @@
                                             colors="primary:#121331,secondary:#08a88a"
                                             style="width:75px;height:75px"></lord-icon>
                                         <h5 class="mt-2">Xin lỗi! Không tìm thấy kết quả</h5>
-                                        <p class="text-muted mb-0">Chúng tôi đã tìm kiếm hơn 200k+ nhiệm vụ nhưng không tìm
-                                            thấy nhiệm vụ nào cho bạn.</p>
+                                        <p class="text-muted mb-0"></p>
                                     </div>
                                 </div>
                             </div>
@@ -170,62 +171,64 @@
                     </div>
                 </div>
 
-                <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-body p-5 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-                                    colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
-                                <div class="mt-4 text-center">
-                                    <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?</h4>
-                                    <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
-                                        <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
-                                    </div>
-                                    <div class="hstack gap-2 justify-content-center remove mt-3">
-                                        <button class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
-                                            id="deleteRecord-close" data-bs-dismiss="modal">
-                                            <i class="ri-close-line me-1 align-middle"></i> Đóng
-                                        </button>
-                                        <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
 
-                                        <!-- Modal xác nhận xóa -->
-                                        <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-body p-5 text-center">
-                                                        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json"
-                                                            trigger="loop" colors="primary:#405189,secondary:#f06548"
-                                                            style="width:90px;height:90px"></lord-icon>
-                                                        <div class="mt-4 text-center">
-                                                            <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?
-                                                            </h4>
-                                                            <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    id="forceDeleteCheckbox">
-                                                                <label class="form-check-label"
-                                                                    for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
-                                                            </div>
-                                                            <div class="hstack gap-2 justify-content-center remove mt-3">
-                                                                <button
-                                                                    class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
-                                                                    id="deleteRecord-close" data-bs-dismiss="modal">
-                                                                    <i class="ri-close-line me-1 align-middle"></i> Đóng
-                                                                </button>
-                                                                <button class="btn btn-danger"
-                                                                    id="confirmDeleteBtn">Xóa</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+    {{-- Modal --}}
+    <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body p-5 text-center">
+                    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                        colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
+                    <div class="mt-4 text-center">
+                        <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?</h4>
+                        <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
+                            <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
+                        </div>
+                        <div class="hstack gap-2 justify-content-center remove mt-3">
+                            <button class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
+                                id="deleteRecord-close" data-bs-dismiss="modal">
+                                <i class="ri-close-line me-1 align-middle"></i> Đóng
+                            </button>
+                            <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+
+                            <!-- Modal xác nhận xóa -->
+                            <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-5 text-center">
+                                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json"
+                                                trigger="loop" colors="primary:#405189,secondary:#f06548"
+                                                style="width:90px;height:90px"></lord-icon>
+                                            <div class="mt-4 text-center">
+                                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?
+                                                </h4>
+                                                <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="forceDeleteCheckbox">
+                                                    <label class="form-check-label"
+                                                        for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
+                                                </div>
+                                                <div class="hstack gap-2 justify-content-center remove mt-3">
+                                                    <button
+                                                        class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
+                                                        id="deleteRecord-close" data-bs-dismiss="modal">
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
+                                                    </button>
+                                                    <button class="btn btn-danger"
+                                                        id="confirmDeleteBtn">Xóa</button>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Đơn Hàng
+@endsection
 @section('libray_css')
     <!-- Sweet Alert css-->
     <link href="{{ asset('theme/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -68,7 +71,7 @@ if (!function_exists('isStatus')) {
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16"></i></button>
-                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-warning"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
+                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-warning"><i class="ri-delete-bin-5-fill fs-16 align-bottom"></i> Thùng rác</a>
                                     </div>
                                 </div>
                             </div>

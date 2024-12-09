@@ -405,14 +405,14 @@
         <div class="container checkout-container">
             <ul class="checkout-progress-bar d-flex justify-content-center flex-wrap">
                 <li>
-                    <a href="{{ route('shopping-cart') }}">Mua sắm</a>
+                    <a href="{{ route('shopping-cart') }}">Giỏ hàng</a>
                 </li>
                 <li class="active">
                     <a href="{{ route('checkout') }}">Thanh toán đơn hàng</a>
                 </li>
-                {{-- <li class="disabled">
-                    <a href="#"></a>
-                </li> --}}
+                <li class="disabled">
+                    <a href="#">Đơn hàng hoàn tất</a>
+                </li>
             </ul>
 
             <div class="checkout-discount">
@@ -562,7 +562,7 @@
                                                 </div>
                                                 <div class="text-end">
                                                     <span class="text-muted">Đơn giá</span>
-                                                    <div class="fw-bold">
+                                                    <div class="fw-bold" style="width: 100px">
                                                         @if ($item->productVariant)
                                                             @if (!empty($item->productVariant->price_modifier))
                                                                 {{ number_format($item->productVariant->price_modifier, 0, ',', '.') }}

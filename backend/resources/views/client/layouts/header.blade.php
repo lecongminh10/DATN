@@ -6,7 +6,7 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <a href="{{ route('client') }}" class="logo">
-                    <img src="{{ asset('themeclient/assets/images/logo.png') }}" width="111" height="44"
+                    <img src="{{ asset('logo/zonmart.png') }}" width="100" height="100"
                         alt="Porto Logo">
                 </a>
             </div>

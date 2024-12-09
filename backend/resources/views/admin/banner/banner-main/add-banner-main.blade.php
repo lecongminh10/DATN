@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm banner chính
+@endsection
 @section('style_css')
 <style>
    .d-none {
@@ -130,8 +133,8 @@
                                     <input type="checkbox" name="active" id="active">
                                 </div>
                             
-                                <a href="{{ route('admin.banner.list_banner_main') }}" class="btn btn-success">Quay lại</a>
-                                <button type="submit" class="btn btn-primary">Thêm</button>
+                                <button type="submit" class="btn btn-success me-2">Thêm mới</button>
+                                <a href="{{ route('admin.banner.list_banner_main') }}" class="btn btn-primary">Quay lại</a>
 
                             </form>
                     </div>

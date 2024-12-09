@@ -311,8 +311,8 @@
                             @if ($data->price_sale == null)
                                 <span class="new-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                             @else
-                                <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                                 <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
+                                <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                             @endif
                         </div>
                         <!-- End .price-box -->

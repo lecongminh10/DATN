@@ -1,6 +1,8 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Danh sách bình luận')
+@section('title')
+    Danh Sách Bình Luận
+@endsection
 
 @section('style_css')
     {{-- Thêm style nếu cần --}}
@@ -54,7 +56,7 @@
                                             <th scope="col">ID</th>
                                             <th scope="col">Người dùng</th>
                                             <th scope="col">Sản phẩm</th>
-                                            <th scope="col">Loại</th>
+                                            {{-- <th scope="col">Loại</th> --}}
                                             <th scope="col">Xếp hạng</th>
                                             <th scope="col">Nội dung</th>
                                             <th scope="col">Hình ảnh/Video</th>
@@ -69,7 +71,7 @@
                                                 <td>{{ $item->id }}</td>
                                                 <td>{{ $item->user->username }}</td>
                                                 <td>{{ $item->product->name }}</td>
-                                                <td>
+                                                {{-- <td>
                                                     @if ($item->productVariant->attributeValues)
                                                         @foreach ($item->productVariant->attributeValues as $attributeValue)
                                                             <p class="attribute-item">
@@ -79,7 +81,7 @@
                                                         @endforeach
                                                     @endif
 
-                                                </td>
+                                                </td> --}}
                                                 <td>{{ $item->rating }}</td>
                                                 <td>{{ $item->review_text }}</td>
                                                 <td>

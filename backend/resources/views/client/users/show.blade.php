@@ -38,14 +38,14 @@
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
                         <?php
-                            $image = Auth::user()->profile_picture;
+                            //$image = Auth::user()->profile_picture;
                         ?>
-                        <img src="{{ Storage::url($image) }}" 
+                        {{-- <img src="{{ Storage::url($image) }}" 
                             alt="{{ Auth::user()->username }}" 
                             class="rounded-circle me-2" 
                             width="100px" 
-                            height="100px">
-                        {{-- @if (!empty($image) && Storage::exists($image))
+                            height="100px"> --}}
+                        @if (!empty($image) && Storage::exists($image))
                             <img src="{{ Storage::url($image) }}" 
                                 alt="{{ Auth::user()->username }}" 
                                 class="rounded-circle me-2" 
@@ -57,7 +57,7 @@
                                 class="rounded-circle me-2" 
                                 width="100px" 
                                 height="100px">
-                        @endif --}}
+                        @endif
                         
                         <h5 class="mb-0 mx-2">{{ Auth::user()->username }}</h5>
                     </div>                    

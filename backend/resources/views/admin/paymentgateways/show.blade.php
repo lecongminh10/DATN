@@ -1,10 +1,13 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Chi Tiết Cổng Thanh Toán: {{ $paymentGateway->name }}
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
             <div class="card">
-                <div class="p-4" style="min-height: 800px;">
+                <div class="p-4">
                     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
                         <div class="flex-grow-1">
                             <h4 class="fs-18 fw-semibold m-0 text-primary">Chi tiết cổng thanh toán</h4>
@@ -45,8 +48,8 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="text-end">
-                            <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-info">Quay lại</a>
+                        <div class="text-start">
+                            <a href="{{ route('admin.paymentgateways.index') }}" class="btn btn-primary">Quay lại</a>
                         </div>
                     </div>
                 </div>

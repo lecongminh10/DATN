@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Quyền
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -52,9 +55,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Thêm mới</button>
-                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-link bg-info-subtle">Quay lại</a>
+                        <div class="text-start">
+                            <button type="submit" class="btn btn-success me-2">Thêm mới</button>
+                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-primary">Quay lại</a>
                         </div>
                     </form>
                 </div>

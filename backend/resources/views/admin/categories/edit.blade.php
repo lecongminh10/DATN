@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    Sửa Danh Mục
+    Cập Nhật Danh Mục
 @endsection
 
 @section('content')
@@ -73,8 +73,8 @@
                                 </div><!--end col-->
 
                                 <div class="col-lg-12">
-                                    <div class="text-end">
-                                        <button class="btn btn-success">Cập nhật</button>
+                                    <div class="text-start">
+                                        <button class="btn btn-success me-2">Cập nhật</button>
                                         <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">Quay lại</a>
 
                                     </div>

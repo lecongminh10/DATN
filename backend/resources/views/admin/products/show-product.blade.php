@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Chi Tiết Sản Phẩm: {{ $product->name }}
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -752,7 +755,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Quay lại</a>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary">Quay lại</a>
                                     </div>
                                 </div>
                             </div>

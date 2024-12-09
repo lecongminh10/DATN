@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Hộp thông tin footer
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -78,7 +81,9 @@
                             <label for="active">Kích Hoạt</label>
                             <input type="checkbox" name="active" id="active" {{ !empty($infoBoxFooter->active) ? 'checked' : '' }}>
                         </div>
-                        <button type="submit" class="btn btn-primary">Cập nhật Info Boxes Footer</button>
+                        <div class="button ms-3 mb-4">
+                            <button type="submit" class="btn btn-success">Cập nhật</button>
+                        </div>
                         </form>
                     </div>
                 </div>

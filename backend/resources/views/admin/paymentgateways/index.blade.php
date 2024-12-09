@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Cổng Thanh Toán
+@endsection
 @section('content')
 <div class="page-content">
     <div class="container-fluid">
@@ -14,12 +17,12 @@
                                     <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm ...">
                                 </div>
                                 <a href="{{ route('admin.paymentgateways.add') }}">
-                                    <button class="btn btn-danger add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
+                                    <button class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
                                         <i class="ri-add-line align-bottom me-1"></i>Thêm mới
                                     </button>
                                 </a>
-                                <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
-                                    <i class="ri-delete-bin-2-line"></i> Xóa Nhiều
+                                <button class="btn btn-soft-danger" id="remove-actions">
+                                    <i class="ri-delete-bin-2-line align-bottom"></i>
                                 </button>
                             </div>
                         </div>

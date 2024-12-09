@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Cập Nhật Quyền
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -66,9 +69,9 @@
                                     </div>
                                 @endforeach
                             </div>
-                            <div class=" mb-3 float-end">
-                                <button type="submit" class="btn btn-primary">Thêm mới</button>
-                                <a href="{{ route('admin.permissions.index') }}" class="btn bg-info-subtle">Quay lại</a>
+                            <div class=" mb-3 text-start">
+                                <button type="submit" class="btn btn-success me-2">Cập nhật</button>
+                                <a href="{{ route('admin.permissions.index') }}" class="btn btn-primary">Quay lại</a>
                             </div>
                         </form>
                     </div>

@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Đơn Vị Vận Cuyển
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -19,12 +22,6 @@
                                 <div class="col-sm">
                                     <div>
                                         <h5 class="card-title mb-0">Thêm đơn vị vận chuyển </h5>
-                                    </div>
-                                </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button type="button" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</button>
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +72,7 @@
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
-                                        <div class="mb-3">
+                                        <div class="mb-2">
                                             <label class="form-label" for="carrier-status-input">Trạng thái</label>
                                             <select class="form-select" id="carrier-status-input" name="is_active" required>
                                                 <option value="active">Active</option>
@@ -86,11 +83,9 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="text-end me-3 mb-3">
-                                        <button type="submit" class="btn btn-success w-sm"><i
-                                                class="ri-check-double-line me-2"></i>Gửi</button>
-                                        <a href="{{ route('admin.carriers.index') }}" class="btn btn-secondary btn w-sm">
-                                            <i class="ri-arrow-left-line"></i> Quay lại danh sách
+                                    <div class="text-start ms-3 mb-3">
+                                        <button type="submit" class="btn btn-success w-sm me-2">Thêm mới</button>
+                                        <a href="{{ route('admin.carriers.index') }}" class="btn btn-primary btn w-sm">Quay lại
                                         </a>
                                     </div>
                                 </div>

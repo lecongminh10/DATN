@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -21,7 +24,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.tags.deleted') }}">Danh sách thẻ đã xóa</a></h5>
+                                                        href="{{ route('admin.tags.deleted') }}">Thùng rác</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -65,13 +68,8 @@
                                                         style="display: none;">
                                                         <i class="ri-delete-bin-5-fill"></i>
                                                     </button>
-                                                    <a class="btn btn-success add-btn me-1"
-                                                        href="{{ route('admin.tags.create') }}">
-                                                        <i class="ri-add-box-fill"></i> Thêm
-                                                    </a>
                                                     <a href="{{ route('admin.tags.index') }}"
-                                                        class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Quay lại
+                                                        class="btn btn-primary">Quay lại
                                                     </a>
                                                 </div>
                                             </div>

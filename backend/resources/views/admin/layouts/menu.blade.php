@@ -4,19 +4,19 @@
         <!-- Dark Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('theme/assets/images/logo-dark.png') }}" alt="" height="17">
+                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
             </span>
         </a>
         <!-- Light Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('theme/assets/images/logo-light.png') }}" alt="" height="17">
+                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -326,13 +326,6 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </li>
-                            <!-- Quản lý danh mục -->
-                            <li class="nav-item">
-                                <a href="#sidebar-admin" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebar-admin" data-key="t-admin">
-                                    Giao diện admin
-                                </a>
                             </li>
                         </ul>
                     </div>

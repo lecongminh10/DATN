@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Chi Tiết Quyền: {{ $permission->permission_name }}
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -13,7 +16,7 @@
             <div class="row">
                 <div class="card">
                     <div class="card-header">
-                        <h1 class="h5 mb-0">Chi Tiết Quyền</h1>
+                        <h1 class="h5 mb-0">Chi tiết quyền</h1>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -56,11 +59,11 @@
                                 </div> <!-- end card -->
                             </div>
                         </div>
-                        <div class="float-end mt-4">
-                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary"> Quay lại
+                        <div class="text-start ">
+                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-primary"> Quay lại
                             </a>
-                            <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-warning">Chỉnh
-                                sửa</a>
+                            {{-- <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-warning">Chỉnh
+                                sửa</a> --}}
                         </div> <!-- end col -->
                     </div>
                 </div>
