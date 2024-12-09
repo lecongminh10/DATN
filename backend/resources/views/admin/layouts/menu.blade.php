@@ -4,19 +4,19 @@
         <!-- Dark Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
         </a>
         <!-- Light Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('logo/zonmart.png') }}" alt="" height="140px">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"

@@ -334,20 +334,21 @@
                             <li>
                                 Danh mục:
                                 <strong>
-                                    <a href="#" class="product-category">{{ $data->category->name }}</a>
+                                    <a href="{{route('client.products.Category',['id'=> $data->category->id])}}" class="product-category">{{ $data->category->name }}</a>
                                 </strong>
                             </li>
 
                             <li>
-                                Thẻ:<strong>
+                                <strong>Thẻ:</strong>
+                                <span class="product-tags">
                                     @foreach ($data->tags as $tag)
-                                        <a href="#" class="product-category">{{ $tag->name }}</a>
+                                        <a href="#" class="badge bg-primary text-white product-category p-2">{{ $tag->name }}</a>
                                         @if (!$loop->last)
-                                            ,
+                                            <span class="text-muted">, </span>
                                         @endif
                                     @endforeach
-                                </strong>
-                            </li>
+                                </span>
+                            </li>                            
                         </ul>
 
                         @php
@@ -420,26 +421,8 @@
                             <a href="javascript:;" data-quantity-product="1" onchange="updateQuantity()"
                                 data-product-id="{{ $data->id }}" data-variant-id="" id="product-variant-id"
                                 class="btn btn-dark add-cart mr-2" title="Add to Cart">Thêm vào giỏ hàng</a>
-
-
                             <a href="{{ route('shopping-cart') }}" class="btn btn-gray view-cart d-none">Xem giỏ hàng</a>
                         </div>
-                        <!-- End .product-action -->
-
-                        <hr class="divider mb-0 mt-0">
-
-                        <div class="product-single-share mb-2">
-                            <label class="sr-only">Share:</label>
-                            <!-- End .social-icons -->
-
-                            <a href="javascript:;" data-product-id="{{ $data->id }}" data-variant-id=""
-                                id="wishlist-variant-id" class="btn-icon-wish add-wishlist" title="Add to Wishlist">
-                                <i id="wishlist-icon" class="icon-wishlist-2"></i>
-                                <span>Thêm yêu thích</span>
-                            </a>
-
-                        </div>
-                        <!-- End .product single-share -->
                     </div>
                     <!-- End .product-single-details -->
                 </div>
@@ -748,57 +731,6 @@
                      cartModal.classList.remove('show');
                  }, 3000); // Modal sẽ tự động ẩn sau 3 giây
              }
-         });
- 
- 
-         // Thêm wishlist
-         document.addEventListener('DOMContentLoaded', function() {
-             const productVariant = document.getElementById('wishlist-variant-id');
-             const wishlistIcon = document.getElementById('wishlist-icon');
-             const wishlistAddModal = document.getElementById('wishlist-add-modal');
-             const wishlistRemoveModal = document.getElementById('wishlist-remove-modal');
- 
-             productVariant.addEventListener('click', function() {
-                 const productId = productVariant.getAttribute('data-product-id');
-                 const productVariantId = productVariant.getAttribute(
-                     'data-variant-id'); // Get variant ID if available
- 
-                 console.log(productVariant);
-                 // console.log(productId);
- 
-                 // AJAX request to add or remove product from wishlist
-                 $.ajax({
-                     type: "POST",
-                     url: "{{ route('addWishList') }}",
-                     data: {
-                         product_id: productId,
-                         product_variants_id: productVariantId ||
-                             null, // Pass variant ID if available, else null
-                         _token: '{{ csrf_token() }}'
-                     },
-                     success: function(response) {
-                         if (response.in_wishlist) {
-                             wishlistIcon.style.color =
-                                 'red'; // Set heart icon color to red for added
-                             showModal(wishlistAddModal); // Show "added to wishlist" modal
-                         } else {
-                             wishlistIcon.style.color = ''; // Reset heart icon color for removed
-                             showModal(
-                                 wishlistRemoveModal); // Show "removed from wishlist" modal
-                         }
-                     },
-                     error: function() {
-                         console.error("Error updating wishlist.");
-                     }
-                 });
-             });
- 
-             // function showModal(modal) {
-             //     modal.classList.add('show');
-             //     setTimeout(function() {
-             //         modal.classList.remove('show');
-             //     }, 3000); // Auto-hide modal after 3 seconds
-             // }
          });
      </script>
     <script>

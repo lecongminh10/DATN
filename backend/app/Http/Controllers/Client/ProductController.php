@@ -50,7 +50,7 @@ class ProductController extends Controller
 
     public function showProduct(int $id)
     {
-        $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries','seos']);
+        $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries','seos','wishList']);
         // Lấy biến thể sản phẩm
         $variants = $this->productVariantService->getProductVariant($id);
         $topRatedProducts = $this->productService->topRatedProducts();

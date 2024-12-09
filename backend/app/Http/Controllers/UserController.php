@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\AdminActivityLogged;
-use App\Http\Controllers\Controller;
-use App\Models\Address;
+use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Permission;
 use App\Models\WishList;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
-use App\Models\OrderLocation;
+use App\Models\Refund;
+use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Models\Refund;
 use App\Models\UserReview;
-use App\Services\AddressServices;
-use App\Services\UserService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\OrderLocation;
+use App\Services\UserService;
+use App\Services\AddressServices;
+use App\Events\AdminActivityLogged;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -245,9 +245,8 @@ class UserController extends Controller
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $wishlistCount = WishList::where('user_id',$userId)->count();
-
         $cartCount = $carts->sum('quantity');
-        return view('client.users.index', compact('carts', 'cartCount', 'userId', 'wishlistCount'));
+        return view('client.users.index', compact('carts', 'cartCount','wishlistCount'));
     }
 
     public function showClient($id)
@@ -260,10 +259,9 @@ class UserController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-                
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCount = $carts->sum('quantity');
-        $wishlistCount = WishList::where('user_id',$user)->count();
-        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount', 'wishlistCount'));
+        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount','wishlistCount'));
     }
 
     public function updateClient(Request $request, $id)
@@ -272,38 +270,57 @@ class UserController extends Controller
             'username' => 'required|string|max:255',
             'phone_number' => 'required|string|max:15',
             'email' => 'required|email|max:255',
-            'date_of_birth' => 'required|date|before:today',
+            'date_of_birth' => 'required|date|before_or_equal:' . now()->subYears(10)->format('Y-m-d'),
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             // Custom messages for username
             'username.required' => 'Tên không được bỏ trống.',
             'username.string' => 'Tên phải là một chuỗi ký tự hợp lệ.',
             'username.max' => 'Tên không được vượt quá 255 ký tự.',
-        
+    
             // Custom messages for phone_number
             'phone_number.required' => 'Số điện thoại không được bỏ trống.',
             'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự hợp lệ.',
             'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
             'phone_number.regex' => 'Số điện thoại không đúng định dạng. Ví dụ: +84123456789 hoặc 0123456789.',
-        
+    
             // Custom messages for email
             'email.required' => 'Email không được bỏ trống.',
             'email.email' => 'Email không đúng định dạng.',
             'email.max' => 'Email không được vượt quá 255 ký tự.',
-        
+    
             // Custom messages for date_of_birth
             'date_of_birth.required' => 'Ngày sinh không được bỏ trống.',
             'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
             'date_of_birth.before' => 'Ngày sinh phải trước ngày hôm nay.',
+            'date_of_birth.before_or_equal' => 'Ngày sinh phải trước ngày ' . now()->subYears(10)->format('d/m/Y') . ' (ít nhất 10 tuổi).',
+    
+            'profile_picture.image' => 'Tệp tải lên phải là một hình ảnh.',
+            'profile_picture.mimes' => 'Chỉ chấp nhận các định dạng JPEG, PNG, JPG và GIF.',
+            'profile_picture.max' => 'Kích thước hình ảnh không được vượt quá 2 MB.',
         ]);
-        
-        
-        $data = $request->all();
-
-        $user = $this->userService->updateUser($id, $data);
-
+    
+        $user = $this->userService->getById($id);
+    
+        $user->username = $request->input('username');
+        $user->phone_number = $request->input('phone_number');
+        $user->email = $request->input('email');
+        $user->date_of_birth = $request->input('date_of_birth');
+    
+        if ($request->hasFile('profile_picture')) {
+            if ($user->profile_picture && Storage::exists('public/' . $user->profile_picture)) {
+                Storage::delete('public/' . $user->profile_picture);
+            }
+            $filename = time() . '.' . $request->file('profile_picture')->extension();
+            $path = $request->file('profile_picture')->storeAs('profile_pictures', $filename, 'public');
+            $user->profile_picture = $path;
+        }
+        $user->save();
+    
         return redirect()->route('users.showClient', $user->id);
 
     }
+    
 
     public function showOrder(Request $request)
     {
