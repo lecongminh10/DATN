@@ -34,8 +34,13 @@
                         <div class="row g-3">
                             <div class="col-lg-12">
                                 <label for="name" class="form-label">Tên</label>
-                                <input type="text" class="form-control" name="name" placeholder="" required>
-                            </div><!--end col-->
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Tên danh mục">
+                                @error('name')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>                            
 
                             <div class="col-lg-12">
                                 <label for="description" class="form-label">Mô tả</label>

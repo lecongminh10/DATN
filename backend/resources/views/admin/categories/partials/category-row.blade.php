@@ -12,10 +12,27 @@
                 </span>
             @endif
         </td>
-        <td scope="col">{{ $category->description }}</td>
+        <td scope="col">
+            @php
+                $words = explode(' ', $category->description);
+            @endphp
+        
+            @if(count($words) > 7)
+                {{ implode(' ', array_slice($words, 0, 7)) }}...
+            @else
+                {{ $category->description }}
+            @endif
+        </td>        
+        <td scope="col" class="text-center align-middle">
+            @if($category->is_active)
+                <i class="ri-checkbox-circle-fill text-success" style="font-size: 24px;"></i> 
+            @else
+                <i class="ri-checkbox-blank-circle-fill text-danger" style="font-size: 24px;"></i> 
+            @endif
+        </td>              
         <td scope="col">
             @if ($category->image)
-                <img src="{{ Storage::url($category->image) }}" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">
+                <img src="{{ Storage::url($category->image) }}" alt="{{$category->image}}" style="width: 50px; height: 50px; object-fit: cover;">
             @else
                 <span>Không có ảnh</span>
             @endif
@@ -59,7 +76,24 @@
                         </span>
                     @endif
                 </td>
-                <td scope="col">{{ $childCategory->description }}</td>
+                <td scope="col">
+                    @php
+                        $words = explode(' ', $childCategory->description);
+                    @endphp
+                
+                    @if(count($words) > 7)
+                        {{ implode(' ', array_slice($words, 0, 7)) }}...
+                    @else
+                        {{ $childCategory->description }}
+                    @endif
+                </td>  
+                <td scope="col" class="text-center align-middle">
+                    @if($childCategory->is_active)
+                        <i class="ri-checkbox-circle-fill text-success" style="font-size: 24px;"></i> 
+                    @else
+                        <i class="ri-checkbox-blank-circle-fill text-danger" style="font-size: 24px;"></i> 
+                    @endif
+                </td>                                   
                 <td scope="col">
                     @if ($childCategory->image)
                         <img src="{{ Storage::url($childCategory->image) }}" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">
