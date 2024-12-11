@@ -57,6 +57,11 @@
                             </div>
                         </div>
                         <div class="card-body border-bottom-dashed border-bottom">
+                            @if (session('success'))
+                                <div class="w-full alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
                             <form>
                                 <div class="row g-3">
                                     <div class="col-xl-4">
@@ -107,7 +112,7 @@
                                                             {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
                                                             Danh mục</option>
                                                         <option value="user"
-                                                            {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
+                                                            {{ request()->get('applies_to') == 'user' ? 'selected' : '' }}>
                                                             Người dùng</option>
 
                                                     </select>
@@ -181,24 +186,25 @@
                                                         </a></td>
                                                     <td class="applies_to">
                                                         @php
-                                                           if($item->applies_to=='all')
-                                                                {
-                                                                    echo 'Toàn cửa hàng';
-                                                                }else if ($item->applies_to=='product')
-                                                                {
-                                                                    echo 'Sản phẩm';
-                                                                } else {
-                                                                    echo 'Danh mục';
-                                                                }
+                                                            if ($item->applies_to == 'all') {
+                                                                echo 'Toàn cửa hàng';
+                                                            } elseif ($item->applies_to == 'product') {
+                                                                echo 'Sản phẩm';
+                                                            } else {
+                                                                echo 'Danh mục';
+                                                            }
                                                         @endphp
                                                     </td>
-                                                    <td class="discount_type">{{ ($item->discount_type=='percentage')?'Phần trăm':'Số tiền cố định' }}</td>
+                                                    <td class="discount_type">
+                                                        {{ $item->discount_type == 'percentage' ? 'Phần trăm' : 'Số tiền cố định' }}
+                                                    </td>
                                                     <td class="discount_value">
                                                         @php
                                                             if ($item->discount_type == 'percentage') {
                                                                 echo $item->discount_value . '%';
                                                             } else {
-                                                                echo number_format($item->discount_value, 0, ',', '.') . ' đ';
+                                                                echo number_format($item->discount_value, 0, ',', '.') .
+                                                                    ' đ';
                                                             }
                                                         @endphp
                                                     </td>
@@ -242,10 +248,10 @@
                                                                             method="post">
                                                                             @csrf
                                                                             @method('DELETE')
-                                                                            <button
-                                                                                onclick="return confirm('Bạn có chắc chắn không?')"
-                                                                                type="submit"
-                                                                                class="dropdown-item remove-item-btn">
+                                                                            <button type="button"
+                                                                                class="dropdown-item remove-item-btn delete-coupon-button"
+                                                                                data-coupon-id="{{ $item->id }}"
+                                                                                onclick="showDeleteCouponModal({{ $item->id }}, '{{ route('admin.coupons.destroy', $item->id) }}')">
                                                                                 <i
                                                                                     class="ri-delete-bin-5-fill fs-16 align-bottom me-2"></i>
                                                                                 Delete
@@ -273,7 +279,7 @@
                                                     <div class="row">
                                                         <div class="col-6">
                                                             <table class="table">
-                                                                <thead >
+                                                                <thead>
                                                                     <tr>
                                                                         <th title="Tiêu đề thông tin"
                                                                             class="font-weight-bold">
@@ -287,11 +293,13 @@
                                                                     <tr>
                                                                         <td title="Đối tượng áp dụng mã giảm giá này">
                                                                             <strong>Áp
-                                                                                Dụng Cho:</strong></td>
+                                                                                Dụng Cho:</strong>
+                                                                        </td>
                                                                         <td id="AppliesTo"></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td title="Thông tin liên quan"><strong>Thông Tin Liên
+                                                                        <td title="Thông tin liên quan"><strong>Thông Tin
+                                                                                Liên
                                                                                 Quan:</strong></td>
                                                                         <td id="RelatedInfo"></td>
                                                                     </tr>
@@ -309,7 +317,7 @@
                                                                                 data-simplebar-auto-hide="false"
                                                                                 style="max-height: 100px;" class="px-2">
                                                                                 <p id="description"></p>
-    
+
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -320,9 +328,11 @@
                                                                         <td id="discount_Type"></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td title="Giá trị giảm giá, ví dụ: 20%"><strong>Giá
+                                                                        <td title="Giá trị giảm giá, ví dụ: 20%">
+                                                                            <strong>Giá
                                                                                 Trị
-                                                                                Giảm Giá:</strong></td>
+                                                                                Giảm Giá:</strong>
+                                                                        </td>
                                                                         <td id="discountValue"></td>
                                                                     </tr>
                                                                     <tr>
@@ -416,6 +426,53 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="modal fade" id="deleteCouponModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Xóa Mã Giảm Giá</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Bạn có chắc chắn muốn xóa mã giảm giá này?
+                                                    <form id="delete-coupon-form" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="confirm-delete-coupon">Xóa</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal Xóa Nhiều -->
+                                    <div class="modal fade" id="deleteMultipleModal" tabindex="-1"
+                                        aria-labelledby="deleteMultipleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteMultipleModalLabel">Xóa Mã Giảm Giá
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Bạn có chắc chắn muốn xóa những mã giảm giá đã chọn không?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="confirm-delete-multiple">Xóa</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                     <div class="results-info ms-3">
@@ -488,7 +545,6 @@
                 </div> <!-- end col -->
             </div>
         </div>
-
     </div>
 @endsection
 @section('script_libray')
@@ -496,6 +552,40 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @endsection
 @section('scripte_logic')
+    <script>
+        function showDeleteCouponModal(couponId, deleteUrl) {
+            const form = document.getElementById('delete-coupon-form');
+            form.action = deleteUrl; // Cập nhật URL của form
+            const modal = new bootstrap.Modal(document.getElementById('deleteCouponModal'));
+            modal.show(); // Hiển thị modal
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lấy tất cả các nút Xóa Coupon
+            const deleteButtons = document.querySelectorAll('.delete-coupon-button');
+            const deleteForm = document.getElementById('delete-coupon-form');
+            const confirmDeleteButton = document.getElementById('confirm-delete-coupon');
+
+            let selectedCouponId = null;
+
+            // Khi nhấn nút Xóa
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    selectedCouponId = this.getAttribute('data-coupon-id');
+                    const deleteUrl = `{{ route('admin.coupons.destroy', ':id') }}`.replace(
+                        ':id', selectedCouponId);
+                    deleteForm.setAttribute('action', deleteUrl);
+                });
+            });
+
+            // Khi xác nhận xóa
+            confirmDeleteButton.addEventListener('click', function() {
+                if (selectedCouponId) {
+                    deleteForm.submit();
+                }
+            });
+        });
+    </script>
     <script>
         // Bộ lọc
         function filterData() {
@@ -622,6 +712,9 @@
             const checkboxes = document.querySelectorAll('input[name="chk_child"]');
             const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
             const checkAll = document.getElementById('checkAll');
+            const deleteMultipleModal = new bootstrap.Modal(document.getElementById('deleteMultipleModal'));
+            const confirmDeleteMultipleBtn = document.getElementById('confirm-delete-multiple');
+
             // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -630,16 +723,20 @@
                     checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
                 });
             });
+
             // Thêm sự kiện cho checkbox "Chọn tất cả"
             checkAll.addEventListener('change', function() {
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
                 });
-                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' :
-                    'none';
+                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' : 'none';
             });
-            // Thêm sự kiện click cho nút xóa nhều
-            deleteMultipleBtn.addEventListener('click', function() {
+
+            // Thêm sự kiện click cho nút xóa nhiều
+            deleteMultipleBtn.addEventListener('click', function(event) {
+                // Ngừng hành động mặc định (ngừng việc tải lại trang)
+                event.preventDefault();
+
                 const selectedIds = Array.from(checkboxes)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
@@ -649,19 +746,22 @@
                     return;
                 }
 
-                const action = 'soft_delete_coupon';
-                if (confirm('Bạn có chắc chắn muốn xóa những thuộc tính đã chọn không?')) {
+                // Mở modal xác nhận
+                deleteMultipleModal.show();
+
+                // Khi xác nhận xóa
+                confirmDeleteMultipleBtn.addEventListener('click', function() {
                     $.ajax({
                         url: `{{ route('admin.coupons.deleteMultiple') }}`,
                         method: 'POST',
                         data: {
                             ids: selectedIds,
-                            action: action,
+                            action: 'soft_delete_coupon',
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
                             alert(response.message);
-                            location.reload();
+                            location.reload(); // Tải lại trang sau khi xóa
                         },
                         error: function(xhr) {
                             console.log(xhr);
@@ -672,7 +772,10 @@
                             }
                         }
                     });
-                }
+
+                    // Đóng modal sau khi thực hiện xóa
+                    deleteMultipleModal.hide();
+                });
             });
         });
     </script>

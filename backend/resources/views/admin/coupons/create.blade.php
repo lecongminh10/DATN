@@ -89,112 +89,146 @@
                                 <div class="col-xl-12">
                                     <div class="card-body">
                                         <div class="mb-3">
-                                            <label class="form-label" for="code-input">Mã giảm giá</label>
-                                            <input value="{{ strtoupper(\Str::random(8)) }}" type="text"
-                                                class="form-control" id="code-input" name="code"
-                                                placeholder="Nhập mã giảm giá" required>
+                                            <label class="form-label" for="code-input">Mã giảm giá<span
+                                                    class="text-danger">*</span></label>
+                                            <input value="{{ old('code', strtoupper(\Str::random(8))) }}" type="text"
+                                                class="form-control @error('code') is-invalid @enderror" id="code-input"
+                                                name="code" placeholder="Nhập mã giảm giá">
                                             @error('code')
-                                                <span class="text-danger">{{ $message }}</span>
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
                                             @enderror
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label" for="description-input">Mô tả mã giảm giá</label>
+                                            <label class="form-label @error('description') is-invalid @enderror"
+                                                for="description-input">Mô tả mã giảm giá</label>
                                             <textarea class="form-control" id="description-input" name="description" placeholder="Nhập mô tả"></textarea>
                                             @error('description')
-                                                <span class="text-danger">{{ $message }}</span>
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
                                             @enderror
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-3">
-                                                <label class="form-label" for="discount-type-input">Loại giảm giá</label>
+                                                <label class="form-label @error('discount_type') is-invalid @enderror"
+                                                    for="discount-type-input">Loại giảm giá</label>
                                                 <select class="form-select" id="discount-type-input" name="discount_type"
                                                     required>
                                                     <option value="percentage">Phần trăm</option>
                                                     <option value="fixed_amount">Số tiền cố định</option>
                                                 </select>
                                                 @error('discount_type')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
 
                                             <div class="col-md-3">
-                                                <label class="form-label" for="discount-value-input">Giá trị giảm
-                                                    giá</label>
-                                                <input type="number" step="0.01" class="form-control"
-                                                    id="discount-value-input" name="discount_value"
+                                                <label class="form-label @error('discount_value') is-invalid @enderror"
+                                                    for="discount-value-input">Giá trị giảm
+                                                    giá<span class="text-danger">*</span></label>
+                                                <input value="{{ old('discount_value') }}" type="number" step="0.01"
+                                                    class="form-control" id="discount-value-input" name="discount_value"
                                                     placeholder="Nhập giá trị giảm giá" required>
                                                 @error('discount_value')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
 
                                             <div class="col-md-3">
-                                                <label class="form-label" for="max-discount-amount-input">Giảm giá tối
-                                                    đa</label>
-                                                <input type="number" step="0.01" class="form-control"
-                                                    id="max-discount-amount-input" name="max_discount_amount"
-                                                    placeholder="Nhập giảm giá tối đa">
+                                                <label class="form-label @error('max_discount_amount') is-invalid @enderror"
+                                                    for="max-discount-amount-input">Giảm giá tối
+                                                    đa<span class="text-danger">*</span></label>
+                                                <input value="{{ old('max_discount_amount') }}" type="number"
+                                                    step="0.01" class="form-control" id="max-discount-amount-input"
+                                                    name="max_discount_amount" placeholder="Nhập giảm giá tối đa" required>
                                                 @error('max_discount_amount')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
 
                                             <div class="col-md-3">
-                                                <label class="form-label" for="min-order-value-input">Giá trị đơn hàng tối
-                                                    thiểu</label>
-                                                <input type="number" step="0.01" class="form-control"
-                                                    id="min-order-value-input" name="min_order_value"
-                                                    placeholder="Nhập giá trị đơn hàng tối thiểu">
+                                                <label class="form-label @error('min_order_value') is-invalid @enderror"
+                                                    for="min-order-value-input">Giá trị đơn hàng tối
+                                                    thiểu<span class="text-danger">*</span></label>
+                                                <input value="{{ old('min_order_value') }}" type="number" step="0.01"
+                                                    class="form-control" id="min-order-value-input" name="min_order_value"
+                                                    placeholder="Nhập giá trị đơn hàng tối thiểu" required>
                                                 @error('min_order_value')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <label class="form-label" for="start-date-input">Thời gian bắt đầu</label>
-                                                <input type="datetime-local" class="form-control" id="start-date-input"
-                                                    name="start_date">
+                                                <label class="form-label @error('start_date') is-invalid @enderror"
+                                                    for="start-date-input">Thời gian bắt đầu<span
+                                                        class="text-danger">*</span></label>
+                                                <input value="{{ old('start_date') }}" type="datetime-local"
+                                                    class="form-control" id="start-date-input" name="start_date" required>
                                                 @error('start_date')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
 
                                             <div class="col-md-6">
-                                                <label class="form-label" for="end-date-input">Thời gian kết thúc</label>
-                                                <input type="datetime-local" class="form-control" id="end-date-input"
-                                                    name="end_date">
+                                                <label class="form-label @error('end_date') is-invalid @enderror"
+                                                    for="end-date-input">Thời gian kết thúc<span
+                                                        class="text-danger">*</span></label>
+                                                <input value="{{ old('end_date') }}" type="datetime-local"
+                                                    class="form-control" id="end-date-input" name="end_date" required>
                                                 @error('end_date')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <label class="form-label" for="usage-limit-input">Số lần mã có thể được sử
+                                                <label class="form-label @error('usage_limit') is-invalid @enderror"
+                                                    for="usage-limit-input">Số lần mã có thể được sử
                                                     dụng</label>
                                                 <input type="number" class="form-control" id="usage-limit-input"
                                                     name="usage_limit" placeholder="Nhập số lần sử dụng tối đa">
                                                 @error('usage_limit')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label" for="per-user-limit-input">Số lần tối đa mỗi
+                                                <label class="form-label @error('per_user_limit') is-invalid @enderror"
+                                                    for="per-user-limit-input">Số lần tối đa mỗi
                                                     người dùng có thể sử dụng mã</label>
                                                 <input type="number" class="form-control" id="per-user-limit-input"
                                                     name="per_user_limit"
                                                     placeholder="Nhập số lần tối đa cho mỗi người dùng">
                                                 @error('per_user_limit')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-4"><!-- Trạng thái hoạt động -->
-                                                <label class="form-label" for="is-active-input">Trạng thái hoạt
+                                                <label class="form-label @error('is_active') is-invalid @enderror"
+                                                    for="is-active-input">Trạng thái hoạt
                                                     động</label>
-                                                <div class="form-check form-switch form-switch-custom form-switch-danger mb-3">
+                                                <div
+                                                    class="form-check form-switch form-switch-custom form-switch-danger mb-3">
                                                     <input type="hidden" name="is_active" value="0">
                                                     <!-- Giá trị mặc định là 0 nếu không được check -->
                                                     <input class="form-check-input" type="checkbox" id="is-active-input"
@@ -202,12 +236,15 @@
                                                         {{ old('is_active', 1) ? 'checked' : '' }}>
                                                 </div>
                                                 @error('is_active')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
                                             <div class="col-4"><!-- Có thể dùng chung với mã khác? -->
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="is-stackable-input">Dùng chung
+                                                    <label class="form-label @error('is_stackable') is-invalid @enderror"
+                                                        for="is-stackable-input">Dùng chung
                                                         với mã khác?</label>
                                                     <div class="form-check form-switch form-switch-success">
                                                         <input type="hidden" name="is_stackable" value="0">
@@ -217,32 +254,39 @@
                                                             {{ old('is_stackable') ? 'checked' : '' }}>
                                                     </div>
                                                     @error('is_stackable')
-                                                        <span class="text-danger">{{ $message }}</span>
+                                                        <div class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </div>
                                                     @enderror
                                                 </div>
                                             </div>
                                             <div class="col-4"><!-- Chỉ dành cho một số người dùng? -->
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="eligible-users-only-input">Chỉ dành cho
+                                                    <label
+                                                        class="form-label @error('eligible_users_only') is-invalid @enderror"
+                                                        for="eligible-users-only-input">Chỉ dành cho
                                                         một số
                                                         người dùng?</label>
                                                     <div class="form-check form-switch form-switch-success">
                                                         <input type="hidden" name="eligible_users_only" value="0">
-                                                        <!-- Giá trị mặc định là 0 nếu không được check -->
                                                         <input class="form-check-input" type="checkbox"
                                                             id="eligible-users-only-input" name="eligible_users_only"
                                                             value="1"
                                                             {{ old('eligible_users_only') ? 'checked' : '' }}>
                                                     </div>
                                                     @error('eligible_users_only')
-                                                        <span class="text-danger">{{ $message }}</span>
+                                                        <div class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </div>
                                                     @enderror
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-2">
-                                                <label class="form-label" for="applies-to-input">Phạm vi áp dụng</label>
+                                                <label class="form-label @error('applies_to') is-invalid @enderror"
+                                                    for="applies-to-input">Phạm vi áp dụng<span
+                                                        class="text-danger">*</span></label>
                                                 <select class="form-select" id="applies-to-input" name="applies_to"
                                                     required>
                                                     <option value="#" checked>Chọn phạm vi</option>
@@ -252,14 +296,16 @@
                                                     <option value="user">User</option>
                                                 </select>
                                                 @error('applies_to')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
                                                 @enderror
                                             </div>
                                             <div id="dynamicSelect" class="col-md-3 position-relative">
                                                 <label class="form-label" for="search-input">Chọn giá trị</label>
                                                 <input novalidate type="text" id="search-input" class="form-control"
                                                     placeholder="Tìm kiếm giá trị..." oninput="filterResults()" required>
-                                                <div id="result" style="display: none" class="dropdown-menu w-100" >
+                                                <div id="result" style="display: none" class="dropdown-menu w-100">
                                                     <!-- Các kết quả sẽ được hiển thị tại đây -->
                                                 </div>
                                                 @error('dynamic_value')
@@ -291,6 +337,7 @@
             </div>
         </div>
     </div>
+    
 @endsection
 @section('script_libray')
     <!-- Include jQuery -->
@@ -299,11 +346,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 @endsection
 @section('scripte_logic')
+    
     <script>
         document.getElementById('applies-to-input').addEventListener('change', function() {
             const selectedOption = this.value;
             const inputMessage = document.getElementById('search-input');
-            document.getElementById("selected-values").innerHTML="";
+            document.getElementById("selected-values").innerHTML = "";
             let url = '';
             if (selectedOption === 'all') {
                 if (inputMessage.value === '') {
@@ -316,7 +364,7 @@
             } else if (selectedOption === 'user') {
                 url = '/storage/users.json';
             }
-                
+
 
             fetch(url)
                 .then(response => response.json())

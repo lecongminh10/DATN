@@ -412,7 +412,7 @@ class CouponController extends Controller
             $data->usage()->forceDelete();
             $data->forceDelete();
         });
-        return redirect()->route('admin.coupons.deleted')->with('success', 'Thuộc tính và các liên kết trung gian đã bị xóa vĩnh viễn');
+        return redirect()->route('admin.coupons.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 
     public function deleteMuitpalt(Request $request)
@@ -428,7 +428,6 @@ class CouponController extends Controller
 
         if (count($ids) > 0) {
             foreach ($ids as $id) {
-
                 switch ($action) {
                     case 'soft_delete_coupon':
                         foreach ($ids as $id) {
@@ -437,7 +436,7 @@ class CouponController extends Controller
                                 $this->destroyCoupon($id);
                             }
                         }
-                        return response()->json(['message' => 'Soft delete successful'], 200);
+                        break;
 
                     case 'hard_delete_coupon':
                         foreach ($ids as $id) {
@@ -446,12 +445,12 @@ class CouponController extends Controller
                                 $this->hardDeleteCoupon($id);
                             }
                         }
-                        return response()->json(['message' => 'Hard erase successful'], 200);
+                        break;
                     default:
                         return response()->json(['message' => 'Invalid action'], 400);
                 }
             }
-            return response()->json(['message' => 'Categories deleted successfully'], 200);
+            return response()->json(['message' => 'Các mã giảm giá bạn chọn đã bị xóa mềm thành công'], 200);
         } else {
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }

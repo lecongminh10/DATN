@@ -45,6 +45,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if (session('success'))
+                                    <div class="w-full alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
                                 <div class="card-body">
                                     <form>
                                         <div class="row g-3">
@@ -53,7 +58,8 @@
                                                     <select class="form-select" aria-label=".form-select-sm example"
                                                         id="idStatus" name="status">
                                                         <option value=""
-                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Chọn trạng thái</option>
+                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Chọn
+                                                            trạng thái</option>
                                                         <option value="1"
                                                             {{ request()->get('status') == '1' ? 'selected' : '' }}>Active
                                                         </option>
@@ -73,6 +79,9 @@
                                                         <option value="category"
                                                             {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
                                                             Danh mục</option>
+                                                            <option value="user"
+                                                            {{ request()->get('applies_to') == 'user' ? 'selected' : '' }}>
+                                                            Người dùng</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2">
@@ -82,10 +91,10 @@
                                                             Loại giảm giá</option>
                                                         <option value="percentage"
                                                             {{ request()->get('discount_type') == 'percentage' ? 'selected' : '' }}>
-                                                            Percentage</option>
+                                                            Phần trăm</option>
                                                         <option value="fixed_amount"
                                                             {{ request()->get('discount_type') == 'fixed_amount' ? 'selected' : '' }}>
-                                                            Fixed</option>
+                                                            Số tiền cố định</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2">
@@ -121,7 +130,7 @@
                                     </form>
                                 </div>
                                 <div class="table-responsive table-card mt-2 mb-1">
-                                    <table class="table table-bordered table-hover table-striped align-middle table-nowrap">
+                                    <table class="table  table-hover table-striped align-middle table-nowrap">
                                         <thead class="table-light">
                                             <tr>
                                                 <th scope="col" style="width: 50px;">
@@ -132,7 +141,6 @@
                                                 </th>
                                                 <th>ID</th>
                                                 <th data-sort="code">Mã Coupon</th>
-                                                <th data-sort="description">Mô Tả</th>
                                                 <th data-sort="discountType">Loại Giảm Giá</th>
                                                 <th data-sort="discountValue">Giá Trị Giảm Giá</th>
                                                 <th data-sort="minOrderValue">Giá Trị Đơn Hàng Tối Thiểu</th>
@@ -158,7 +166,6 @@
                                                             {{ $item->code }}
                                                         </a>
                                                     </td>
-                                                    <td class="description">{{ $item->description }}</td>
                                                     <td class="discountType">{{ $item->discount_type }}</td>
                                                     <td class="discountValue">{{ $item->discount_value }}</td>
                                                     <td class="minOrderValue">{{ $item->min_order_value }}</td>
@@ -171,26 +178,17 @@
                                                     <td>{{ $item->created_at->format('d-m-Y H:i:s') }}</td>
                                                     <td>{{ $item->updated_at->format('d-m-Y H:i:s') }}</td>
                                                     <td>
-                                                        <form action="{{ route('admin.coupons.restore', $item->id) }}"
-                                                            method="POST" style="display:inline;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button
-                                                                onclick="return confirm('Bạn có chắc muốn khôi phục không?')"
-                                                                type="submit"
-                                                                class="btn btn-sm btn-info edit-item-btn">Khôi
-                                                                phục</button>
-                                                        </form>
-                                                        <form action="{{ route('admin.coupons.hardDelete', $item->id) }}"
-                                                            method="POST" style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button
-                                                                onclick="return confirm('Bạn có chắc chắn xóa vĩnh viễn không?')"
-                                                                type="submit"
-                                                                class="btn btn-sm btn-danger remove-item-btn">Xóa
-                                                                vĩnh viễn</button>
-                                                        </form>
+                                                        <button type="button" class="btn btn-sm btn-info edit-item-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#restoreCouponModal"
+                                                            data-restore-url="{{ route('admin.coupons.restore', $item->id) }}">
+                                                            Khôi phục
+                                                        </button>
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-danger remove-item-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#deleteCouponModal"
+                                                            data-delete-url="{{ route('admin.coupons.hardDelete', $item->id) }}">
+                                                            Xóa vĩnh viễn
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -208,7 +206,7 @@
                                                     <div class="row">
                                                         <div class="col-6">
                                                             <table class="table">
-                                                                <thead >
+                                                                <thead>
                                                                     <tr>
                                                                         <th title="Tiêu đề thông tin"
                                                                             class="font-weight-bold">
@@ -222,11 +220,13 @@
                                                                     <tr>
                                                                         <td title="Đối tượng áp dụng mã giảm giá này">
                                                                             <strong>Áp
-                                                                                Dụng Cho:</strong></td>
+                                                                                Dụng Cho:</strong>
+                                                                        </td>
                                                                         <td id="AppliesTo"></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td title="Thông tin liên quan"><strong>Thông Tin Liên
+                                                                        <td title="Thông tin liên quan"><strong>Thông Tin
+                                                                                Liên
                                                                                 Quan:</strong></td>
                                                                         <td id="RelatedInfo"></td>
                                                                     </tr>
@@ -244,7 +244,7 @@
                                                                                 data-simplebar-auto-hide="false"
                                                                                 style="max-height: 100px;" class="px-2">
                                                                                 <p id="description"></p>
-    
+
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -255,9 +255,11 @@
                                                                         <td id="discount_Type"></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td title="Giá trị giảm giá, ví dụ: 20%"><strong>Giá
+                                                                        <td title="Giá trị giảm giá, ví dụ: 20%">
+                                                                            <strong>Giá
                                                                                 Trị
-                                                                                Giảm Giá:</strong></td>
+                                                                                Giảm Giá:</strong>
+                                                                        </td>
                                                                         <td id="discountValue"></td>
                                                                     </tr>
                                                                     <tr>
@@ -351,6 +353,84 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Modal Khôi phục -->
+                                    <div class="modal fade" id="restoreCouponModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Khôi phục Mã Giảm Giá</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Bạn có muốn khôi phục mã giảm giá này?
+                                                    <form id="restore-coupon-form" method="POST">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="button" class="btn btn-info"
+                                                        id="confirm-restore-coupon">Khôi phục</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal Xóa Nhiều -->
+                                    <div class="modal fade" id="deleteMultipleCouponsModal" tabindex="-1"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Xóa Nhiều Mã Giảm Giá</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Bạn có muốn xóa vĩnh viễn các mã giảm giá đã chọn không?
+                                                    <form id="delete-multiple-coupons-form" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="hidden" name="selected_ids" id="selected-ids">
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="confirm-delete-multiple-coupons">Xóa</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal Xóa -->
+                                    <div class="modal fade" id="deleteCouponModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Xóa Mã Giảm Giá</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Bạn có chắc chắn muốn xóa mã giảm giá này?
+                                                    <form id="delete-coupon-form" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        id="confirm-delete-coupon">Xóa</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -433,12 +513,47 @@
 @endsection
 @section('scripte_logic')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteCouponModal = document.getElementById('deleteCouponModal');
+            const deleteForm = document.getElementById('delete-coupon-form');
+            const confirmDeleteBtn = document.getElementById('confirm-delete-coupon');
+
+            const restoreCouponModal = document.getElementById('restoreCouponModal');
+            const restoreForm = document.getElementById('restore-coupon-form');
+            const confirmRestoreBtn = document.getElementById('confirm-restore-coupon');
+
+            // Xử lý Modal xóa coupon
+            deleteCouponModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const deleteUrl = button.getAttribute('data-delete-url');
+                deleteForm.setAttribute('action', deleteUrl); // Cập nhật URL cho form xóa
+            });
+
+            // Xử lý xác nhận xóa coupon
+            confirmDeleteBtn.addEventListener('click', function() {
+                deleteForm.submit(); // Gửi form xóa
+            });
+
+            // Xử lý Modal khôi phục coupon
+            restoreCouponModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const restoreUrl = button.getAttribute('data-restore-url');
+                restoreForm.setAttribute('action', restoreUrl); // Cập nhật URL cho form khôi phục
+            });
+
+            // Xử lý xác nhận khôi phục coupon
+            confirmRestoreBtn.addEventListener('click', function() {
+                restoreForm.submit(); // Gửi form khôi phục
+            });
+        });
+    </script>
+    <script>
         //Bộ lọc
         function filterData() {
             let status = document.getElementById('idStatus').value;
             let appliesTo = document.getElementById('idAppliesTo').value;
             let discountType = document.getElementById('idDiscountType').value;
-            let filterUrl = '/listsotfdeleted?';
+            let filterUrl = '/admin/listsotfdeleted?';
 
             if (status !== '') {
                 filterUrl += 'status=' + status + '&';
@@ -454,7 +569,7 @@
         }
 
         function clearFilters() {
-            window.location.href = '/listsotfdeleted';
+            window.location.href = '/admin/listsotfdeleted';
         }
     </script>
     <script>
@@ -512,6 +627,11 @@
             const checkboxes = document.querySelectorAll('input[name="chk_child"]');
             const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
             const checkAll = document.getElementById('checkAll');
+            const deleteMultipleCouponsModal = new bootstrap.Modal(document.getElementById(
+                'deleteMultipleCouponsModal'));
+            const selectedIdsInput = document.getElementById('selected-ids');
+            const confirmDeleteMultipleBtn = document.getElementById('confirm-delete-multiple-coupons');
+
             // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -520,16 +640,20 @@
                     checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
                 });
             });
+
             // Thêm sự kiện cho checkbox "Chọn tất cả"
             checkAll.addEventListener('change', function() {
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
                 });
-                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' :
-                    'none';
+                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' : 'none';
             });
-            // Thêm sự kiện click cho nút xóa nhều
-            deleteMultipleBtn.addEventListener('click', function() {
+
+            // Mở modal khi nhấn nút xóa nhiều
+            deleteMultipleBtn.addEventListener('click', function(event) {
+                // Ngừng hành động mặc định (ngừng việc tải lại trang)
+                event.preventDefault();
+
                 const selectedIds = Array.from(checkboxes)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
@@ -538,30 +662,39 @@
                     alert('Vui lòng chọn ít nhất một thuộc tính để xóa.');
                     return;
                 }
+
+                selectedIdsInput.value = selectedIds.join(','); // Cập nhật selected ids vào form ẩn
+                deleteMultipleCouponsModal.show(); // Hiển thị modal
+            });
+
+            // Xử lý xác nhận xóa trong modal xóa nhiều
+            confirmDeleteMultipleBtn.addEventListener('click', function() {
+                const selectedIds = selectedIdsInput.value.split(',');
                 const action = 'hard_delete_coupon';
-                if (confirm('Bạn có chắc chắn muốn xóa những thuộc tính đã chọn không?')) {
-                    $.ajax({
-                        url: `{{ route('admin.coupons.deleteMultiple') }}`,
-                        method: 'POST',
-                        data: {
-                            ids: selectedIds,
-                            action: action,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            alert(response.message);
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            console.log(xhr);
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
-                            } else {
-                                alert('Có lỗi xảy ra: ' + xhr.statusText);
-                            }
+
+                $.ajax({
+                    url: `{{ route('admin.coupons.deleteMultiple') }}`,
+                    method: 'POST',
+                    data: {
+                        ids: selectedIds,
+                        action: action,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload(); // Tải lại trang sau khi xóa
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
+                        } else {
+                            alert('Có lỗi xảy ra: ' + xhr.statusText);
                         }
-                    });
-                }
+                    }
+                });
+
+                deleteMultipleCouponsModal.hide(); // Đóng modal sau khi xóa
             });
         });
     </script>
