@@ -38,15 +38,14 @@ class AttributeRepository extends BaseRepository
                     ->orWhere('description', 'LIKE', '%' . $search . '%');
             });
         }
-        // Sử dụng paginate để phân trang
         $model = $query->paginate($perPage);
-
         return $model;
     }
 
     public function restore_delete($id)
     {
         $model = Attribute::onlyTrashed()->findOrFail($id);
+        $model->deleted_by = null;
         $model->restore();
     }
 }

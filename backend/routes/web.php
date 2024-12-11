@@ -274,7 +274,6 @@ Route::group([
         Route::put('/{id}', [PermissionController::class, 'update'])->name('update');
         Route::delete('/{id}', [PermissionController::class, 'destroyPermission'])->name('destroyPermission');
         Route::delete('/{id}/hard', [PermissionController::class, 'destroyPermissionHard'])->name('destroyPermissionHard');
-
         Route::delete('/{id}/value', [PermissionController::class, 'destroyPermissionValue'])->name('destroyPermissionValue');
         Route::delete('/{id}/value/hard', [PermissionController::class, 'destroyPermissionValueHard'])->name('destroyPermissionValueHard');
 
@@ -506,7 +505,7 @@ Route::group([
     Route::group([
         'prefix' => 'refunds',
         'as' => 'refunds.'
-    ], function(){
+    ], function () {
         Route::get('/', [RefundController::class, 'index'])->name('index');
         // Route::get('refund-detail/{code}', [RefundController::class, 'detailRefund'])->name('detailRefund');
         Route::post('/', [RefundController::class, 'store'])->name('store');

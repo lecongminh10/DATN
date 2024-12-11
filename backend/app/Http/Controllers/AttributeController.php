@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\AdminActivityLogged;
-use App\Http\Requests\AttributeRequest;
+use Attribute;
+use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use App\Services\AttributeService;
-use App\Services\AttributeValueService;
-use Attribute;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Events\AdminActivityLogged;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\AttributeRequest;
+use App\Services\AttributeValueService;
 
 class AttributeController extends Controller
 {
@@ -74,7 +77,7 @@ class AttributeController extends Controller
                 $logDetails
             ));
             DB::commit();
-            return redirect()->route('admin.attributes.index')->with('success', 'Thêm mới Attribute và Attribute Values thành công');
+            return redirect()->route('admin.attributes.index')->with('success', 'Thêm mới thuộc tính và giá trị thuộc tính thành công');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi thêm thuộc tính: ' . $e->getMessage()]);
@@ -152,7 +155,7 @@ class AttributeController extends Controller
                 $logDetails
             ));
             DB::commit();
-            return redirect()->route('admin.attributes.index')->with('success', 'Cập nhật thành công');
+            return redirect()->route('admin.attributes.index')->with('success', 'Cập nhật thuộc tính thành công');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi cập nhật thuộc tính: ' . $e->getMessage()]);
@@ -161,19 +164,20 @@ class AttributeController extends Controller
 
     public function showSotfDelete(Request $request)
     {
+        $users = User::all();
         $search = $request->input('search');
         $perPage = $request->input('perPage', 10);
         $data = $this->attributeService->show_soft_delete($search, $perPage);
-        return view('admin.attributes.deleted', compact('data'));
+        return view('admin.attributes.deleted', compact('data', 'users'));
     }
 
     public function restore($id)
     {
         try {
             $this->attributeService->restore_delete($id);
-            return redirect()->route('admin.attributes.attributeshortdeleted')->with('success', 'Khôi phục thuộc tính thành công!');
+            return redirect()->route('admin.attributes.index')->with('success', 'Khôi phục thuộc tính thành công!');
         } catch (\Exception $e) {
-            return redirect()->route('admin.attributes.attributeshortdeleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
+            return redirect()->route('admin.attributes.index')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
         }
     }
 
@@ -198,9 +202,15 @@ class AttributeController extends Controller
             'Xóa Mềm',
             $logDetails
         ));
+        if ($data) {
+            if (Auth::check()) {
+                $data->deleted_by = Auth::id();
+                $data->save();
+            }
+        }
         $data->delete();
         if ($data->trashed()) {
-            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
+            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã được xóa thành công');
         }
         return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
@@ -210,6 +220,12 @@ class AttributeController extends Controller
             $data = $this->attributeValueService->getById($id);
             if (!$data) {
                 return response()->json(['message' => 'Attribute Values not found'], 404);
+            }
+            if ($data) {
+                if (Auth::check()) {
+                    $data->deleted_by = Auth::id();
+                    $data->save();
+                }
             }
             $data->delete();
             if ($data->trashed()) {
@@ -230,24 +246,35 @@ class AttributeController extends Controller
 
     public function hardDeleteAttribute(int $id)
     {
-        $data = $this->attributeService->getIdWithTrashed($id);
-        if (!$data) {
-            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã được xóa không thành công');
-        }
-        $logDetails = sprintf(
-            'Xóa thuộc tính: Tên - %s',
-            $data->attribute_name
-        );
+        try {
+            // Tìm dữ liệu kể cả khi bị soft delete
+            $data = $this->attributeService->getIdWithTrashed($id);
+            if (!$data) {
+                return redirect()->route('admin.attributes.index')->with('error', 'Không tìm thấy thuộc tính để xóa.');
+            }
 
-        // Ghi nhật ký hoạt động
-        event(new AdminActivityLogged(
-            auth()->user()->id,
-            'Xóa Cứng',
-            $logDetails
-        ));
-        $data->forceDelete();
-        return redirect()->route('admin.attributes.attributeshortdeleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
+            // Chi tiết nhật ký
+            $logDetails = sprintf(
+                'Xóa thuộc tính: Tên - %s',
+                $data->attribute_name
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Xóa Cứng',
+                $logDetails
+            ));
+
+            // Xóa cứng dữ liệu
+            $data->forceDelete();
+
+            return redirect()->route('admin.attributes.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.attributes.index')->with('error', 'Không xóa được vĩnh viễn thuộc tính: ' . $e->getMessage());
+        }
     }
+
 
     public function hardDeleteAttributeValue(int $id)
     {
@@ -269,55 +296,43 @@ class AttributeController extends Controller
 
         $ids = $request->input('ids');
         $action = $request->input('action');
-
-        if (count($ids) > 0) {
-            foreach ($ids as $id) {
-
-                switch ($action) {
-                    case 'soft_delete_attribute':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->attributeService->isSoftDeleted($id);
-                            if (!$isSoftDeleted) {
-                                $this->destroy($id);
-                            }
-                        }
-                        return response()->json(['message' => 'Soft delete successful'], 200);
-
-                    case 'hard_delete_attribute':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->attributeService->isSoftDeleted($id);
-                            if ($isSoftDeleted) {
-                                $this->hardDeleteAttribute($id);
-                            }
-                        }
-                        return response()->json(['message' => 'Hard erase successful'], 200);
-
-                    case 'soft_delete_attribute_values':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->attributeValueService->isSoftDeleted($id);
-                            if (!$isSoftDeleted) {
-                                $this->destroyValue($id);
-                            }
-                        }
-                        return response()->json(['message' => 'Soft delete successful'], 200);
-
-                    case 'hard_delete_attribute_value':
-                        foreach ($ids as $id) {
-                            $isSoftDeleted = $this->attributeValueService->isSoftDeleted($id);
-                            if ($isSoftDeleted) {
-                                $this->hardDeleteAttributeValue($id);
-                            }
-                        }
-                        return response()->json(['message' => 'Hard erase successful'], 200);
-                    default:
-                        return response()->json(['message' => 'Invalid action'], 400);
-                }
-            }
-            return response()->json(['message' => 'Categories deleted successfully'], 200);
-        } else {
-            return response()->json(['message' => 'Error: No IDs provided'], 500);
+        $deletedBy = Auth::check() ? Auth::id() : null;
+        if (count($ids) == 0) {
+            return redirect()->route('admin.attributes.index')
+                ->with('error', 'Không có thuộc tính nào được chọn để xóa.');
         }
+
+        if ($action === 'soft_delete_attribute') {
+            $result = DB::table('attributes')
+                ->whereIn('id', $ids)
+                ->update(
+                    [
+                        'deleted_at' => Carbon::now(),
+                        'deleted_by' =>  $deletedBy
+                    ]
+                );
+            if ($result) {
+                event(new AdminActivityLogged(auth()->user()->id, 'Xóa thuộc tính', 'IDs: ' . implode(', ', $ids)));
+                return redirect()->route('admin.attributes.index')
+                    ->with('success', 'Các thuộc tính đã được xóa thành công!');
+            }
+
+            return redirect()->route('admin.attributes.index')
+                ->with('error', 'Không tìm thấy thuộc tính với các ID đã cho.');
+        }
+        if ($action === 'hard_delete_attribute') {
+            $result = DB::table('attributes')
+                ->whereIn('id', $ids)
+                ->delete();
+            if ($result) {
+                event(new AdminActivityLogged(auth()->user()->id, 'Xóa vĩnh viễn thuộc tính', 'IDs: ' . implode(', ', $ids)));
+                return redirect()->route('admin.attributes.index')->with('success', 'Các thuộc tính đã được xóa thành công!');
+            }
+            return redirect()->route('admin.attributes.index')->with('error', 'Không tìm thấy thuộc tính với các ID đã cho.');
+        }
+        return redirect()->route('admin.attributes.index')->with('error', 'Hành động không hợp lệ.');
     }
+
 
     public function saveAttributes(Request $request)
     {

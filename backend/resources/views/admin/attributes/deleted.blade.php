@@ -8,8 +8,8 @@
                 'title' => 'Thuộc tính ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Thuộc tính', 'url' => '#']
-                ]
+                    ['name' => 'Thuộc tính', 'url' => '#'],
+                ],
             ])
             <div class="row">
                 <div class="col-lg-12">
@@ -21,12 +21,13 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.attributes.deleted') }}">Danh sách đã xóa</a></h5>
+                                                        href="{{ route('admin.attributes.attributeshortdeleted') }}">Danh sách đã xóa</a>
+                                                </h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
                                             <div class="search-box mb-3">
-                                                <form method="GET" action="{{ route('admin.attributes.deleted') }}">
+                                                <form method="GET" action="{{ route('admin.attributes.attributeshortdeleted') }}">
                                                     <input type="text" class="form-control search" name="search"
                                                         placeholder="Nhập từ khóa tìm kiếm..."
                                                         value="{{ request()->input('search') }}">
@@ -36,12 +37,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if (session('success'))
+                                <div class="w-full alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
                                 <div class="listjs-table" id="customerList">
                                     <div class="card-header border-0 mt-2">
                                         <div class="d-flex justify-content-between align-items-center w-100">
                                             <h1 class="card-title fw-semibold mb-0"></h1>
                                             <div class="d-flex align-items-center">
                                                 <button class="btn btn-soft-danger ms-2" id="deleteMultipleBtn"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteMultipleModal"
                                                     style="display: none;">
                                                     <i class="ri-delete-bin-5-fill"></i>
                                                 </button>
@@ -75,7 +82,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                @foreach ($data as $index=> $item)
+                                                @foreach ($data as $index => $item)
                                                     <tr>
                                                         <th scope="row">
                                                             <div class="form-check">
@@ -83,34 +90,36 @@
                                                                     name="chk_child" value="{{ $item->id }}">
                                                             </div>
                                                         </th>
-                                                        <td>{{ $index+1 }}</td>
+                                                        <td>{{ $index + 1 }}</td>
                                                         <td>{{ $item->attribute_name }}</td>
-                                                        <td>{{ $item->deleted_by }}</td>
-                                                        <td>{{ ($item->deleted_at) ? $item->deleted_at->format('d-m-Y H:i:s'):''}}</td>
+                                                        @php
+                                                            $deletedByUser = $users->firstWhere(
+                                                                'id',
+                                                                $item->deleted_by,
+                                                            );
+                                                        @endphp
+                                                        @if ($deletedByUser)
+                                                            <td>{{ $deletedByUser->username }}</td>
+                                                        @else
+                                                            <td>Unknown</td>
+                                                        @endif
+                                                        <td>{{ $item->deleted_at ? $item->deleted_at->format('H:i d-m-Y') : '' }}
+                                                        </td>
 
                                                         <td>
-                                                            <form
-                                                                action="{{ route('admin.attributes.restore', $item->id) }}"
-                                                                method="POST" style="display:inline;">
-                                                                @csrf
-                                                                @method('PATCH')
-                                                                <button
-                                                                    onclick="return confirm('Bạn có chắc muốn khôi phục không?')"
-                                                                    type="submit"
-                                                                    class="btn btn-sm btn-info edit-item-btn">Khôi
-                                                                    phục</button>
-                                                            </form>
-                                                            <form
-                                                                action="{{ route('admin.attributes.hardDelete', $item->id) }}"
-                                                                method="POST" style="display:inline;">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button
-                                                                    onclick="return confirm('Bạn có chắc chắn xóa vĩnh viễn không?')"
-                                                                    type="submit"
-                                                                    class="btn btn-sm btn-danger remove-item-btn">Xóa
-                                                                    vĩnh viễn</button>
-                                                            </form>
+                                                            <button type="button" class="btn btn-sm btn-info edit-item-btn"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#restoreAttributesModal"
+                                                                data-id="{{ $item->id }}">
+                                                                Khôi phục
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-danger remove-item-btn"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#hardDeleteAttributesModal"
+                                                                data-id="{{ $item->id }}">
+                                                                Xóa
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -189,6 +198,71 @@
             <!-- end row -->
         </div>
     </div>
+    <div class="modal fade" id="restoreAttributesModal" tabindex="-1" aria-labelledby="restoreAttributesModal"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="restoreAttributesModalLabel">Khôi phục Thuộc Tính</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc muốn khôi phục thuộc tính này?
+                    <form id="restore-attribute-form" method="POST">
+                        @csrf
+                        @method('PATCH')
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-info" id="confirm-restore">Khôi phục</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="hardDeleteAttributesModal" tabindex="-1" aria-labelledby="hardDeleteAttributesModal"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="hardDeleteAttributesModalLabel">Xóa Vĩnh Viễn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa vĩnh viễn thuộc tính này?
+                    <form id="hard-delete-attribute-form" method="POST">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirm-hard-delete">Xóa </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteMultipleModal" tabindex="-1" aria-labelledby="deleteMultipleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteMultipleModalLabel">Xóa Nhiều Thuộc Tính</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa các thuộc tính đã chọn không?
+                <form id="delete-multiple-attributes-form" method="POST">
+                    <!-- Nội dung form sẽ được thêm động trong JavaScript -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-multiple">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('script_libray')
     <!-- Nạp jQuery từ CDN -->
@@ -196,12 +270,48 @@
 @endsection
 @section('scripte_logic')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const restoreButtons = document.querySelectorAll('.edit-item-btn');
+            const restoreForm = document.getElementById('restore-attribute-form');
+            const confirmRestoreButton = document.getElementById('confirm-restore');
+
+            restoreButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-id');
+                    const actionUrl = `/admin/attributes/restore/${itemId}`;
+                    restoreForm.setAttribute('action', actionUrl);
+                });
+            });
+
+            confirmRestoreButton.addEventListener('click', function() {
+                restoreForm.submit();
+            });
+
+            const hardDeleteButtons = document.querySelectorAll('.remove-item-btn');
+            const hardDeleteForm = document.getElementById('hard-delete-attribute-form');
+            const confirmHardDeleteButton = document.getElementById('confirm-hard-delete');
+
+            hardDeleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-id');
+                    const actionUrl = `/admin/attributes/${itemId}/hard-delete`;
+                    hardDeleteForm.setAttribute('action', actionUrl);
+                });
+            });
+
+            confirmHardDeleteButton.addEventListener('click', function() {
+                hardDeleteForm.submit();
+            });
+        });
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxes = document.querySelectorAll('input[name="chk_child"]');
             const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
             const checkAll = document.getElementById('checkAll'); // Checkbox "Chọn tất cả"
+            const deleteMultipleModal = new bootstrap.Modal(document.getElementById(
+                'deleteMultipleModal')); // Modal
+            const confirmDeleteMultipleBtn = document.getElementById(
+                'confirm-delete-multiple'); // Nút xác nhận xóa trong modal
 
-            // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
@@ -210,50 +320,54 @@
                 });
             });
 
-            // Thêm sự kiện cho checkbox "Chọn tất cả"
             checkAll.addEventListener('change', function() {
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
                 });
                 deleteMultipleBtn.style.display = checkAll.checked ? 'block' :
-                    'none'; // Hiển thị/ẩn nút xóa nhiều
+                    'none';
             });
 
-            // Thêm sự kiện click cho nút xóa nhiều
             deleteMultipleBtn.addEventListener('click', function() {
                 const selectedIds = Array.from(checkboxes)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
-                console.log(selectedIds);
+
                 if (selectedIds.length === 0) {
                     alert('Vui lòng chọn ít nhất một thuộc tính để xóa.');
                     return;
                 }
 
-                const action = 'hard_delete_attribute';
-                if (confirm('Bạn có chắc chắn muốn xóa những thuộc tính đã chọn không?')) {
-                    $.ajax({
-                        url: `{{ route('admin.attributes.deleteMultiple') }}`,
-                        method: 'POST',
-                        data: {
-                            ids: selectedIds,
-                            action: action,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            alert(response.message);
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            console.log(xhr); // Hiển thị thông tin lỗi chi tiết
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
-                            } else {
-                                alert('Có lỗi xảy ra: ' + xhr.statusText);
-                            }
+                deleteMultipleModal.show();
+
+                deleteMultipleModal.selectedIds = selectedIds;
+            });
+
+            confirmDeleteMultipleBtn.addEventListener('click', function() {
+                const selectedIds = deleteMultipleModal.selectedIds;
+
+                $.ajax({
+                    url: `{{ route('admin.attributes.deleteMultiple') }}`,
+                    method: 'POST',
+                    data: {
+                        ids: selectedIds,
+                        action: 'hard_delete_attribute',
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        // alert('Các thuộc tính đã được xóa thành công!');
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
+                        } else {
+                            alert('Có lỗi xảy ra: ' + xhr.statusText);
                         }
-                    });
-                }
+                    }
+                });
+                deleteMultipleModal.hide();
             });
         });
     </script>

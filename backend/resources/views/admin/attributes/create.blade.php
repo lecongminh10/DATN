@@ -12,7 +12,7 @@
                     ['name' => 'Thuộc tính', 'url' => '#']
                 ]
             ])
-            @if ($errors->any())
+            {{-- @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
@@ -31,7 +31,7 @@
                 <div class="alert alert-primary" role="alert">
                     <strong>Thao Tác Không Thành Công</strong> {{ session()->get('error') }}
                 </div>
-            @endif
+            @endif --}}
             <form id="create-attribute-form" method="POST" action="{{ route('admin.attributes.store') }}"
                 autocomplete="off" class="needs-validation" novalidate>
                 @csrf
@@ -56,7 +56,7 @@
                             <div class="card-body">
                                 <!-- Attribute Name -->
                                 <div class="mb-3">
-                                    <label class="form-label" for="attribute-name-input">Tên </label>
+                                    <label class="form-label" for="attribute-name-input">Tên <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="attribute-name-input"
                                         name="attribute_name" placeholder="Enter thuộc tính" required>
                                     @error('attribute_name')
@@ -73,7 +73,7 @@
                                 </div>
                                 <!-- Attribute Values -->
                                 <div class="mb-3">
-                                    <label class="form-label">Giá trị của thuộc tính</label>
+                                    <label class="form-label">Giá trị của thuộc tính <span class="text-danger">*</span></label>
                                     <div id="attribute-values">
                                         <div class="input-group mb-2">
                                             <input type="text" class="form-control" name="attribute_value[]"
