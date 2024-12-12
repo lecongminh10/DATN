@@ -36,7 +36,7 @@
                                 <div class="col-lg-12">
                                     <div class="card-body">
                                         <div class="mb-3">
-                                            <label class="form-label" for="carrier-name-input">Tên</label>
+                                            <label class="form-label" for="carrier-name-input">Tên<span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="carrier-name-input"
                                                 name="name" placeholder="Nhập tên thẻ" required>
                                             @error('name')

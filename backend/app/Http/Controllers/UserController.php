@@ -20,6 +20,8 @@ use App\Events\AdminActivityLogged;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -28,7 +30,7 @@ class UserController extends Controller
     protected $userRepository;
     protected $productService;
 
-    public function __construct(UserService $userService, AddressServices $addressServices,ProductService $productService,)
+    public function __construct(UserService $userService, AddressServices $addressServices, ProductService $productService,)
     {
         $this->userService = $userService;
         $this->productService = $productService;
@@ -51,79 +53,48 @@ class UserController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'password' => 'required|string|min:8',
-            'phone_number' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:users,email',
-            'date_of_birth' => 'required|date',
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-        ], [
-            'username.required' => 'Tên người dùng không được để trống.',
-            'username.string' => 'Tên người dùng phải là một chuỗi ký tự.',
-            'username.max' => 'Tên người dùng không được vượt quá 255 ký tự.',
-            
-            'password.required' => 'Mật khẩu không được để trống.',
-            'password.string' => 'Mật khẩu phải là một chuỗi ký tự.',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            
-            'phone_number.required' => 'Số điện thoại không được để trống.',
-            'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự.',
-            'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
-            
-            'email.required' => 'Email không được để trống.',
-            'email.email' => 'Địa chỉ email không hợp lệ.',
-            'email.max' => 'Email không được vượt quá 255 ký tự.',
-            'email.unique' => 'Email đã tồn tại trong hệ thống.',
-            
-            'date_of_birth.required' => 'Ngày sinh không được để trống.',
-            'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
-            
-            'profile_picture.nullable' => 'Ảnh đại diện là tùy chọn.',
-            'profile_picture.image' => 'Ảnh đại diện phải là một hình ảnh.',
-            'profile_picture.mimes' => 'Ảnh đại diện phải có định dạng jpg, jpeg hoặc png.',
-            'profile_picture.max' => 'Ảnh đại diện không được vượt quá 2048 KB.'
-        ]);
-        
         try {
-            $data = $request->except('permissions');
+            $data = $request->validated();
 
-            $data['password'] = bcrypt($request->input('password'));
+            // Hash mật khẩu
+            $data['password'] = bcrypt($data['password']);
 
+            // Xử lý ảnh đại diện nếu có
             if ($request->hasFile('profile_picture')) {
                 $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
                 $data['profile_picture'] = $imagePath;
             }
 
+            // Tạo người dùng
             $user = $this->userService->createUser($data);
 
-            //nhật ký
+            // Ghi nhật ký
             $logDetails = sprintf(
                 'Thêm người dùng: Tên - %s',
-                $user->username,
+                $user->username
             );
-
-            // Ghi nhật ký hoạt động
             event(new AdminActivityLogged(
                 auth()->user()->id,
                 'Thêm mới',
                 $logDetails
             ));
 
+            // Xử lý quyền
             if ($user && $request->has('permissions')) {
-                $user->permissionsValues()->attach($request->permissions);
+                $user->permissionsValues()->attach($request->input('permissions'));
             }
 
             return redirect()->route('admin.users.index')->with([
-                'user' => $user
+                'success' => 'Thêm mới thành công'
             ]);
         } catch (\Exception $e) {
             Log::error("Error creating user: " . $e->getMessage());
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi tạo người dùng.');
         }
     }
+
 
     public function show($id)
     {
@@ -155,38 +126,10 @@ class UserController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(UserUpdateRequest $request, $id)
     {
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:15',
-            'email' => 'required|email|max:255',
-            'date_of_birth' => 'required|date',
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-        ], [
-            'username.required' => 'Tên người dùng không được để trống.',
-            'username.string' => 'Tên người dùng phải là một chuỗi ký tự.',
-            'username.max' => 'Tên người dùng không được vượt quá 255 ký tự.',
-            
-            'phone_number.required' => 'Số điện thoại không được để trống.',
-            'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự.',
-            'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
-            
-            'email.required' => 'Email không được để trống.',
-            'email.email' => 'Địa chỉ email không hợp lệ.',
-            'email.max' => 'Email không được vượt quá 255 ký tự.',
-            
-            'date_of_birth.required' => 'Ngày sinh không được để trống.',
-            'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
-            
-            'profile_picture.nullable' => 'Ảnh đại diện là tùy chọn.',
-            'profile_picture.image' => 'Ảnh đại diện phải là một hình ảnh.',
-            'profile_picture.mimes' => 'Ảnh đại diện phải có định dạng jpg, jpeg hoặc png.',
-            'profile_picture.max' => 'Ảnh đại diện không được vượt quá 2048 KB.'
-        ]);
-        $data = $request->all();
 
-        $data['password'] = bcrypt($request->input('password'));
+        $data = $request->validated();
 
         $user = $this->userService->updateUser($id, $data);
 
@@ -220,23 +163,29 @@ class UserController extends Controller
         if ($request->has('id_permissions')) {
             $user->permissionsValues()->sync($request->id_permissions);
         }
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.index')->with([
+            'success' => 'Cập nhật thành công !'
+        ]);
     }
 
     public function destroy($id, Request $request)
     {
+        // Tìm người dùng cần xóa
         $user = User::findOrFail($id);
 
+        // Kiểm tra xem có yêu cầu xóa cứng (force delete) không
         if ($request->forceDelete === 'true') {
             $user->forceDelete();
         } else {
-            $user->delete();
+            $user->deleted_by = Auth::id(); 
+            $user->save(); 
+            $user->delete(); 
         }
 
-        //nhật ký
+        // Nhật ký hành động
         $logDetails = sprintf(
             'Xóa người dùng: Tên - %s',
-            $user->username,
+            $user->username
         );
 
         // Ghi nhật ký hoạt động
@@ -246,41 +195,31 @@ class UserController extends Controller
             $logDetails
         ));
 
-        //nhật ký
-        $logDetails = sprintf(
-            'Xóa người dùng: Tên - %s',
-            $user->username,
-        );
-
-        // Ghi nhật ký hoạt động
-        event(new AdminActivityLogged(
-            auth()->user()->id,
-            'Xóa',
-            $logDetails
-        ));
-
-        return redirect()->route('users.index')->with('success', 'User deleted successfully');
+        // Quay lại trang danh sách người dùng
+        return redirect()->route('admin.users.index')->with('success', 'Người dùng được xóa thành công');
     }
 
-
-    // UserController.php
     public function deleteMultiple(Request $request)
     {
-        $ids = json_decode($request->ids); // Lấy danh sách ID từ yêu cầu
-        $forceDelete = $request->forceDelete === 'true'; // Kiểm tra có xóa vĩnh viễn không
-        // Xóa người dùng
+        $ids = json_decode($request->ids);
+        $forceDelete = $request->forceDelete === 'true';
 
+        // Xóa người dùng
         foreach ($ids as $id) {
             $user = User::withTrashed()->find($id);
             if ($forceDelete) {
                 $user->forceDelete();
             } else {
+                $user->deleted_by = Auth::id();
+                $user->save();
                 $user->delete();
             }
         }
-
-        return response()->json(['success' => true, 'message' => 'Người dùng đã được xóa.']);
+        return redirect()->route('users.index')->with([
+            'success' => 'Xóa nhiều thành công'
+        ]);
     }
+
 
     public function indexClient()
     {
@@ -366,7 +305,7 @@ class UserController extends Controller
         $locations = OrderLocation::where('order_id', $id)->get();
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
             ->select('payments.*', 'payment_gateways.name as gateway_name')
-            ->where('order_id',$id)
+            ->where('order_id', $id)
             ->get();
 
         $userId = auth()->id();
@@ -385,7 +324,7 @@ class UserController extends Controller
             ->take(5)
             ->get();
         $bestSellingProducts = $this->productService->bestSellingProducts();
-        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts','bestSellingProducts'));
+        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts', 'bestSellingProducts'));
     }
 
 
@@ -397,22 +336,35 @@ class UserController extends Controller
 
     public function manage(Request $request, int $id)
     {
-
+        // Tìm người dùng đã bị xóa mềm (soft delete)
         $user = User::onlyTrashed()->find($id);
+
+        // Nếu không tìm thấy người dùng, thông báo lỗi và chuyển hướng
         if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+            session()->flash('error', 'Không tìm thấy người dùng.');
+            return redirect()->route('users.index');
         }
 
+        // Xử lý hành động khôi phục
         if ($request->input('action') === 'restore') {
-            $user->restore();
-            return response()->json(['success' => true, 'message' => 'User restored successfully.']);
-        } elseif ($request->input('action') === 'hard-delete') {
-            $user->forceDelete();
-            return response()->json(['success' => true, 'message' => 'User deleted permanently.']);
+            $user->restore(); // Khôi phục người dùng
+            session()->flash('success', 'Khôi phục người dùng thành công.');
+            return redirect()->route('users.index'); // Chuyển hướng về danh sách tất cả người dùng
         }
 
-        return response()->json(['success' => false, 'message' => 'Invalid action.'], 400);
+        // Xử lý hành động xóa vĩnh viễn
+        if ($request->input('action') === 'hard-delete') {
+            $user->forceDelete(); // Xóa vĩnh viễn người dùng
+            session()->flash('success', 'Xóa vĩnh viễn người dùng thành công.');
+            return redirect()->route('users.index'); // Chuyển hướng về danh sách tất cả người dùng
+        }
+
+        // Nếu không xác định được hành động, chuyển hướng với lỗi
+        session()->flash('error', 'Hành động không hợp lệ.');
+        return redirect()->route('users.index');
     }
+
+
 
     public function updateOrInsertAddress(Request $request)
     {

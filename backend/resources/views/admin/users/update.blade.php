@@ -29,7 +29,7 @@
                                         <input type="text" class="form-control" placeholder="Nhập tên" name="username"
                                             value="{{ $user->username }}">
                                         @error('username')
-                                        <span class="text-danger">{{ $message }}</span>
+                                            <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>

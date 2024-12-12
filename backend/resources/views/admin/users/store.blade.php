@@ -13,7 +13,7 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="username" class="form-label">Tên</label>
+                                    <label for="username" class="form-label">Tên<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" placeholder="Nhập tên" id="username"
                                         name="username" value="{{ old('username') }}">
                                     @error('username')
@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="password" class="form-label">Mật khẩu</label>
+                                    <label for="password" class="form-label">Mật khẩu<span class="text-danger">*</span></label>
                                     <input type="password" class="form-control" placeholder="Nhập mật khẩu" id="password"
                                         name="password">
                                     @error('password')
@@ -33,7 +33,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="phone_number" class="form-label">Số điện thoại</label>
+                                    <label for="phone_number" class="form-label">Số điện thoại<span class="text-danger">*</span></label>
                                     <input type="tel" class="form-control" placeholder="Nhập số điện thoại"
                                         id="phone_number" name="phone_number" value="{{ old('phone_number') }}">
                                     @error('phone_number')
@@ -43,7 +43,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="date_of_birth" class="form-label">Ngày sinh</label>
+                                    <label for="date_of_birth" class="form-label">Ngày sinh<span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
                                         value="{{ old('date_of_birth') }}">
                                     @error('date_of_birth')
@@ -53,7 +53,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
+                                    <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
                                     <input type="email" class="form-control" placeholder="example@gmail.com"
                                         id="email" name="email" value="{{ old('email') }}">
                                     @error('email')

@@ -53,7 +53,6 @@ class User extends Authenticatable
 
     protected $casts = [
         'is_verified' => 'boolean',
-        'deleted_at' => 'boolean'
     ];
 
     public function permissionsValues()
@@ -118,13 +117,13 @@ class User extends Authenticatable
     {
         // Kiểm tra số điểm loyalty và trả về hạng thành viên tương ứng
         if ($this->loyalty_points < 5000) {
-            return 'Bronze'; 
+            return 'Bronze';
         } elseif ($this->loyalty_points <= 10000) {
-            return 'Silver'; 
+            return 'Silver';
         } elseif ($this->loyalty_points <= 20000) {
-            return 'Gold'; 
+            return 'Gold';
         } else {
-            return 'Platinum'; 
+            return 'Platinum';
         }
     }
     public function scopeClients($query)
@@ -134,4 +133,10 @@ class User extends Authenticatable
         });
     }
 
+    // Trong Model User.php
+    public function getDeletedByNameAttribute()
+    {
+        // Kiểm tra nếu deleted_by không phải null và có liên kết tới một User khác
+        return $this->deleted_by ? $this->deleted_by->username : 'Không xác định';
+    }
 }
