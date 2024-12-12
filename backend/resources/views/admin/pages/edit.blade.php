@@ -68,8 +68,7 @@
             ])
             <div class="row">
                 <div class="col">
-                    <form action="{{ route('admin.pages.update',$pages->id) }}" method="POST" enctype="multipart/form-data"
-                        id="uploadForm" class="dropzone">
+                    <form action="{{ route('admin.pages.update',$pages->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">

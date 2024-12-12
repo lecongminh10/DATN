@@ -20,9 +20,7 @@ class CreatePagesTable extends Migration
             $table->text('description')->nullable(); // Mô tả, có thể để trống
             $table->longText('content'); // Nội dung trang
             $table->boolean('is_active')->default(true)->comment('Cờ kích hoạt hiện , ẩn');
-            $table->string('template')->nullable(); // Mẫu trang, có thể để trống
-            $table->string('seo_title')->nullable(); // Tiêu đề SEO, có thể để trống
-            $table->text('seo_description')->nullable(); // Mô tả SEO, có thể để trống
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->comment('Người thực hiện xóa mềm');
             $table->timestamps(); // Thời gian tạo và cập nhật
         });
     }

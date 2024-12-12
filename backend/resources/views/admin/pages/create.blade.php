@@ -18,6 +18,10 @@
 @endsection
 @section('style_css')
     <style>
+        /* Xóa cảnh báo đỏ */
+        .cke_notification {
+            display: none;
+        }
         .dropzone {
             border: 1px solid rgb(212 212 212 / 80%);
         }
@@ -68,8 +72,7 @@
             ])
             <div class="row">
                 <div class="col">
-                    <form action="{{ route('admin.pages.store') }}" method="POST" enctype="multipart/form-data"
-                        id="uploadForm" class="dropzone">
+                    <form action="{{ route('admin.pages.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-lg-12">
@@ -91,11 +94,11 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Mô Tả</label>
+                                                    <label for="description" class="form-label">Mô tả</label>
                                                     <textarea class="form-control" name="description" id="description">{{ old('description') }}</textarea>
                                                 </div>
                                                 <div class="col-md-8 mt-3">
-                                                    <label for="permalink" class="form-label">Đường link <span
+                                                    <label for="permalink" class="form-label">Liên kết cố định <span
                                                             class="text-danger">*</span></label>
                                                     <textarea class="form-control @error('permalink') is-invalid @enderror" name="permalink" id="permalink" readonly>{{ old('permalink') }}</textarea>
                                                     @error('permalink')
@@ -122,14 +125,14 @@
                                                     </div>
                                                     {{-- <div class="card mt-3">
                                                         <div class="card-header">
-                                                            <h4 class="card-title mb-0">Template<span
+                                                            <h4 class="card-title mb-0">Bản mẫu<span
                                                                     class="text-danger">*</span></h4>
                                                         </div>
                                                         <div class="card-body">
                                                             <select
                                                                 class="form-select @error('template') is-invalid @enderror"
                                                                 id="templateSelect" name="template">
-                                                                <option value="" disabled selected>-- Chọn Template --
+                                                                <option value="" disabled selected>-- Chọn bản mẫu --
                                                                 </option>
                                                                 <option value="default"
                                                                     {{ old('template') == 'default' ? 'selected' : '' }}>
@@ -159,23 +162,23 @@
                                         <h4 class="card-title mb-0">Nội dung <span class="text-danger">*</span></h4>
                                     </div>
                                     <div class="card-body">
-                                        <textarea name="content" id="editor-container" style="height: 300px;">{!! old('content', $page->content ?? '') !!}</textarea>
+                                        <textarea class="cke_notification" name="content" id="editor-container" style="height: 300px;">{{ old('content') }}</textarea>
                                         @error('content')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <!-- Image Upload -->
-                                {{-- <div class="card mt-3">
+                                <div class="card mt-3">
                                     <div class="card-header">
-                                        <h4 class="card-title mb-0">Mục ảnh Trang<span class="text-danger">*</span></h4>
+                                        <h4 class="card-title mb-0">Mục ảnh Trang</h4>
                                     </div>
                                     <div class="card-body">
                                         <input type="file" name="image" id="pages" class="hidden"
                                             multiple />
                                     </div>
-                                </div> --}}
+                                </div>
 
                                 {{-- <div class="card mt-3 shadow-sm border-0">
                                     <div class="card-header">
@@ -207,38 +210,6 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEO Modal -->
-    <div class="modal fade" id="seoModal" tabindex="-1" aria-labelledby="seoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="seoModalLabel">Nhập thông tin SEO</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="seoTitle" class="form-label">SEO Title</label>
-                        <input type="text" class="form-control @error('seo_title') is-invalid @enderror" id="seoTitle" name="seo_title" value="{{ old('seo_title') }}">
-                        @error('seo_title')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="seoDescription" class="form-label">SEO Description</label>
-                        <textarea class="form-control @error('seo_description') is-invalid @enderror" id="seoDescription" name="seo_description" rows="3">{{ old('seo_description') }}</textarea>
-                        @error('seo_description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-success" id="saveSeo">Lưu</button>
                 </div>
             </div>
         </div>

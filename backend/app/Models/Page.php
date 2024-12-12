@@ -18,9 +18,11 @@ class Page extends Model
         'description',
         'content',
         'is_active',
-        'template',
-        'seo_title',
-        'seo_description',
+        'deleted_by',
         'deleted_at',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
 }

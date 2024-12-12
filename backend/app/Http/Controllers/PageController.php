@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use Illuminate\Http\Request;
 use App\Services\PageService;
+use App\Http\Requests\PageRequest;
 use App\Events\AdminActivityLogged;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PageController extends Controller
 {
@@ -40,24 +44,17 @@ class PageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PageRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'content' => 'required|string',
-            'is_active' => 'required|in:1,0',
-            'permalink' => 'required|string|max:255|unique:pages,permalink',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'seo_title' => 'nullable|string|max:255',
-            'seo_description' => 'nullable|string|max:500',
-        ]);
+        $data = $request->validated();
+
         $page = Page::create($data);
 
         if ($request->hasFile('image')) {
             $page->image = $request->file('image')->store('pages', 'public');
             $page->save();
         }
+
         $logDetails = sprintf(
             'Thêm Trang: Tên - %s',
             $page->name
@@ -68,8 +65,8 @@ class PageController extends Controller
             'Thêm',
             $logDetails
         ));
-        // dd($page);
-        return redirect()->route('admin.pages.index')->with('success', 'Page created successfully');
+
+        return redirect()->route('admin.pages.index')->with('success', 'Thêm trang thành công.');
     }
 
 
@@ -99,29 +96,32 @@ class PageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(PageRequest $request, $id)
     {
-        // Validate request data
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'permalink' => 'required|string|max:255|unique:pages,permalink,' . $id,
-            'is_active' => 'required|in:0,1',
-            'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'seo_title' => 'nullable|string|max:255',
-            'seo_description' => 'nullable|string|max:500',
-        ]);
-
+        // Tìm trang theo ID
         $page = Page::findOrFail($id);
+
+        // Validate request data qua PageRequest (tương tự như store)
+        $data = $request->validated();
+
+        // Cập nhật thông tin trang
         $page->update($data);
 
+        // Kiểm tra và xử lý file ảnh (nếu có)
         if ($request->hasFile('image')) {
+            // Xóa file cũ nếu có
+            if ($page->image) {
+                Storage::disk('public')->delete($page->image);
+            }
+
+            // Lưu file ảnh mới và cập nhật đường dẫn vào cơ sở dữ liệu
             $page->image = $request->file('image')->store('images', 'public');
+            $page->save();
         }
-        $page->save();
+
+        // Ghi lại log hoạt động
         $logDetails = sprintf(
-            'Sủa Trang: Tên - %s',
+            'Sửa Trang: Tên - %s',
             $page->name
         );
 
@@ -131,8 +131,10 @@ class PageController extends Controller
             $logDetails
         ));
 
-        return redirect()->route('admin.pages.index')->with('success', 'Page updated successfully!');
+        // Quay lại trang danh sách với thông báo thành công
+        return redirect()->route('admin.pages.index')->with('success', 'Sửa trang thành công!');
     }
+
     public function destroyPage(int $id)
     {
         $data = $this->pageService->getById($id);
@@ -140,7 +142,6 @@ class PageController extends Controller
         if (!$data) {
             return abort(404);
         }
-        $data->delete();
         $logDetails = sprintf(
             'Xóa Trang: Tên - %s',
             $data->name
@@ -151,22 +152,30 @@ class PageController extends Controller
             'Xóa Mềm',
             $logDetails
         ));
-        if ($data->trashed()) {
-            return redirect()->route('admin.pages.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
+        if ($data) {
+            if (Auth::check()) {
+                $data->deleted_by = Auth::id();
+                $data->save();
+            }
         }
-        return redirect()->route('admin.pages.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
+        $data->delete();
+        if ($data->trashed()) {
+            return redirect()->route('admin.pages.index')->with('success', 'Trang đã được xóa thành công,');
+        }
+        return redirect()->route('admin.pages.index')->with('success', 'Xóa không thành công');
     }
     public function showSotfDelete(Request $request)
     {
+        $users = User::all();
         $search = $request->input('search');
         $perPage = $request->input('perPage', 10);
         $pages = $this->pageService->show_soft_delete($search, $perPage);
-        return view('admin.pages.delete', compact('pages'));
+        return view('admin.pages.delete', compact('pages','users'));
     }
     public function restore($id)
     {
         try {
-        $this->pageService->restore_delete($id);
+            $this->pageService->restore_delete($id);
             return redirect()->route('admin.pages.deleted')->with('success', 'Khôi phục thuộc tính thành công!');
         } catch (\Exception $e) {
             return redirect()->route('admin.pages.deleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());

@@ -27,7 +27,8 @@
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button class="btn btn-soft-danger" id="deleteMultipleBtn" style="display: none;">
+                                        <button class="btn btn-danger" id="deleteMultipleBtn" style="display: none;"
+                                            data-bs-toggle="modal" data-bs-target="#deleteMultipleModal">
                                             <i class="ri-delete-bin-5-fill"></i>
                                         </button>
                                         <a href="{{ route('admin.pages.create') }}" class="btn btn-success add-btn"
@@ -43,8 +44,9 @@
                                 <div class="row g-3">
                                     <div class="col-xl-3">
                                         <div class="search-box">
-                                                <input type="text" class="form-control search" name="search" placeholder="Nhập từ khóa tìm kiếm..."
-                                                    value="{{ request()->input('search') }}">
+                                            <input type="text" class="form-control search" name="search"
+                                                placeholder="Nhập từ khóa tìm kiếm..."
+                                                value="{{ request()->input('search') }}">
                                         </div>
                                     </div>
                                     <!--end col-->
@@ -72,6 +74,11 @@
                                 </div>
                             </form>
                         </div>
+                        @if (session('success'))
+                            <div class="w-full alert alert-success " style="margin-bottom: 20px">
+                                {{ session('success') }}
+                            </div>
+                        @endif
                         <div class="card-body">
                             <div>
                                 <div class="table-responsive table-card mb-1">
@@ -107,11 +114,13 @@
                                                     </th>
                                                     <td>{{ $item->id }}</td>
                                                     <td class="name">{{ $item->name }}</td>
-                                                    <td class="permalink"><a href="{{ $item->permalink }}">{{ $item->permalink }}</a></td>
+                                                    <td class="permalink"><a
+                                                            href="{{ $item->permalink }}">{{ $item->permalink }}</a></td>
                                                     <td class="description">{{ $item->description }}</td>
                                                     <td class="content">{{ $item->content }}</td>
                                                     <td class="is_active">
-                                                        <span class="badge {{ $item->is_active == 1 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} text-uppercase">
+                                                        <span
+                                                            class="badge {{ $item->is_active == 1 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} text-uppercase">
                                                             {{ $item->is_active == 1 ? 'active' : 'inactive' }}
                                                         </span>
                                                     </td>
@@ -128,16 +137,16 @@
                                                                     <i class="ri-pencil-fill fs-16"></i>
                                                                 </a>
                                                             </li>
-                                                            <form action="{{ route('admin.pages.destroy', $item->id) }}"
-                                                                method="post">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button onclick="return confirm('Bạn có chắc chắn không?')"
-                                                                    type="submit"
-                                                                    style="border: none; background: none; padding: 0; cursor: pointer; color: #F06549;">
+                                                            <li class="list-inline-item" data-bs-toggle="tooltip"
+                                                                data-bs-trigger="hover" data-bs-placement="top"
+                                                                title="Delete">
+                                                                <button type="button"
+                                                                    class="btn text-danger remove-item-btn"
+                                                                    data-id="{{ $item->id }}" data-bs-toggle="modal"
+                                                                    data-bs-target="#deletePageModal">
                                                                     <i class="ri-delete-bin-5-fill fs-16"></i>
                                                                 </button>
-                                                            </form>
+                                                            </li>
                                                         </ul>
                                                     </td>
                                                 </tr>
@@ -221,6 +230,50 @@
         </div>
         <!-- container-fluid -->
     </div>
+    <div class="modal fade" id="deletePageModal" tabindex="-1" aria-labelledby="deletePageModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePageModalLabel">Xóa Trang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa trang này?
+                    <form id="delete-page-form" method="POST">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteMultipleModal" tabindex="-1" aria-labelledby="deleteMultipleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteMultipleModalLabel">Xóa Nhiều Trang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa các trang đã chọn?
+                    <form id="delete-multiple-pages-form" method="POST">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-multiple">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script_libray')
     <!-- Nạp jQuery từ CDN -->
@@ -240,11 +293,37 @@
     </script>
     <script>
         //Tìm kiếm
-        document.getElementById('search-input').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                const query = this.value;
-                window.location.href = `/search?query=${encodeURIComponent(query)}`;
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('search-input').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        window.location.href = `/search?query=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.remove-item-btn'); // Select all delete buttons
+            const modal = document.getElementById('deletePageModal'); // Modal for confirmation
+            const deleteForm = document.getElementById('delete-page-form'); // The form inside the modal
+            const confirmButton = document.getElementById('confirm-delete'); // The confirm button
+
+            // Loop through all delete buttons to attach event listeners
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-id'); // Get the ID of the page to delete
+                    const actionUrl =
+                        `/admin/pages/${itemId}`; // Construct the URL for the delete action
+                    deleteForm.setAttribute('action', actionUrl); // Set the form action dynamically
+                });
+            });
+
+            // Handle form submission on clicking the confirm delete button
+            confirmButton.addEventListener('click', function() {
+                deleteForm.submit(); // Submit the form to perform the delete action
+            });
         });
     </script>
     <script>
@@ -252,7 +331,11 @@
             const checkboxes = document.querySelectorAll('input[name="chk_child"]');
             const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
             const checkAll = document.getElementById('checkAll');
-            // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
+            const deleteMultipleModal = new bootstrap.Modal(document.getElementById(
+            'deleteMultipleModal')); // Modal for multiple deletion
+            const confirmDeleteMultipleBtn = document.getElementById(
+            'confirm-delete-multiple');
+
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
@@ -260,49 +343,54 @@
                     checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
                 });
             });
-            // Thêm sự kiện cho checkbox "Chọn tất cả"
+
             checkAll.addEventListener('change', function() {
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
                 });
-                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' :
-                    'none';
+                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' : 'none';
             });
-            // Thêm sự kiện click cho nút xóa nhều
+
             deleteMultipleBtn.addEventListener('click', function() {
                 const selectedIds = Array.from(checkboxes)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
 
                 if (selectedIds.length === 0) {
-                    alert('Vui lòng chọn ít nhất một thuộc tính để xóa.');
+                    alert('Vui lòng chọn ít nhất một trang để xóa.');
                     return;
                 }
 
-                const action = 'soft_delete_pages';
-                if (confirm('Bạn có chắc chắn muốn xóa những thuộc tính đã chọn không?')) {
-                    $.ajax({
-                        url: `{{ route('admin.pages.deleteMultiple') }}`,
-                        method: 'POST',
-                        data: {
-                            ids: selectedIds,
-                            action: action,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            alert(response.message);
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            console.log(xhr);
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
-                            } else {
-                                alert('Có lỗi xảy ra: ' + xhr.statusText);
-                            }
+                deleteMultipleModal.show();
+                deleteMultipleModal.selectedIds = selectedIds;
+            });
+
+            confirmDeleteMultipleBtn.addEventListener('click', function() {
+                const selectedIds = deleteMultipleModal.selectedIds;
+
+                $.ajax({
+                    url: '{{ route('admin.pages.deleteMultiple') }}',
+                    method: 'POST',
+                    data: {
+                        ids: selectedIds,
+                        action: 'soft_delete_pages',
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        // alert('Các trang đã được xóa thành công!');
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
+                        } else {
+                            alert('Có lỗi xảy ra: ' + xhr.statusText);
                         }
-                    });
-                }
+                    }
+                });
+
+                deleteMultipleModal.hide();
             });
         });
     </script>

@@ -39,6 +39,7 @@ class  PageRepository extends BaseRepository
     public function restore_delete($id)
     {
         $model = Page::onlyTrashed()->findOrFail($id);
+        $model->deleted_by = null;
         $model->restore();
     }
 }
