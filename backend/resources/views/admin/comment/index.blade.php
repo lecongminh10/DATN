@@ -1,6 +1,8 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Danh sách bình luận')
+@section('title')
+    Danh Sách Bình Luận
+@endsection
 
 @section('style_css')
     {{-- Thêm style nếu cần --}}
@@ -26,7 +28,7 @@
                             <div class="live-preview">
                                 <div class="row g-4 mb-3">
                                     <div class="col-sm d-flex justify-content-end">
-                                        <form action="{{ route('comment.index') }}" method="GET" class="d-flex">
+                                        <form action="{{ route('admin.comment.index') }}" method="GET" class="d-flex">
                                             <!-- Lọc theo tên sản phẩm -->
                                             <div class="me-2">
                                                 <input type="text" class="form-control" name="product_name"
@@ -44,7 +46,7 @@
                                                     value="{{ request('date_to') }}" style="max-width: 150px;">
                                             </div>
                                             <button type="submit" class="btn btn-primary btn-sm"
-                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Lọc</button>
+                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem; width: 90px;"><i class="ri-equalizer-fill fs-13 align-bottom me-1 "></i> Tìm</button>
                                         </form>
                                     </div>
                                 </div>
@@ -54,7 +56,7 @@
                                             <th scope="col">ID</th>
                                             <th scope="col">Người dùng</th>
                                             <th scope="col">Sản phẩm</th>
-                                            <th scope="col">Loại</th>
+                                            {{-- <th scope="col">Loại</th> --}}
                                             <th scope="col">Xếp hạng</th>
                                             <th scope="col">Nội dung</th>
                                             <th scope="col">Hình ảnh/Video</th>
@@ -69,7 +71,7 @@
                                                 <td>{{ $item->id }}</td>
                                                 <td>{{ $item->user->username }}</td>
                                                 <td>{{ $item->product->name }}</td>
-                                                <td>
+                                                {{-- <td>
                                                     @if ($item->productVariant->attributeValues)
                                                         @foreach ($item->productVariant->attributeValues as $attributeValue)
                                                             <p class="attribute-item">
@@ -79,7 +81,7 @@
                                                         @endforeach
                                                     @endif
 
-                                                </td>
+                                                </td> --}}
                                                 <td>{{ $item->rating }}</td>
                                                 <td>{{ $item->review_text }}</td>
                                                 <td>
@@ -157,7 +159,7 @@
             // Khi nhấn vào nút "Trả lời"
             $('[data-bs-toggle="modal"]').on('click', function() {
                 var commentId = $(this).data('bs-id'); // Lấy ID của bình luận
-                var formAction = '{{ route('comment.reply', ':id') }}'; // Định dạng URL cho action
+                var formAction = '{{ route('admin.comment.reply', ':id') }}'; // Định dạng URL cho action
                 formAction = formAction.replace(':id', commentId); // Thay thế :id với commentId
 
                 // Cập nhật action của form

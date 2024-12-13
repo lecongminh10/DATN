@@ -10051,6 +10051,7 @@ footer .contact-info-label {
 #scroll-top:hover, #scroll-top:focus {
   background-color: #3a4045;
 }
+/* Loại bỏ icon ô vuông
 #scroll-top.fixed {
   transform: translateY(0);
   opacity: 1;
@@ -10064,7 +10065,7 @@ footer .contact-info-label {
   z-index: 996;
   transition: background 0.3s ease-out;
   background: rgba(64, 64, 64, 0.75);
-}
+} */
 #scroll-top.fixed:hover {
   color: #08C;
 }

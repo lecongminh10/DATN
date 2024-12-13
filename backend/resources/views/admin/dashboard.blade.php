@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Dashboard
+@endsection
 @section('libray_css')
     <!-- jsvectormap css -->
     <link href="{{ asset('theme/assets/libs/jsvectormap/css/jsvectormap.min.css') }}" rel="stylesheet" type="text/css" />
@@ -12,7 +16,13 @@
 
             <div class="row">
                 <div class="col">
-
+                    @include('admin.layouts.component.page-header', [
+                        'title' => 'Dashboard',
+                        'breadcrumb' => [
+                            // ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                            ['name' => 'Dashboard', 'url' => '#'],
+                        ],
+                    ])
                     <div class="h-100">
                         <div class="row mb-3 pb-1">
                             <div class="col-12">
@@ -30,12 +40,12 @@
                                                     </div>
                                                 </div> --}}
                                                 <!--end col-->
-                                                <div class="col-auto">
+                                                {{-- <div class="col-auto">
                                                     <a href="{{ route('admin.products.addProduct') }}"
                                                         class="btn btn-soft-success"><i
                                                             class="ri-add-circle-line align-middle me-1"></i>
                                                         Add Product</a>
-                                                </div>
+                                                </div> --}}
                                                 <!--end col-->
                                             </div>
                                             <!--end row-->

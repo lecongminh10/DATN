@@ -1,8 +1,17 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Nhật ký
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
+            @include('admin.layouts.component.page-header', [
+                'title' => 'Nhật ký',
+                'breadcrumb' => [
+                    ['name' => 'Nhật ký', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Danh sách nhật ký', 'url' => '#'],
+                ],
+            ])
             <div class="card">
                 <div class="card-header">
                     <h5>Nhật ký hoạt động</h5>

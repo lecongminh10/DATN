@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -21,8 +24,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.carriers.deleted') }}">Carrier List
-                                                        SotfDelete</a></h5>
+                                                        href="{{ route('admin.carriers.deleted') }}">Thùng rác</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -44,7 +46,7 @@
                                                 <div class="col-6">
                                                     <select class="form-select" aria-label=".form-select-sm example"
                                                         id="idStatus">
-                                                        <option value="" selected>All</option>
+                                                        <option value="" selected>Tất cả</option>
                                                         <option value="active"
                                                             {{ request()->get('status') == 'active' ? 'selected' : '' }}>
                                                             Active</option>
@@ -54,9 +56,9 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-3 ms-3">
-                                                    <button type="button" class="btn btn-primary w-100"
+                                                    <button type="button" class="btn btn-primary w-sm"
                                                         onclick="filterData();">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm
                                                     </button>
                                                 </div>
                                             </div>
@@ -64,15 +66,10 @@
                                                 <div class="">
                                                     <button class="btn btn-soft-danger me-1" id="deleteMultipleBtn"
                                                         style="display: none;">
-                                                        <i class="ri-delete-bin-5-fill"></i>
+                                                        <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                     </button>
-                                                    <a class="btn btn-success add-btn me-1"
-                                                        href="{{ route('admin.carriers.create') }}">
-                                                        <i class="ri-add-box-fill"></i> Thêm
-                                                    </a>
                                                     <a href="{{ route('admin.carriers.index') }}"
-                                                        class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Trang list
+                                                        class="btn btn-primary">Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -90,15 +87,13 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name">Carrier Name</th>
+                                                <th data-sort="carrier_name">Tên nhà vận chuyển</th>
                                                 <th data-sort="api_url">API URL</th>
                                                 <th data-sort="api_token">API Token</th>
-                                                <th data-sort="phone">Phone</th>
+                                                <th data-sort="phone">Số điện thoại</th>
                                                 <th data-sort="email">Email</th>
-                                                <th data-sort="is_active">Status</th>
-                                                <th data-sort="created_at">Created_at</th>
-                                                <th data-sort="updated_at">Update_at</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="is_active">Trạng thái</th>
+                                                <th data-sort="action">Hoạt động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -122,8 +117,6 @@
                                                             {{ $item->is_active === 'active' ? 'active' : 'inactive' }}
                                                         </span>
                                                     </td>
-                                                    <td>{{ $item->created_at->format('d-m-Y H:i:s') }}</td>
-                                                    <td>{{ $item->updated_at->format('d-m-Y H:i:s') }}</td>
                                                     <td>
                                                         <form action="{{ route('admin.carriers.restore', $item->id) }}"
                                                             method="POST" style="display:inline;">

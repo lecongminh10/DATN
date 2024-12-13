@@ -75,7 +75,7 @@ class ProductController extends Controller
     {
         Artisan::call('generate:attributes-json');
         Artisan::call('generate:tags-json');
-        $product = $this->productService->getById($id)->load(['category', 'tags', 'galleries']);
+        $product = $this->productService->getById($id)->load(['category', 'tags', 'galleries','productDimension']);
         if (!$product) {
             return redirect()->route('admin.products.index')->with('error', 'Product not found');
         }

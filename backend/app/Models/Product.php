@@ -113,6 +113,10 @@ class Product extends Model
         return $this->hasOne(ProductDimension::class, 'product_id');  // Sử dụng hasOne vì mỗi sản phẩm chỉ có một bảng kích thước
     }
 
+    public function wishList()
+    {
+        return $this->hasOne(WishList::class, 'product_id');
+    }
 }
 
 

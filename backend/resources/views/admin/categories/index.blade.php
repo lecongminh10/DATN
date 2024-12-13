@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    Danh sách sản phẩm
+    Danh Sách Danh Mục
 @endsection
 @section('style_css')
     <style>
@@ -12,6 +12,40 @@
             word-wrap: break-word;
             white-space: normal;
         }
+
+        .toggle-subcategories {
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.toggle-subcategories i {
+    transition: transform 0.3s;
+}
+
+.toggle-subcategories[aria-expanded="true"] i {
+    transform: rotate(90deg); /* Xoay mũi tên khi mở rộng */
+}
+
+/* Tên danh mục con */
+.child-prefix {
+    color: #000; 
+    margin-right: 5px;
+}
+
+.child-name {
+    color: #007bff; 
+    font-weight: 500;
+}
+.subchild-name {
+    color: green; 
+    font-weight: 500;
+}
+
+.collapse td {
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+
+}
     </style>
 @endsection
 @section('content')
@@ -32,25 +66,30 @@
                         </div>
 
                         <div class="card-body">
+                            @if (session('success'))
+                                <div class="w-full alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
                             <div class="live-preview">
                                 <div class="row g-4 mb-3">
                                     <div class="col-sm-auto">
                                         <div>
-                                            <a href="{{ route('admin.categories.create') }}" class="btn btn-success">
-                                                <i class="ri-add-line align-bottom me-1"></i> Thêm mới
+                                            <a href="{{ route('admin.categories.create') }}" class="btn btn-success me-2">
+                                                <i class="ri-add-line align-bottom"></i> Thêm mới
+                                            </a>
+                                            <a href="{{ route('admin.categories.trashed') }}" class="btn btn-warning me-2">
+                                                <i class="ri-delete-bin-5-line align-bottom"></i> Thùng rác
                                             </a>
                                             <button type="button" class="btn btn-soft-danger" id="delete-selected">
-                                                <i class="ri-delete-bin-2-line"></i>
+                                                <i class="ri-delete-bin-2-line align-bottom"></i>
                                             </button>
-                                            <a href="{{ route('admin.categories.trashed') }}" class="btn btn-warning">
-                                                <i class="ri-delete-bin-5-line align-bottom me-1"></i> Thùng rác
-                                            </a>
                                         </div>
                                     </div>
                                     <div class="col-sm d-flex justify-content-end">
                                         <form action="{{ route('admin.categories.index') }}" method="GET" class="d-flex"
                                             id="search-form">
-                                            <select name="parent_id" class="form-control me-2" style="max-width: 150px;"
+                                            <select name="parent_id" class="form-control me-2" style="max-width: 200px;"
                                                 onchange="this.form.submit()">
                                                 <option value="">-- Chọn Danh Mục Cha --</option>
                                                 @foreach ($parentCategories as $parent)
@@ -64,37 +103,39 @@
                                                 placeholder="Tìm kiếm..." value="{{ request('search') }}" id="search-input"
                                                 style="max-width: 150px;">
                                             <button type="submit" class="btn btn-primary btn-sm"
-                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Tìm kiếm</button>
+                                                style="padding: 0.2rem 0.5rem; font-size: 0.8rem; width: 80px;"><i class="ri-equalizer-fill fs-13 align-bottom me-1"></i> Tìm</button>
                                         </form>
                                     </div>
                                 </div><br>
-                                <form action="{{ route('admin.categories.delete-multiple') }}" method="POST" id="delete-multiple-form">
-                                      @csrf
-                                      @method('DELETE')
-                                     <table class="table table-bordered align-middle table-nowrap mb-0">
-                                              <thead>
-                                                  <tr>
-                                                      <th scope="col"><input type="checkbox" id="checkAll"></th>
-                                                      <!-- Checkbox tổng -->
-                                                      <th scope="col">ID</th>
-                                                      <th scope="col">Tên</th>
-                                                      <th scope="col">Mô tả</th>
-                                                       <th scope="col">Ảnh</th>
-                                                      <th scope="col">Hành động</th>
-                                                  </tr>
-                                              </thead>
-                                              <tbody>
-                                                  @foreach ($parentCategories as $category)
-                                                      @include('admin.categories.partials.category-row', [
-                                                          'category' => $category,
-                                                          'level' => 0,
-                                                      ])
-                                                  @endforeach
-                                              </tbody>
-                                       </table>
-                                    </form>
+                                <form action="{{ route('admin.categories.delete-multiple') }}" method="POST"
+                                    id="delete-multiple-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <table class="table table-bordered align-middle table-nowrap mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"><input type="checkbox" id="checkAll"></th>
+                                                <!-- Checkbox tổng -->
+                                                <th scope="col">STT</th>
+                                                <th scope="col">Tên</th>
+                                                <th scope="col">Mô tả</th>
+                                                <th scope="col">Trạng thái</th>
+                                                <th scope="col">Ảnh</th>
+                                                <th scope="col">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($data as $category)
+                                            @include('admin.categories.partials.category-row', [
+                                                'category' => $category,
+                                                'level' => 0,
+                                            ])
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </form>
                                 <div class="d-flex justify-content-center mt-3">
-                                    {{ $parentCategories->links('vendor.pagination.bootstrap-5') }}
+                                    {{ $data->links('vendor.pagination.bootstrap-5') }}
                                 </div>
                             </div>
                         </div>

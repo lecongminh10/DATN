@@ -5,7 +5,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 @extends('client.layouts.app')
 @section('style_css')
     <style>
-        .add-cart{
+        .add-cart {
             background-color: #f4f4f4;
         }
 
@@ -19,11 +19,13 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
         }
 
         .modal-content {
-            max-height: calc(100vh - 3rem); /* Đảm bảo modal không vượt quá chiều cao màn hình */
-            overflow-y: auto; /* Cuộn nếu nội dung quá dài */
+            max-height: calc(100vh - 3rem);
+            /* Đảm bảo modal không vượt quá chiều cao màn hình */
+            overflow-y: auto;
+            /* Cuộn nếu nội dung quá dài */
         }
 
-        .view-detail{
+        .view-detail {
             border: none;
             color: #4d4c4a;
             cursor: pointer;
@@ -31,11 +33,11 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             background-color: transparent;
         }
 
-        .btn-icon-wish{
+        .btn-icon-wish {
             margin-top: 10px;
         }
 
-        .btn-detail{
+        .btn-detail {
             border: none;
             background-color: transparent;
             color: #4d4c4a;
@@ -99,35 +101,6 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                         <!-- End .toolbox-item -->
                     </div>
                     <!-- End .toolbox-left -->
-
-                    <div class="toolbox-right">
-                        <div class="toolbox-item toolbox-show">
-                            <label>Show:</label>
-                            <form action="{{ url()->current() }}" method="GET">
-                                <div class="select-custom">
-                                    <select name="count" class="form-control" onchange="this.form.submit()">
-                                        <option value="12" {{ request('count') == 12 ? 'selected' : '' }}>12</option>
-                                        <option value="24" {{ request('count') == 24 ? 'selected' : '' }}>24</option>
-                                        <option value="36" {{ request('count') == 36 ? 'selected' : '' }}>36</option>
-                                    </select>
-                                </div>
-                                <!-- End .select-custom -->
-                            </form>
-                            <!-- End .select-custom -->
-                        </div>
-                        <!-- End .toolbox-item -->
-
-                        {{-- <div class="toolbox-item layout-modes">
-                            <a href="category.html" class="layout-btn btn-grid active" title="Grid">
-                                <i class="icon-mode-grid"></i>
-                            </a>
-                            <a href="category-list.html" class="layout-btn btn-list" title="List">
-                                <i class="icon-mode-list"></i>
-                            </a>
-                        </div> --}}
-                        <!-- End .layout-modes -->
-                    </div>
-                    <!-- End .toolbox-right -->
                 </nav>
 
                 @php
@@ -139,44 +112,52 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             <div class="product-default">
                                 <figure>
                                     {{-- @foreach ($item->galleries as $value) --}}
-                                        <a href="{{route('client.showProduct',$item->id)}}">
-                                            @php
-                                                $mainImage = $item->galleries->where('is_main', true)->first();
-                                                $otherImages = $item->galleries->where('is_main', false)->take(1);
-                                            @endphp
-                                        
-                                            @if ($mainImage)
-                                                <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
-                                            @endif
-                                            
-                                            @foreach ($otherImages as $value)
-                                                <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $item->name }}" />
-                                            @endforeach
-                                        </a>
+                                    <a href="{{ route('client.showProduct', $item->id) }}">
+                                        @php
+                                            $mainImage = $item->galleries->where('is_main', true)->first();
+                                            $otherImages = $item->galleries->where('is_main', false)->take(1);
+                                        @endphp
+
+                                        @if ($mainImage)
+                                            <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205"
+                                                height="205" alt="{{ $item->name }}" />
+                                        @endif
+
+                                        @foreach ($otherImages as $value)
+                                            <img src="{{ \Storage::url($value->image_gallery) }}" width="205"
+                                                height="205" alt="{{ $item->name }}" />
+                                        @endforeach
+                                    </a>
                                     {{-- @endforeach --}}
                                     <div class="label-group">
                                         @if ($item->is_hot_deal == 1)
-                                            <div class="product-label label-hot">HOT</div> 
+                                            <div class="product-label label-hot">HOT</div>
                                         @endif
-                                            {{-- <div class="product-label label-hot">HOT</div> --}}
+                                        {{-- <div class="product-label label-hot">HOT</div> --}}
 
                                         @php
                                             // Xác định giá sản phẩm
                                             if (isset($item->productVariant)) {
-                                                // Nếu có product_variant, lấy giá từ biến thể  
+                                                // Nếu có product_variant, lấy giá từ biến thể
                                                 $price = $item->productVariant->price_modifier;
                                             } else {
                                                 // Nếu không có product_variant, kiểm tra giá sale của sản phẩm
-                                                $price = ($item->price_sale !== null && $item->price_sale < $item->price_regular)
-                                                    ? $item->price_sale // Lấy giá sale nếu có
-                                                    : $item->price_regular; // Nếu không có giá sale, lấy giá thường
+                                                $price =
+                                                    $item->price_sale !== null &&
+                                                    $item->price_sale < $item->price_regular
+                                                        ? $item->price_sale // Lấy giá sale nếu có
+                                                        : $item->price_regular; // Nếu không có giá sale, lấy giá thường
                                             }
 
-                                            // Tính toán phần trăm giảm giá nếu có giá sale hợp lệ
                                             $discountPercentage = null;
-                                            if ($item->price_sale !== null && $item->price_sale < $item->price_regular) {
+                                            if (
+                                                $item->price_sale !== null &&
+                                                $item->price_sale < $item->price_regular
+                                            ) {
                                                 $discountPercentage = round(
-                                                    (($item->price_regular - $item->price_sale) / $item->price_regular) * 100
+                                                    (($item->price_regular - $item->price_sale) /
+                                                        $item->price_regular) *
+                                                        100,
                                                 );
                                             }
                                         @endphp
@@ -190,12 +171,14 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                 <div class="product-details">
                                     <div class="category-wrap">
                                         <div class="category-list">
-                                            <a href="{{ route('client.products.Category', ['id' =>$item->category->id]) }}"
+                                            <a href="{{ route('client.products.Category', ['id' => $item->category->id]) }}"
                                                 class="product-category">{{ $item->category->name }}</a>
                                         </div>
                                     </div>
 
-                                    <h3 class="product-title"> <a href="{{route('client.showProduct',$item->id)}}">{{ $item->name }}</a> </h3>
+                                    <h3 class="product-title"> <a
+                                            href="{{ route('client.showProduct', $item->id) }}">{{ $item->name }}</a>
+                                    </h3>
 
                                     <div class="ratings-container">
                                         <div class="product-ratings">
@@ -208,19 +191,28 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
                                     <div class="price-box">
                                         @if ($item->price_sale == null)
-                                            <span class="new-price" style="color: #08c; font-size: 1.2em;">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
+                                            <span class="new-price"
+                                                style="color: #08c; font-size: 1.2em;">{{ number_format($item->price_regular, 0, ',', '.') }}
+                                                ₫</span>
                                         @else
-                                            <span class="new-price" style="color: #08c;  font-size: 1.2em;">{{ number_format($item->price_sale, 0, ',', '.') }} ₫</span>
-                                            <span class="old-price">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
-                                        @endif                                 
+                                            <span class="new-price"
+                                                style="color: #08c;  font-size: 1.2em;">{{ number_format($item->price_sale, 0, ',', '.') }}
+                                                ₫</span>
+                                            <span class="old-price">{{ number_format($item->price_regular, 0, ',', '.') }}
+                                                ₫</span>
+                                        @endif
                                     </div>
 
                                     <!-- End .price-box -->
 
                                     <div class="product-action">
-                                        <a href="#" class="btn-icon-wish" title="wishlist" data-product-id="{{ $item->id }}"><i class="icon-heart"></i></a>
-                                        <a href="#" class="btn-icon btn-add-cart add-cart" data-product-id="{{ $item->id }}" data-toggle="modal" data-target="#addToCart"><i class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span></a>
-                                        <a href="{{route('client.showProduct', $item->id)}}" class="btn-quickview" title="Quick View">
+                                        <a href="#" class="btn-icon-wish" title="wishlist"
+                                            data-product-id="{{ $item->id }}"><i class="icon-heart"></i></a>
+                                        <a href="#" class="btn-icon btn-add-cart add-cart"
+                                            data-product-id="{{ $item->id }}" data-toggle="modal"><i
+                                                class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span></a>
+                                        <a href="{{ route('client.showProduct', $item->id) }}" class="btn-quickview"
+                                            title="Quick View">
                                             <button class="view-detail"><i class="fas fa-external-link-alt"></i></button>
                                         </a>
                                     </div>
@@ -231,7 +223,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     @endforeach
                 </div>
                 <!-- End .row -->
-                {{-- <nav class="toolbox toolbox-pagination">
+                <nav class="toolbox toolbox-pagination">
                     <div class="toolbox-item toolbox-show">
                         <label>Show:</label>
                         <form action="{{ url()->current() }}" method="GET">
@@ -249,7 +241,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     <ul class="pagination toolbox-item">
                         {{ $products->links('pagination::bootstrap-5') }}
                     </ul>
-                </nav> --}}
+                </nav>
             </div>
             <!-- End .col-lg-9 -->
 
@@ -261,28 +253,26 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             <a data-toggle="collapse" href="#widget-body-2" role="button" aria-expanded="true"
                                 aria-controls="widget-body-2">Danh mục</a>
                         </h3>
-
                         <div class="collapse show" id="widget-body-2">
                             <div class="widget-body">
                                 <ul class="cat-list">
                                     @foreach ($categories as $category)
                                         <li>
-                                            <a href="{{ route('client.products.Category', ['id' => $category->id]) }}"
-                                                role="button"
-                                                aria-expanded="{{ $category->children->isNotEmpty() ? 'true' : 'false' }}"
-                                                aria-controls="widget-category-{{ $category->id }}">
+                                            <a href="#" class="category-link" role="button"
+                                                data-target="#widget-category-{{ $category->id }}" aria-expanded="false">
                                                 {{ $category->name }}
                                                 <span class="products-count">({{ $category->products_count }})</span>
-                                                <span class="toggle"></span>
+                                                @if ($category->children->isNotEmpty())
+                                                    <span class="toggle"></span>
+                                                @endif
                                             </a>
                                             @if ($category->children->isNotEmpty())
-                                                <div class="collapse {{ $category->children->isNotEmpty() ? 'show' : '' }}"
-                                                    id="widget-category-{{ $category->id }}">
+                                                <div class="collapse" id="widget-category-{{ $category->id }}">
                                                     <ul class="cat-sublist">
                                                         @foreach ($category->children as $subcategory)
                                                             <li>
                                                                 <a
-                                                                    href="{{ route('client.products.Category',$subcategory->id) }}">
+                                                                    href="{{ route('client.products.Category', $subcategory->id) }}">
                                                                     {{ $subcategory->name }}
                                                                     <span
                                                                         class="products-count">({{ $subcategory->products_count }})</span>
@@ -298,6 +288,8 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             </div>
                             <!-- End .widget-body -->
                         </div>
+
+
 
                         <!-- End .collapse -->
                     </div>
@@ -319,7 +311,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     <div
                                         class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
                                         <div class="filter-price-text">
-                                            Price:
+                                            Giá:
                                             <span id="filter-price-range">₫{{ $minPrice ?? 0 }} -
                                                 ₫{{ $maxPrice ?? 100000000 }}</span>
                                         </div>
@@ -342,7 +334,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     <!-- End .widget -->
 
                     <div style="margin-bottom: 50px"></div>
-                    
+
                 </div>
                 <!-- End .sidebar-wrapper -->
             </aside>
@@ -352,29 +344,31 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
     </div>
 
     <!-- Modal -->
-<div class="modal fade" id="addToCart" tabindex="-1" role="dialog" aria-labelledby="addToCartLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="max-width: 550px">
-        <div class="modal-header">
-            <h5 class="modal-title" id="addToCartLabel">Thông báo </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
-        </div>
+    <div class="modal fade" id="addToCart" tabindex="-1" role="dialog" aria-labelledby="addToCartLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="max-width: 550px">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addToCartLabel">Thông báo </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 @endsection
 @section('scripte_logic')
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
+        let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
         if (window.location.hash === "#_=_") {
             window.location.hash = "";
         }
@@ -399,102 +393,145 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             this.form.submit();
         });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryLinks = document.querySelectorAll('.category-link');
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Thêm vào giỏ hàng
-        const addToCartButtons = document.querySelectorAll('.btn-add-cart');
-        addToCartButtons.forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                event.preventDefault(); // Ngăn chặn chuyển trang
-                const productId = button.getAttribute('data-product-id');
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    const targetElement = document.querySelector(targetId);
 
-                // Gọi AJAX để thêm sản phẩm vào giỏ hàng
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('addCart') }}", // Thay bằng route tương ứng
-                    data: {
-                        product_id: productId,
-                        quantity: 1, // Thiết lập số lượng mặc định là 1
-                        _token: '{{ csrf_token() }}' // CSRF token
-                    },
-                    success: function(response) {
+                    if (targetElement) {
+                        const isExpanded = link.getAttribute('aria-expanded') === 'true';
 
-                        // alert("Sản phẩm đã được thêm vào giỏ hàng thành công!");
-                        updateCartDisplay(response);
-                       
-                        
-                    },
-                    error: function(xhr) {
-                        if (xhr.status === 401) {
-                            alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
-                        } else {
-                            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+                        document.querySelectorAll('.category-link[aria-expanded="true"]').forEach(
+                            activeLink => {
+                                const activeTargetId = activeLink.getAttribute('data-target');
+                                const activeTargetElement = document.querySelector(
+                                    activeTargetId);
+                                if (activeTargetElement) {
+                                    activeTargetElement.classList.remove('show');
+                                    activeLink.setAttribute('aria-expanded', 'false');
+                                }
+                            });
+
+                        if (!isExpanded) {
+                            targetElement.classList.add('show');
+                            link.setAttribute('aria-expanded', 'true');
                         }
                     }
                 });
             });
         });
 
-        // Thêm vào wishlist
-        const wishlistButtons = document.querySelectorAll('.btn-icon-wish');
-        wishlistButtons.forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                event.preventDefault(); // Ngăn chặn chuyển trang
-                const productId = button.getAttribute('data-product-id');
-                
-                // Gọi AJAX để thêm sản phẩm vào wishlist
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('addWishList') }}", // Thay bằng route tương ứng
-                    data: {
-                        product_id: productId,
-                        _token: '{{ csrf_token() }}' // CSRF token
-                    },
-                    success: function(response) {
-                        // Xử lý khi thêm vào wishlist thành công
-                        // alert("Sản phẩm đã được thêm vào danh sách yêu thích!");
-                    },
-                    error: function(xhr) {
-                        if (xhr.status === 401) {
-                            alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
-                        } else {
-                            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-                        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Thêm vào giỏ hàng
+            const addToCartButtons = document.querySelectorAll('.btn-add-cart');
+            addToCartButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Ngăn chặn chuyển trang
+                    const productId = button.getAttribute('data-product-id');
+                    if (isLoggedIn) {
+                        // Gọi AJAX để thêm sản phẩm vào giỏ hàng
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('addCart') }}", // Thay bằng route tương ứng
+                            data: {
+                                product_id: productId,
+                                quantity: 1, // Thiết lập số lượng mặc định là 1
+                                _token: '{{ csrf_token() }}' // CSRF token
+                            },
+                            success: function(response) {
+
+                                // alert("Sản phẩm đã được thêm vào giỏ hàng thành công!");
+                                updateCartDisplay(response);
+
+
+                            },
+                            error: function(xhr) {
+                                if (xhr.status === 401) {
+                                    alert(
+                                        "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng."
+                                    );
+                                } else {
+                                    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+                                }
+                            }
+                        });
+                    } else {
+                        alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
+                    }
+                });
+            });
+
+            // Thêm vào wishlist
+            const wishlistButtons = document.querySelectorAll('.btn-icon-wish');
+            wishlistButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Ngăn chặn chuyển trang
+                    const productId = button.getAttribute('data-product-id');
+                    if (isLoggedIn) {
+                        // Gọi AJAX để thêm sản phẩm vào wishlist
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('addWishList') }}", // Thay bằng route tương ứng
+                            data: {
+                                product_id: productId,
+                                _token: '{{ csrf_token() }}' // CSRF token
+                            },
+                            success: function(response) {
+                                // Xử lý khi thêm vào wishlist thành công
+                                // alert("Sản phẩm đã được thêm vào danh sách yêu thích!");
+                                $('#addToCart').modal('show');
+                            },
+                            error: function(xhr) {
+                                if (xhr.status === 401) {
+                                    alert(
+                                        "Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích."
+                                    );
+                                } else {
+                                    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+                                }
+                            }
+                        });
+                    } else {
+                        alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
                     }
                 });
             });
         });
-    });
 
-    function updateCartDisplay(data) {
-    // Đặt lại nội dung của phần sản phẩm trong giỏ hàng
-        let cartContent = '';
-        let subTotal = 0;
+        function updateCartDisplay(data) {
+            // Đặt lại nội dung của phần sản phẩm trong giỏ hàng
+            let cartContent = '';
+            let subTotal = 0;
 
-        // Duyệt qua các sản phẩm trong giỏ hàng
-        data.carts.forEach(item => {
-            let price = item.product.price_sale > 0 ? item.product.price_sale : item.product.price_regular;
-            if (item.productVariant) {
-                price = item.productVariant.price_modifier;
-            }
-            const sub = price * item.quantity;
-            subTotal += sub;
+            // Duyệt qua các sản phẩm trong giỏ hàng
+            data.carts.forEach(item => {
+                let price = item.product.price_sale > 0 ? item.product.price_sale : item.product.price_regular;
+                if (item.productVariant) {
+                    price = item.productVariant.price_modifier;
+                }
+                const sub = price * item.quantity;
+                subTotal += sub;
 
-            // Kiểm tra và lấy ảnh chính từ galleries
-            let mainImage = item.product.galleries.find(gallery => gallery.is_main); 
-            let imageUrl = mainImage && mainImage.image_gallery 
-                ? `/storage/${mainImage.image_gallery}` 
-                : '/images/default-image.jpg'; // Nếu không có ảnh chính, dùng ảnh mặc định
+                // Kiểm tra và lấy ảnh chính từ galleries
+                let mainImage = item.product.galleries.find(gallery => gallery.is_main);
+                let imageUrl = mainImage && mainImage.image_gallery ?
+                    `/storage/${mainImage.image_gallery}` :
+                    '/images/default-image.jpg'; // Nếu không có ảnh chính, dùng ảnh mặc định
 
-            // Xây dựng HTML cho từng sản phẩm
-            cartContent += `
+                // Xây dựng HTML cho từng sản phẩm
+                cartContent += `
                 <div class="product">
                     <div class="product-details">
                         <h4 class="product-title">
                             <a href="/product/${item.product.id}">${item.product.name}</a>
                         </h4>
                         <span class="cart-product-info">
-                                <span class="cart-product-qty">${item.quantity}</span> × 
+                                <span class="cart-product-qty">${item.quantity}</span> ×
                                 ${price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} ₫
                         </span>
                     </div>
@@ -506,27 +543,25 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     </figure>
                 </div>
             `;
-        });
-        // console.log(data.totalQuantity);
-        
-        document.querySelector(".cart-count").innerHTML=data.totalQuantity
+            });
+            // console.log(data.totalQuantity);
 
-        // Cập nhật HTML giỏ hàng
-        document.querySelector('.dropdown-cart-products').innerHTML = cartContent;
-        document.querySelector('.cart-total-price').innerText = `${subTotal.toLocaleString('vi-VN')}₫`;
-    }
+            document.querySelector(".cart-count").innerHTML = data.totalQuantity
 
-    // Giả sử đây là JSON nhận được từ server
-    const cartData = {
-        totalQuantity: 18,
-        carts: [
-            // Array sản phẩm
-        ]
-    };
+            // Cập nhật HTML giỏ hàng
+            document.querySelector('.dropdown-cart-products').innerHTML = cartContent;
+            document.querySelector('.cart-total-price').innerText = `${subTotal.toLocaleString('vi-VN')}₫`;
+        }
 
-
-    // Modal thông báo thêm giỏ hàng
-    document.querySelector("#addToCart .modal-body").innerHTML= `<p style="">Thêm vào giỏ hàng thành công</p>`
+        // Giả sử đây là JSON nhận được từ server
+        const cartData = {
+            totalQuantity: 18,
+            carts: [
+                // Array sản phẩm
+            ]
+        };
+        // Modal thông báo thêm giỏ hàng
+        document.querySelector("#addToCart .modal-body").innerHTML = `<p style="">Thêm vào giỏ hàng thành công</p>`
     </script>
 @endsection
 </style>

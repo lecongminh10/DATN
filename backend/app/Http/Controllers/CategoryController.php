@@ -23,9 +23,11 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-      $perPage = 5;
-      $parentCategories = Category::whereNull('parent_id')->paginate($perPage);
-      return view(self::PATH_VIEW . __FUNCTION__,  compact('parentCategories'));
+        $parent_id = $request->parent_id;
+        $search = $request->search;
+        $data = $this->categoryService->getCategoriesByParentIdAndName($parent_id ,$search);
+        $parentCategories = Category::whereNull('parent_id')->with('children.children')->get();
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data','parentCategories'));
     }
 
     public function create()
@@ -58,7 +60,7 @@ class CategoryController extends Controller
         ));
 
 
-        return redirect()->route('admin.categories.index');
+        return redirect()->route('admin.categories.index')->with('success','Thêm danh mục thành công');
     }
 
     public function show($id)

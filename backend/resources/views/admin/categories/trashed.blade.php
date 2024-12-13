@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+   Thùng Rác
+@endsection
 @section('style_css')
     <style>
         .description {
@@ -25,7 +28,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="mb-sm-0">Danh Sách Danh Mục Đã Xóa</h4>
+                            <h4 class="mb-sm-0">Thùng rác</h4>
                         </div><!-- end card header -->
 
                         <div class="card-body">
@@ -36,9 +39,7 @@
                                     <div class="table-responsive">
                                         <div class="row g-4 mb-3">
                                             <div class="col-sm-auto">
-                                                <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">
-                                                    <i class="ri-arrow-left-line align-bottom me-1"></i> Quay lại
-                                                </a>
+                                                <a href="{{ route('admin.categories.index') }}" class="btn btn-primary"> Quay lại </a>
                                                 <button type="button" id="restore-selected" class="btn btn-success ms-2"
                                                     title="Khôi phục đã chọn">
                                                     Khôi phục
@@ -51,7 +52,7 @@
                                                     <input type="text" class="form-control me-2" name="search"
                                                         placeholder="Tìm kiếm..." value="{{ request('search') }}"
                                                         id="search-input" style="max-width: 150px;">
-                                                    <button type="submit" class="btn btn-primary btn-sm">Tìm kiếm</button>
+                                                    <button type="submit" class="btn btn-primary btn-sm" style="width: 80px"><i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm</button>
                                                 </form>
                                             </div>
                                         </div><br>
@@ -62,12 +63,12 @@
                                                         <input type="checkbox" id="select-all">
                                                     </th>
                                                     <th>ID</th>
-                                                    <th>Name</th>
-                                                    <th>Description</th>
-                                                    <th>Image</th>
-                                                    <th>Is Active</th>
-                                                    <th>Deleted At</th>
-                                                    <th>Action</th>
+                                                    <th>Tên danh mục</th>
+                                                    <th>Mô tả</th>
+                                                    <th>Ảnh</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Ngày xóa</th>
+                                                    <th>Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

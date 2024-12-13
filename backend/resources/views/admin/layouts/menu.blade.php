@@ -4,19 +4,19 @@
         <!-- Dark Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('theme/assets/images/logo-dark.png') }}" alt="" height="17">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
         </a>
         <!-- Light Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('theme/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('theme/assets/images/logo-light.png') }}" alt="" height="17">
+                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -238,20 +238,6 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a href="#sidebarinterface" class="nav-link" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarinterface"
-                                    data-key="t-product">
-                                    Giao diện
-                                </a>
-                                <div class="collapse menu-dropdown" id="sidebarinterface">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="{{ route('admin.footer.edit') }}" class="nav-link {{ request()->routeIs('admin.footer.edit') ? 'active' : '' }}" data-key="t-product-list">Footer</a>
-                                        </li>                                        
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item">
                                 <a href="#sidebarPage" class="nav-link" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarPage" data-key="t-product">
                                     Trang
@@ -314,10 +300,25 @@
                                                 role="button" aria-expanded="false" aria-controls="sidebar-header" data-key="t-header">
                                                 Header
                                             </a>
-                                            <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-header">
+                                            <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.info_boxes_footer.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-header">
                                                 <a href="{{ route('admin.announcement.edit') }}" class="nav-link {{ Route::is('admin.announcement.edit') ? 'active' : '' }}" data-key="t-client">Thông báo</a>
                                                 <a href="{{ route('admin.info_boxes.edit') }}" class="nav-link {{ Route::is('admin.info_boxes.edit') ? 'active' : '' }}" data-key="t-client">Hộp thông tin</a>
+                                                <a href="{{ route('admin.info_boxes_footer.edit') }}" class="nav-link {{ Route::is('admin.info_boxes_footer.edit') ? 'active' : '' }}" data-key="t-client">Hộp thông tin footer</a>
                                                 <a href="{{ route('admin.popuphome.edit') }}" class="nav-link {{ Route::is('admin.popuphome.edit') ? 'active' : '' }}" data-key="t-client">Popup home</a>
+                                            </div>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#sidebar-banner" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.banner_main_edit') ? 'active' : '' }}" 
+                                               data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar-banner" data-key="t-banner">
+                                                Banner
+                                            </a>
+                                            <div class="collapse menu-dropdown {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.list_banner_main') ? 'show' : '' }}" 
+                                                 id="sidebar-banner">
+                                                <a href="{{ route('admin.banner.list_banner_main') }}" class="nav-link {{ Route::is('admin.banner.list_banner_main') ? 'active' : '' }}" 
+                                                    data-key="t-client">Banner chính</a>
+                                                <a href="{{ route('admin.banner.banner_extra_edit') }}" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') ? 'active' : '' }}" 
+                                                    data-key="t-client">Banner phụ</a>
+                                                
                                             </div>
                                         </li>
                                         <li class="nav-item">
@@ -326,20 +327,13 @@
                                     </ul>
                                 </div>
                             </li>
-                            <!-- Quản lý danh mục -->
-                            <li class="nav-item">
-                                <a href="#sidebar-admin" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebar-admin" data-key="t-admin">
-                                    Giao diện admin
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>                
                 <li class="nav-item">
                     <a href="#sidebar-comments-questions" class="nav-link" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebar-comments-questions" data-key="t-product">
-                        <i class="ri-chat-1-line"></i> <span data-key="t-landing">Gớp ý và đóng góp</span>
+                        <i class="ri-chat-1-line"></i> <span data-key="t-landing">Góp ý và đóng góp</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebar-comments-questions">
                         <ul class="nav nav-sm flex-column">
@@ -378,16 +372,6 @@
                     </a>
                     <div class="collapse menu-dropdown {{ Route::is('admin.blogs.index') ? 'show' : '' }}" id="sidebar-post">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Danh mục
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    Sản phẩm
-                                </a>
-                            </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.blogs.index') }}" class="nav-link {{ Route::is('admin.blogs.index') ? 'active' : '' }}">
                                     Tin tức

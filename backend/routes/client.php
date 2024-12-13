@@ -13,50 +13,53 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController;
+use Illuminate\Support\Facades\Auth;
 
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
     Route::get('pages/{permalink}', [HomeController::class, 'show'])->name('pages.show');
     //profile
-    Route::get('/user',                                     [UserController::class, 'indexClient'])->name('users.indexClient');
-    Route::get('profile/{id}',                              [UserController::class, 'showClient'])->name('users.showClient');
-    Route::put('update-profile/{id}',                       [UserController::class, 'updateClient'])->name('users.updateClient');
-    Route::get('show-order',                                [UserController::class, 'showOrder'])->name('users.showOrder');
-    Route::get('show-order-detail/{id}',                    [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
-    Route::get('show-rank/{id}',                            [UserController::class, 'showRank'])->name('users.showRank');
-    Route::post('/order/{orderId}/cancel',                  [UserController::class, 'cancelOrder'])->name('users.cancel');
-    Route::post('/order/{order}/review',                    [UserController::class, 'submitReview'])->name('users.submitReview');
+    Route::get('/user', [UserController::class, 'indexClient'])->name('users.indexClient');
+    Route::get('profile/{id}', [UserController::class, 'showClient'])->name('users.showClient');
+    Route::put('update-profile/{id}', [UserController::class, 'updateClient'])->name('users.updateClient');
+    Route::get('show-order', [UserController::class, 'showOrder'])->name('users.showOrder');
+    Route::get('show-order-detail/{id}', [UserController::class, 'showDetailOrder'])->name('users.showDetailOrder');
+    Route::get('show-rank/{id}', [UserController::class, 'showRank'])->name('users.showRank');
+    Route::post('/order/{orderId}/cancel', [UserController::class, 'cancelOrder'])->name('users.cancel');
+    Route::post('/order/{order}/review', [UserController::class, 'submitReview'])->name('users.submitReview');
 
 
     //product
-    Route::get('/products',                                 [HomeController::class, 'showProducts'])->name('client.products');
-    Route::get('/products/sort',                            [HomeController::class, 'sortProducts'])->name('client.products.sort');
-    Route::get('/product/{id}',                             [ClientProductController::class, 'showProduct'])->name('client.showProduct');
-    Route::get('/products/category/{id}',                   [HomeController::class, 'getByCategory'])->name('client.products.Category');
-    Route::get('/products/filter-by-price',                 [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
-    Route::get('/search',                                   [ClientProductController::class, 'search'])->name('search');
+    Route::get('/products', [HomeController::class, 'showProducts'])->name('client.products');
+    Route::get('/products/sort', [HomeController::class, 'sortProducts'])->name('client.products.sort');
+    Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
+    Route::get('/products/category/{id}', [HomeController::class, 'getByCategory'])->name('client.products.Category');
+    Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
+    Route::get('/search', [ClientProductController::class, 'search'])->name('search');
 
     //Oder
-    Route::get('wishlist',                                  [OrderController::class, 'wishList'])->name('wishList');
-    Route::post('add-wishlist',                             [OrderController::class, 'addWishList'])->name('addWishList');
-    Route::delete('wishlist/{id}',                          [OrderController::class, 'destroyWishlist'])->name('wishlistDelete');
+    Route::get('wishlist', [OrderController::class, 'wishList'])->name('wishList');
+    Route::post('add-wishlist', [OrderController::class, 'addWishList'])->name('addWishList');
+    Route::delete('wishlist/{id}', [OrderController::class, 'destroyWishlist'])->name('wishlistDelete');
 
-    Route::post('add-cart',                                 [OrderController::class, 'addToCart'])->name('addCart');
-    Route::get('shopping-cart',                             [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
-    Route::get('checkout',                                  [OrderController::class, 'showCheckOut'])->name('checkout')->middleware('check-cart');
-    Route::post('addresses',                                [UserController::class, 'updateOrInsertAddress'])->name('addresses');
-    Route::post('/addresses/set-default/{id}',              [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
-    Route::post('/update-address',                          [UserController::class, 'updateAddress'])->name('update.address');
-    Route::post('add-order',                                [PayMentController::class, 'addOrder'])->name('addOrder'); // tahnh toán
-    Route::delete('remove/{id}',                            [OrderController::class, 'removeFromCart'])->name('removeFromCart');
-    Route::post('update-cart',                              [OrderController::class, 'updateCart'])->name('updateCart');
-    Route::get('/blog',                                     [PostController::class, 'index'])->name('client.blogs.index');
-    Route::get('/blogs/{id}',                               [PostController::class, 'show'])->name('client.blogs.show');
+    Route::post('add-cart', [OrderController::class, 'addToCart'])->name('addCart');
+    Route::get('shopping-cart', [OrderController::class, 'showShoppingCart'])->name('shopping-cart');
+    Route::get('checkout', [OrderController::class, 'showCheckOut'])->name('checkout')->middleware('check-cart');
+    Route::post('addresses', [UserController::class, 'updateOrInsertAddress'])->name('addresses');
+    Route::post('/addresses/set-default/{id}', [UserController::class, 'setDefaultAddress'])->name('addresses.setDefault');
+    Route::post('/update-address', [UserController::class, 'updateAddress'])->name('update.address');
+    Route::post('add-order', [PayMentController::class, 'addOrder'])->name('addOrder'); // tahnh toán
+    Route::delete('remove/{id}', [OrderController::class, 'removeFromCart'])->name('removeFromCart');
+    Route::post('update-cart', [OrderController::class, 'updateCart'])->name('updateCart');
+    Route::get('/blog', [PostController::class, 'index'])->name('client.blogs.index');
+    Route::get('/blogs/{id}', [PostController::class, 'show'])->name('client.blogs.show');
+    Route::get('/blogs/tag/{id}', [PostController::class, 'showTagPosts'])->name('client.blogs.tag');
+
     //Counpon
-    Route::post('/apply-discount',                          [CouponController::class, 'applyDiscount']);
+    Route::post('/apply-discount', [CouponController::class, 'applyDiscount']);
 
     // //PayMent
-    Route::get('/vnpay-return',                            [PayMentController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::get('/vnpay-return', [PayMentController::class, 'vnpayReturn'])->name('vnpay.return');
 
     // Route::post('/create-order',                         [PayMentController::class, 'createOrder'])->name('create.order');
     // Route kiểm tra mã giảm giá
@@ -64,10 +67,10 @@ Route::prefix('/')->group(function () {
     // Route áp dụng mã giảm giá vào đơn hàng
     Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply.coupon');
 
-    Route::get('/clear-coupons', function() {
+    Route::get('/clear-coupons', function () {
         $currentUrl = url()->current();
-        if($currentUrl=="http://localhost:8000/checkout"){
-            return response()->json(['success' => false]);
+        if ($currentUrl == "http://localhost:8000/checkout") {
+            return response()->json(['success' => true]);
         }
         session()->forget('coupons'); // Clear the coupons session
         return response()->json(['success' => true]);
@@ -89,8 +92,8 @@ Route::prefix('chat')->name('chat.')->group(function () {
     Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('sendMessage');
     Route::post('/user-online/{id}', [ChatController::class, 'userOnline'])->name('userOnline');
     Route::post('/user-offline/{id}', [ChatController::class, 'userOffline'])->name('userOffline');
-    Route::post('/getDataChatAdmin',[ChatController::class ,'getDataChatAdmin'])->middleware(['auth', 'isAdmin'])->name('getDataChatAdmin');
-    Route::post('/getDataChatClient',[ChatController::class ,'getDataChatClient'])->name('getDataChatClient');
+    Route::post('/getDataChatAdmin', [ChatController::class, 'getDataChatAdmin'])->middleware(['auth', 'isAdmin'])->name('getDataChatAdmin');
+    Route::post('/getDataChatClient', [ChatController::class, 'getDataChatClient'])->name('getDataChatClient');
     Route::post('/get-room-id', [ChatController::class, 'getRoomId'])->name('getDataChatAdminaNew');
     Route::post('/chat-message/delete', [ChatController::class, 'deleteChatMessageById'])->middleware(['auth', 'isAdmin'])->name('message.delete');
 });

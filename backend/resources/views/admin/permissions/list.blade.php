@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Quyền
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -14,25 +17,28 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="card-title mb-0">Danh sách Quyền</h5>
-                                    {{-- <form action="{{ route('admin.permissions.index') }}" method="GET"
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0 me-3">Danh sách Quyền</h5>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center ">
+                                    <form action="" method="GET"
                                         class="d-flex align-items-center flex-grow-1">
                                         <div class="input-group me-2" style="max-width: 300px;">
                                             <input type="text" id="search" name="search" class="form-control"
                                                 placeholder="Nhập từ khóa tìm kiếm" value="{{ request('search') }}">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="ri-search-line"></i>
-                                            </button>
+                                            
                                         </div>
-                                    </form> --}}
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm
+                                            </button>
+                                    </form>
                                     <div>
                                         <div class="d-flex flex-wrap gap-2">
-                                            <a href="{{ route('admin.permissions.create') }}" class="btn btn-success">
-                                                    <i class="ri-add-line align-bottom me-1"></i>Thêm mới
+                                            <a href="{{ route('admin.permissions.create') }}" class="btn btn-success me-2">
+                                                    <i class="ri-add-line align-bottom "></i> Thêm mới
                                             </a>
-                                            <button class="btn btn-danger" onClick="deleteMultiplePermissions()">
-                                                <i class="ri-delete-bin-2-line"></i> Xóa nhiều
+                                            <button class="btn btn-soft-danger" onClick="deleteMultiplePermissions()">
+                                                <i class="ri-delete-bin-2-line align-bottom"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -50,7 +56,7 @@
                                                         id="checkAllPermissions">
                                                 </div>
                                             </th>
-                                            <th data-ordering="false">Stt</th>
+                                            <th data-ordering="false">STT</th>
                                             <th data-ordering="false">Tên</th>
                                             <th data-ordering="false">Mô tả</th>
                                             <th data-ordering="false">Ngày tạo</th>

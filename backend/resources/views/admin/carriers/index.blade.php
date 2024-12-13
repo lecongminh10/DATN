@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Nhà Vận Chuyển
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -21,19 +24,8 @@
                                 <div class="col-sm">
                                     <div>
                                         <a href="{{ route('admin.carriers.index') }}">
-                                            <h5 class="card-title mb-0">Carriers List</h5>
+                                            <h5 class="card-title mb-0">Danh sách nhà vận chuyển</h5>
                                         </a>
-                                    </div>
-                                </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button class="btn btn-soft-danger" id="deleteMultipleBtn" style="display: none;">
-                                            <i class="ri-delete-bin-5-fill"></i>
-                                        </button>
-                                        <a href="{{ route('admin.carriers.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Add Carrier</a>
-                                        <a href="{{ route('admin.carriers.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
                                     </div>
                                 </div>
                             </div>
@@ -70,9 +62,9 @@
                                             </div>
                                             <div class="col-sm-3">
                                                 <div>
-                                                    <button type="button" class="btn btn-primary w-100"
+                                                    <button type="button" class="btn btn-primary w-sm"
                                                         onclick="filterData();">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                        <i class="ri-equalizer-fill align-bottom"></i> Tìm
                                                     </button>
                                                 </div>
                                             </div>
@@ -81,8 +73,14 @@
                                     <div class="col-xl-4">
                                         <div class="row g-4 d-flex justify-content-end">
                                             <div class="col-sm-auto">
-                                                <a href="{{ route('admin.carriers.deleted') }}" class="btn btn-soft-danger">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none;">
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
+                                                </button>
+                                                <a href="{{ route('admin.carriers.create') }}" class="btn btn-success me-2 add-btn"
+                                                    id="create-btn"><i class="ri-add-line align-bottom me-1"></i>Thêm mới
+                                                </a>
+                                                <a href="{{ route('admin.carriers.deleted') }}" class="btn btn-warning">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
                                             </div>
                                         </div>
@@ -103,13 +101,13 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name">Carrier Name</th>
+                                                <th data-sort="carrier_name">Tên nhà vận chuyển</th>
                                                 <th data-sort="api_url">API URL</th>
                                                 <th data-sort="api_token">API Token</th>
-                                                <th data-sort="phone">Phone</th>
+                                                <th data-sort="phone">Số điện thoại</th>
                                                 <th data-sort="email">Email</th>
-                                                <th data-sort="is_active">Status</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="is_active">Trạng thái</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         @foreach ($carrier as $item)

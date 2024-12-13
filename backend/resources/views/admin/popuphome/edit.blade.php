@@ -1,11 +1,23 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Popuphome
+@endsection
+@section('style_css')
+    <style>
+        .image{
+            margin-top: 10px; 
+            border-radius: 5px;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
             @include('admin.layouts.component.page-header', [
-                'title' => 'Quản lý ',
-                'breadcrumb' => [['name' => '', 'url' => 'javascript: void(0);'], ['name' => '', 'url' => '#']],
+                'title' => 'Popuphome',
+                'breadcrumb' => [['name' => 'Quản lí', 'url' => 'javascript: void(0);'], ['name' => 'Popuphome', 'url' => '#']],
             ])
             <div class="row">
                 <div class="col-lg-12">
@@ -36,12 +48,14 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="image" class="form-label">Hình nền</label>
+                                    <br>
+                                    @if ($popuphome->image)
+                                        <img src="{{ Storage::url($popuphome->image) }}" width="100" height="100"
+                                            alt="Current Image" class="mb-3 image">
+                                    @endif
                                     <input type="file" name="image" id="image" class="form-control"
                                         data-allow-reorder="true" data-max-file-size="3MB" data-max-files="1">
-                                    @if ($popuphome->image)
-                                        <img src="{{ Storage::url($popuphome->image) }}" width="50" height="50"
-                                            alt="Current Image" style="margin-top: 10px;">
-                                    @endif
+                                   
                                     @error('image')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -51,7 +65,9 @@
                                     <input type="checkbox" name="active" id="active"
                                         {{ $popuphome->active ? 'checked' : '' }}>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Cập nhật Info Boxes</button>
+                                <div class="button mb-2">
+                                    <button type="submit" class="btn btn-success">Cập nhật</button>
+                                </div>
                             </form>
                         </div>
                     </div>

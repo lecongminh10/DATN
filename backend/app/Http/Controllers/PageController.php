@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\PageService;
 use App\Http\Requests\PageRequest;
 use App\Events\AdminActivityLogged;
+use App\Http\Requests\UpdatePageRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -96,18 +97,14 @@ class PageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PageRequest $request, $id)
+    public function update(UpdatePageRequest $request, $id)
     {
-        // Tìm trang theo ID
         $page = Page::findOrFail($id);
 
-        // Validate request data qua PageRequest (tương tự như store)
         $data = $request->validated();
 
-        // Cập nhật thông tin trang
         $page->update($data);
 
-        // Kiểm tra và xử lý file ảnh (nếu có)
         if ($request->hasFile('image')) {
             // Xóa file cũ nếu có
             if ($page->image) {
@@ -160,9 +157,9 @@ class PageController extends Controller
         }
         $data->delete();
         if ($data->trashed()) {
-            return redirect()->route('admin.pages.index')->with('success', 'Trang đã được xóa thành công,');
+            return redirect()->route('admin.pages.index')->with('success', 'Trang đã được xóa thành công.');
         }
-        return redirect()->route('admin.pages.index')->with('success', 'Xóa không thành công');
+        return redirect()->route('admin.pages.index')->with('success', 'Xóa không thành công.');
     }
     public function showSotfDelete(Request $request)
     {
@@ -176,16 +173,16 @@ class PageController extends Controller
     {
         try {
             $this->pageService->restore_delete($id);
-            return redirect()->route('admin.pages.deleted')->with('success', 'Khôi phục thuộc tính thành công!');
+            return redirect()->route('admin.pages.deleted')->with('success', 'Khôi phục trang thành công!');
         } catch (\Exception $e) {
-            return redirect()->route('admin.pages.deleted')->with('error', 'Không thể khôi phục thuộc tính: ' . $e->getMessage());
+            return redirect()->route('admin.pages.deleted')->with('error', 'Không thể khôi phục trang: ' . $e->getMessage());
         }
     }
     public function hardDeletePage(int $id)
     {
         $data = $this->pageService->getIdWithTrashed($id);
         if (!$data) {
-            return redirect()->route('admin.pages.index')->with('success', 'Thuộc tính đã được xóa không thành công');
+            return redirect()->route('admin.pages.index')->with('success', 'Trang đã được xóa thành công');
         }
         $data->forceDelete();
         $logDetails = sprintf(
@@ -198,7 +195,7 @@ class PageController extends Controller
             'Xóa Cứng',
             $logDetails
         ));
-        return redirect()->route('admin.pages.deleted')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
+        return redirect()->route('admin.pages.deleted')->with('success', 'Trang đã bị xóa vĩnh viễn');
     }
 
     /**

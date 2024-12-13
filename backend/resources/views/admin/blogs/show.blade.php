@@ -1,15 +1,26 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Chi tiết bài viết
+@endsection
 @section('content')
+
+    {{-- <style>
+        .no-bullets {
+            list-style-type: none;
+            padding-left: 0;
+
+        }
+    </style> --}}
+
     <div class="page-content">
         <div class="container-fluid">
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Chi tiết Blog',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Blogs', 'url' => '#']
-                ]
+                    ['name' => 'Chi tiết bài viết', 'url' => '#'],
+                ],
             ])
             <div class="row">
                 <!-- end page title -->
@@ -18,7 +29,8 @@
                         <div class="row g-4 align-items-center">
                             <div class="col-sm">
                                 <div>
-                                    <h5 class="card-title mb-0"><a class="text-dark" href="{{ route('admin.blogs.index') }}">Chi tiết</a></h5>
+                                    <h5 class="card-title mb-0"><a class="text-dark"
+                                            href="{{ route('admin.blogs.index') }}">Chi tiết</a></h5>
                                 </div>
                             </div>
                         </div>
@@ -27,8 +39,7 @@
                         <div class="mb-4">
                             <div class="mb-3">
                                 <label for="title" class="form-label fw-semibold">Tiêu đề</label>
-                                <input type="text" id="title"
-                                    class="form-control border-0 bg-white p-3 shadow-sm"
+                                <input type="text" id="title" class="form-control border-0 bg-white p-3 shadow-sm"
                                     value="{{ $blog->title }}" readonly>
                             </div>
                             <div class="mb-3">
@@ -75,12 +86,15 @@
                                 <label for="content" class="form-label fw-semibold">Ảnh</label>
                                 <div class="col-md-12">
                                     <div class="form-control border-0 bg-white p-3 shadow-sm">
-                                        <p id="content" class="mb-0">
-                                            {{ $blog->thumbnail }}
-                                        </p>
+                                        @if ($blog->thumbnail)
+                                            <img src="{{ asset('storage/' . $blog->thumbnail) }}" alt="Thumbnail" class="img-fluid " width="30%">
+                                        @else
+                                            <p class="mb-0">Chưa có ảnh</p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="author" class="form-label fw-semibold">Tác giả</label>
                                 <div class="col-md-12">
@@ -109,10 +123,24 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            
-                           
-                            
+
+                            <div class="mb-3">
+                                <label for="tags" class="form-label fw-semibold">Tags</label>
+                                <div class="col-md-12">
+                                    <div class="form-control border-0 bg-white p-3 shadow-sm">
+                                        @if ($blog->tags && $blog->tags->isNotEmpty())
+                                            <ul class="mb-0 no-bullets">
+                                                @foreach ($blog->tags as $tag)
+                                                    <li>{{ $tag->name }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            <p class="mb-0">Chưa có tags</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="mb-3">
                                 <label for="content" class="form-label fw-semibold">Ngày tạo</label>
                                 <div class="col-md-12">
@@ -124,14 +152,14 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="text-end mb-3">
-                            <a href="{{ route('admin.blogs.index') }}" class="btn btn-secondary btn w-sm"><i
-                                    class="ri-arrow-left-line"></i> Quay lại</a>
+
+                        <div class="text-start mb-3">
+                            <a href="{{ route('admin.blogs.index') }}" class="btn btn-primary btn w-sm"> Quay lại</a>
                         </div>
                     </div>
                 </div>
 
             </div>
         </div>
-    @endsection
+    </div>
+@endsection

@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Thêm mới seo
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -7,8 +9,8 @@
             @include('admin.layouts.component.page-header', [
                 'title' => 'Seo ',
                 'breadcrumb' => [
-                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Seo', 'url' => '#'],
+                    ['name' => 'Seo', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Thêm Seo', 'url' => '#'],
                 ],
             ])
             <div class="row">
@@ -22,10 +24,6 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button type="button" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -39,7 +37,7 @@
                                             @csrf
                                             <!-- Tên -->
                                             <div class="mb-3">
-                                                <label class="form-label" for="meta-title-input">Meta Title</label>
+                                                <label class="form-label" for="meta-title-input">Tiêu đề meta</label>
                                                 <input type="text" class="form-control" id="meta-title-input"
                                                     name="meta_title" placeholder="Nhập Meta Title">
                                                 @error('meta_title')
@@ -49,8 +47,7 @@
 
                                             <!-- Meta Description -->
                                             <div class="mb-3">
-                                                <label class="form-label" for="meta-description-input">Meta
-                                                    Description</label>
+                                                <label class="form-label" for="meta-description-input">Mô tả meta</label>
                                                 <textarea class="form-control" id="meta-description-input" name="meta_description" rows="3"
                                                     placeholder="Nhập Meta Description"></textarea>
                                                 @error('meta_description')
@@ -60,7 +57,7 @@
 
                                             <!-- Meta Keywords -->
                                             <div class="mb-3">
-                                                <label class="form-label" for="meta-keywords-input">Meta Keywords</label>
+                                                <label class="form-label" for="meta-keywords-input">Từ khóa meta</label>
                                                 <input type="text" class="form-control" id="meta-keywords-input"
                                                     name="meta_keywords" placeholder="Nhập Meta Keywords">
                                                 @error('meta_keywords')
@@ -70,7 +67,7 @@
 
                                             <!-- Canonical URL -->
                                             <div class="mb-3">
-                                                <label class="form-label" for="canonical-url-input">Canonical URL</label>
+                                                <label class="form-label" for="canonical-url-input">URL chuẩn</label>
                                                 <input type="text" class="form-control" id="canonical-url-input"
                                                     name="canonical_url" placeholder="Nhập Canonical URL">
                                                 @error('canonical_url')
@@ -79,7 +76,7 @@
                                             </div>
                                             <!-- Chọn Product ID -->
                                             <div class="mb-3">
-                                                <label class="form-label  text-muted" for="choices-multiple-remove-butto">Product</label>
+                                                <label class="form-label  text-muted" for="choices-multiple-remove-butto">Sản phẩm</label>
                                                 <select  placeholder="This is a placeholder" multiple class="form-control" id="choices-multiple-remove-butto" name="product_id[]">
                                                     @foreach ($products as $product)
                                                         <option value="{{ $product->id }}">
@@ -118,12 +115,10 @@
 
 
                                             <!-- Submit Button -->
-                                            <div class="text-end me-3 mb-3">
-                                                <button type="submit" class="btn btn-success w-sm">
-                                                    <i class="ri-check-double-line me-2"></i>Gửi
+                                            <div class="text-start mt-2 mb-3">
+                                                <button type="submit" class="btn btn-success w-sm me-2"> Thêm mới
                                                 </button>
-                                                <a href="{{ route('admin.seo.index') }}" class="btn btn-secondary w-sm">
-                                                    <i class="ri-arrow-left-line"></i> Quay lại danh sách
+                                                <a href="{{ route('admin.seo.index') }}" class="btn btn-primary w-sm"> Quay lại
                                                 </a>
                                             </div>
                                         </form>

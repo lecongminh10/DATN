@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Cập Nhật Khuyến Mãi
+@endsection
 @section('style_css')
     <style>
         .dropzone {
@@ -67,12 +71,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Coupons</h4>
+                        <h4 class="mb-sm-0">Mã Coupons</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                                <li class="breadcrumb-item active">Update Coupon</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Quản lí</a></li>
+                                <li class="breadcrumb-item active">Cập nhật Coupon</li>
                             </ol>
                         </div>
                     </div>
@@ -82,7 +86,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header border-bottom-dashed">
-                            <h5 class="card-title mb-0">Update Coupon</h5>
+                            <h5 class="card-title mb-0">Cập nhật Coupon</h5>
                         </div>
                         {{-- @if ($errors->any())
                             <div class="alert alert-danger">
@@ -351,12 +355,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-end me-3 mb-3">
-                                        <button type="submit" class="btn btn-success w-sm">
-                                            <i class="ri-check-double-line me-2"></i>Cập nhật
+                                    <div class="text-start ms-3 mb-3">
+                                        <button type="submit" class="btn btn-success me-2 w-sm">Cập nhật
                                         </button>
-                                        <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary btn w-sm">
-                                            <i class="ri-arrow-left-line"></i> Quay lại danh sách
+                                        <a href="{{ route('admin.coupons.index') }}" class="btn btn-primary btn w-sm">Quay lại
                                         </a>
                                     </div>
                                 </div>

@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\AdminActivityLogged;
-use App\Http\Controllers\Controller;
-use App\Models\Address;
+use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Permission;
+use App\Models\WishList;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Order;
-use App\Models\OrderLocation;
+use App\Models\Refund;
+use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Models\Refund;
 use App\Models\UserReview;
-use App\Services\AddressServices;
-use App\Services\UserService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\OrderLocation;
+use App\Services\UserService;
+use App\Services\AddressServices;
+use App\Events\AdminActivityLogged;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -33,9 +34,11 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = $this->userService->getAll();
+        $perPage = $request->input('perPage', 10); // Số lượng mặc định là 10
+        $user = $this->userService->getAll($perPage);
+
         return view('admin.users.index', compact('user'));
     }
 
@@ -131,10 +134,10 @@ class UserController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'password' => 'required',
             'phone_number' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:users,email',
+            'email' => 'required|email|max:255',
             'date_of_birth' => 'required|date',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
         $data = $request->all();
 
@@ -172,7 +175,7 @@ class UserController extends Controller
         if ($request->has('id_permissions')) {
             $user->permissionsValues()->sync($request->id_permissions);
         }
-        return redirect()->route('users.index');
+        return redirect()->route('admin.users.index');
     }
 
     public function destroy($id, Request $request)
@@ -211,7 +214,7 @@ class UserController extends Controller
             $logDetails
         ));
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully');
+        return redirect()->route('admin.users.index')->with('success', 'Xóa tài khoản thành công');
     }
 
 
@@ -241,9 +244,9 @@ class UserController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCount = $carts->sum('quantity');
-        return view('client.users.index', compact('carts', 'cartCount'));
+        return view('client.users.index', compact('carts', 'cartCount','wishlistCount'));
     }
 
     public function showClient($id)
@@ -256,29 +259,72 @@ class UserController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount'));
+        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount','wishlistCount'));
     }
 
     public function updateClient(Request $request, $id)
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:15|unique:users,phone_number',
-            'email' => 'required|email|max:255|unique:users,email',
-            'date_of_birth' => 'required|date',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|email|max:255',
+            'date_of_birth' => 'required|date|before_or_equal:' . now()->subYears(10)->format('Y-m-d'),
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            // Custom messages for username
+            'username.required' => 'Tên không được bỏ trống.',
+            'username.string' => 'Tên phải là một chuỗi ký tự hợp lệ.',
+            'username.max' => 'Tên không được vượt quá 255 ký tự.',
+    
+            // Custom messages for phone_number
+            'phone_number.required' => 'Số điện thoại không được bỏ trống.',
+            'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự hợp lệ.',
+            'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
+            'phone_number.regex' => 'Số điện thoại không đúng định dạng. Ví dụ: +84123456789 hoặc 0123456789.',
+    
+            // Custom messages for email
+            'email.required' => 'Email không được bỏ trống.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+    
+            // Custom messages for date_of_birth
+            'date_of_birth.required' => 'Ngày sinh không được bỏ trống.',
+            'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
+            'date_of_birth.before' => 'Ngày sinh phải trước ngày hôm nay.',
+            'date_of_birth.before_or_equal' => 'Ngày sinh phải trước ngày ' . now()->subYears(10)->format('d/m/Y') . ' (ít nhất 10 tuổi).',
+    
+            'profile_picture.image' => 'Tệp tải lên phải là một hình ảnh.',
+            'profile_picture.mimes' => 'Chỉ chấp nhận các định dạng JPEG, PNG, JPG và GIF.',
+            'profile_picture.max' => 'Kích thước hình ảnh không được vượt quá 2 MB.',
         ]);
-        $data = $request->all();
-
-        $user = $this->userService->updateUser($id, $data);
-
+    
+        $user = $this->userService->getById($id);
+    
+        $user->username = $request->input('username');
+        $user->phone_number = $request->input('phone_number');
+        $user->email = $request->input('email');
+        $user->date_of_birth = $request->input('date_of_birth');
+    
+        if ($request->hasFile('profile_picture')) {
+            if ($user->profile_picture && Storage::exists('public/' . $user->profile_picture)) {
+                Storage::delete('public/' . $user->profile_picture);
+            }
+            $filename = time() . '.' . $request->file('profile_picture')->extension();
+            $path = $request->file('profile_picture')->storeAs('profile_pictures', $filename, 'public');
+            $user->profile_picture = $path;
+        }
+        $user->save();
+    
         return redirect()->route('users.showClient', $user->id);
+
     }
+    
 
     public function showOrder(Request $request)
     {
-        $id = Auth::user()->id;
+        $userId = Auth::user()->id;
         $status = $request->input('status', 'all');
 
         // Query cơ bản để lấy tất cả đơn hàng của người dùng
@@ -306,8 +352,9 @@ class UserController extends Controller
             ->get();
 
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
-        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount', 'wishlistCount'));
     }
 
 
@@ -354,6 +401,8 @@ class UserController extends Controller
         $cartCount = $carts->sum('quantity');
         $address = Address::getActiveAddress(Auth::user()->id);
 
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+
         $orderItems = $orders->items;
         $firstProduct = $orderItems->first()->product;
         $similarProducts = Product::where('category_id', $firstProduct->category_id)
@@ -374,7 +423,8 @@ class UserController extends Controller
             'orderStatus',
             'showButtons',
             'dateTimeOrders',
-            'messageStatus'
+            'messageStatus',
+            'wishlistCount'
         ));
     }
 
@@ -490,7 +540,14 @@ class UserController extends Controller
     public function showRank($id)
     {
         $user = $this->userService->getById($id);
-        return view('client.users.show_rank', compact('user'));
+        if($user) {
+            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $user->id)
+            ->get();
+        }
+        $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$user)->count();
+        return view('client.users.show_rank', compact('user','carts','cartCount','wishlistCount'));
     }
 
     public function cancelOrder($orderId)
