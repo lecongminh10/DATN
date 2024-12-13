@@ -9,7 +9,7 @@
             <div class="text-center text-white-50">
                 <div>
                     <a href="{{ route('users.indexClient') }}" class="d-inline-block auth-logo">
-                        <img src="{{asset('logo/zonmart.png')}}" alt="" width="150px" height="150">
+                        <img src="{{asset('logo.png')}}" alt="" width="180px" height="150px">
                     </a>
                 </div>
                 {{-- <p class="mt-3 fs-15 fw-medium">Đăng nhập</p> --}}

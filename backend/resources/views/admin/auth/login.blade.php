@@ -14,7 +14,7 @@
                             <div class="position-relative h-100 d-flex flex-column">
                                 <div class="mb-4">
                                     <a href="/auth/admin/login" class="d-block" style="position: absolute; top:0px ; left:0px">
-                                        <img src="{{ asset('logo.png') }}" alt="" height="170" width="270">
+                                        <img src="{{ asset('logo.png') }}" alt="" height="80" width="150">
                                     </a>
                                 </div>
                                 <div class="mt-auto">
