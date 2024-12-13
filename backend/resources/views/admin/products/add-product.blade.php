@@ -503,14 +503,15 @@
                                     <div class="card-body">
                                         <!-- Editor container -->
                                         <textarea name="content" id="editor-container" style="height: 300px;" value="{{old('content')}}"></textarea>
-                                        @error('content')
+                                        
+                                    </div>
+                                    @error('content')
                                             <div>
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
                                                 </div>
                                             </div>
                                         @enderror
-                                    </div>
                                 </div>
                             </div>
                         </div>

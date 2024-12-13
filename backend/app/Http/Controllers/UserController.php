@@ -390,6 +390,7 @@ class UserController extends Controller
         $locations = OrderLocation::where('order_id', $id)->get();
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
             ->select('payments.*', 'payment_gateways.name as gateway_name')
+            ->where('payments.order_id',$orders->id)
             ->get();
 
         $userId = auth()->id();

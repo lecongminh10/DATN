@@ -35,26 +35,35 @@
                                 </div>
 
                                 <div class="col-lg-12">
-                                    <label for="name" class="form-label">Tên</label>
-                                    <input type="text" class="form-control" name="name" value="{{ $data->name }}" required>
+                                    <label for="name" class="form-label">Tên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $data->name) }}">
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div><!--end col-->
 
                                 <div class="col-lg-12">
                                     <label for="description" class="form-label">Mô tả</label>
-                                    <textarea class="form-control" name="description" rows="3" required>{{ $data->description }}</textarea>
+                                    <textarea class="form-control @error('description') is-invalid @enderror" name="description" rows="3" >{{ old('description', $data->description) }}</textarea>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div><!--end col-->
 
                                 <div class="col-lg-12">
                                     <h5 class="fw-semibold mb-3">Ảnh</h5>
-                                    <input type="file" class="form-control" name="image" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="2">
+                                    <input type="file" class="form-control @error('image') is-invalid @enderror" name="image" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="2">
                                     @if($data->image)
                                     <img src="{{ Storage::url($data->image) }}" width="50" height="50" alt="Current Image" style="margin-top: 10px;">
                                     @endif
+                                    @error('image')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div><!--end col-->
 
                                 <div class="col-lg-12">
                                     <label for="parent_id" class="form-label">Danh mục cha</label>
-                                    <select class="form-select" name="parent_id" id="parent_id">
+                                    <select class="form-select @error('parent_id') is-invalid @enderror" name="parent_id" id="parent_id">
                                         <option value="">Không có</option>
                                         @foreach($parentCategories as $parent)
                                             <option value="{{ $parent->id }}" {{ $parent->id == $data->parent_id ? 'selected' : '' }}>
@@ -70,13 +79,15 @@
                                             @endforeach
                                         @endforeach
                                     </select>
+                                    @error('parent_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div><!--end col-->
 
                                 <div class="col-lg-12">
                                     <div class="text-start">
                                         <button class="btn btn-success me-2">Cập nhật</button>
                                         <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">Quay lại</a>
-
                                     </div>
                                 </div>
                             </div><!--end row-->

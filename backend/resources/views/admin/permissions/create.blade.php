@@ -18,10 +18,15 @@
                 <div class="card-header">
                     <h1 class="h5">Thêm mới </h1>
                 </div>
+                @if (session('error'))
+                    <div class="w-full alert alert-danger mt-3">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 <div class="card-body">
                     <form action="{{ route('admin.permissions.store') }}" method="POST">
                         @csrf
-                        @if ($errors->any())
+                        {{-- @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul>
                                     @foreach ($errors->all() as $error)
@@ -29,11 +34,16 @@
                                     @endforeach
                                 </ul>
                             </div>
-                        @endif
+                        @endif --}}
 
                         <div class="mb-3">
-                            <label for="permission_name" class="form-label">Tên </label>
-                            <input type="text" class="form-control" id="permission_name" name="permission_name" >
+                            <label for="permission_name" class="form-label">Tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('permission_name') is-invalid @enderror" id="permission_name" name="permission_name" >
+                            @error('permission_name')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                         </div>
 
                         <div class="mb-3">
@@ -47,7 +57,12 @@
                             <div class="row mb-3 permission-value-item">
                                 <div class="col-md-6">
                                     <label for="value" class="form-label">Giá trị quyền </label>
-                                    <input type="text" class="form-control" name="value[]" >
+                                    <input type="text" class="form-control @error('value') is-invalid @enderror" name="value[]" >
+                                    @error('value')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <label for="description" class="form-label">Mô tả</label>
