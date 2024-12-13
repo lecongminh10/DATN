@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Cập Nhật Sản Phẩm
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -774,8 +777,8 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <button class="btn btn-success" type="submit" id="uploadButton">Cập nhật</button>
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Quay lại</a>
+                                        <button class="btn btn-success me-2" type="submit" id="uploadButton" style="cursor: pointer">Cập nhật</button>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2" style="cursor: pointer">Quay lại</a>
                                     </div>
                                 </div>
                             </div>

@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Chi Tiết Đơn Hàng: {{ $data->code }}
+@endsection
 @section('libray_css')
 
 @endsection
@@ -38,7 +41,7 @@
                                 <a href="apps-invoices-details.html" class="btn btn-success btn-sm me-2"><i class="ri-download-2-fill align-middle me-1"></i> Invoice</a>
                             </div> --}}
                             <div class="flex-shrink-0">
-                                <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary btn-sm"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
+                                <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary "> Quay lại</a>
                             </div>
                         </div>
                     </div>

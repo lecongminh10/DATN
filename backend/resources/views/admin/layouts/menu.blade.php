@@ -327,13 +327,6 @@
                                     </ul>
                                 </div>
                             </li>
-                            <!-- Quản lý danh mục -->
-                            <li class="nav-item">
-                                <a href="#sidebar-admin" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebar-admin" data-key="t-admin">
-                                    Giao diện admin
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>                

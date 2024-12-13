@@ -317,7 +317,7 @@ Route::group([
         Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update'); // Route để cập nhật blog
         Route::get('/{id}', [BlogController::class, 'show'])->name('blogs.show');
         Route::delete('/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
-        Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
+        // Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
         Route::get('/trash', [BlogController::class, 'trash'])->name('blogs.trash'); // Route để hiển thị danh sách blog đã xóa
         Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); // Khôi phục blog đã xóa
         // Route cho danh sách blog đã bị xóa mềm

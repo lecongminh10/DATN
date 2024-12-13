@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('title')
+    Nhập dữ liệu bài viết
+@endsection
 @section('style_css')
     <style>
         .chunk-size {
@@ -233,7 +236,8 @@
 
                     <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
                         <div class="btn-footer">
-                            <button id="importButton" class="btn btn-primary" disabled>Nhập</button>
+                            <button id="importButton" class="btn btn-success me-2" disabled>Nhập</button>
+                            <a href="{{ route('admin.export-import.view-export-import') }}"><button class="btn btn-primary me-2">Quay lại</button></a>
                         </div>
                     </div>
 

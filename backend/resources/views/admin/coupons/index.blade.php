@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Danh Sách Khuyến Mãi
+@endsection
 @section('styleCss')
     <style>
         .table td,
@@ -42,18 +46,6 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button class="btn btn-soft-danger" id="deleteMultipleBtn" style="display: none;">
-                                            <i class="ri-delete-bin-5-fill"></i>
-                                        </button>
-                                        <a href="{{ route('admin.coupons.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Thêm Mã Giảm
-                                            Giá</a>
-                                        <a href="" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="card-body border-bottom-dashed border-bottom">
@@ -72,8 +64,14 @@
                                     <div class="col-xl-8">
                                         <div class="row g-4 d-flex justify-content-end">
                                             <div class="col-sm-auto">
-                                                <a href="{{ route('admin.coupons.deleted') }}" class="btn btn-soft-danger">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none;">
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
+                                                </button>
+                                                <a href="{{ route('admin.coupons.create') }}" class="btn btn-success me-2 add-btn"
+                                                    id="create-btn"><i class="ri-add-line align-bottom"></i> Thêm mới
+                                                </a>
+                                                <a href="{{ route('admin.coupons.deleted') }}" class="btn btn-warning">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
                                             </div>
                                         </div>
@@ -225,7 +223,7 @@
                                                                             data-id="{{ $item->id }}">
                                                                             <i
                                                                                 class="ri-eye-fill align-bottom me-2 fs-16"></i>
-                                                                            View
+                                                                            Xem
                                                                         </a>
                                                                     </li>
                                                                     <li>
@@ -233,7 +231,7 @@
                                                                             class="dropdown-item edit-item-btn">
                                                                             <i
                                                                                 class="ri-pencil-fill fs-16 align-bottom me-2"></i>
-                                                                            Edit
+                                                                            Sửa
                                                                         </a>
                                                                     </li>
                                                                     <li>
@@ -246,9 +244,8 @@
                                                                                 onclick="return confirm('Bạn có chắc chắn không?')"
                                                                                 type="submit"
                                                                                 class="dropdown-item remove-item-btn">
-                                                                                <i
-                                                                                    class="ri-delete-bin-5-fill fs-16 align-bottom me-2"></i>
-                                                                                Delete
+                                                                                <i class="ri-delete-bin-5-fill fs-16 align-bottom me-2"></i>
+                                                                                Xóa
                                                                             </button>
                                                                         </form>
                                                                     </li>

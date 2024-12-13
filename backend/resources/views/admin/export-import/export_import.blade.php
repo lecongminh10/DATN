@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('title')
+    Xuất - Nhập
+@endsection
 @section('style_css')
     <style>
         .export-box{
@@ -51,15 +54,15 @@
                                 <div class="row align-items-center">
                                     <div class="col-md-3">
                                         <a href="{{ route('admin.export-import.exportCategory') }}"><b class="title"><i class="las la-box-open"></i> Danh mục</b></a>
-                                        <p class="text">Xuất dữ liệu danh mục của bạn sang tệp CSV hoặc Excel.</p>
+                                        <p class="text">Xuất dữ liệu danh mục của bạn sang tệp Excel.</p>
                                     </div>
                                     <div class="col-md-3">
                                         <a href="{{ route('admin.export-import.exportProduct') }}"><b class="title"><i class="las la-box-open"></i> Sản phẩm</b></a>
-                                        <p class="text">Xuất dữ liệu sản phẩm của bạn sang tệp CSV hoặc Excel.</p>
+                                        <p class="text">Xuất dữ liệu sản phẩm của bạn sang tệp Excel.</p>
                                     </div>
                                     <div class="col-md-3">
                                         <a href="{{ route('admin.export-import.exportPost') }}"><b class="title"><i class="las la-box-open"></i> Bài viết</b></a>
-                                        <p class="text">Xuất dữ liệu bài viết của bạn sang tệp CSV hoặc Excel.</p>
+                                        <p class="text">Xuất dữ liệu bài viết của bạn sang tệp Excel.</p>
                                     </div>
                                 </div>
                             </div>
@@ -85,15 +88,15 @@
                                 <div class="row align-items-center">
                                     <div class="col-md-3">
                                         <a href="{{ route('admin.export-import.importCategory') }}"><b class="title"><i class="las la-box"></i> Danh mục</b></a>
-                                        <p class="text">Nhập dữ liệu danh mục của bạn từ tệp CSV hoặc Excel.</p>
+                                        <p class="text">Nhập dữ liệu danh mục của bạn từ tệp Excel.</p>
                                     </div>
                                     <div class="col-md-3">
                                         <a href="{{ route('admin.export-import.importProduct') }}"><b class="title"><i class="las la-box"></i> Sản phẩm</b></a>
-                                        <p class="text">Nhập dữ liệu sản phẩm của bạn từ tệp CSV hoặc Excel.</p>
+                                        <p class="text">Nhập dữ liệu sản phẩm của bạn từ tệp Excel.</p>
                                     </div>
                                     <div class="col-md-3">
                                         <a href="{{ route('admin.export-import.importPost') }}"><b class="title"><i class="las la-box"></i> Bài viết</b></a>
-                                        <p class="text">Nhập dữ liệu bài viết của bạn từ tệp CSV hoặc Excel.</p>
+                                        <p class="text">Nhập dữ liệu bài viết của bạn từ tệp Excel.</p>
                                     </div>
                                 </div>
                             </div>

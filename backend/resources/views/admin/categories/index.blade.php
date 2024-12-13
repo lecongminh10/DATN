@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    Danh sách sản phẩm
+    Danh Sách Danh Mục
 @endsection
 @section('style_css')
     <style>
@@ -75,21 +75,21 @@
                                 <div class="row g-4 mb-3">
                                     <div class="col-sm-auto">
                                         <div>
-                                            <a href="{{ route('admin.categories.create') }}" class="btn btn-success">
-                                                <i class="ri-add-line align-bottom me-1"></i> Thêm mới
+                                            <a href="{{ route('admin.categories.create') }}" class="btn btn-success me-2">
+                                                <i class="ri-add-line align-bottom"></i> Thêm mới
+                                            </a>
+                                            <a href="{{ route('admin.categories.trashed') }}" class="btn btn-warning me-2">
+                                                <i class="ri-delete-bin-5-line align-bottom"></i> Thùng rác
                                             </a>
                                             <button type="button" class="btn btn-soft-danger" id="delete-selected">
-                                                <i class="ri-delete-bin-2-line align-bottom me-1"></i>
+                                                <i class="ri-delete-bin-2-line align-bottom"></i>
                                             </button>
-                                            <a href="{{ route('admin.categories.trashed') }}" class="btn btn-warning">
-                                                <i class="ri-delete-bin-5-line align-bottom me-1"></i> Thùng rác
-                                            </a>
                                         </div>
                                     </div>
                                     <div class="col-sm d-flex justify-content-end">
                                         <form action="{{ route('admin.categories.index') }}" method="GET" class="d-flex"
                                             id="search-form">
-                                            <select name="parent_id" class="form-control me-2" style="max-width: 150px;"
+                                            <select name="parent_id" class="form-control me-2" style="max-width: 200px;"
                                                 onchange="this.form.submit()">
                                                 <option value="">-- Chọn Danh Mục Cha --</option>
                                                 @foreach ($parentCategories as $parent)

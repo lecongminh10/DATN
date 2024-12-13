@@ -44,8 +44,8 @@
                                     {!! $data->is_active ? '<span class="badge bg-success"> Hoạt động </span>' : '<span class="badge bg-danger"> Không hoạt động </span>' !!}
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="created_at" class="form-label">Ngày tạo</label>
-                                    <input disabled type="text" class="form-control" value="{{ $data['created_at'] }}">
+                                    <label for="created_at" class="form-label ">Ngày tạo</label>
+                                    <input disabled type="text" class="form-control mb-3" value="{{ $data['created_at'] }}">
                                     <label for="updated_at" class="form-label">Ngày cập nhật</label>
                                     <input disabled type="text" class="form-control" value="{{ $data['updated_at'] }}">
                                 </div>
@@ -55,8 +55,8 @@
                                         <img src="{{ Storage::url($data->image) }}" style="max-width: 100%; max-height: 100px;" alt="">
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                    <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">Trở lại</a>
+                                <div class="text-start">
+                                    <a href="{{ route('admin.categories.index') }}" class="btn btn-primary">Quay lại</a>
                                 </div>
                             </div>
                         </div>

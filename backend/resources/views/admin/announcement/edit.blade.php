@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Header thông báo
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -48,13 +51,13 @@
                             <input type="datetime-local" id="end_date" name="end_date" class="form-control"
                                 value="{{ $announcement->end_date ?? '' }}">
                         </div>
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-2">
                             <label for="active">Kích Hoạt</label>
                             <input type="checkbox" name="active" id="active"
                                 {{ $announcement->active ? 'checked' : '' }}>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Cập Nhật</button>
+                        <button type="submit" class="btn btn-success">Cập Nhật</button>
                     </form>
                 </div>
             </div>

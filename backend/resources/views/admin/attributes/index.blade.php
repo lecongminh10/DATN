@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Thuộc Tính
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -24,7 +27,12 @@
                                                         href="{{ route('admin.attributes.index') }}">Danh sách</a></h5>
                                             </div>
                                         </div>
-                                        <div class="col-sm-auto">
+                                    </div>
+                                </div>
+                                <div class="listjs-table" id="customerList">
+                                    
+                                    <div class="card-header border-0 mt-1">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
                                             <div class="search-box mb-2">
                                                 <form method="GET" action="{{ route('admin.attributes.index') }}">
                                                     <input type="text" class="form-control search" name="search"
@@ -33,25 +41,17 @@
                                                     <i class="ri-search-line search-icon"></i>
                                                 </form>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="listjs-table" id="customerList">
-                                    <div class="card-header border-0 mt-1">
-                                        <div class="d-flex justify-content-between align-items-center w-100">
-                                            <h1 class="card-title fw-semibold mb-0"></h1>
                                             <div class="d-flex align-items-center">
-                                                <button class="btn btn-soft-danger" id="deleteMultipleBtn"
-                                                    style="display: none;">
-                                                    <i class="ri-delete-bin-5-fill"></i>
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none">
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                 </button>
-                                                <a class="btn btn-success add-btn ms-2"
+                                                <a class="btn btn-success add-btn me-2"
                                                     href="{{ route('admin.attributes.create') }}">
-                                                    <i class="ri-add-line"></i> Thêm mới
+                                                    <i class="ri-add-line  align-bottom"></i> Thêm mới
                                                 </a>
                                                 <a href="{{ route('admin.attributes.attributeshortdeleted') }}"
-                                                    class="btn btn-warning ms-2">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                    class="btn btn-warning ">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
                                             </div>
                                         </div>
@@ -67,7 +67,7 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>Stt</th>
+                                                    <th>STT</th>
                                                     <th>Tên </th>
                                                     <th>Mô tả </th>
                                                     <th>Ngày tạo</th>
