@@ -4,6 +4,9 @@
         .cke_notification {
             display: none;
         }
+
+        
+        
     </style>
 @endsection
 @section('content')
@@ -12,10 +15,10 @@
 
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Thêm mới Blog',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Thêm mới Blog', 'url' => '#'],
+                    ['name' => 'Thêm mới bài viết', 'url' => '#'],
                 ],
             ])
 
@@ -107,21 +110,45 @@
                                         accept="image/*">
                                 </div>
 
+                                <!-- Tags Section -->
+                                <div class="mb-3">
+                                    <label class="form-label" for="tags">Chọn thẻ bài viết</label>
+                                    <div class="d-flex flex-wrap">
+                                        @foreach ($tags as $tag)
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="checkbox" value="{{ $tag->id }}" name="tags[]"
+                                                    id="tag-{{ $tag->id }}"
+                                                    {{ in_array($tag->id, old('tags', $selectedTags ?? [])) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="tag-{{ $tag->id }}">
+                                                    {{ $tag->name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    @error('tags')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                                 
+                                
+                                
+
                                 <!-- Is Published -->
                                 <div class="mb-3">
                                     <label class="form-label" for="is_published">Trạng thái</label>
                                     <select class="form-select" id="is_published" name="is_published" required>
-                                        <option value="0" {{ old('is_published', 0) == 0 ? 'selected' : '' }}>Chưa xuất bản</option>
-                                        <option value="1" {{ old('is_published', 0) == 1 ? 'selected' : '' }}>Đã xuất bản</option>
-                                        <option value="2" {{ old('is_published', 0) == 2 ? 'selected' : '' }}>Bản nháp</option>
+                                        <option value="0" {{ old('is_published', 0) == 0 ? 'selected' : '' }}>Chưa
+                                            xuất bản</option>
+                                        <option value="1" {{ old('is_published', 0) == 1 ? 'selected' : '' }}>Đã xuất
+                                            bản</option>
+                                        <option value="2" {{ old('is_published', 0) == 2 ? 'selected' : '' }}>Bản nháp
+                                        </option>
                                     </select>
                                     @error('is_published')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
 
-                        
                             </div>
                             <!-- Submit Button -->
                             <div class="text-end mb-3">
@@ -139,19 +166,19 @@
 @endsection
 
 @section('scripte_logic')
-<script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
-<script>
-    CKEDITOR.replace('editor-container');
-</script>
+    <script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('editor-container');
+    </script>
     <script>
         function addTag() {
             const tagsDiv = document.getElementById('blog-tags');
             const newInputGroup = document.createElement('div');
             newInputGroup.className = 'input-group mb-2';
             newInputGroup.innerHTML = `
-                <input type="text" class="form-control" name="tags[]" placeholder="Nhập thẻ" required>
-                <button type="button" class="btn btn-outline-danger" onclick="removeTag(this)">Xóa</button>
-            `;
+            <input type="text" class="form-control" name="tags[]" placeholder="Nhập thẻ" required>
+            <button type="button" class="btn btn-outline-danger" onclick="removeTag(this)">Xóa</button>
+        `;
             tagsDiv.appendChild(newInputGroup);
         }
 
@@ -159,4 +186,6 @@
             button.parentElement.remove();
         }
     </script>
+
+    
 @endsection

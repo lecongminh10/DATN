@@ -7,8 +7,8 @@
             @include('admin.layouts.component.page-header', [
                 'title' => 'Seo ',
                 'breadcrumb' => [
-                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Seo', 'url' => '#']
+                    ['name' => 'Seo', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Danh sách xóa', 'url' => '#']
                 ]
             ])
             <div class="row">
@@ -21,8 +21,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.seo.deleted') }}">Seo List
-                                                        SotfDelete</a></h5>
+                                                        href="{{ route('admin.seo.deleted') }}">Danh sách SEO đã xóa</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -72,7 +71,7 @@
                                                     </a>
                                                     <a href="{{ route('admin.seo.index') }}"
                                                         class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Trang list
+                                                        <i class="ri-home-6-fill"></i>Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -90,11 +89,11 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="meta_title">Meta Title</th>
-                                                <th data-sort="meta_description">Meta Description</th>
-                                                <th data-sort="meta_keywords">Meta Keywords</th>
-                                                <th data-sort="canonical_url">Canonical URL</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="meta_title">Tiêu đề meta</th>
+                                                <th data-sort="meta_description">Mô tả meta </th>
+                                                <th data-sort="meta_keywords">Từ khóa meta</th>
+                                                <th data-sort="canonical_url">URL chuẩn</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">

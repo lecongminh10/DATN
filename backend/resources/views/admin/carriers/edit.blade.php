@@ -18,7 +18,7 @@
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Edit Carrier</h5>
+                                        <h5 class="card-title mb-0">Cập nhật nhà vận chuyển</h5>
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
@@ -104,7 +104,7 @@
                                     </div>
                                     <div class="text-end me-3 mb-3">
                                         <button type="submit" class="btn btn-success w-sm"><i
-                                                class="ri-check-double-line me-2"></i>Update</button>
+                                                class="ri-check-double-line me-2"></i>Cập nhật</button>
                                         <a href="{{ route('admin.carriers.index') }}" class="btn btn-secondary btn w-sm">
                                             <i class="ri-arrow-left-line"></i> Quay lại danh sách
                                         </a>

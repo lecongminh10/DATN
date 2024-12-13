@@ -47,10 +47,10 @@
                                                 </button>
                                                 <a class="btn btn-success add-btn ms-2"
                                                     href="{{ route('admin.attributes.create') }}">
-                                                    <i class="ri-add-box-fill"></i> Thêm
+                                                    <i class="ri-add-line"></i> Thêm mới
                                                 </a>
                                                 <a href="{{ route('admin.attributes.attributeshortdeleted') }}"
-                                                    class="btn btn-soft-danger ms-2">
+                                                    class="btn btn-warning ms-2">
                                                     <i class="ri-delete-bin-2-line"></i>Thùng rác
                                                 </a>
                                             </div>

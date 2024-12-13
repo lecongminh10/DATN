@@ -21,7 +21,8 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.tags.deleted') }}">Danh sách xóa mềm</a></h5>
+                                                        href="{{ route('admin.tags.deleted') }}">Danh sách thẻ đã xóa</a>
+                                                </h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -56,8 +57,8 @@
                                                             {{ request()->get('status') == 'inactive' ? 'selected' : '' }}>
                                                             Inactive</option>
                                                     </select>
-                                                </div> --}}
-                                                {{-- <div class="col-3 ms-3">
+                                                </div> 
+                                                <div class="col-3 ms-3">
                                                     <button type="button" class="btn btn-primary w-100"
                                                         onclick="filterData();">
                                                         <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
@@ -75,7 +76,7 @@
                                                         <i class="ri-add-box-fill"></i> Thêm
                                                     </a>
                                                     <a href="{{ route('admin.tags.index') }}" class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Danh sách
+                                                        <i class="ri-home-6-fill"></i>Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -119,11 +120,11 @@
                                                     </td>
                                                     <td class="due_date">
                                                         @if ($value->deleted_by)
-                                                            <?php 
-                                                                $deletedBy = \App\Models\User::find($value->deleted_by); // Lấy thông tin người dùng
+                                                            <?php
+                                                            $deletedBy = \App\Models\User::find($value->deleted_by); // Lấy thông tin người dùng
                                                             ?>
                                                             @if ($deletedBy)
-                                                                {{ $deletedBy->username}} <!-- Hiển thị tên người xóa -->
+                                                                {{ $deletedBy->username }} <!-- Hiển thị tên người xóa -->
                                                             @else
                                                                 Không xác định
                                                             @endif
@@ -223,7 +224,6 @@
         </div>
         <!-- end row -->
     </div>
-    <!-- Modal Khôi phục -->
     <div class="modal fade" id="restoreModal" tabindex="-1" role="dialog" aria-labelledby="restoreModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

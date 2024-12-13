@@ -1,15 +1,30 @@
 @extends('admin.layouts.app')
 
 @section('content')
+    <style>
+        .content-ellipsis {
+            max-width: 200px;
+            
+            white-space: nowrap;
+            
+            overflow: hidden;
+            
+            text-overflow: ellipsis;
+            
+        }
+
+        
+    </style>
+
     <div class="page-content">
         <div class="container-fluid">
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Blogs',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
-                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Blogs', 'url' => '#']
-                ]
+                    // ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Bài viết', 'url' => '#'],
+                ],
             ])
             <div class="row">
                 <div class="col-lg-12">
@@ -49,16 +64,12 @@
                                                     href="{{ route('admin.blogs.create') }}">
                                                     <i class="ri-add-box-fill"></i> Thêm
                                                 </a>
-                                                <a href="{{ route('admin.blogs.blogshortdeleted') }}"
-                                                    class="btn btn-soft-danger ms-2">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
-                                                </a>
+                                               
                                             </div>
                                         </div>
                                     </div>
                                     <div class="table-responsive table-card mt-1">
-                                        <table
-                                            class="table align-middle">
+                                        <table class="table align-middle">
                                             <thead class="table-light text-muted">
                                                 <tr>
                                                     <th scope="col" style="width: 50px;">
@@ -87,7 +98,7 @@
                                                             </div>
                                                         </th>
                                                         <td>{{ $index + 1 }}</td>
-                                                        
+
                                                         <td class="text-center"> <!-- Căn giữa nội dung -->
                                                             <div
                                                                 style="width: 50px; height: 50px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
@@ -96,29 +107,35 @@
                                                                     alt="">
                                                             </div>
                                                         </td>
-                                                        <td>
+                                                        <td class="title-ellipsis">
                                                             <a href="{{ route('admin.blogs.show', $item->id) }}"
                                                                 class="dropdown-item">
-                                                                {{ $item->title }}</a>
+                                                                {{ $item->title }}
+                                                            </a>
                                                         </td>
-                                                        <td>{{ $item->content }}</td>
+                                                        <td class="content-ellipsis">
+                                                            {{ $item->content }}
+                                                        </td>
                                                         <td>
                                                             {{ optional($item->user)->username ?? 'N/A' }}
                                                         </td>
-                                                        
-                                                        <td>{{ ($item->created_at) ? $item->created_at->format('d-m-Y H:i:s') : '' }}</td>
+
+                                                        <td>{{ $item->created_at ? $item->created_at->format('d-m-Y H:i:s') : '' }}
+                                                        </td>
                                                         <td>
                                                             @if ($item->is_published == 1)
                                                                 <span class="badge bg-success">Đã xuất bản</span>
                                                             @elseif ($item->is_published == 0)
-                                                                <span class="badge bg-warning text-dark">Chưa xuất bản</span>
+                                                                <span class="badge bg-warning text-dark">Chưa xuất
+                                                                    bản</span>
                                                             @elseif ($item->is_published == 2)
                                                                 <span class="badge bg-secondary">Bản nháp</span>
                                                             @else
-                                                                <span class="badge bg-danger">Trạng thái không xác định</span>
+                                                                <span class="badge bg-danger">Trạng thái không xác
+                                                                    định</span>
                                                             @endif
                                                         </td>
-                                                        
+
                                                         <td>
                                                             <div class="d-flex justify-content-center">
                                                                 <div class="dropdown d-inline-block">
@@ -185,7 +202,8 @@
                                             </li>
                                         @else
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $blogs->previousPageUrl() }}" aria-label="Previous">
+                                                <a class="page-link" href="{{ $blogs->previousPageUrl() }}"
+                                                    aria-label="Previous">
                                                     Previous
                                                 </a>
                                             </li>
@@ -204,7 +222,8 @@
                                                         </li>
                                                     @else
                                                         <li class="page-item">
-                                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                                            <a class="page-link"
+                                                                href="{{ $url }}">{{ $page }}</a>
                                                         </li>
                                                     @endif
                                                 @endforeach
@@ -212,7 +231,8 @@
                                         @endforeach
                                         @if ($blogs->hasMorePages())
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $blogs->nextPageUrl() }}" aria-label="Next">
+                                                <a class="page-link" href="{{ $blogs->nextPageUrl() }}"
+                                                    aria-label="Next">
                                                     Next
                                                 </a>
                                             </li>

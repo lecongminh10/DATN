@@ -10,8 +10,7 @@
                     ['name' => 'Người dùng ', 'url' => '#'],
                 ],
             ])
-
-            <div class="roư">
+            <div class="row">
                 <div class="col-lg-12">
                     <div class="card" id="tasksList">
                         <div class="card-header border-0">
@@ -55,15 +54,15 @@
                                                         value="option">
                                                 </div>
                                             </th>
-                                            <th class="sort" data-sort="id">ID</th>
-                                            <th class="sort" data-sort="username">Tên</th>
-                                            <th class="sort" data-sort="avatar">Ảnh</th>
-                                            <th class="sort" data-sort="email">Email</th>
-                                            <th class="sort" data-sort="permission">Quyền</th>
-                                            <th class="sort" data-sort="status">Status</th>
-                                            <th class="sort" data-sort="gender">Giới Tính</th>
-                                            <th class="sort" data-sort="date_of_birth">Ngày Sinh</th>
-                                            <th class="sort" data-sort="phone_number">Số Điện Thoại</th>
+                                            <th data-sort="id">ID</th>
+                                            <th data-sort="username">Tên</th>
+                                            <th data-sort="avatar">Ảnh</th>
+                                            <th data-sort="email">Email</th>
+                                            <th data-sort="permission">Quyền</th>
+                                            <th data-sort="status">Status</th>
+                                            <th data-sort="gender">Giới Tính</th>
+                                            <th data-sort="date_of_birth">Ngày Sinh</th>
+                                            <th data-sort="phone_number">Số Điện Thoại</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list form-check-all" id="userTableBody">
@@ -117,10 +116,13 @@
                                                 </td>
                                                 <td>
                                                     <?php
-                                                    $image = $value->profile_picture;
+                                                    // Lấy đường dẫn ảnh từ Storage
+                                                    $image = $value->profile_picture ? Storage::url($value->profile_picture) : null;
+                                                    // Đường dẫn ảnh mặc định từ mạng
+                                                    $defaultImage = 'https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png';
                                                     ?>
-                                                    <img src="{{ Storage::url($image) }}" alt="Ảnh đại diện" width="100px"
-                                                        height="100px">
+                                                    <img src="{{ $image ? $image : $defaultImage }}" alt="Ảnh đại diện"
+                                                        style="border-radius: 5px" width="80px" height="80px">
                                                 </td>
                                                 <td class="client_name">{{ $value->email }}</td>
                                                 <td class="project_name">
@@ -168,38 +170,43 @@
                                     </div>
                                 </div>
                             </div>
-                            {{ $user->links() }}
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal xác nhận xóa -->
-                <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-body p-5 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-                                    colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
-                                <div class="mt-4 text-center">
-                                    <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?
-                                    </h4>
-                                    <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
-                                        <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
-                                    </div>
-                                    <div class="hstack gap-2 justify-content-center remove mt-3">
-                                        <button class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
-                                            id="deleteRecord-close" data-bs-dismiss="modal">
-                                            <i class="ri-close-line me-1 align-middle"></i> Đóng
-                                        </button>
-                                        <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                            <!-- Modal xác nhận xóa -->
+                            <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-5 text-center">
+                                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                                                colors="primary:#405189,secondary:#f06548"
+                                                style="width:90px;height:90px"></lord-icon>
+                                            <div class="mt-4 text-center">
+                                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?
+                                                </h4>
+                                                <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="forceDeleteCheckbox">
+                                                    <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh
+                                                        viễn</label>
+                                                </div>
+                                                <div class="hstack gap-2 justify-content-center remove mt-3">
+                                                    <button
+                                                        class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
+                                                        id="deleteRecord-close" data-bs-dismiss="modal">
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
+                                                    </button>
+                                                    <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-2">
+                                @include('admin.components.pagination', ['data' => $user])
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

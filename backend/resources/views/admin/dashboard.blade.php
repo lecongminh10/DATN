@@ -34,7 +34,7 @@
                                                     <a href="{{ route('admin.products.addProduct') }}"
                                                         class="btn btn-soft-success"><i
                                                             class="ri-add-circle-line align-middle me-1"></i>
-                                                        Add Product</a>
+                                                        Thêm mới sản phẩm</a>
                                                 </div>
                                                 <!--end col-->
                                             </div>

@@ -131,10 +131,10 @@
                                     <div class="col-xl-2">
                                         <div class="btn-group w-100" role="group" aria-label="Filter buttons">
                                             <button type="button" class="btn btn-primary" onclick="filterData();">
-                                                <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm
                                             </button>
                                             <button type="button" class="btn btn-secondary" onclick="clearFilters();">
-                                                <i class="ri-close-circle-fill me-2 align-bottom"></i>Clear
+                                                <i class="ri-close-circle-fill me-2 align-bottom"></i>Hủy
                                             </button>
                                         </div>
                                     </div>

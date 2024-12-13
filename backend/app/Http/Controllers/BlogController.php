@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Tag;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\BlogService;
@@ -33,10 +34,50 @@ class BlogController extends Controller
     // Hiển thị form tạo blog mới
     public function create()
     {
-        return view('admin.blogs.create');
+        $tags = Tag::all(); // Lấy tất cả các tag
+        return view('admin.blogs.create', compact('tags'));
     }
 
+
     // Lưu blog mới
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'content' => 'required|string',
+    //         'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         'meta_title' => 'nullable|string|max:255',
+    //         'meta_description' => 'nullable|string|max:255',
+    //     ]);
+
+    //     $slug = Str::slug($request->title);
+    //     $isPublished = $request->input('is_published', 1);
+    //     $blog = Blog::create([
+    //         'title' => $request->title,
+    //         'content' => $request->content,
+    //         'slug' => $slug,
+    //         'meta_title' => $request->meta_title,
+    //         'meta_description' => $request->meta_description,
+    //         'thumbnail' => $request->file('thumbnail') ? $request->file('thumbnail')->store('thumbnails', 'public') : null,
+    //         'user_id' => auth()->id(),
+    //         'is_published' => $isPublished,
+    //         'published_at' => $isPublished == 1 ? now() : null,
+    //     ]);
+    //     $logDetails = sprintf(
+    //         'Thêm bài viết: Tiêu Đề - %s',
+    //         $blog->title
+    //     );
+
+    //     // Ghi nhật ký hoạt động
+    //     event(new AdminActivityLogged(
+    //         auth()->user()->id,
+    //         'Thêm Mới',
+    //         $logDetails
+    //     ));
+
+    //     return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
+    // }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -45,10 +86,14 @@ class BlogController extends Controller
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:255',
+            'tags' => 'nullable|array', // Thêm validate cho tags
+            'tags.*' => 'nullable|exists:tags,id', // Kiểm tra xem các ID tags có tồn tại trong bảng tags không
         ]);
 
         $slug = Str::slug($request->title);
         $isPublished = $request->input('is_published', 1);
+
+        // Tạo blog mới
         $blog = Blog::create([
             'title' => $request->title,
             'content' => $request->content,
@@ -60,17 +105,23 @@ class BlogController extends Controller
             'is_published' => $isPublished,
             'published_at' => $isPublished == 1 ? now() : null,
         ]);
-        $logDetails = sprintf(
-            'Thêm bài viết: Tiêu Đề - %s',
-            $blog->title
-        );
+
+        // Xử lý tags
+        if ($request->has('tags')) {
+            $tags = $request->input('tags'); // Mảng ID của tags
+
+            // Kiểm tra và gắn các tags cho bài viết
+            foreach ($tags as $tagId) {
+                $tag = Tag::find($tagId); // Tìm tag theo ID
+                if ($tag) {
+                    $blog->tags()->attach($tag); // Gắn tag vào blog qua bảng trung gian post_tag
+                }
+            }
+        }
 
         // Ghi nhật ký hoạt động
-        event(new AdminActivityLogged(
-            auth()->user()->id,
-            'Thêm Mới',
-            $logDetails
-        ));
+        $logDetails = sprintf('Thêm bài viết: Tiêu Đề - %s', $blog->title);
+        event(new AdminActivityLogged(auth()->user()->id, 'Thêm Mới', $logDetails));
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
     }
@@ -86,13 +137,89 @@ class BlogController extends Controller
     }
 
     // Hiển thị form chỉnh sửa blog
+    // public function edit($id)
+    // {
+    //     $blog = Blog::findOrFail($id);
+    //     return view('admin.blogs.edit', compact('blog'));
+    // }
+
     public function edit($id)
     {
-        $blog = Blog::findOrFail($id);
-        return view('admin.blogs.edit', compact('blog'));
+        $blog = Blog::with('tags')->findOrFail($id);
+
+        // Lấy danh sách ID của các thẻ đã chọn
+        $selectedTags = $blog->tags->pluck('id')->toArray();
+
+        // Lấy tất cả các thẻ chưa được chọn
+        $allTags = Tag::whereNotIn('id', $selectedTags)->get();
+
+        return view('admin.blogs.edit', compact('blog', 'allTags', 'selectedTags'));
     }
 
+
     // Cập nhật blog
+
+    // public function update(Request $request, $id)
+    // {
+    //     // Tìm blog theo ID
+    //     $blog = Blog::findOrFail($id);
+
+    //     // Kiểm tra tính hợp lệ của dữ liệu
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'content' => 'required|string',
+    //         'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         'meta_title' => 'nullable|string|max:255',
+    //         'meta_description' => 'nullable|string|max:255',
+    //         'is_published' => 'required|in:0,1,2',
+    //     ]);
+
+    //     // Tạo slug từ tiêu đề
+    //     $slug = Str::slug($request->title);
+
+    //     // Xử lý hình ảnh thumbnail
+    //     if ($request->hasFile('thumbnail')) {
+    //         // Xóa hình ảnh cũ nếu có
+    //         if ($blog->thumbnail && Storage::disk('public')->exists($blog->thumbnail)) {
+    //             Storage::disk('public')->delete($blog->thumbnail);
+    //         }
+    //         // Lưu hình ảnh mới vào disk 'public'
+    //         $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+    //     } else {
+    //         // Giữ nguyên hình ảnh cũ nếu không có hình ảnh mới
+    //         $thumbnailPath = $blog->thumbnail;
+    //     }
+
+    //     // Xác định trạng thái xuất bản
+    //     $isPublished = $request->input('is_published');
+    //     $publishedAt = $isPublished == 1 ? now() : null;
+
+    //     // Cập nhật thông tin blog
+    //     $blog->update([
+    //         'title' => $request->title,
+    //         'content' => $request->content,
+    //         'slug' => $slug,
+    //         'meta_title' => $request->meta_title,
+    //         'meta_description' => $request->meta_description,
+    //         'thumbnail' => $thumbnailPath,
+    //         'is_published' => $isPublished,
+    //         'published_at' => $publishedAt,
+    //     ]);
+    //     $logDetails = sprintf(
+    //         'Sửa bài viết: Tiêu Đề - %s',
+    //         $blog->title
+    //     );
+
+    //     // Ghi nhật ký hoạt động
+    //     event(new AdminActivityLogged(
+    //         auth()->user()->id,
+    //         'Sửa',
+    //         $logDetails
+    //     ));
+
+    //     return redirect()->route('admin.blogs.index')->with('success', 'Blog updated successfully.');
+    // }
+
 
     public function update(Request $request, $id)
     {
@@ -107,6 +234,8 @@ class BlogController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:255',
             'is_published' => 'required|in:0,1,2',
+            'tags' => 'nullable|array', // Thêm validate cho tags
+            'tags.*' => 'nullable|string|max:255', // Kiểm tra giá trị tags
         ]);
 
         // Tạo slug từ tiêu đề
@@ -140,12 +269,26 @@ class BlogController extends Controller
             'is_published' => $isPublished,
             'published_at' => $publishedAt,
         ]);
+
+        // Xử lý tags
+        if ($request->has('tags')) {
+            $tags = $request->input('tags'); // Mảng các tag
+
+            // Gắn các tag vào blog, tạo tag mới nếu chưa có
+            $blog->tags()->sync([]); // Loại bỏ tất cả các tags hiện tại
+            foreach ($tags as $tagName) {
+                // Kiểm tra xem tag đã tồn tại chưa, nếu chưa thì tạo mới
+                $tag = Tag::firstOrCreate(['name' => $tagName]);
+                $blog->tags()->attach($tag); // Gắn tag vào blog
+            }
+        }
+
+        // Ghi nhật ký hoạt động
         $logDetails = sprintf(
             'Sửa bài viết: Tiêu Đề - %s',
             $blog->title
         );
 
-        // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
             'Sửa',
@@ -166,38 +309,38 @@ class BlogController extends Controller
     // }
 
     public function showSotfDelete(Request $request)
-{
-    // Lấy giá trị tìm kiếm và số lượng trên mỗi trang
-    $search = $request->input('search');
-    $perPage = $request->input('perPage', 10);
+    {
+        // Lấy giá trị tìm kiếm và số lượng trên mỗi trang
+        $search = $request->input('search');
+        $perPage = $request->input('perPage', 10);
 
-    // Truy vấn các bài viết đã xóa mềm
-    $data = $this->blogService->show_soft_delete($search, $perPage);
+        // Truy vấn các bài viết đã xóa mềm
+        $data = $this->blogService->show_soft_delete($search, $perPage);
 
-    // Trả về view với dữ liệu bài viết đã xóa mềm
-    return view('admin.blogs.deleted', compact('data'));
-}
+        // Trả về view với dữ liệu bài viết đã xóa mềm
+        return view('admin.blogs.deleted', compact('data'));
+    }
 
 
     public function restore($id)
-{
-    try {
-        // Kiểm tra xem blog có tồn tại hay không
-        $blog = $this->blogService->findDeletedBlogById($id);
+    {
+        try {
+            // Kiểm tra xem blog có tồn tại hay không
+            $blog = $this->blogService->findDeletedBlogById($id);
 
-        if (!$blog) {
-            return redirect()->route('admin.blogs.deleted')->with('error', 'Blog không tồn tại hoặc đã bị khôi phục trước đó.');
+            if (!$blog) {
+                return redirect()->route('admin.blogs.deleted')->with('error', 'Blog không tồn tại hoặc đã bị khôi phục trước đó.');
+            }
+
+            // Khôi phục blog
+            $this->blogService->restore_delete($id);
+
+            return redirect()->route('admin.blogs.blogshortdeleted')->with('success', 'Khôi phục blog thành công!');
+        } catch (\Exception $e) {
+            // Trả về thông báo lỗi nếu có lỗi xảy ra trong quá trình khôi phục
+            return redirect()->route('admin.blogs.blogshortdeleted')->with('error', 'Không thể khôi phục blog: ' . $e->getMessage());
         }
-
-        // Khôi phục blog
-        $this->blogService->restore_delete($id);
-
-        return redirect()->route('admin.blogs.blogshortdeleted')->with('success', 'Khôi phục blog thành công!');
-    } catch (\Exception $e) {
-        // Trả về thông báo lỗi nếu có lỗi xảy ra trong quá trình khôi phục
-        return redirect()->route('admin.blogs.blogshortdeleted')->with('error', 'Không thể khôi phục blog: ' . $e->getMessage());
     }
-}
 
 
 
@@ -211,7 +354,7 @@ class BlogController extends Controller
             return redirect()->route('admin.blogs.index')->with('error', 'Blog không tồn tại!');
         }
 
-         $logDetails = sprintf(
+        $logDetails = sprintf(
             'Xóa bài viết: Tiêu Đề - %s',
             $blog->title
         );

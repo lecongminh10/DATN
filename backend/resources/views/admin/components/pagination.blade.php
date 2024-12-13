@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-    <div class="results-info ms-3">
+    <div class="results-info ms-3 me-3">
         <p class="pagination mb-0">
             Showing
             {{ $data->firstItem() }}

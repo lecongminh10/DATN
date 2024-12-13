@@ -99,18 +99,21 @@
                     <hr class="mt-1 mb-3 pb-2">
 
                     <div class="feature-boxes-container">
-                        <div class="row">
+
+                        @php
+                            $infoBoxFooter = App\Models\infoBoxFooter::first(); // Lấy dữ liệu từ DB
+                        @endphp
+                        <div class="row" style ="display:{{($infoBoxFooter->active) ? '':'none'}}">
                             <div class="col-md-4 appear-animate" data-animation-name="fadeInRightShorter"
                                 data-animation-delay="200">
                                 <div class="feature-box  feature-box-simple text-center">
                                     <i class="icon-earphones-alt"></i>
 
                                     <div class="feature-box-content p-0">
-                                        <h3 class="mb-0 pb-1">Customer Support</h3>
-                                        <h5 class="mb-1 pb-1">Need Assistance?</h5>
+                                        <h3 class="mb-0 pb-1">{{ $infoBoxFooter->title_1 }}</h3>
+                                        <h5 class="mb-1 pb-1">{{ $infoBoxFooter->sub_title_1 }}</h5>
 
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec vestibulum
-                                            magna, et dapib.</p>
+                                        <p>{{ $infoBoxFooter->description_support }}</p>
                                     </div>
                                     <!-- End .feature-box-content -->
                                 </div>
@@ -124,11 +127,10 @@
                                     <i class="icon-credit-card"></i>
 
                                     <div class="feature-box-content p-0">
-                                        <h3 class="mb-0 pb-1">Secured Payment</h3>
-                                        <h5 class="mb-1 pb-1">Safe & Fast</h5>
+                                        <h3 class="mb-0 pb-1">{{ $infoBoxFooter->title_2 }}</h3>
+                                        <h5 class="mb-1 pb-1">{{ $infoBoxFooter->sub_title_2 }}</h5>
 
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec vestibulum
-                                            magna, et dapib.</p>
+                                        <p>{{ $infoBoxFooter->description_payment }}</p>
                                     </div>
                                     <!-- End .feature-box-content -->
                                 </div>
@@ -142,11 +144,10 @@
                                     <i class="icon-action-undo"></i>
 
                                     <div class="feature-box-content p-0">
-                                        <h3 class="mb-0 pb-1">Returns</h3>
-                                        <h5 class="mb-1 pb-1">Easy & Free</h5>
+                                        <h3 class="mb-0 pb-1">{{ $infoBoxFooter->title_3 }}</h3>
+                                        <h5 class="mb-1 pb-1">{{ $infoBoxFooter->sub_title_3 }}</h5>
 
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec vestibulum
-                                            magna, et dapib.</p>
+                                        <p>{{ $infoBoxFooter->description_return }}</p>
                                     </div>
                                     <!-- End .feature-box-content -->
                                 </div>

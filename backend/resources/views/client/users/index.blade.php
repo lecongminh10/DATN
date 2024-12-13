@@ -156,11 +156,15 @@
                 <section class="profile-content">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            @if (empty(Auth::user()->profile_image_url) || !Storage::exists(Auth::user()->profile_image_url))
+                            {{-- @if (empty(Auth::user()->profile_image_url) || !Storage::exists(Auth::user()->profile_image_url))
                                 <img src="https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png" alt="" class="rounded-circle me-2" width="50" height="50">
                             @else
                                 <img src="{{ Storage::url(Auth::user()->profile_image_url) }}" alt="{{ Auth::user()->profile_image_url}}" class="rounded-circle me-2" width="50" height="50">
-                            @endif
+                            @endif --}}
+                            <?php
+                                $image = Auth::user()->profile_picture;
+                            ?>
+                            <img src="{{ Storage::url($image) }}" class="rounded-circle me-2" alt="Ảnh đại diện" width="100px" height="100px">
                             <h5 class="mb-0 mx-2">{{ Auth::user()->username }}</h5>
                         </div> 
                         <div id="dashboard" class="dashboard-section">
@@ -172,8 +176,7 @@
                                 </div>
                                 <div class="widget-card">
                                     <h4 style="font-size: 17px">Điểm thưởng</h4>
-                                    <p style="font-size: 15px">500 điểm sẵn có</p>
-                                    <a href="#rewards" class="view-details">Đổi điểm</a>
+                                    <p style="font-size: 15px">{{ Auth::user()->loyalty_points }} điểm có sẳn</p>
                                 </div>
                                 <div class="widget-card">
                                     <h4 style="font-size: 17px">Hạng thành viên</h4>

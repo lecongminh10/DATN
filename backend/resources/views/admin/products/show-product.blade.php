@@ -315,7 +315,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin sản phẩm</h4>
                                     </div><!-- end card header -->
                                     <div class="card-body">
                                         <div class="live-preview">
@@ -410,6 +410,21 @@
                                                         <input type="number" class="form-control" name="warranty_period"
                                                             id="warranty_period" value="{{$product->warranty_period}}" disabled>
                                                     </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="height" id="height"  value="{{$product->productDimension->height}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="length" id="length"  value="{{$product->productDimension->length}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="width" id="width"  value="{{$product->productDimension->width}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="weight" id="weight"  value="{{$product->productDimension->weight}}" placeholder="Cân nặng (gr)">
+                                                            </div>
+                                                    </div>
                                                     <div class="row">
                                                         @php
                                                             $status = [
@@ -488,7 +503,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Nội dung</h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
@@ -525,11 +540,6 @@
                                                         href="#v-pills-profile" role="tab"
                                                         aria-controls="v-pills-profile" aria-selected="false">
                                                         Các biến thể
-                                                    </a>
-                                                    <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
-                                                        href="#v-pills-coupons" role="tab"
-                                                        aria-controls="v-pills-coupons" aria-selected="false">
-                                                        Khuyến mãi
                                                     </a>
                                                 </div>
                                             </div>
@@ -742,7 +752,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Quay lại</a>
                                     </div>
                                 </div>
                             </div>

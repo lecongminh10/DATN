@@ -30,6 +30,18 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             margin-top: 9px;
             background-color: transparent;
         }
+
+        .btn-icon-wish{
+            margin-top: 10px;
+        }
+
+        .btn-detail{
+            border: none;
+            background-color: transparent;
+            color: #4d4c4a;
+            cursor: pointer;
+            margin-top: 10px;
+        }
     </style>
 @endsection
 @section('content')
@@ -87,35 +99,6 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                         <!-- End .toolbox-item -->
                     </div>
                     <!-- End .toolbox-left -->
-
-                    <div class="toolbox-right">
-                        <div class="toolbox-item toolbox-show">
-                            <label>Show:</label>
-                            <form action="{{ url()->current() }}" method="GET">
-                                <div class="select-custom">
-                                    <select name="count" class="form-control" onchange="this.form.submit()">
-                                        <option value="12" {{ request('count') == 12 ? 'selected' : '' }}>12</option>
-                                        <option value="24" {{ request('count') == 24 ? 'selected' : '' }}>24</option>
-                                        <option value="36" {{ request('count') == 36 ? 'selected' : '' }}>36</option>
-                                    </select>
-                                </div>
-                                <!-- End .select-custom -->
-                            </form>
-                            <!-- End .select-custom -->
-                        </div>
-                        <!-- End .toolbox-item -->
-
-                        {{-- <div class="toolbox-item layout-modes">
-                            <a href="category.html" class="layout-btn btn-grid active" title="Grid">
-                                <i class="icon-mode-grid"></i>
-                            </a>
-                            <a href="category-list.html" class="layout-btn btn-list" title="List">
-                                <i class="icon-mode-list"></i>
-                            </a>
-                        </div> --}}
-                        <!-- End .layout-modes -->
-                    </div>
-                    <!-- End .toolbox-right -->
                 </nav>
 
                 @php
@@ -207,7 +190,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
                                     <div class="product-action">
                                         <a href="#" class="btn-icon-wish" title="wishlist" data-product-id="{{ $item->id }}"><i class="icon-heart"></i></a>
-                                        <a href="#" class="btn-icon btn-add-cart add-cart" data-product-id="{{ $item->id }}" data-toggle="modal" data-target="#addToCart"><i class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span></a>
+                                        <a href="#" class="btn-icon btn-add-cart add-cart" data-product-id="{{ $item->id }}" data-toggle="modal"><i class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span></a>
                                         <a href="{{route('client.showProduct', $item->id)}}" class="btn-quickview" title="Quick View">
                                             <button class="view-detail"><i class="fas fa-external-link-alt"></i></button>
                                         </a>
@@ -219,7 +202,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     @endforeach
                 </div>
                 <!-- End .row -->
-                {{-- <nav class="toolbox toolbox-pagination">
+                <nav class="toolbox toolbox-pagination">
                     <div class="toolbox-item toolbox-show">
                         <label>Show:</label>
                         <form action="{{ url()->current() }}" method="GET">
@@ -237,7 +220,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     <ul class="pagination toolbox-item">
                         {{ $products->links('pagination::bootstrap-5') }}
                     </ul>
-                </nav> --}}
+                </nav>
             </div>
             <!-- End .col-lg-9 -->
 
@@ -307,7 +290,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     <div
                                         class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
                                         <div class="filter-price-text">
-                                            Price:
+                                            Giá:
                                             <span id="filter-price-range">₫{{ $minPrice ?? 0 }} -
                                                 ₫{{ $maxPrice ?? 100000000 }}</span>
                                         </div>
@@ -363,6 +346,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
+        let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
         if (window.location.hash === "#_=_") {
             window.location.hash = "";
         }
@@ -390,12 +374,12 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
     document.addEventListener('DOMContentLoaded', function() {
         // Thêm vào giỏ hàng
-        const addToCartButtons = document.querySelectorAll('.btn-add-cart');
+            const addToCartButtons = document.querySelectorAll('.btn-add-cart');
         addToCartButtons.forEach(function(button) {
             button.addEventListener('click', function(event) {
                 event.preventDefault(); // Ngăn chặn chuyển trang
                 const productId = button.getAttribute('data-product-id');
-
+                if(isLoggedIn){
                 // Gọi AJAX để thêm sản phẩm vào giỏ hàng
                 $.ajax({
                     type: "POST",
@@ -420,6 +404,9 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                         }
                     }
                 });
+                } else {
+                    alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
+                }
             });
         });
 
@@ -429,7 +416,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             button.addEventListener('click', function(event) {
                 event.preventDefault(); // Ngăn chặn chuyển trang
                 const productId = button.getAttribute('data-product-id');
-                
+                if(isLoggedIn){
                 // Gọi AJAX để thêm sản phẩm vào wishlist
                 $.ajax({
                     type: "POST",
@@ -441,6 +428,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                     success: function(response) {
                         // Xử lý khi thêm vào wishlist thành công
                         // alert("Sản phẩm đã được thêm vào danh sách yêu thích!");
+                        $('#addToCart').modal('show');
                     },
                     error: function(xhr) {
                         if (xhr.status === 401) {
@@ -450,6 +438,9 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                         }
                     }
                 });
+                    } else{
+                    alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
+                }
             });
         });
     });

@@ -24,7 +24,7 @@
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
                                         <button type="button" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</button>
+                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</button>
                                     </div>
                                 </div>
                             </div>
@@ -48,7 +48,7 @@
                                         <button type="submit" class="btn btn-success w-sm"><i
                                                 class="ri-check-double-line me-2"></i>Gửi</button>
                                         <a href="{{ route('admin.tags.index') }}" class="btn btn-secondary btn w-sm">
-                                            <i class="ri-arrow-left-line"></i> Quay lại danh sách
+                                            <i class="ri-arrow-left-line"></i> Quay lại
                                         </a>
                                     </div>
                                 </div>

@@ -40,8 +40,10 @@ use App\Http\Controllers\AdminActivityLogController;
 use App\Http\Controllers\CategoryStatisticsController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-
+use App\Http\Controllers\InfoBoxFooterController;
+use App\Http\Controllers\RefundController;
 
 Route::group([
     'prefix' => 'admin',
@@ -396,6 +398,40 @@ Route::group([
         }
     );
 
+    //////info_boxes_footer
+    Route::group(
+        [
+            'prefix' => 'info-boxes-footer',
+            'as' => 'info_boxes_footer.',
+        ],
+        function () {
+            Route::get('info_boxes_footer/edit', [InfoBoxFooterController::class, 'edit'])->name('edit');
+            Route::post('info_boxes_footer/update', [InfoBoxFooterController::class, 'update'])->name('update');
+        }
+    );
+
+    //////banner
+    Route::group(
+        [
+            'prefix' => 'banner',
+            'as' => 'banner.',
+        ],
+        function () {
+            // banner chính
+            Route::get('list_banner', [BannerController::class, 'list_banner_main'])->name('list_banner_main');
+
+            Route::get('banner_main_view_add', [BannerController::class, 'banner_main_view_add'])->name('banner_main_view_add');
+            Route::post('banner_main_add', [BannerController::class, 'banner_main_add'])->name('banner_main_add');
+
+            Route::get('banner_main/edit/{id}', [BannerController::class, 'banner_main_edit'])->name('banner_main_edit');
+            Route::post('banner_main/update/{id}', [BannerController::class, 'banner_main_update'])->name('banner_main_update');
+
+            // banner phụ
+            Route::get('banner_extra/edit', [BannerController::class, 'banner_extra_edit'])->name('banner_extra_edit');
+            Route::post('banner_extra/update', [BannerController::class, 'banner_extra_update'])->name('banner_extra_update');
+        }
+    );
+
     //////popuphome
     Route::group(
         [
@@ -466,6 +502,16 @@ Route::group([
         Route::delete('/content/{id}', [FeedbackController::class, 'destroyContent'])->name('feedbackContent.destroy');
         Route::delete('/content/{id}/hard-delete', [FeedbackController::class, 'hardDeleteContent'])->name('feedbackContent.hardDelete');
         Route::post('/delete-multiple', [FeedbackController::class, 'deleteMultiple'])->name('feedbacks.deleteMultiple');
+    });
+    Route::group([
+        'prefix' => 'refunds',
+        'as' => 'refunds.'
+    ], function(){
+        Route::get('/', [RefundController::class, 'index'])->name('index');
+        // Route::get('refund-detail/{code}', [RefundController::class, 'detailRefund'])->name('detailRefund');
+        Route::post('/', [RefundController::class, 'store'])->name('store');
+        Route::put('/{refund}', [RefundController::class, 'update'])->name('update');
+        Route::get('/create/{orderId}', [RefundController::class, 'createRefundForm'])->name('create');
     });
 });
 Route::get('/admin/logs',                       [AdminActivityLogController::class, 'index'])->name('admin.logs.index');

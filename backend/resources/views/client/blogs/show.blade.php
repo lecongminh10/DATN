@@ -33,35 +33,17 @@
                             </div><!-- End .post-meta -->
 
                             <div class="post-content">
-                                <p>{{ $post->content }}</p>
+                                <p>{{ strip_tags($post->content) }}</p>
                             </div><!-- End .post-content -->
-
-                            <div class="post-share">
-                                <h3 class="d-flex align-items-center">
-                                    <i class="fas fa-share"></i>
-                                    Share this post
-                                </h3>
-
-                                <div class="social-icons">
-                                    <a href="#" class="social-icon social-facebook" target="_blank" title="Facebook">
-                                        <i class="icon-facebook"></i>
-                                    </a>
-                                    <a href="#" class="social-icon social-twitter" target="_blank" title="Twitter">
-                                        <i class="icon-twitter"></i>
-                                    </a>
-                                    <a href="#" class="social-icon social-linkedin" target="_blank" title="LinkedIn">
-                                        <i class="fab fa-linkedin-in"></i>
-                                    </a>
-                                </div><!-- End .social-icons -->
-                            </div><!-- End .post-share -->
 
                             <div class="post-author">
                                 <h3><i class="far fa-user"></i>Author</h3>
 
                                 <figure>
                                     <a href="#">
-                                        <img src="{{ asset('storage/' . $post->user->profile_picture) }}"
-                                            alt="{{ $post->user->username }}">
+                                        <img src="{{ $post->user->profile_picture ? asset('storage/' . $post->user->profile_picture) : asset('images/default-profile-picture.png') }}" 
+                                             alt="{{ $post->user->username }}"
+                                             style="width: 100px; height: 100px; object-fit: cover;">
                                     </a>
                                 </figure>
 

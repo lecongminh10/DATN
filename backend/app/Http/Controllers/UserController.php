@@ -6,9 +6,11 @@ use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Refund;
 use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\WishList;
 use App\Models\Permission;
 use App\Models\UserReview;
 use Illuminate\Http\Request;
@@ -21,8 +23,8 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserStoreRequest;
-use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
 {
@@ -37,9 +39,11 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = $this->userService->getAll();
+        $perPage = $request->input('perPage', 10); // Số lượng mặc định là 10
+        $user = $this->userService->getAll($perPage);
+
         return view('admin.users.index', compact('user'));
     }
 
@@ -228,9 +232,9 @@ class UserController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCount = $carts->sum('quantity');
-        return view('client.users.index', compact('carts', 'cartCount'));
+        return view('client.users.index', compact('carts', 'cartCount','wishlistCount'));
     }
 
     public function showClient($id)
@@ -243,56 +247,114 @@ class UserController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount'));
+        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount','wishlistCount'));
     }
 
     public function updateClient(Request $request, $id)
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:15|unique:users,phone_number',
-            'email' => 'required|email|max:255|unique:users,email',
-            'date_of_birth' => 'required|date',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|email|max:255',
+            'date_of_birth' => 'required|date|before_or_equal:' . now()->subYears(10)->format('Y-m-d'),
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            // Custom messages for username
+            'username.required' => 'Tên không được bỏ trống.',
+            'username.string' => 'Tên phải là một chuỗi ký tự hợp lệ.',
+            'username.max' => 'Tên không được vượt quá 255 ký tự.',
+    
+            // Custom messages for phone_number
+            'phone_number.required' => 'Số điện thoại không được bỏ trống.',
+            'phone_number.string' => 'Số điện thoại phải là một chuỗi ký tự hợp lệ.',
+            'phone_number.max' => 'Số điện thoại không được vượt quá 15 ký tự.',
+            'phone_number.regex' => 'Số điện thoại không đúng định dạng. Ví dụ: +84123456789 hoặc 0123456789.',
+    
+            // Custom messages for email
+            'email.required' => 'Email không được bỏ trống.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+    
+            // Custom messages for date_of_birth
+            'date_of_birth.required' => 'Ngày sinh không được bỏ trống.',
+            'date_of_birth.date' => 'Ngày sinh phải là một ngày hợp lệ.',
+            'date_of_birth.before' => 'Ngày sinh phải trước ngày hôm nay.',
+            'date_of_birth.before_or_equal' => 'Ngày sinh phải trước ngày ' . now()->subYears(10)->format('d/m/Y') . ' (ít nhất 10 tuổi).',
+    
+            'profile_picture.image' => 'Tệp tải lên phải là một hình ảnh.',
+            'profile_picture.mimes' => 'Chỉ chấp nhận các định dạng JPEG, PNG, JPG và GIF.',
+            'profile_picture.max' => 'Kích thước hình ảnh không được vượt quá 2 MB.',
         ]);
-        $data = $request->all();
-
-        $user = $this->userService->updateUser($id, $data);
-
+    
+        $user = $this->userService->getById($id);
+    
+        $user->username = $request->input('username');
+        $user->phone_number = $request->input('phone_number');
+        $user->email = $request->input('email');
+        $user->date_of_birth = $request->input('date_of_birth');
+    
+        if ($request->hasFile('profile_picture')) {
+            if ($user->profile_picture && Storage::exists('public/' . $user->profile_picture)) {
+                Storage::delete('public/' . $user->profile_picture);
+            }
+            $filename = time() . '.' . $request->file('profile_picture')->extension();
+            $path = $request->file('profile_picture')->storeAs('profile_pictures', $filename, 'public');
+            $user->profile_picture = $path;
+        }
+        $user->save();
+    
         return redirect()->route('users.showClient', $user->id);
+
     }
+    
 
     public function showOrder(Request $request)
     {
-        $id = Auth::user()->id;
+        $userId = Auth::user()->id;
         $status = $request->input('status', 'all');
 
-        // Tạo query
-        $query = Order::query();
+        // Query cơ bản để lấy tất cả đơn hàng của người dùng
+        $baseQuery = Order::where('user_id', $userId);
 
+        // Lọc theo trạng thái nếu có
         if ($status !== 'all') {
-            $query->where('status', $status);
+            $baseQuery->where('status', $status);
         }
 
-        // Sử dụng paginate để phân trang
-        $orders = $query->paginate(5);
-        $totalOrders = $query->count();
+        // Tổng số đơn hàng không thay đổi theo phân trang
+        $totalOrders = $baseQuery->count();
 
-        // Lấy giỏ hàng
-        $carts = collect();
-        if ($id) {
-            $carts = Cart::where('user_id', $id)->with('product')->get();
-        }
+        // Lấy dữ liệu với phân trang
+        $orders = $baseQuery->with([
+            'items.product',
+            'items.productVariant.attributeValues.attribute',
+            'payment.paymentGateway',
+            'shippingMethod'
+        ])->simplePaginate(5);
+
+        // Giỏ hàng và số lượng giỏ hàng
+        $carts = Cart::where('user_id', $userId)
+            ->with('product')
+            ->get();
 
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
-        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount'));
+        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount', 'wishlistCount'));
     }
 
 
     public function showDetailOrder($id)
     {
+        $statusMapping = [
+            'pending' => 'Đang chờ xử lí',
+            'approved' => 'Đã duyệt',
+            'rejected' => 'Bị từ chối',
+            'completed' => 'Hoàn thành',
+            'cancelled' => 'Đã hủy',
+        ];
 
         $orders = Order::with([
             'items.product',
@@ -301,6 +363,17 @@ class UserController extends Controller
             'shippingMethod'
         ])->findOrFail($id);
 
+        $refund = Refund::where('order_id', $id)->first(); // Lấy thông tin hoàn trả nếu có
+        $refundStatus = $refund->status ?? null; // Lấy trạng thái hoàn trả
+        $timeRefunds = $refund->created_at ??null;
+        // Nếu có trạng thái hoàn trả, ưu tiên hiển thị trạng thái này
+        $orderStatus = $statusMapping[$refundStatus] ?? $orders->status;
+        $dateTimeOrders= $timeRefunds ?? $orders->created_at;
+        $messageStatus='';
+        if( $refundStatus=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
+        // if($statusMapping[$refundStatus]=='rejected' &&  $refund->rejection_reason!==null) $messageStatus=$refund->rejection_reason;
+        // Quy định điều kiện ẩn/hiện nút
+        $showButtons = is_null($refund);
 
         $locations = OrderLocation::where('order_id', $id)->get();
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
@@ -317,6 +390,8 @@ class UserController extends Controller
         $cartCount = $carts->sum('quantity');
         $address = Address::getActiveAddress(Auth::user()->id);
 
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+
         $orderItems = $orders->items;
         $firstProduct = $orderItems->first()->product;
         $similarProducts = Product::where('category_id', $firstProduct->category_id)
@@ -324,7 +399,24 @@ class UserController extends Controller
             ->take(5)
             ->get();
         $bestSellingProducts = $this->productService->bestSellingProducts();
-        return view('client.users.show_detail_order', compact('orders', 'locations', 'carts', 'cartCount', 'address', 'payments', 'orderItems', 'similarProducts', 'bestSellingProducts'));
+
+        return view('client.users.show_detail_order', compact(
+            'orders', 
+            'locations', 
+            'carts', 
+            'cartCount', 
+            'address', 
+            'payments', 
+            'orderItems', 
+            'similarProducts', 
+            'refundStatus', 
+            'orderStatus',
+            'showButtons',
+            'dateTimeOrders',
+            'messageStatus',
+            'wishlistCount',
+            'bestSellingProducts'
+        ));
     }
 
 
@@ -452,7 +544,14 @@ class UserController extends Controller
     public function showRank($id)
     {
         $user = $this->userService->getById($id);
-        return view('client.users.show_rank', compact('user'));
+        if($user) {
+            $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $user->id)
+            ->get();
+        }
+        $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$user)->count();
+        return view('client.users.show_rank', compact('user','carts','cartCount','wishlistCount'));
     }
 
     public function cancelOrder($orderId)

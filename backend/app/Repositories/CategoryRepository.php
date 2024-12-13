@@ -46,4 +46,17 @@ class CategoryRepository extends BaseRepository
 
         return $query->paginate($perPage);
     }
+
+    public function getCategoriesByParentIdAndName($parentId = null, $name = null, $perPage = 10)
+    {
+        $query = Category::query();
+        if (!is_null($parentId)) {
+            $query->where('parent_id', $parentId);
+        }
+        if (!is_null($name)) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+        return $query->with('children.children')->paginate($perPage);
+    }
+
 }

@@ -14,7 +14,7 @@ class  TagRepository extends BaseRepository
     }
     public function getAll($search = null, $perPage = null)
     {
-        $query = Tag::query()->latest('id');
+        $query = Tag::query()->oldest('id');
 
         if ($search) {
             $query->where(function ($q) use ($search) {

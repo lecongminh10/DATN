@@ -9,7 +9,7 @@
                 'title' => 'thẻ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'thẻ', 'url' => '#'],
+                    ['name' => 'Thẻ', 'url' => '#'],
                 ],
             ])
 
@@ -33,7 +33,7 @@
                                         <a href="{{ route('admin.tags.create') }}" class="btn btn-success add-btn"
                                             id="create-btn"><i class="ri-add-line align-bottom me-1"></i>Thêm thẻ</a>
                                         <a href="{{ route('admin.tags.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
+                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
                                                     <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm kiếm
                                                     </button>
                                                 </div>
                                             </div>

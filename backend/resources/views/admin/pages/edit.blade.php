@@ -82,7 +82,7 @@
                                         <div class="live-preview">
                                             <div class="row gy-4">
                                                 <div class="col-md-12">
-                                                    <label for="name" class="form-label">Name <span
+                                                    <label for="name" class="form-label">Tên <span
                                                             class="text-danger">*</span></label>
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
@@ -92,11 +92,11 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Description</label>
+                                                    <label for="description" class="form-label">Mô tả</label>
                                                     <textarea class="form-control" name="description" id="description" value="{{ old('description', $pages->description) }}">{{$pages->description}}</textarea>
                                                 </div>
                                                 <div class="col-md-8 mt-3">
-                                                    <label for="permalink" class="form-label">Permalink <span
+                                                    <label for="permalink" class="form-label">Liên kết cố định <span
                                                             class="text-danger">*</span></label>
                                                     <textarea class="form-control @error('permalink') is-invalid @enderror" name="permalink" id="permalink" readonly>{{ old('permalink',$pages->permalink) }}</textarea>
                                                     @error('permalink')
@@ -123,11 +123,11 @@
                                                     </div>
                                                     <div class="card mt-3">
                                                         <div class="card-header">
-                                                            <h4 class="card-title mb-0">Template <span class="text-danger">*</span></h4>
+                                                            <h4 class="card-title mb-0">Bản mẫu <span class="text-danger">*</span></h4>
                                                         </div>
                                                         <div class="card-body">
                                                             <select class="form-select @error('template') is-invalid @enderror" id="templateSelect" name="template">
-                                                                <option value="" disabled selected>-- Chọn Template --</option>
+                                                                <option value="" disabled selected>-- Chọn bản mẫu --</option>
                                                                 <option value="default" {{ old('template', $pages->template) == 'default' ? 'selected' : '' }}>Default</option>
                                                                 <option value="coming_soon" {{ old('template', $pages->template) == 'coming_soon' ? 'selected' : '' }}>Coming Soon</option>
                                                                 <option value="blog" {{ old('template', $pages->template) == 'blog' ? 'selected' : '' }}>Blog</option>
@@ -147,7 +147,7 @@
                                 <!-- Content -->
                                 <div class="card mt-3">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0">Content <span class="text-danger">*</span></h4>
+                                        <h4 class="card-title mb-0">Nội dung <span class="text-danger">*</span></h4>
                                     </div>
                                     <div class="card-body">
                                         <textarea name="content" id="editor-container" style="height: 300px;">{{ old('content',$pages->content) }}</textarea>
@@ -198,8 +198,7 @@
                                 <div class="card mt-3">
                                     <div class="card-header align-items-center d-flex">
                                         <button class="btn btn-primary" type="submit" id="uploadButton">Sửa</button>
-                                        <a href="{{ route('admin.pages.index') }}" class="btn btn-primary mx-2">Trở
-                                            về</a>
+                                        <a href="{{ route('admin.pages.index') }}" class="btn btn-primary mx-2">Quay lại</a>
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +220,7 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="seoTitle" class="form-label">SEO Title</label>
+                    <label for="seoTitle" class="form-label">Tiêu đề SEO</label>
                     <input type="text" class="form-control" id="seoTitle" name="seo_title" value="{{ $seo_title }}">
                 </div>
                 {{-- <div class="mb-3">
@@ -229,7 +228,7 @@
                     <input type="text" class="form-control" id="seoUrl" name="seo_url" value="{{ $permalink }}">
                 </div> --}}
                 <div class="mb-3">
-                    <label for="seoDescription" class="form-label">SEO Description</label>
+                    <label for="seoDescription" class="form-label">Mô tả SEO</label>
                     <textarea class="form-control" id="seoDescription" name="seo_description" rows="3">{{ $seo_description }}</textarea>
                 </div>
             </div>

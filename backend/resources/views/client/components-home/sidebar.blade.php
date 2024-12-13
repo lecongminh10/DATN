@@ -1,17 +1,17 @@
 <aside class="sidebar-home col-lg-3 order-lg-first mobile-sidebar">
     <div class="side-menu-wrapper text-uppercase mb-2 d-none d-lg-block">
-        <h2 class="side-menu-title bg-gray ls-n-25">Browse Categories</h2>
+        {{-- <h2 class="side-menu-title bg-gray ls-n-25">Browse Categories</h2> --}}
 
         <nav class="side-nav">
             <ul class="menu menu-vertical sf-arrows">
-                <li class="active"><a href="/"><i class="icon-home"></i>Home</a></li>
+                <li class="active"><a href="/"><i class="icon-home"></i>Trang chủ</a></li>
                 <li>
-                    <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
+                    <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Danh mục</a>
                     <div class="megamenu megamenu-fixed-width megamenu-3cols">
                         <div class="row">
                             @foreach ($categories as $parent)
                                 <div class="col-lg-4">
-                                    <a href="#" class="nolink pl-0">{{ $parent->name }}</a>
+                                    <a href="{{ route('client.products.Category',$parent->id) }}" class="nolink pl-0">{{ $parent->name }}</a>
                                     @if($parent->children->isNotEmpty())
                                         <ul class="submenu">
                                             @foreach ($parent->children as $child)
@@ -23,72 +23,9 @@
                             @endforeach
                         </div>
                     </div>
-                <li>
-                    <a href="{{route('client.products')}}" class="sf-with-ul"><i
-                            class="sicon-basket"></i>Products</a>
-                    <div class="megamenu megamenu-fixed-width">
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <a href="#" class="nolink pl-0">PRODUCT PAGES</a>
-                                <ul class="submenu">
-                                    <li><a href="product.html">SIMPLE PRODUCT</a></li>
-                                    <li><a href="product-variable.html">VARIABLE PRODUCT</a></li>
-                                    <li><a href="product.html">SALE PRODUCT</a></li>
-                                    <li><a href="product.html">FEATURED & ON SALE</a></li>
-                                    <li><a href="product-custom-tab.html">WITH CUSTOM TAB</a></li>
-                                    <li><a href="product-sidebar-left.html">WITH LEFT SIDEBAR</a>
-                                    </li>
-                                    <li><a href="product-sidebar-right.html">WITH RIGHT SIDEBAR</a>
-                                    </li>
-                                    <li><a href="product-addcart-sticky.html">ADD CART STICKY</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <!-- End .col-lg-4 -->
-
-                            <div class="col-lg-4">
-                                <a href="#" class="nolink pl-0">PRODUCT LAYOUTS</a>
-                                <ul class="submenu">
-                                    <li><a href="product-extended-layout.html">EXTENDED LAYOUT</a>
-                                    </li>
-                                    <li><a href="product-grid-layout.html">GRID IMAGE</a></li>
-                                    <li><a href="product-full-width.html">FULL WIDTH LAYOUT</a></li>
-                                    <li><a href="product-sticky-info.html">STICKY INFO</a></li>
-                                    <li><a href="product-sticky-both.html">LEFT & RIGHT STICKY</a>
-                                    </li>
-                                    <li><a href="product-transparent-image.html">TRANSPARENT
-                                            IMAGE</a></li>
-                                    <li><a href="product-center-vertical.html">CENTER VERTICAL</a>
-                                    </li>
-                                    <li><a href="#">BUILD YOUR OWN</a></li>
-                                </ul>
-                            </div>
-                            <!-- End .col-lg-4 -->
-
-                            <div class="col-lg-4 p-0">
-                                <div class="menu-banner menu-banner-2">
-                                    <figure>
-                                        <img src="{{asset('themeclient/assets/images/menu-banner-1.jpg')}}" alt="Menu banner" class="product-promo">
-                                    </figure>
-                                    <i>OFF</i>
-                                    <div class="banner-content">
-                                        <h4>
-                                            <span class="">UP TO</span><br />
-                                            <b class="">50%</b>
-                                        </h4>
-                                    </div>
-                                    <a href="demo1-shop.html" class="btn btn-sm btn-dark">SHOP
-                                        NOW</a>
-                                </div>
-                            </div>
-                            <!-- End .col-lg-4 -->
-                        </div>
-                        <!-- End .row -->
-                    </div>
-                    <!-- End .megamenu -->
                 </li>
-                <li>
-                    <a href="#" class="sf-with-ul"><i class="sicon-envelope"></i>Pages</a>
+                {{-- <li>
+                    <a href="#" class="sf-with-ul"><i class="sicon-envelope"></i>Trang</a>
 
                     <ul>
                         <li><a href="wishlist.html">Wishlist</a></li>
@@ -106,13 +43,13 @@
                         <li><a href="login.html">Login</a></li>
                         <li><a href="forgot-password.html">Forgot Password</a></li>
                     </ul>
+                </li> --}}
+                <li>
+                    <a href="{{route('client.products')}}" ><i
+                            class="sicon-basket"></i>Sản phẩm</a>
                 </li>
-                <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Blog</a></li>
-                <li><a href="demo1-about.html"><i class="sicon-users"></i>About Us</a></li>
-                <li><a href="#"><i class="icon-cat-gift"></i>Special Offer!</a></li>
-                <li><a href="https://1.envato.market/DdLk5" target="_blank"><i
-                            class="sicon-star"></i>Buy Porto!<span
-                            class="tip tip-hot">Hot</span></a></li>
+                <li><a href="{{ route('client.blogs.index') }}"><i class="sicon-book-open"></i>Bài viết</a></li>
+                <li><a href="demo1-about.html"><i class="sicon-users"></i>Chúng tôi</a></li>
             </ul>
         </nav>
     </div>
@@ -122,13 +59,11 @@
         <div class="owl-carousel owl-theme dots-small">
             <div class="banner d-flex flex-column align-items-center">
                 <h3 class="badge-sale bg-primary d-flex flex-column align-items-center justify-content-center text-uppercase">
-                    <em>Sale</em>Many Item
+                    <em>Mới nhất</em>Nhiều sản phẩm
                 </h3>
 
-                <h4 class="sale-text text-uppercase"><small>UP
-                        TO</small>50<sup>%</sup><sub>off</sub></h4>
-                <p>Bags, Clothing, T-Shirts, Shoes, Watches and much more...</p>
-                <a href="demo1-shop.html" class="btn btn-dark btn-md">View Sale</a>
+                <h4 class="sale-text text-uppercase"><small>Khuyến mãi </small>50<sup>%</sup><sub>off</sub></h4>
+                <p>Nhiều loại sản phẩm khác nhau</p>
             </div>
             <!-- End .banner -->
 
@@ -139,19 +74,16 @@
 
                 <div class="banner-layer">
                     <div class="coupon-sale-content">
-                        <h4>DRONE + CAMERAS</h4>
-                        <h5 class="coupon-sale-text text-gray ls-n-10 p-0 font1"><i>UP
-                                TO</i><b class="text-white bg-dark font1">$100</b> OFF</h5>
-                        <p class="ls-0">Top Brands and Models!</p>
-                        <a href="demo1-shop.html" class="btn btn-inline-block btn-dark btn-black ls-0">VIEW
-                            SALE</a>
+                        <h4>Iphone 16 mới nhất</h4>
+                        <h5 class="coupon-sale-text text-gray ls-n-10 p-0 font1"><i>Giảm ngay</i><b class="text-white bg-dark font1">10%</b> OFF</h5>
+                        <p class="ls-0">Top sản phẩm mới!</p>
                     </div>
                 </div>
             </div>
             <!-- End .banner -->
 
             <div class="banner banner5">
-                <h4>HEADPHONES SALE</h4>
+                <h4>Mới nhất</h4>
 
                 <figure class="m-b-3">
                     <img src="{{asset('themeclient/assets/images/demoes/demo1/banners/banner-8.jpg')}}" alt="banner">
@@ -159,10 +91,7 @@
 
                 <div class="banner-layer">
                     <div class="coupon-sale-content">
-                        <h5 class="coupon-sale-text ls-n-10 p-0 font1"><i>UP
-                                TO</i><b class="text-white bg-secondary font1">50%</b> OFF</h5>
-                        <a href="demo1-shop.html" class="btn btn-inline-block btn-dark btn-black ls-0">VIEW
-                            SALE</a>
+                        <h5 class="coupon-sale-text ls-n-10 p-0 font1"><i>Mua ngay</i><b class="text-white bg-secondary font1">50%</b> OFF</h5>
                     </div>
                 </div>
             </div>
@@ -172,73 +101,9 @@
     </div>
     <!-- End .widget -->
 
-    <div class="widget widget-testimonials">
-        <div class="owl-carousel owl-theme dots-left dots-small">
-            <div class="testimonial">
-                <div class="testimonial-owner">
-                    <figure>
-                        <img src="{{asset('themeclient/assets/images/clients/client-1.jpg')}}" alt="client">
-                    </figure>
-
-                    <div>
-                        <h4 class="testimonial-title">john Smith</h4>
-                        <span>CEO &amp; Founder</span>
-                    </div>
-                </div>
-                <!-- End .testimonial-owner -->
-
-                <blockquote class="ml-4 pr-0">
-                    <p>Lorem ipsum dolor sit amet, consectetur elitad adipiscing Cras non placerat mi.
-                    </p>
-                </blockquote>
-            </div>
-            <!-- End .testimonial -->
-
-            <div class="testimonial">
-                <div class="testimonial-owner">
-                    <figure>
-                        <img src="{{asset('themeclient/assets/images/clients/client-2.jpg')}}" alt="client">
-                    </figure>
-
-                    <div>
-                        <h4 class="testimonial-title">Dae Smith</h4>
-                        <span>CEO &amp; Founder</span>
-                    </div>
-                </div>
-                <!-- End .testimonial-owner -->
-
-                <blockquote class="ml-4 pr-0">
-                    <p>Lorem ipsum dolor sit amet, consectetur elitad adipiscing Cras non placerat mi.
-                    </p>
-                </blockquote>
-            </div>
-            <!-- End .testimonial -->
-
-            <div class="testimonial">
-                <div class="testimonial-owner">
-                    <figure>
-                        <img src="{{asset('themeclient/assets/images/clients/client-3.jpg')}}" alt="client">
-                    </figure>
-
-                    <div>
-                        <h4 class="testimonial-title">John Doe</h4>
-                        <span>CEO &amp; Founder</span>
-                    </div>
-                </div>
-                <!-- End .testimonial-owner -->
-
-                <blockquote class="ml-4 pr-0">
-                    <p>Lorem ipsum dolor sit amet, consectetur elitad adipiscing Cras non placerat mi.
-                    </p>
-                </blockquote>
-            </div>
-            <!-- End .testimonial -->
-        </div>
-        <!-- End .testimonials-slider -->
-    </div>
     <!-- End .widget -->
 
-    <div class="widget widget-posts post-date-in-media media-with-zoom mb-0 mb-lg-2 pb-lg-2">
+    {{-- <div class="widget widget-posts post-date-in-media media-with-zoom mb-0 mb-lg-2 pb-lg-2">
         <div class="owl-carousel owl-theme dots-left dots-m-0 dots-small" data-owl-options="
             { 'margin' : 20,
               'loop': false }">
@@ -261,7 +126,7 @@
 
                 <div class="post-body">
                     <h2 class="post-title">
-                        <a href="single.html">Post Format Standard</a>
+                        <a href="single.html">Bản tin công nghệ </a>
                     </h2>
 
                     <div class="post-content">
@@ -341,6 +206,6 @@
             </article>
         </div>
         <!-- End .posts-slider -->
-    </div>
+    </div> --}}
     <!-- End .widget -->
 </aside>

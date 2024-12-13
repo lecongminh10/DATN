@@ -51,7 +51,7 @@
                                                 </a>
                                                 <a href="{{ route('admin.attributes.index') }}"
                                                     class="btn btn-soft-primary ms-2">
-                                                    <i class="ri-home-6-fill"></i>Trang list
+                                                    <i class="ri-home-6-fill"></i>Quay lại
                                                 </a>
                                             </div>
                                         </div>
