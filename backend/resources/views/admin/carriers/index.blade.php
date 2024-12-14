@@ -120,8 +120,12 @@
                                                         </th>
                                                         <td>{{ $key+1 }}</td>
                                                         <td class="carrier_name">{{ $item->name }}</td>
-                                                        <td class="api_url">{{ $item->api_url }}</td>
-                                                        <td class="api_token">{{ $item->api_token }}</td>
+                                                        <td class="api_url" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            {{ $item->api_url }}
+                                                        </td>
+                                                        <td class="api_token" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            {{ $item->api_token }}
+                                                        </td>                                                                                                            
                                                         <td class="phone">{{ $item->phone }}</td>
                                                         <td class="email">{{ $item->email }}</td>
                                                         <td class="is_active">

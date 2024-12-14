@@ -46,17 +46,34 @@ class CarrierController extends Controller
     {
         $data = $carrierRequest->validated();
 
-        Carrier::create([
-            'name' => $data['name'],
-            'code' => $data['code'],
-            'api_url' => $data['api_url'],
-            'api_token' => $data['api_token'],
-            'phone' => $data['phone'],
-            'email' => $data['email'],
-            'is_active' => $data['is_active'], // Giá trị trạng thái
-        ]);
-        
-        return redirect()->route('admin.carriers.index')->with('success', 'Nhà vận chuyển đã được thêm thành công.');
+        $validatedData = $carrierRequest->validated();
+        try {
+            DB::beginTransaction();
+            $this->carrierService->update_status($id, $validatedData);
+            $data = $this->carrierService->saveOrUpdate([
+                'name' => $validatedData['name'],
+                'code' => $validatedData['code'],
+                'api_url' => $validatedData['api_url'],
+                'api_token' => $validatedData['api_token'],
+                'phone' => $validatedData['phone'],
+                'email' => $validatedData['email'],
+                'is_active' => $validatedData['is_active'],
+            ]);
+            $logDetails = sprintf(
+                'Thêm mới vận chuyển: Tên - %s',
+                $data->name
+            );
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
+            DB::commit();
+            return redirect()->route('admin.carriers.index')->with('success', 'Thêm mới carrier thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi thêm carrier: ' . $e->getMessage()]);
+        }
     }
 
 
@@ -83,25 +100,37 @@ class CarrierController extends Controller
      */
     public function update(CarrierRequest $carrierRequest, string $id)
     {
-        // Lấy dữ liệu từ request
-        $data = $carrierRequest->validated();
+        $validatedData = $carrierRequest->validated();
 
-        // Tìm nhà vận chuyển cần cập nhật
-        $carrier = Carrier::findOrFail($id);
-
-        // Cập nhật thông tin nhà vận chuyển
-        $carrier->update([
-            'name' => $data['name'],
-            'code' => $data['code'],
-            'api_url' => $data['api_url'],
-            'api_token' => $data['api_token'],
-            'phone' => $data['phone'],
-            'email' => $data['email'],
-            'is_active' => $data['is_active'], // Giá trị trạng thái
-        ]);
-
-        // Chuyển hướng với thông báo thành công
-        return redirect()->route('admin.carriers.index')->with('success', 'Nhà vận chuyển đã được cập nhật thành công.');
+        try {
+            DB::beginTransaction();
+            $this->carrierService->update_status($id, $validatedData);
+            $carrier = $this->carrierService->getById($id);
+            $carrier->update([
+                'name' => $validatedData['name'],
+                'code' => $validatedData['code'],
+                'api_url' => $validatedData['api_url'],
+                'api_token' => $validatedData['api_token'],
+                'phone' => $validatedData['phone'],
+                'email' => $validatedData['email'],
+                'is_active' => $validatedData['is_active'] === 'active' ? 'active' : 'inactive',
+            ]);
+            $logDetails = sprintf(
+                'Sửa vận chuyển: Tên - %s',
+                $carrier->name
+            );
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Sửa',
+                $logDetails
+            ));
+            DB::commit();
+            return redirect()->route('admin.carriers.index')->with('success', 'Cập nhật thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi cập nhật carrier: ' . $e->getMessage()]);
+        }
     }
 
     /**

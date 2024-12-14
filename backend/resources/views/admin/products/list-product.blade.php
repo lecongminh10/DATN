@@ -83,7 +83,7 @@
                                                         <th>Tên </th>
                                                         <th>Ảnh đại diện</th>
                                                         <th>Danh mục</th>
-                                                        <th>Slug</th>
+                                                        <th>Số lượng</th>
                                                         <th>Giá gốc</th>
                                                         <th>Giá khuyến mãi</th>
                                                         <th>Hành động</th>
@@ -116,7 +116,7 @@
                                                                     style="max-height: 100px !important; max-width:100px !important">
                                                             </td>
                                                             <td>{{ $value->category_name }}</td>
-                                                            <td>{{ $value->slug }}</td>
+                                                            <td>{{ $value->stock }}</td>
                                                             <td>{{ number_format($value->price_regular, 0, ',', '.') }} ₫</td>
                                                             <td>{{ number_format($value->price_sale, 0, ',', '.') }} ₫</td>
                                                             <td>
