@@ -12,8 +12,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\FooterController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\CarrierController;
 use App\Http\Controllers\InfoBoxController;
 use App\Http\Controllers\PayMentController;
@@ -25,6 +27,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PopuphomeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BannerLeftController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\Client\HomeController;
@@ -32,6 +35,7 @@ use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ExportImportController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\InfoBoxFooterController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
@@ -40,10 +44,8 @@ use App\Http\Controllers\AdminActivityLogController;
 use App\Http\Controllers\CategoryStatisticsController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
-use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\InfoBoxFooterController;
-use App\Http\Controllers\RefundController;
 
 Route::group([
     'prefix' => 'admin',
@@ -418,7 +420,7 @@ Route::group([
         ],
         function () {
             // banner chính
-            Route::get('list_banner', [BannerController::class, 'list_banner_main'])->name('list_banner_main');
+            Route::get('list_banner_main', [BannerController::class, 'list_banner_main'])->name('list_banner_main');
 
             Route::get('banner_main_view_add', [BannerController::class, 'banner_main_view_add'])->name('banner_main_view_add');
             Route::post('banner_main_add', [BannerController::class, 'banner_main_add'])->name('banner_main_add');
@@ -429,6 +431,32 @@ Route::group([
             // banner phụ
             Route::get('banner_extra/edit', [BannerController::class, 'banner_extra_edit'])->name('banner_extra_edit');
             Route::post('banner_extra/update', [BannerController::class, 'banner_extra_update'])->name('banner_extra_update');
+            // banner left
+            Route::get('list_banner', [BannerLeftController::class, 'index'])->name('index');
+
+            Route::get('banner_left_add', [BannerLeftController::class, 'create'])->name('banner_left_add');
+            Route::post('banner_left_add', [BannerLeftController::class, 'store'])->name('banner_left_add');
+
+
+            Route::get('banner_left/edit/{id}', [BannerLeftController::class, 'edit'])->name('banner_left_edit');
+            Route::post('banner_left/update/{id}', [BannerLeftController::class, 'update'])->name('banner_left_update');
+        }
+    );
+    // brand
+    Route::group(
+        [
+            'prefix' => 'brand',
+            'as' => 'brand.',
+        ],
+        function () {
+            // brand
+            Route::get('list', [BrandController::class, 'index'])->name('index');
+
+            Route::get('add', [BrandController::class, 'create'])->name('add');
+            Route::post('add', [BrandController::class, 'store'])->name('add');
+
+            Route::get('edit/{id}', [BrandController::class, 'edit'])->name('edit');
+            Route::post('update/{id}', [BrandController::class, 'update'])->name('update');
         }
     );
 

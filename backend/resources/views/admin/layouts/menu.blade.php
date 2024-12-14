@@ -33,7 +33,7 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.dashboard') }}" 
+                    <a class="nav-link menu-link" href="{{ route('admin.dashboard') }}"
                         aria-expanded="false" aria-controls="sidebarDashboards">
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Trang chủ</span>
                     </a>
@@ -87,7 +87,7 @@
                                             <a href="{{ route('admin.comment.index') }}" class="nav-link {{ request()->routeIs('admin.comment.index') ? 'active' : '' }}" data-key="t-main-list">
                                                 Danh sách
                                             </a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -104,7 +104,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.categories.create') }}" class="nav-link {{ request()->routeIs('admin.categories.create') ? 'active' : '' }}" data-key="t-category-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -122,7 +122,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.products.addProduct') }}" class="nav-link {{ request()->routeIs('admin.products.addProduct') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -139,7 +139,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.attributes.create') }}" class="nav-link {{ request()->routeIs('admin.attributes.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -155,7 +155,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.carriers.create') }}" class="nav-link {{ request()->routeIs('admin.carriers.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -171,7 +171,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.coupons.create') }}" class="nav-link {{ request()->routeIs('admin.coupons.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -187,7 +187,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.users.add') }}" class="nav-link {{ request()->routeIs('admin.users.add') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -204,7 +204,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.permissions.create') }}" class="nav-link {{ request()->routeIs('admin.permissions.create') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -220,7 +220,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.paymentgateways.add') }}" class="nav-link {{ request()->routeIs('admin.paymentgateways.add') ? 'active' : '' }}" data-key="t-product-add">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -233,7 +233,7 @@
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
                                             <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -249,7 +249,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{{ route('admin.pages.create') }}" class="nav-link {{ request()->routeIs('admin.pages.create') ? 'active' : '' }}" data-key="t-product-list">Thêm mới</a>
-                                        </li>                                        
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -280,7 +280,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>                
+                </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'active' : '' }}" href="#sidebar-display-management" data-bs-toggle="collapse"
                         role="button" aria-expanded="{{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'true' : 'false' }}" aria-controls="#sidebar-display-management">
@@ -296,6 +296,15 @@
                                 <div class="collapse menu-dropdown {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'show' : '' }}" id="sidebar-client">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
+                                            <a href="#sidebar-brand" class="nav-link" data-bs-toggle="collapse"
+                                                role="button" aria-expanded="false" aria-controls="sidebar-brand" data-key="t-brand">
+                                                Thương hiệu
+                                            </a>
+                                            <div class="collapse menu-dropdown" id="sidebar-brand">
+                                                <a href="{{ route('admin.brand.index') }}" class="nav-link " data-key="t-client">Danh sách</a>
+                                            </div>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="#sidebar-header" class="nav-link {{ Route::is('admin.announcement.edit') || Route::is('admin.info_boxes.edit') || Route::is('admin.popuphome.edit') ? 'active' : '' }}" data-bs-toggle="collapse"
                                                 role="button" aria-expanded="false" aria-controls="sidebar-header" data-key="t-header">
                                                 Header
@@ -308,17 +317,18 @@
                                             </div>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="#sidebar-banner" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.banner_main_edit') ? 'active' : '' }}" 
+                                            <a href="#sidebar-banner" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.banner_main_edit') ? 'active' : '' }}"
                                                data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar-banner" data-key="t-banner">
                                                 Banner
                                             </a>
-                                            <div class="collapse menu-dropdown {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.list_banner_main') ? 'show' : '' }}" 
+                                            <div class="collapse menu-dropdown {{ Route::is('admin.banner.banner_extra_edit') || Route::is('admin.banner.list_banner_main') ? 'show' : '' }}"
                                                  id="sidebar-banner">
-                                                <a href="{{ route('admin.banner.list_banner_main') }}" class="nav-link {{ Route::is('admin.banner.list_banner_main') ? 'active' : '' }}" 
+                                                <a href="{{ route('admin.banner.list_banner_main') }}" class="nav-link {{ Route::is('admin.banner.list_banner_main') ? 'active' : '' }}"
                                                     data-key="t-client">Banner chính</a>
-                                                <a href="{{ route('admin.banner.banner_extra_edit') }}" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') ? 'active' : '' }}" 
+                                                <a href="{{ route('admin.banner.banner_extra_edit') }}" class="nav-link {{ Route::is('admin.banner.banner_extra_edit') ? 'active' : '' }}"
                                                     data-key="t-client">Banner phụ</a>
-                                                
+                                                <a href="{{ route('admin.banner.index') }}" class="nav-link {{ Route::is('admin.banner.index') ? 'active' : '' }}"
+                                                    data-key="t-client">Banner Trái</a>
                                             </div>
                                         </li>
                                         <li class="nav-item">
@@ -329,7 +339,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>                
+                </li>
                 <li class="nav-item">
                     <a href="#sidebar-comments-questions" class="nav-link" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebar-comments-questions" data-key="t-product">
@@ -364,7 +374,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>                
+                </li>
                 <li class="nav-item">
                     <a href="#sidebar-post" class="nav-link {{ Route::is('admin.blogs.index') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
                         aria-expanded="{{ Route::is('admin.blogs.index') ? 'true' : 'false' }}" aria-controls="sidebar-post" data-key="t-product">
@@ -379,7 +389,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>                
+                </li>
                 <li class="nav-item">
                     <a href="#sidebar-message" class="nav-link {{ Route::is('admin.email.viewEmail', 'chat.index') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
                         aria-expanded="{{ Route::is('admin.email.viewEmail', 'chat.index') ? 'true' : 'false' }}" aria-controls="sidebar-message" data-key="t-product">
@@ -399,7 +409,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>                
+                </li>
                 <li class="nav-item">
                     <a href="#sidebar-profile" class="nav-link {{ Route::is('admin.profile.index', 'admin.profile.edit') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
                         aria-expanded="{{ Route::is('admin.profile.index', 'admin.profile.edit') ? 'true' : 'false' }}" aria-controls="sidebar-profile" data-key="t-product">
@@ -419,7 +429,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>                
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.export-import.view-export-import') }}" class="nav-link {{ Route::is('admin.export-import.view-export-import') ? 'active' : '' }}" role="button"
                         aria-expanded="false" aria-controls="sidebar-message" data-key="t-product">
@@ -427,7 +437,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('admin.logs.index')}}" class="nav-link {{ Route::is('admin.logs.index') ? 'active' : '' }}" 
+                    <a href="{{route('admin.logs.index')}}" class="nav-link {{ Route::is('admin.logs.index') ? 'active' : '' }}"
                         aria-expanded="false" aria-controls="sidebar-diary" data-key="t-product">
                         <i class="ri-drive-line"></i> <span data-key="t-landing">Nhật ký </span>
                     </a>

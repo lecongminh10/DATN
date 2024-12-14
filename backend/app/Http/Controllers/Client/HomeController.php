@@ -3,18 +3,20 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Cart;
+use App\Models\Brand;
 use App\Models\Address;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\WishList;
 use App\Events\TestEvent;
+use App\Models\BannerLeft;
+use App\Models\BannerMain;
 use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Services\ProductService;
 use App\Services\CategoryService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\BannerMain;
-use App\Models\WishList;
 use App\Services\AttributeValueService;
 use App\Services\ProductGalleryService;
 use App\Services\ProductVariantService;
@@ -49,6 +51,8 @@ class HomeController extends Controller
     }
     public function index(Request $request)
     {
+        $brands = Brand::all();
+        $bannerLeft = BannerLeft::all();
         $userId = auth()->id();
         $carts  = collect();
         if($userId) {
@@ -63,7 +67,7 @@ class HomeController extends Controller
         $ratingProducts = $this->productService->ratingProducts();
         $categories = $this->getCategoriesForMenu();
         $bannerMain = BannerMain::all();
-        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'ratingProducts', 'carts', 'cartCount', 'bannerMain','wishlistCount'));
+        return view('client.home', compact('brands','bannerLeft','categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'ratingProducts', 'carts', 'cartCount', 'bannerMain','wishlistCount'));
     }
 
     public function showProducts(Request  $request)
