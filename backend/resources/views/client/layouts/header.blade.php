@@ -6,7 +6,7 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <a href="{{ route('client') }}" class="logo">
-                    <img src="{{ asset('logo.png') }}" width="200" height="120"
+                    <img src="{{ asset('logo.png') }}" width="200" height="100"
                         alt="ZonMart">
                 </a>
             </div>

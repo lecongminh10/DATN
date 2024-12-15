@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Thùng rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -65,13 +67,8 @@
                                                         style="display: none;">
                                                         <i class="ri-delete-bin-5-fill"></i>
                                                     </button>
-                                                    <a class="btn btn-success add-btn me-1"
-                                                        href="{{ route('admin.seo.create') }}">
-                                                        <i class="ri-add-box-fill"></i> Thêm
-                                                    </a>
                                                     <a href="{{ route('admin.seo.index') }}"
-                                                        class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Quay lại
+                                                        class="btn btn-primary">Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -88,7 +85,7 @@
                                                             value="option">
                                                     </div>
                                                 </th>
-                                                <th>ID</th>
+                                                <th>STT</th>
                                                 <th data-sort="meta_title">Tiêu đề meta</th>
                                                 <th data-sort="meta_description">Mô tả meta </th>
                                                 <th data-sort="meta_keywords">Từ khóa meta</th>
@@ -97,7 +94,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
-                                            @foreach ($seo as $item)
+                                            @foreach ($seo as $key => $item)
                                                 <tr>
                                                     <th scope="row">
                                                         <div class="form-check">
@@ -105,7 +102,7 @@
                                                                 value="{{ $item->id }}">
                                                         </div>
                                                     </th>
-                                                    <td>{{ $item->id }}</td>
+                                                    <td>{{ $key + 1 }}</td>
                                                     <td class="meta_title">{{ $item->meta_title }}</td>
                                                     <td class="meta_description">{{ Str::limit($item->meta_description, 50) }}</td>
                                                     <td class="meta_keywords">{{ $item->meta_keywords }}</td>

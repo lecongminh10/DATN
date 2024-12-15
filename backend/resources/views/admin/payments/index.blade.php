@@ -16,7 +16,7 @@
                                     </button>
                                 </a>
                                 <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
-                                    <i class="ri-delete-bin-2-line"></i> Xóa Nhiều
+                                    <i class="ri-delete-bin-2-line"></i>
                                 </button>
                             </div>
                         </div>

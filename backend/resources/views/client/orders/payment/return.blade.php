@@ -10,7 +10,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{asset('theme/assets/images/favicon.ico')}}">
+    <link rel="shortcut icon" href="{{asset('favicon.ico')}}">
 
     <!-- Layout config Js -->
     <script src="{{asset('theme/assets/js/layout.js')}}"></script>
@@ -80,8 +80,8 @@
                                         <div class="card-header border-bottom-dashed p-4">
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
-                                                    <img src="{{asset('theme/assets/images/logo-dark.png')}}" class="card-logo card-logo-dark" alt="logo dark" height="17">
-                                                    <img src="{{asset('theme/assets/images/logo-light.png')}}" class="card-logo card-logo-light" alt="logo light" height="17">
+                                                    <img src="{{asset('logo.png')}}" class="card-logo card-logo-dark" alt="logo dark" width="100px" height="60px">
+                                                    <img src="{{asset('logo.png')}}" class="card-logo card-logo-light" alt="logo light" width="100px" height="60px">
                                                     <div class="mt-sm-5 mt-4">
                                                         <h6 class="text-muted text-uppercase fw-semibold">Địa chỉ : 
                                                              @if ($addressShop && $addressShop['address']!==null)

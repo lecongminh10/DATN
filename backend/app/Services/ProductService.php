@@ -16,7 +16,7 @@ class ProductService extends BaseService
     public function __construct(ProductRepository $productService)
     {
         parent::__construct($productService);
-        $this ->productService = $productService;
+        $this->productService = $productService;
     }
 
     public function getSeachProduct($search, $perPage)
@@ -25,21 +25,24 @@ class ProductService extends BaseService
     }
     public function getFeaturedProducts()
     {
-        return Product::with(['galleries', 'category','wishList'])
+        return Product::with(['galleries', 'category', 'wishList'])
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
             ->orderByDesc('view')
             ->take(10)
             ->get();
     }
+
     public function getTopProducts()
     {
-        return Product::with(['galleries', 'category','wishList'])
+        return Product::with(['galleries', 'category', 'wishList'])
             ->orderByDesc('view')
             ->get();
     }
     public function getAllProducts($count, $minprice = null, $maxprice = null)
     {
-        $query = Product::with(['galleries', 'category','wishList']);
-        
+        $query = Product::with(['galleries', 'category', 'wishList']);
+
         if (!is_null($minprice) && !is_null($maxprice)) {
             $query->whereBetween('price_regular', [$minprice, $maxprice])
                 ->orWhereBetween('price_sale', [$minprice, $maxprice]);
@@ -50,7 +53,7 @@ class ProductService extends BaseService
 
     public function getSaleProducts()
     {
-        return Product::with(['galleries', 'category','wishList'])
+        return Product::with(['galleries', 'category', 'wishList'])
             ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
             ->orderBy('discount_percentage', 'desc')
             ->take(4)
@@ -58,9 +61,9 @@ class ProductService extends BaseService
     }
 
 
-    public function show_soft_delete($search , $perPage)
+    public function show_soft_delete($search, $perPage)
     {
-        return $this->productService->show_soft_delete($search , $perPage);
+        return $this->productService->show_soft_delete($search, $perPage);
     }
 
 
@@ -81,50 +84,69 @@ class ProductService extends BaseService
     //     }
     // }
 
-    public function topRatedProducts()
-    {
-        return Product::with(['galleries', 'category','wishList'])
-        ->orderByDesc('rating')
-        ->limit(10)
-        ->get();
-    }
+    // public function topRatedProducts()
+    // {
+    //     return Product::with(['galleries', 'category','wishList'])
+    //     ->orderByDesc('rating')
+    //     ->limit(10)
+    //     ->get();
+    // }
 
     public function bestSellingProducts()
     {
-        return Product::with(['galleries', 'category','wishList'])
+        return Product::with(['galleries', 'category', 'wishList'])
             ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
             ->orderBy('discount_percentage', 'desc')
             ->take(10)
             ->get();
     }
 
+    public function buyCountProducts()
+    {
+        return Product::with(['galleries', 'category', 'wishList'])
+            ->whereMonth('created_at', now()->month) 
+            ->whereYear('created_at', now()->year)  
+            ->orderByDesc('buycount')          
+            ->limit(10)
+            ->get();
+    }
+
+
     public function latestProducts()
     {
-        return Product::with(['galleries', 'category','wishList'])
-        ->whereNotNull('rating')
-        ->orderByDesc('id')
-        ->limit(10)
-        ->get();
+        return Product::with(['galleries', 'category', 'wishList'])
+            ->whereNotNull('rating')
+            ->whereMonth('created_at', now()->month) // Lọc theo tháng hiện tại
+            ->whereYear('created_at', now()->year) // Lọc theo năm hiện tại
+            ->orderByDesc('id')
+            ->limit(10)
+            ->get();
     }
+
     public function searchProducts($search, $categoryId = null)
     {
-        $query =Product::with(['galleries', 'category','wishList']);
-              if($search !==null){
-                   $query=$query->where('name', 'like', "%{$search}%");
-              }
-              if($categoryId !==null){
-                 $query= $query->where('category_id', $categoryId);
-              }
+        $query = Product::with(['galleries', 'category', 'wishList']);
+        if ($search !== null) {
+            $query = $query->where('name', 'like', "%{$search}%");
+        }
+        if ($categoryId !== null) {
+            $query = $query->where('category_id', $categoryId);
+        }
 
         return $query->paginate(10);
     }
 
     public function ratingProducts()
     {
-        return Product::with(['galleries', 'category','wishList'])
+        return Product::with(['galleries', 'category', 'wishList'])
             ->whereNotNull('rating')
             ->orderByDesc('rating')
             ->limit(10)
             ->get();
+    }
+
+    public function filterbyProducts($data)
+    {
+        return $this->productService->filterbyProducts($data);
     }
 }

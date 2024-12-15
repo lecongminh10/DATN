@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Sản Phẩm
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -316,7 +319,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Thêm sản phẩm</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Thêm mới sản phẩm</h4>
                                     </div><!-- end card header -->
                                     <div class="card-body">
                                         <div class="live-preview">
@@ -500,14 +503,15 @@
                                     <div class="card-body">
                                         <!-- Editor container -->
                                         <textarea name="content" id="editor-container" style="height: 300px;" value="{{old('content')}}"></textarea>
-                                        @error('content')
+                                        
+                                    </div>
+                                    @error('content')
                                             <div>
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
                                                 </div>
                                             </div>
                                         @enderror
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -646,12 +650,9 @@
                                                                                         name="product_variants[{{ $i }}][status]">
                                                                                         <option value="none">None
                                                                                         </option>
-                                                                                        <option value="available">Available
-                                                                                        </option>
-                                                                                        <option value="out_of_stock">Out of
-                                                                                            Stock</option>
-                                                                                        <option value="discontinued">
-                                                                                            Discontinued</option>
+                                                                                        <option value="available">Còn hàng</option>
+                                                                                        <option value="out_of_stock">Hết hàng</option>
+                                                                                        <option value="discontinued">Ngừng sản xuất</option>
                                                                                     </select>
                                                                                 </td>
                                                                                 <td>
@@ -749,7 +750,7 @@
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header align-items-center d-flex">
-                                            <button class="btn btn-success" style="width:100px; cursor: pointer" type="submit"
+                                            <button class="btn btn-success me-2" style="width:100px; cursor: pointer" type="submit"
                                                 id="uploadButton">Thêm mới</button>
                                                 <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2" style="width:90px; cursor: pointer">Quay lại</a>
                                         </div>

@@ -31,7 +31,7 @@ class OrderService extends BaseService
 
     public function getbyCode(string $code)
     {
-       return  Order::where('code',$code)->first();
+       return  Order::with(['items','payment','user'])->where('code',$code)->first();
     }
 
     public function getOrderById($id)

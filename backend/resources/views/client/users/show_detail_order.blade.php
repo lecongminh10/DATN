@@ -117,8 +117,10 @@
             background-color: #f44336;
             color: white;
             border: none;
+            margin-top: -20px;
+            margin-bottom: 20px;
             padding: 10px 20px;
-            border-radius: 50px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -310,12 +312,12 @@
     @endif
 
 
-    <main class="main home">
+    <main class="main home mt-3">
         <div class="container mb-2">
-            <div class="row">
+            <div class="row mb-3 pb-3">
                 <div class="col-lg-9">
-                    <div class="container pl-5   pr-5 order-container">
-                        <div class="order-header">
+                    <div class="container pl-5   pr-5 pb-3 order-container">
+                        <div class="order-header pt-4">
                             <div>
                                 <h2>Đơn hàng: {{ $orders->code }}</h2>
                                     @if (!$showButtons)
@@ -453,7 +455,13 @@
                                 @foreach ($payments as $key => $value)
                                     <tr>
                                         <td>Loại thanh toán:</td>
-                                        <td>{{ $value->gateway_name }}</td>
+                                        <td>
+                                            @if ($value->gateway_name == 'cash')
+                                                Thanh toán tiền mặt
+                                            @else
+                                                {{ $value->gateway_name }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Giá:</td>
@@ -463,14 +471,7 @@
 
                             </table>
                         </div>
-
-
-                        @include('client.components-home.products', [
-                            'title' => 'Sản phẩm tương tự',
-                            'products' => $similarProducts,
-                        ])
                     </div>
-
                     <!-- Modal xác nhận hủy đơn hàng -->
                     <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel"
                         aria-hidden="true">
@@ -582,6 +583,10 @@
                 </div>
                 @include('client.users.left_menu')
             </div>
+            @include('client.components-home.products', [
+                'title' => 'Sản phẩm tương tự',
+                'products' => $similarProducts,
+            ])
         </div>
     </main>
 

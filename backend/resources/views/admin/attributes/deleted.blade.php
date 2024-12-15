@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -21,7 +24,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.attributes.deleted') }}">Danh sách đã xóa</a></h5>
+                                                        href="{{ route('admin.attributes.deleted') }}">Thùng Rác</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -43,15 +46,10 @@
                                             <div class="d-flex align-items-center">
                                                 <button class="btn btn-soft-danger ms-2" id="deleteMultipleBtn"
                                                     style="display: none;">
-                                                    <i class="ri-delete-bin-5-fill"></i>
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                 </button>
-                                                <a class="btn btn-success add-btn ms-2"
-                                                    href="{{ route('admin.attributes.create') }}">
-                                                    <i class="ri-add-box-fill"></i> Thêm
-                                                </a>
                                                 <a href="{{ route('admin.attributes.index') }}"
-                                                    class="btn btn-soft-primary ms-2">
-                                                    <i class="ri-home-6-fill"></i>Quay lại
+                                                    class="btn btn-primary ms-2">Quay lại
                                                 </a>
                                             </div>
                                         </div>
@@ -67,7 +65,7 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>Stt</th>
+                                                    <th>STT</th>
                                                     <th>Tên thuộc tính</th>
                                                     <th>Người xóa</th>
                                                     <th>Ngày xóa</th>

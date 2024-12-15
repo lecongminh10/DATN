@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Hộp thông tin
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -64,7 +67,9 @@
                             <input type="checkbox" name="active" id="active"
                                 {{ $infoBox->active ? 'checked' : '' }}>
                         </div>
-                        <button type="submit" class="btn btn-primary">Cập nhật Info Boxes</button>
+                        <div class="button ms-3 mb-4">
+                            <button type="submit" class="btn btn-success ">Cập nhật</button>
+                        </div>
                         </form>
                     </div>
                 </div>

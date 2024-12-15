@@ -244,18 +244,23 @@
                                                     <td>{{ $value->code }}</td>
                                                     <td>
                                                         @php
+                                                            $img = '';
                                                             foreach ($value->items as $val) {
-                                                                $img = '';
                                                                 $variant = $val->productVariant;
                                                                 if (!empty($variant)) {
                                                                     $img = $val->productVariant->variant_image;
                                                                 } else {
                                                                     $img = $val->product->getMainImage()->image_gallery;
                                                                 }
+                                                                break;
                                                             }
                                                         @endphp
-                                                        <img src="{{ Storage::url($img) }}" alt="Ảnh sản phẩm"
-                                                            width="100px" height="100px">
+                                                        @if (!empty($img))
+                                                            <img src="{{ Storage::url($img) }}" alt="Ảnh sản phẩm"
+                                                                width="100px" height="100px">
+                                                        @else
+                                                            <span>Không có ảnh</span>
+                                                        @endif
                                                     </td>
                                                     <td>{{ number_format($value->total_price, 0, ',', '.') }} VNĐ</td>
                                                     <td

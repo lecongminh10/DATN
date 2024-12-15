@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Cập nhật bài viết
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -140,7 +142,7 @@
 
 
 
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <label class="form-label" for="is_published">Trạng thái</label>
                                     <select class="form-select" id="is_published" name="is_published" required>
                                         <option value="1"
@@ -160,11 +162,9 @@
                             </div>
 
 
-                            <div class="text-end mb-3">
-                                <button type="submit" class="btn btn-success w-sm"><i
-                                        class="ri-check-double-line me-2"></i>Lưu thay đổi</button>
-                                <a href="{{ route('admin.blogs.index') }}" class="btn btn-secondary w-sm"><i
-                                        class="ri-arrow-left-line"></i> Quay lại</a>
+                            <div class="text-start ms-3 mb-3">
+                                <button type="submit" class="btn btn-success me-2 w-sm">Cập nhật</button>
+                                <a href="{{ route('admin.blogs.index') }}" class="btn btn-primary w-sm"> Quay lại</a>
                             </div>
                         </div>
                     </div>

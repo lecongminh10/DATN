@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Danh sách bài viết
+@endsection
 @section('content')
     <style>
         .content-ellipsis {
@@ -69,7 +71,7 @@
                                             <div class="d-flex align-items-center">
                                                 <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn"
                                                     style="display: none;">
-                                                    <i class="ri-delete-bin-5-fill"></i>
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                 </button>
                                                 <a href="{{ route('admin.blogs.listTrash') }}" class="btn btn-warning">
                                                     <i class="ri-delete-bin-5-line align-bottom me-1"></i> Thùng rác
@@ -77,7 +79,7 @@
 
                                                 <a class="btn btn-success add-btn ms-2"
                                                     href="{{ route('admin.blogs.create') }}">
-                                                    <i class="ri-add-box-fill"></i> Thêm
+                                                    <i class="ri-add-line align-bottom "></i> Thêm mới
                                                 </a>
                                             </div>
                                         </div>
@@ -97,7 +99,7 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>Stt</th>
+                                                    <th>STT</th>
                                                     <th>Ảnh đại diện</th>
                                                     <th>Tiêu đề</th>
                                                     <th>Nội dung</th>

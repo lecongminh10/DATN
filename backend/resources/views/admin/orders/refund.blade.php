@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    Danh sách đơn hàng
+    Danh sách hoàn trả
 @endsection
 @section('style_css')
     <style>
@@ -203,8 +203,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" id="submit-refund">Xác nhận</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-success" id="submit-refund">Xác nhận</button>
                 </div>
             </div>
         </div>
@@ -225,7 +225,7 @@
                     <div id="image-preview-container" class="row gx-2 gy-2"></div> <!-- Ảnh nhỏ sẽ được hiển thị tại đây -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>

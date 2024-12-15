@@ -16,9 +16,9 @@ class UserRepository extends BaseRepository
         $this->userRepository = $userRepository;
     }
 
-    public function getAllUser()
+    public function getAllUser($perPage = 5)
     {
-        return User::with('permissionsValues')->get();
+        return User::with('permissionsValues')->simplePaginate($perPage);
     }
 
     public function create(array $data)

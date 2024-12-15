@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Nhật ký
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -42,10 +44,10 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        {{ $logs->links() }}    
                     </div>
                 </div>
-            </div>
-            {{ $logs->links() }}
+            </div>  
         </div>
     </div>
 @endsection

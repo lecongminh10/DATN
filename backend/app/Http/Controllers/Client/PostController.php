@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Client;
 use App\Models\Tag;
 use App\Models\Blog;
 use App\Models\Cart;
+use App\Models\PostTag;
+use App\Models\Product;
 use App\Models\Category;
 use App\Models\WishList;
 use App\Http\Controllers\Controller;
@@ -25,11 +27,10 @@ class PostController extends Controller
         $user = Auth::user();
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
         $carts  = collect();
-        $cartCount = $carts->sum('quantity');
         $tags = Tag::all();
         $categories = Category::with('children')->whereNull('parent_id')->get();
-        $wishlistCount = WishList::where('user_id',$userId)->count();
-        return view('client.blogs.index', compact('posts', 'categories','carts', 'cartCount', 'tags','wishlistCount')); 
+        $wishlistCount = WishList::where('user_id', $userId)->count();
+        return view('client.blogs.index', compact('posts', 'categories', 'carts', 'cartCount', 'tags', 'wishlistCount'));
     }
 
 
@@ -51,10 +52,23 @@ class PostController extends Controller
 
         // Lấy 5 bài viết gần đây có trạng thái đã xuất bản cho sidebar
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+
+        // Lấy các tags của bài viết hiện tại
+        $tagIds = PostTag::where('post_id', $post->id)->pluck('tag_id');
+
+        // Lấy các sản phẩm liên quan qua tags
+        $relatedProducts = Product::whereHas('tags', function ($query) use ($tagIds) {
+            $query->whereIn('tags.id', $tagIds);
+        })
+            ->where('is_active', 1)
+            ->take(3) // Giới hạn số lượng sản phẩm
+            ->get();
+
         $this->countCartWish();
 
         return view('client.blogs.show', compact('post', 'posts', 'cartCount','tags','wishlistCount'));
     }
+
 
     // app/Http/Controllers/BlogController.php
 
@@ -81,10 +95,10 @@ class PostController extends Controller
     {
         $userId = auth()->id();
         $carts  = collect();
-        if($userId) {
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $cartCount = $carts->sum('quantity');
-        $wishlistCount = WishList::where('user_id',$userId)->count();
+        $wishlistCount = WishList::where('user_id', $userId)->count();
     }
 }

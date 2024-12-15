@@ -109,7 +109,7 @@ Route::group([
         // Xóa cứng carrier
         Route::delete('/{id}/hard-delete', [CarrierController::class, 'hardDeleteCarrier'])->name('carriers.hardDelete');
         // Xóa nhiều
-        Route::post('/delete-multiple', [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
+        Route::post('/carriers/delete-multiple', [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
     });
 
     //tags
@@ -222,8 +222,8 @@ Route::group([
         Route::get('/home',                                [HomeController::class, 'index'])->name('home.index');
     });
     Route::get('/categoryTrashed', [CategoryController::class, 'trashed'])->name('categories.trashed');
-    Route::get('/categoriesTrashed/search', [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
-    Route::post('/categories/trashed/restore-multiple', [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
+    // Route::get('/categories/trashed/search', [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
+    Route::put('/categories/trashed/restore-multiple', [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
     Route::post('/categories/trashed/hard-delete-multiple', [CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
 
     //Users
