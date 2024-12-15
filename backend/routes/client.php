@@ -70,9 +70,10 @@ Route::prefix('/')->group(function () {
         $currentUrl = url()->current();
         if ($currentUrl == "http://localhost:8000/checkout") {
             return response()->json(['success' => false]);
+        }else{
+            session()->forget('coupons'); // Clear the coupons session
+            return response()->json(['success' => true]);
         }
-        session()->forget('coupons'); // Clear the coupons session
-        return response()->json(['success' => true]);
     });
     Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
 

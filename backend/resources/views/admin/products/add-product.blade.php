@@ -650,12 +650,9 @@
                                                                                         name="product_variants[{{ $i }}][status]">
                                                                                         <option value="none">None
                                                                                         </option>
-                                                                                        <option value="available">Available
-                                                                                        </option>
-                                                                                        <option value="out_of_stock">Out of
-                                                                                            Stock</option>
-                                                                                        <option value="discontinued">
-                                                                                            Discontinued</option>
+                                                                                        <option value="available">Còn hàng</option>
+                                                                                        <option value="out_of_stock">Hết hàng</option>
+                                                                                        <option value="discontinued">Ngừng sản xuất</option>
                                                                                     </select>
                                                                                 </td>
                                                                                 <td>

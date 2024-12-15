@@ -105,7 +105,7 @@
                                                             {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
                                                             Danh mục</option>
                                                         <option value="user"
-                                                            {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
+                                                            {{ request()->get('applies_to') == 'user' ? 'selected' : '' }}>
                                                             Người dùng</option>
 
                                                     </select>
@@ -185,8 +185,11 @@
                                                                 }else if ($item->applies_to=='product')
                                                                 {
                                                                     echo 'Sản phẩm';
-                                                                } else {
+                                                                } else if($item->applies_to == 'category'){
                                                                     echo 'Danh mục';
+                                                                }  else if($item->applies_to == 'user')
+                                                                {
+                                                                    echo 'Người dùng';
                                                                 }
                                                         @endphp
                                                     </td>

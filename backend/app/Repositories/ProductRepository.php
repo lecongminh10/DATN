@@ -49,7 +49,7 @@ class ProductRepository extends BaseRepository
             // });
         }
 
-        return $query->paginate($perPage);
+        return $query->orderByDesc('id') ->paginate($perPage);
     }
 
     public function isSoftDeleted(int $id): bool
@@ -100,7 +100,7 @@ class ProductRepository extends BaseRepository
         }
 
         // Sử dụng paginate để phân trang
-        return $query->paginate($perPage);
+        return $query->orderByDesc('id')->paginate($perPage);
     }
 
     public function filterByProducts($data)
