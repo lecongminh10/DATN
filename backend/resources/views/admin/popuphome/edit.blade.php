@@ -49,10 +49,13 @@
                                 <div class="mb-3">
                                     <label for="image" class="form-label">Hình nền</label>
                                     <br>
-                                    @if ($popuphome->image)
+                                    @if ($popuphome && $popuphome->image)
                                         <img src="{{ Storage::url($popuphome->image) }}" width="100" height="100"
-                                            alt="Current Image" class="mb-3 image">
+                                                alt="Current Image" class="mb-3 image">
+                                    @else
+                                        Không có ảnh
                                     @endif
+                                    
                                     <input type="file" name="image" id="image" class="form-control"
                                         data-allow-reorder="true" data-max-file-size="3MB" data-max-files="1">
                                    
@@ -63,7 +66,7 @@
                                 <div class="form-group">
                                     <label for="active">Kích Hoạt</label>
                                     <input type="checkbox" name="active" id="active"
-                                        {{ $popuphome->active ? 'checked' : '' }}>
+                                    {{ isset($popuphome) && $popuphome->active ? 'checked' : '' }}>
                                 </div>
                                 <div class="button mb-2">
                                     <button type="submit" class="btn btn-success">Cập nhật</button>

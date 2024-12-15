@@ -4834,7 +4834,7 @@ label {
     }
 }
 .page-header {
-    padding: 5.5rem 0;
+    padding: 1.5rem 0;
     color: #222529;
     background-color: #f4f4f4;
     text-align: center;
@@ -9225,7 +9225,7 @@ img.slide-bg {
     max-width: 100px;
 }
 .sticky-header.header-middle.fixed {
-    height: 60px;
+    height: 95px;
 }
 .sticky-header.deprecated-sticky:not(.fixed) .cart-dropdown,
 .sticky-header.deprecated-sticky:not(.fixed) .logo {
@@ -9356,10 +9356,10 @@ header a {
     font-weight: 700;
     letter-spacing: 0.017em;
 }
-.header-middle {
+/* .header-middle {
     padding-top: 2.7rem;
     padding-bottom: 2.7rem;
-}
+} */
 /* .header-bottom {
     background: #f4f4f4;
 } */
@@ -14602,9 +14602,9 @@ body {
 .header-top .top-message {
     margin-right: 3.8rem;
 }
-.header-middle {
+/* .header-middle {
     padding: 2.7rem 0;
-}
+} */
 .header-middle .header-right {
     padding-right: 2.6rem;
 }

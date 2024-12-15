@@ -11,6 +11,8 @@ class Category extends Model
 {
     use HasFactory , SoftDeletes;
 
+    protected $dates = ['deleted_at'];
+
     protected $table = 'categories';
 
     protected $fillable = [
@@ -25,7 +27,6 @@ class Category extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'deleted_at' => 'boolean'
     ];
     public function parent()
     {
@@ -55,6 +56,11 @@ class Category extends Model
         return $this->belongsToMany(Coupon::class, 'coupons_categories')
                     ->withTimestamps();
     }
+
+    public function deletedByUser()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
     
     //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
     protected static function boot()
@@ -69,6 +75,16 @@ class Category extends Model
             event(new CategoryEvent());
         });
 
+        // Sự kiện trước khi xóa (deleting)
+        static::deleting(function ($category) {
+            if (auth()->check()) {
+                $user = auth()->user();
+                $category->deleted_by = $user->id;
+                $category->save();
+            }
+        });
+
+        // Sự kiện sau khi xóa (deleted)
         static::deleted(function () {
             event(new CategoryEvent());
         });

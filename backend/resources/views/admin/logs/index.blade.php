@@ -44,10 +44,10 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        {{ $logs->links() }}    
                     </div>
                 </div>
-            </div>
-            {{ $logs->links() }}
+            </div>  
         </div>
     </div>
 @endsection

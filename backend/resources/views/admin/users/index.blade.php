@@ -131,10 +131,12 @@
                                                     @endforeach
                                                 </td>
                                                 <td>
-                                                    <span
-                                                        class="badge {{ $value->status == 'active' ? 'bg-success' : 'bg-danger' }}">
-                                                        {{ $value->status == 'active' ? $value->status : 'Inactive' }}
-                                                    </span>
+                                                    @if ($value->status == 'active')
+                                                        <span class="badge bg-success">Kích hoạt</span>
+                                                    @else
+                                                        <span class="badge bg-danger">Không kích hoạt</span>
+                                                    @endif
+                                                    
                                                 </td>
                                                 <td class="assignedto">
                                                     @if ($value->gender === 'male')
@@ -145,7 +147,7 @@
                                                         <span class="badge bg-secondary">Khác</span>
                                                     @endif
                                                 </td>
-                                                <td class="due_date">{{ $value->date_of_birth }}</td>
+                                                <td class="due_date">{{ date('d-m-Y', strtotime($value->date_of_birth)) }}</td>
                                                 <td class="status">
                                                     <span
                                                         class="badge bg-secondary-subtle text-secondary text-uppercase">{{ $value->phone_number }}</span>
