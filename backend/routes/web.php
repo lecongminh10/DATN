@@ -314,32 +314,20 @@ Route::group([
         Route::get('/create', [BlogController::class, 'create'])->name('blogs.create');
         Route::post('/', [BlogController::class, 'store'])->name('blogs.store');
         Route::get('{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
-        Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update'); // Route để cập nhật blog
+        Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update');
         Route::get('/{id}', [BlogController::class, 'show'])->name('blogs.show');
-        Route::delete('/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
-        Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
-        Route::get('/trash', [BlogController::class, 'trash'])->name('blogs.trash'); // Route để hiển thị danh sách blog đã xóa
-        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); // Khôi phục blog đã xóa
-        // Route cho danh sách blog đã bị xóa mềm
-        // Route::get('/listsotfdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
-
-        // Route khôi phục blog đã xóa mềm
-        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore');
-
-        // Route cho xóa cứng blog
+        Route::get('/listTrash', [BlogController::class, 'listTrash'])->name('blogs.listTrash'); 
+        Route::delete('/blogs/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); 
+        // Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore');
         Route::delete('/{id}/hard-delete', [BlogController::class, 'hardDeleteBlog'])->name('blogs.hardDelete');
-
-        // Route cho xóa mềm blog values (nếu có blog values)
         Route::delete('/values/{id}', [BlogController::class, 'destroyValue'])->name('blogValues.destroy');
-
-        // Route cho xóa cứng blog values (nếu có blog values)
         Route::delete('/values/{id}/hard-delete', [BlogController::class, 'hardDeleteBlogValue'])->name('blogValues.hardDelete');
-
-        // Route cho xóa nhiều blog
         Route::post('/delete-multiple', [BlogController::class, 'deleteMultiple'])->name('blogs.deleteMultiple');
-
         Route::get('/blogshortdeleted', [BlogController::class, 'showSotfDelete'])->name('blogs.blogshortdeleted');
     });
+    Route::get('/admin/blog/delete_trashfer', [BlogController::class, 'listTrashDelete'])->name('blogs.listTrash'); 
+
 
     // statistic
     Route::prefix('statistics')->as('statistics.')->group(

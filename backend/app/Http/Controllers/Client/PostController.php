@@ -38,6 +38,14 @@ class PostController extends Controller
 
     public function show($id)
     {
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+        $cartCount = $carts->sum('quantity');
+        $tags = Tag::all();
         // Lấy bài viết cụ thể
         $post = Blog::where('id', $id)->where('is_published', 1)->firstOrFail();
 
@@ -45,21 +53,28 @@ class PostController extends Controller
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
         $this->countCartWish();
 
-        return view('client.blogs.show', compact('post', 'posts', 'cartCount','wishlistCount'));
+        return view('client.blogs.show', compact('post', 'posts', 'cartCount','tags','wishlistCount'));
     }
 
     // app/Http/Controllers/BlogController.php
 
     public function showTagPosts($id)
     {
+        $userId = auth()->id();
+        $carts  = collect();
+        if($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+        $cartCount = $carts->sum('quantity');
         // Lấy tag theo ID
         $tag = Tag::findOrFail($id);
-
+        $tags = Tag::all();
         // Lấy các bài viết liên quan đến tag này
         $posts = $tag->posts;  // Giả sử có mối quan hệ 'posts' trong mô hình Tag
         $this->countCartWish();
         // Trả về view 'tag.blade.php' kèm theo dữ liệu
-        return view('client.blogs.tag', compact('tag', 'posts', 'cartCount','wishlistCount'));
+        return view('client.blogs.tag', compact('tag', 'posts', 'cartCount','tags','wishlistCount'));
     }
 
     private function countCartWish()

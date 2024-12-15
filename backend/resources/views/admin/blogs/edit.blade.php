@@ -13,29 +13,6 @@
                 ],
             ])
 
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            @if (session()->has('success') && session()->get('success'))
-                <div class="alert alert-primary" role="alert">
-                    <strong>Thao Tác Thành Công</strong>
-                </div>
-            @endif
-
-            @if (session()->has('success') && !session()->get('success'))
-                <div class="alert alert-danger" role="alert">
-                    <strong>Thao Tác Không Thành Công</strong> {{ session()->get('error') }}
-                </div>
-            @endif
-
-
             <form id="update-blog-form" method="POST" action="{{ route('admin.blogs.update', $blog->id) }}"
                 enctype="multipart/form-data" autocomplete="off" class="needs-validation" novalidate>
                 @csrf

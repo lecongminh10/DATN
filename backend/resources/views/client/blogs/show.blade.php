@@ -14,10 +14,10 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-lg-9">
+                <div class="col-lg-9 order-lg-1">
                     <article class="post single">
-                        <div class="post-media">
-                            <img src="{{ asset('storage/' . $post->thumbnail) }}" alt="{{ $post->title }}">
+                        <div class="post-media" style="width: 550px; height: 550px;">
+                            <img src="{{ asset('storage/' . $post->thumbnail) }}" alt="{{ $post->title }} " style="width: 550px; height: 550px;">
                         </div><!-- End .post-media -->
 
                         <div class="post-body">
@@ -29,29 +29,15 @@
                             <h2 class="post-title">{{ $post->title }}</h2>
 
                             <div class="post-meta">
-                                <a href="#" class="hash-scroll">{{ $post->comments_count }} Comments</a>
+                                <a href="#" class="hash-scroll">{{ $post->comments_count }} Bình luận</a>
                             </div><!-- End .post-meta -->
 
                             <div class="post-content">
-                                <p>{{ strip_tags($post->content) }}</p>
+                               
+                                <p>{!! strip_tags(html_entity_decode($post->content), '<p><img><a><b><i><ul><ol><li>') !!}</p>
                             </div><!-- End .post-content -->
 
-                            <div class="post-author">
-                                <h3><i class="far fa-user"></i>Author</h3>
-
-                                <figure>
-                                    <a href="#">
-                                        <img src="{{ $post->user->profile_picture ? asset('storage/' . $post->user->profile_picture) : asset('images/default-profile-picture.png') }}" 
-                                             alt="{{ $post->user->username }}"
-                                             style="width: 100px; height: 100px; object-fit: cover;">
-                                    </a>
-                                </figure>
-
-                                <div class="author-content">
-                                    <h4><a href="#">{{ $post->user->username }}</a></h4>
-                                    <p>{{ $post->user->bio }}</p>
-                                </div><!-- End .author-content -->
-                            </div><!-- End .post-author -->
+                            
                         </div><!-- End .post-body -->
                     </article><!-- End .post -->
 
@@ -61,28 +47,12 @@
                     <i class="fas fa-sliders-h"></i>
                 </div>
                 <div class="sidebar-overlay"></div>
-                <aside class="sidebar mobile-sidebar col-lg-3">
+                <div class="col-lg-3 order-lg-3">
                     <div class="sidebar-wrapper" data-sticky-sidebar-options='{"offsetTop": 72}'>
-                        {{-- <div class="widget widget-categories">
-                            <h4 class="widget-title">Blog Categories</h4>
-
-                            <ul class="list">
-                                <li>
-                                    <a href="#">All about clothing</a>
-
-                                    <ul class="list">
-                                        <li><a href="#">Dresses</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#">Make-up &amp; beauty</a></li>
-                                <li><a href="#">Accessories</a></li>
-                                <li><a href="#">Fashion trends</a></li>
-                                <li><a href="#">Haircuts &amp; hairstyles</a></li>
-                            </ul>
-                        </div><!-- End .widget --> --}}
+                        
 
                         <div class="widget widget-post">
-                            <h4 class="widget-title">Recent Posts</h4>
+                            <h4 class="widget-title">Bài viết gần đây</h4>
 
                             <ul class="simple-post-list">
                                 @foreach ($posts->take(5) as $post)
@@ -101,16 +71,9 @@
                             </ul>
                         </div><!-- End .widget -->
 
-                        {{-- <div class="widget">
-                            <h4 class="widget-title">Tags</h4>
-
-                            <div class="tagcloud">
-                                <a href="#">ARTICLES</a>
-                                <a href="#">CHAT</a>
-                            </div><!-- End .tagcloud -->
-                        </div><!-- End .widget --> --}}
+                        
                     </div><!-- End .sidebar-wrapper -->
-                </aside><!-- End .col-lg-3 -->
+                </div><!-- End .col-lg-3 -->
 
                 <!-- Sidebar code here -->
             </div><!-- End .row -->

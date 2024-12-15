@@ -32,11 +32,6 @@ class Blog extends Model
         'published_at',
         'deleted_at',
     ];
-
-    protected $casts = [
-        'deleted_at' => 'boolean',
-    ];
-
     
    
 
