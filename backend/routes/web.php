@@ -109,7 +109,7 @@ Route::group([
         // Xóa cứng carrier
         Route::delete('/{id}/hard-delete', [CarrierController::class, 'hardDeleteCarrier'])->name('carriers.hardDelete');
         // Xóa nhiều
-        Route::post('/delete-multiple', [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
+        Route::post('/carriers/delete-multiple', [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
     });
 
     //tags
@@ -222,8 +222,8 @@ Route::group([
         Route::get('/home',                                [HomeController::class, 'index'])->name('home.index');
     });
     Route::get('/categoryTrashed', [CategoryController::class, 'trashed'])->name('categories.trashed');
-    Route::get('/categoriesTrashed/search', [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
-    Route::post('/categories/trashed/restore-multiple', [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
+    // Route::get('/categories/trashed/search', [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
+    Route::put('/categories/trashed/restore-multiple', [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
     Route::post('/categories/trashed/hard-delete-multiple', [CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
 
     //Users
@@ -317,8 +317,8 @@ Route::group([
         Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update'); // Route để cập nhật blog
         Route::get('/{id}', [BlogController::class, 'show'])->name('blogs.show');
         Route::delete('/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
-        Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
-        Route::get('/trash', [BlogController::class, 'trash'])->name('blogs.trash'); // Route để hiển thị danh sách blog đã xóa
+        Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.showSoftDelete');
+        // Route::get('/trash', [BlogController::class, 'trash'])->name('blogs.trash'); // Route để hiển thị danh sách blog đã xóa
         Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); // Khôi phục blog đã xóa
         // Route cho danh sách blog đã bị xóa mềm
         // Route::get('/listsotfdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
@@ -515,3 +515,8 @@ Route::group([
     });
 });
 Route::get('/admin/logs',                       [AdminActivityLogController::class, 'index'])->name('admin.logs.index');
+
+
+Route::fallback(function () {
+    return response()->view('errorr.404', [], 404);
+});

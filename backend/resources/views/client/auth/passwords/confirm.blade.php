@@ -1,5 +1,5 @@
 @extends('client.auth.layouts.app')
-@section('title', 'Confirm Password In Admin ')
+@section('title', 'Xác nhận mật khẩu')
 @section('content')
     {{-- <div class="container">
     <div class="row justify-content-center">
@@ -52,8 +52,8 @@
 
                 <div class="card-body p-4">
                     <div class="text-center mt-2">
-                        <h5 class="text-primary">Confirm Password</h5>
-                        <p class="text-muted">Reset password with velzon</p>
+                        <h5 class="text-primary">Xác nhận mật khẩu</h5>
+                        <p class="text-muted">Đặt lại mật khẩu</p>
                         @if (session('status'))
                             <div class="alert alert-success" role="alert">
                                 {{ session('status') }}
@@ -68,21 +68,21 @@
                     </div>
 
                     <div class="alert border-0 alert-warning text-center mb-2 mx-2" role="alert">
-                        Enter your email and instructions will be sent to you!
+                        Nhập email của bạn và hướng dẫn sẽ được gửi cho bạn!
                     </div>
                     <div class="p-2">
                         <form method="POST" action="{{ route('password.email') }}">
                             @csrf
                             <div class="mb-4">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="Enter Email"
+                                <input type="email" class="form-control" id="email" placeholder="Nhập email"
                                     name="email">
                             </div>
 
                             <div class="text-center mt-4">
                                 <div class="text-center mt-4">
                                     <button id="sendResetLinkBtn" class="btn btn-success w-100" type="submit"
-                                        @if (session('waiting_time')) disabled @endif>Send Reset Link</button>
+                                        @if (session('waiting_time')) disabled @endif>Đặt lại mật khẩu</button>
                                 </div>
                             </div>
                         </form><!-- end form -->
@@ -93,8 +93,8 @@
             <!-- end card -->
 
             <div class="mt-4 text-center">
-                <p class="mb-0">Wait, I remember my password... <a href="{{ route('client.login') }}"
-                        class="fw-semibold text-primary text-decoration-underline"> Click here </a> </p>
+                <p class="mb-0">Đợi đã, tôi nhớ mật khẩu của mình...  <a href="{{ route('client.login') }}"
+                        class="fw-semibold text-primary text-decoration-underline"> Nhấn vào đây </a> </p>
             </div>
 
         </div>
@@ -107,7 +107,7 @@
             if (countdownElement) {
                 let countdownValue = parseInt(countdownElement.innerText);
 
-                let countdownInterval = setInterval(function() {
+                let countdownInterval = setInterval(function() {    
                     countdownValue--;
                     countdownElement.innerText = countdownValue;
                     if (countdownValue <= 0) {

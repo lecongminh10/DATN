@@ -724,6 +724,13 @@ class OrderController extends Controller
             ]);
         }
 
+        if($coupon->usage_limit ==0){
+            return response()->json([
+                'success' => false,
+                'message' => 'Số lần sử dụng đã hết'
+            ]);
+        }
+
         // Tính toán giảm giá từ coupon
         $discountAmount = $coupon->discount_type === 'fixed_amount'
             ? $coupon->discount_value

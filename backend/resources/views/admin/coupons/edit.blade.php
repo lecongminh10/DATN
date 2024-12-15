@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Cập Nhật Khuyến Mãi
+@endsection
 @section('style_css')
     <style>
         .dropzone {
@@ -351,12 +355,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-end me-3 mb-3">
-                                        <button type="submit" class="btn btn-success w-sm">
-                                            <i class="ri-check-double-line me-2"></i>Cập nhật
+                                    <div class="text-start ms-3 mb-3">
+                                        <button type="submit" class="btn btn-success me-2 w-sm">Cập nhật
                                         </button>
-                                        <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary btn w-sm">
-                                            <i class="ri-arrow-left-line"></i> Quay lại danh sách
+                                        <a href="{{ route('admin.coupons.index') }}" class="btn btn-primary btn w-sm">Quay lại
                                         </a>
                                     </div>
                                 </div>

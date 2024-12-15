@@ -312,12 +312,12 @@
     @endif
 
 
-    <main class="main home">
+    <main class="main home mt-3">
         <div class="container mb-2">
-            <div class="row">
+            <div class="row mb-3 pb-3">
                 <div class="col-lg-9">
-                    <div class="container pl-5   pr-5 order-container">
-                        <div class="order-header">
+                    <div class="container pl-5   pr-5 pb-3 order-container">
+                        <div class="order-header pt-4">
                             <div>
                                 <h2>Đơn hàng: {{ $orders->code }}</h2>
                                     @if (!$showButtons)
@@ -587,10 +587,6 @@
                 'title' => 'Sản phẩm tương tự',
                 'products' => $similarProducts,
             ])
-            @include('client.components-home.products', [
-                'title' => 'Sản phẩm nhiều lượt mua nhẩt',
-                'products' => $bestSellingProducts,
-             ])
         </div>
     </main>
 

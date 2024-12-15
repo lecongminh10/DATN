@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Tài Khoản
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -18,20 +21,19 @@
                                 <h5 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h5>
                                 <div class="flex-shrink-0">
                                     <div class="d-flex flex-wrap gap-2">
-                                        <div class="">
-                                            <input type="text" id="searchInput" class="form-control"
+                                        <div class="me-2">
+                                            <input type="text" id="searchInput" class="form-control "
                                                 placeholder="Tìm kiếm người dùng...">
                                         </div>
                                         <a href="{{ route('admin.users.add') }}">
-                                            <button class="btn btn-danger add-btn" data-bs-toggle="modal"
+                                            <button class="btn btn-success me-2 add-btn" data-bs-toggle="modal"
                                                 data-bs-target="#showModal">
-                                                <i class="ri-add-line align-bottom me-1"></i>Thêm mới
+                                                <i class="ri-add-line align-bottom "></i> Thêm mới
                                             </button>
                                         </a>
-                                        <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-primary">Đã
-                                            xóa</a>
+                                        <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-warning me-2"><i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác</a>
                                         <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
-                                            <i class="ri-delete-bin-2-line"></i> Xóa Nhiều
+                                            <i class="ri-delete-bin-2-line align-bottom"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -59,7 +61,7 @@
                                             <th data-sort="avatar">Ảnh</th>
                                             <th data-sort="email">Email</th>
                                             <th data-sort="permission">Quyền</th>
-                                            <th data-sort="status">Status</th>
+                                            <th data-sort="status">Trạng thái</th>
                                             <th data-sort="gender">Giới Tính</th>
                                             <th data-sort="date_of_birth">Ngày Sinh</th>
                                             <th data-sort="phone_number">Số Điện Thoại</th>
@@ -134,10 +136,12 @@
                                                     @endforeach
                                                 </td>
                                                 <td>
-                                                    <span
-                                                        class="badge {{ $value->status == 'active' ? 'bg-success' : 'bg-danger' }}">
-                                                        {{ $value->status == 'active' ? $value->status : 'Inactive' }}
-                                                    </span>
+                                                    @if ($value->status == 'active')
+                                                        <span class="badge bg-success">Kích hoạt</span>
+                                                    @else
+                                                        <span class="badge bg-danger">Không kích hoạt</span>
+                                                    @endif
+                                                    
                                                 </td>
                                                 <td class="assignedto">
                                                     @if ($value->gender === 'male')
@@ -165,8 +169,7 @@
                                             colors="primary:#121331,secondary:#08a88a"
                                             style="width:75px;height:75px"></lord-icon>
                                         <h5 class="mt-2">Xin lỗi! Không tìm thấy kết quả</h5>
-                                        <p class="text-muted mb-0">Chúng tôi đã tìm kiếm hơn 200k+ nhiệm vụ nhưng không tìm
-                                            thấy nhiệm vụ nào cho bạn.</p>
+                                        <p class="text-muted mb-0"></p>
                                     </div>
                                 </div>
                             </div>

@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -21,7 +24,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.pages.deleted') }}">Danh sách trang đã xóa</a></h5>
+                                                        href="{{ route('admin.pages.deleted') }}">Thùng Rác</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -59,19 +62,14 @@
                                                     </button>
                                                 </div> --}}
                                             </div>
-                                            <div class="col-xl-6 d-flex justify-content-end align-items-center">
+                                            <div class="col-xl-6 d-flex justify-content-end align-items-center mb-3">
                                                 <div class="">
-                                                    <button class="btn btn-soft-danger me-1" id="deleteMultipleBtn"
+                                                    <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn"
                                                         style="display: none;">
-                                                        <i class="ri-delete-bin-5-fill"></i>
+                                                        <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                     </button>
-                                                    <a class="btn btn-success add-btn me-1"
-                                                        href="{{ route('admin.pages.create') }}">
-                                                        <i class="ri-add-box-fill"></i> Thêm
-                                                    </a>
                                                     <a href="{{ route('admin.pages.index') }}"
-                                                        class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Trang list
+                                                        class="btn btn-primary">Quay lại
                                                     </a>
                                                 </div>
                                             </div>

@@ -1,10 +1,13 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Quyền
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
                 @include('admin.layouts.component.page-header', [
-                    'title' => 'Phân quyền  ',
+                    'title' => 'Phân quyền ',
                     'breadcrumb' => [
                         ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
                         ['name' => 'Phân quyền ', 'url' => '#']
@@ -14,29 +17,35 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="card-title mb-0">Danh sách Quyền</h5>
-                                    {{-- <form action="{{ route('admin.permissions.index') }}" method="GET"
-                                        class="d-flex align-items-center flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0 me-3">Danh sách Quyền</h5>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center ">
+                                    <form action="" method="GET" class="d-flex align-items-center flex-grow-1">
                                         <div class="input-group me-2" style="max-width: 300px;">
                                             <input type="text" id="search" name="search" class="form-control"
                                                 placeholder="Nhập từ khóa tìm kiếm" value="{{ request('search') }}">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="ri-search-line"></i>
-                                            </button>
                                         </div>
-                                    </form> --}}
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm
+                                        </button>
+                                    </form>
                                     <div>
                                         <div class="d-flex flex-wrap gap-2">
-                                            <a href="{{ route('admin.permissions.create') }}" class="btn btn-success">
-                                                    <i class="ri-add-line align-bottom me-1"></i>Thêm mới
+                                            <a href="{{ route('admin.permissions.create') }}" class="btn btn-success me-2">
+                                                    <i class="ri-add-line align-bottom "></i> Thêm mới
                                             </a>
-                                            <button class="btn btn-danger" onClick="deleteMultiplePermissions()">
-                                                <i class="ri-delete-bin-2-line"></i> Xóa nhiều
+                                            <button class="btn btn-soft-danger" onClick="deleteMultiplePermissions()">
+                                                <i class="ri-delete-bin-2-line align-bottom"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
+                                @if (session('success'))
+                                    <div class="w-full alert alert-success mt-3">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
                             </div>
                             <div class="card-body">
                                 <table id="example"
@@ -50,7 +59,7 @@
                                                         id="checkAllPermissions">
                                                 </div>
                                             </th>
-                                            <th data-ordering="false">Stt</th>
+                                            <th data-ordering="false">STT</th>
                                             <th data-ordering="false">Tên</th>
                                             <th data-ordering="false">Mô tả</th>
                                             <th data-ordering="false">Ngày tạo</th>
@@ -59,7 +68,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($permissions as $item)
+                                        @foreach ($permissions as $key => $item)
                                             <tr>
                                                 <th scope="row">
                                                     <div class="form-check">
@@ -67,11 +76,11 @@
                                                             name="ids[]" value="{{ $item->id }}">
                                                     </div>
                                                 </th>
-                                                <th scope="row">{{ $item->id }}</th>
+                                                <th scope="row">{{ $key+1 }}</th>
                                                 <td>{{ $item->permission_name }}</td>
                                                 <td>{{ $item->description }}</td>
-                                                <td>{{ $item->created_at }}</td>
-                                                <td>{{ $item->updated_at }}</td>
+                                                <td>{{ $item->created_at->format('H:i d-m-Y') }}</td>
+                                                <td>{{ $item->updated_at->format('H:i d-m-Y') }}</td>
                                                 <td>
                                                     <div class="dropdown">
                                                         <a href="#" role="button" id="dropdownMenuLink"
@@ -126,7 +135,7 @@
                 <!-- Modal xác nhận xóa -->
                 <div class="modal fade" id="deletePermissionModal" tabindex="-1"
                     aria-labelledby="deletePermissionModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="deletePermissionModalLabel">Xác nhận xóa quyền</h5>
@@ -141,7 +150,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
                                 <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
                             </div>
                         </div>
@@ -149,9 +158,36 @@
                 </div>
             </div>
         </div>
+
+        {{-- Modal cảnh báo --}}
+        <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-warning" id="alertModalLabel">Cảnh báo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Vui lòng chọn ít nhất một quyền để xóa.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection
 @section('scripte_logic')
     <script>
+
+        // Chọn tất cả
+        document.getElementById('checkAllPermissions').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('.permission-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked; // Đồng bộ trạng thái với checkbox "chọn tất cả"
+            });
+        });
+
         let deletePermissionId = null; // Biến lưu ID của permission cần xóa
         let deleteValueId = null; // Biến lưu ID của permission value cần xóa
 
@@ -213,33 +249,41 @@
 
         // Hàm xóa nhiều quyền
         function deleteMultiplePermissions() {
-            const selectedIds = Array.from(document.querySelectorAll('.permission-checkbox:checked'))
-                .map(checkbox => checkbox.value);
-            if (selectedIds.length > 0) {
-                const confirmation = confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} quyền?`);
-                if (confirmation) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '{{ route('admin.permissions.destroyMultiple') }}';
-                    const csrfInput = document.createElement('input');
-                    csrfInput.type = 'hidden';
-                    csrfInput.name = '_token';
-                    csrfInput.value = '{{ csrf_token() }}';
+        const selectedIds = Array.from(document.querySelectorAll('.permission-checkbox:checked'))
+            .map(checkbox => checkbox.value);
 
-                    const idsInput = document.createElement('input');
-                    idsInput.type = 'hidden';
-                    idsInput.name = 'ids';
-                    idsInput.value = JSON.stringify(selectedIds);
+        if (selectedIds.length === 0) {
+            // Hiển thị modal cảnh báo
+            const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+            alertModal.show();
+        } else {
+            // Hiển thị modal xác nhận xóa
+            document.getElementById('modalPermissionName').innerText = `Bạn có chắc chắn muốn xóa ${selectedIds.length} quyền?`;
+            const deleteModal = new bootstrap.Modal(document.getElementById('deletePermissionModal'));
+            deleteModal.show();
 
-                    form.appendChild(csrfInput);
-                    form.appendChild(idsInput);
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            } else {
-                alert('Vui lòng chọn ít nhất một quyền để xóa.');
-            }
+            document.getElementById('confirmDeleteBtn').onclick = function() {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route('admin.permissions.destroyMultiple') }}';
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}';
+
+                const idsInput = document.createElement('input');
+                idsInput.type = 'hidden';
+                idsInput.name = 'ids';
+                idsInput.value = JSON.stringify(selectedIds);
+
+                form.appendChild(csrfInput);
+                form.appendChild(idsInput);
+                document.body.appendChild(form);
+                form.submit();
+            };
         }
+    }
 
         function deleteMultiplePermissionValues() {
             const selectedValueIds = Array.from(document.querySelectorAll('.value-checkbox:checked'))

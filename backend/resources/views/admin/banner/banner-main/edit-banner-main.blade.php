@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+   Cập nhật banner chính
+@endsection
 @section('style_css')
 <style>
    .d-none {
@@ -38,21 +41,18 @@
         
     }
 
-    /* .preview-container .img{
-        filter: blur(20px); Làm mờ ảnh với độ mờ 5px
-    } */
-
-    /* .banner{
-        display: flex;
-        justify-content: space-around;
-    } */
-
     .banner button{
         width: 150px;
     }
     
     .banner .form-label{
         text: center;
+    }
+
+    .image{
+        width: 100px;
+        height: 100px; 
+        border-radius: 5px;
     }
 </style>
 
@@ -75,14 +75,6 @@
                             <h3 class="mb-4">Quản lý Banner Main</h3>
                         </div>
                         <div class="card-body">
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-
                             <form action="{{ route('admin.banner.banner_main_update', $bannerMain->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('POST') <!-- Hoặc PUT nếu bạn muốn sử dụng PUT -->
@@ -92,29 +84,23 @@
                                     <label for="title">Tiêu đề</label>
                                     <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $bannerMain->title) }}">
                                 </div>
-                                <div class="form-group">
-                                    <label for="sub_title">Phụ đề</label>
-                                    <input type="text" name="sub_title" id="sub_title" class="form-control" value="{{ old('sub_title', $bannerMain->sub_title) }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="price">Giá</label>
-                                    <input type="text" name="price" id="price" class="form-control" value="{{ old('price', $bannerMain->price) }} ">
-                                </div>
-                                <div class="form-group">
+                                
+                                <div class="form-group mt-2">
                                     <label for="title_button">Tiêu đề nút</label>
                                     <input type="text" name="title_button" id="title_button" class="form-control" value="{{ old('title_button', $bannerMain->title_button) }}">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group mt-2">
                                     <label for="image">Ảnh</label>
+                                    <br>
+                                    <img src="{{Storage::url($bannerMain->image)}}" class="mb-3 image"  alt="">
                                     <input type="file" name="image" id="image" class="form-control">
-                                    <img src="{{Storage::url($bannerMain->image)}}" class="mt-3 mb-3" style="width: 80px;height: 80px; border-radius: 5px" alt="">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group mt-2">
                                     <label for="active">Hiển thị</label>
                                     <input type="checkbox" name="active" id="active" {{ $bannerMain->active ? 'checked' : '' }}>
                                 </div>
-                                <a href="{{ route('admin.banner.list_banner_main') }}" class="btn btn-success">Quay lại</a>
-                                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                <button type="submit" class="btn btn-success me-2">Cập nhật</button>
+                                <a href="{{ route('admin.banner.list_banner_main') }}" class="btn btn-primary">Quay lại</a>
                             </form>
                     </div>
                 </div>

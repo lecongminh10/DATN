@@ -27,7 +27,6 @@ class PostController extends Controller
         $user = Auth::user();
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
         $carts  = collect();
-        $cartCount = $carts->sum('quantity');
         $tags = Tag::all();
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $wishlistCount = WishList::where('user_id', $userId)->count();
@@ -42,14 +41,6 @@ class PostController extends Controller
     {
         // Lấy bài viết cụ thể
         $post = Blog::where('id', $id)->where('is_published', 1)->firstOrFail();
-
-        $carts  = collect();
-        $userId = auth()->id();
-        if ($userId) {
-            $carts = Cart::where('user_id', $userId)->with('product')->get();
-        }
-        $cartCount = $carts->sum('quantity');
-        $wishlistCount = WishList::where('user_id', $userId)->count();
 
         // Lấy 5 bài viết gần đây có trạng thái đã xuất bản cho sidebar
         $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
@@ -66,6 +57,14 @@ class PostController extends Controller
             ->get();
 
         $this->countCartWish();
+
+        $userId = auth()->id();
+        $carts = Cart::with(['product', 'productVariant.attributeValues.attribute', 'product.galleries'])
+            ->where('user_id', $userId)
+            ->get();
+
+        $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
         return view('client.blogs.show', compact('post', 'posts', 'cartCount', 'wishlistCount', 'relatedProducts'));
     }

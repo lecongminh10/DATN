@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Danh sách bài viết
+@endsection
 @section('content')
     <style>
         .content-ellipsis {
@@ -58,12 +60,15 @@
                                             <div class="d-flex align-items-center">
                                                 <button class="btn btn-soft-danger" id="deleteMultipleBtn"
                                                     style="display: none;">
-                                                    <i class="ri-delete-bin-5-fill"></i>
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                 </button>
-                                                <a class="btn btn-success add-btn ms-2"
+                                                <a class="btn btn-success add-btn ms-2 me-2"
                                                     href="{{ route('admin.blogs.create') }}">
-                                                    <i class="ri-add-box-fill"></i> Thêm
+                                                    <i class="ri-add-line align-bottom "></i> Thêm mới
                                                 </a>
+                                                {{-- <a href="{{ route('admin.blogs.trash') }}" class="btn btn-warning">
+                                                    <i class="ri-delete-bin-5-line align-bottom"></i> Thùng rác
+                                                </a> --}}
                                                
                                             </div>
                                         </div>
@@ -78,7 +83,7 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>Stt</th>
+                                                    <th>STT</th>
                                                     <th>Ảnh đại diện</th>
                                                     <th>Tiêu đề</th>
                                                     <th>Nội dung</th>

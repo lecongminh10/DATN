@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm mới tài khoản
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">

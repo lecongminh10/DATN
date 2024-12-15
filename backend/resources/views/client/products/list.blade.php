@@ -44,6 +44,63 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             cursor: pointer;
             margin-top: 10px;
         }
+
+        .scrollable-content {
+            max-height: 300px; /* Giới hạn chiều cao */
+            overflow-y: auto; /* Hiển thị thanh cuộn dọc khi nội dung vượt quá */
+            padding-right: 10px; /* Khoảng cách cho thanh cuộn */
+        }
+
+        /* Thanh cuộn cơ bản */
+        .scrollable-content::-webkit-scrollbar {
+            width: 8px; /* Độ rộng thanh cuộn */
+            height: 8px; /* Độ cao thanh cuộn ngang (nếu có) */
+        }
+
+        /* Đường dẫn thanh cuộn */
+        .scrollable-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Đối với Firefox */
+        .scrollable-content {
+            scrollbar-width: thin;
+        }
+
+        /* Nút thu gọn danh mục */
+        .toggle {
+            cursor: pointer;
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+            position: relative;
+            transition: transform 0.3s ease; /* Hiệu ứng xoay */
+        }
+
+        .toggle::before {
+            content: ''; /* Mũi tên lên  */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #000000;
+        }
+
+        /* Xoay xuống khi danh mục con được mở */
+        .toggle.rotate {
+            transform: rotate(180deg);
+        }
+
+        .toggle::before {
+            content: ''; /* Mũi tên lên  */
+        }
+
+        .toggle.rotate::before {
+            content: ''; /* Mũi tên xuống  */
+        }
     </style>
 @endsection
 @section('content')
@@ -120,7 +177,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                 @php
                     // dd($products)
                 @endphp
-                <div class="row">
+                <div class="row" style="margin-top: -30px">
                     @foreach ($products as $item)
                         <div class="col-6 col-sm-4">
                             <div class="product-default">
@@ -240,7 +297,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                 <!-- End .row -->
                 <nav class="toolbox toolbox-pagination">
                     <div class="toolbox-item toolbox-show">
-                        <label>Show:</label>
+                        <label style="margin-bottom: 50px;">Show:</label>
                         <form action="{{ url()->current() }}" method="GET">
                             <div class="select-custom mt-5">
                                 <select name="count" class="form-control" onchange="this.form.submit()">
@@ -253,9 +310,9 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                         </form>
                     </div>
                     <!-- End .toolbox-item -->
-                    <ul class="pagination toolbox-item">
+                    {{-- <ul class="pagination toolbox-item">
                         {{ $products->links('pagination::bootstrap-5') }}
-                    </ul>
+                    </ul> --}}
                 </nav>
             </div>
             <!-- End .col-lg-9 -->
@@ -274,25 +331,24 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                 <ul class="cat-list">
                                     @foreach ($categories as $category)
                                         <li>
-                                            <a href="{{ route('client.products.Category', ['id' => $category->id]) }}"
-                                                role="button"
-                                                aria-expanded="{{ $category->children->isNotEmpty() ? 'true' : 'false' }}"
-                                                aria-controls="widget-category-{{ $category->id }}">
-                                                {{ $category->name }}
-                                                <span class="products-count">({{ $category->products_count }})</span>
-                                                <span class="toggle"></span>
-                                            </a>
+                                            @if ($category->parent_id == null)
+                                                <a href="{{ route('client.products.Category', ['id' => $category->id]) }}"
+                                                    role="button"
+                                                    aria-expanded="{{ $category->children->isNotEmpty() ? 'true' : 'false' }}"
+                                                    aria-controls="widget-category-{{ $category->id }}">
+                                                    {{ $category->name }}
+                                                    <span class="products-count">({{ $category->products_count }})</span>
+                                                </a>
+                                                <span class="toggle" data-target="#widget-category-{{ $category->id }}"></span>
+                                            @endif
                                             @if ($category->children->isNotEmpty())
-                                                <div class="collapse {{ $category->children->isNotEmpty() ? 'show' : '' }}"
-                                                    id="widget-category-{{ $category->id }}">
+                                                <div class="collapse" id="widget-category-{{ $category->id }}">
                                                     <ul class="cat-sublist">
                                                         @foreach ($category->children as $subcategory)
                                                             <li>
-                                                                <a
-                                                                    href="{{ route('client.products.Category', $subcategory->id) }}">
+                                                                <a href="{{ route('client.products.Category', $subcategory->id) }}">
                                                                     {{ $subcategory->name }}
-                                                                    <span
-                                                                        class="products-count">({{ $subcategory->products_count }})</span>
+                                                                    <span class="products-count">({{ $subcategory->products_count }})</span>
                                                                 </a>
                                                             </li>
                                                         @endforeach
@@ -303,8 +359,8 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     @endforeach
                                 </ul>
                             </div>
-                            <!-- End .widget-body -->
                         </div>
+                        
 
                         <!-- End .collapse -->
                     </div>
@@ -312,39 +368,56 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
                     <div class="widget border border-bottom">
                         <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-body-3" role="button" aria-expanded="true"
-                                aria-controls="widget-body-3">Giá</a>
+                            <a data-toggle="collapse" href="#widget-body-3" role="button" aria-expanded="true" aria-controls="widget-body-3">
+                                Đặc tính
+                            </a>
                         </h3>
-
+                    
                         <div class="collapse show" id="widget-body-3">
                             <div class="widget-body pb-0">
-                                <form action="{{ route('client.products.filterByPrice') }}" method="GET">
-                                    <div class="price-slider-wrapper">
-                                        <div id="price-slider"></div>
-                                    </div>
-
-                                    <div
-                                        class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
-                                        <div class="filter-price-text">
-                                            Giá:
-                                            <span id="filter-price-range">₫{{ $minPrice ?? 0 }} -
-                                                ₫{{ $maxPrice ?? 100000000 }}</span>
+                                <!-- Thêm lớp cuộn -->
+                                <div class="scrollable-content">
+                                    <form action="{{ route('client.products.filterByProducts') }}" method="GET">
+                                        <div class="price-input-wrapper">
+                                            <!-- Input kết hợp select -->
+                                            <div class="form-group">
+                                                @foreach($attributes as $attribute)
+                                          
+                                                    <!-- Tên thuộc tính -->
+                                                    <label for="attribute-{{ $attribute->id }}">{{ $attribute->attribute_name }}:</label>
+                                                    <!-- Select chứa giá trị của thuộc tính -->
+                                                    <select name="attributes[]" id="attribute-{{ $attribute->id }}" class="form-control mb-2" style="height: 45px">
+                                                        <option value="" selected>Chọn {{ $attribute->attribute_name }}</option>
+                                                        @foreach($attribute->attributeValues as $value)
+                                                            <option value="{{ $value->id }}">{{ $value->attribute_value }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @endforeach
+                                            </div>
+                    
+                                            <!-- Input giá tối thiểu -->
+                                            <div class="form-group">
+                                                <label for="min">Giá tối thiểu (₫):</label>
+                                                <input type="text" class="form-control" name="min" id="min" 
+                                                    value="{{ $minPriceFormatted ?? '' }}" min="0">
+                                            </div>
+                                            <!-- Input giá tối đa -->
+                                            <div class="form-group">
+                                                <label for="max">Giá tối đa (₫):</label>
+                                                <input type="text" class="form-control" name="max" id="max" 
+                                                    value="{{ $maxPriceFormatted ?? '' }}" min="0">
+                                            </div>
                                         </div>
-
-                                        <input type="hidden" name="min" id="min"
-                                            value="{{ $minPrice ?? 0 }}">
-                                        <input type="hidden" name="max" id="max"
-                                            value="{{ $maxPrice ?? 100000000 }}">
-
-                                        <button type="submit" class="btn btn-primary">Lọc</button>
-                                    </div>
-                                </form>
-
+                    
+                                        <div class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
+                                            <button type="submit" class="btn btn-primary">Lọc</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <!-- End .widget-body -->
                         </div>
                         <!-- End .collapse -->
-                    </div>
+                    </div> 
 
                     <!-- End .widget -->
 
@@ -545,8 +618,63 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
         };
 
 
-        // Modal thông báo thêm giỏ hàng
-        document.querySelector("#addToCart .modal-body").innerHTML = `<p style="">Thêm vào giỏ hàng thành công</p>`
+    // Modal thông báo thêm giỏ hàng
+    document.querySelector("#addToCart .modal-body").innerHTML= `<p style="">Thêm vào giỏ hàng thành công</p>`
+
+    $(document).ready(function () {
+        // Khi nhấn vào input, hiển thị danh sách tùy chọn
+        $('#attribute').on('focus click', function () {
+            $('#attribute-select').show();
+        });
+
+        // Khi chọn một tùy chọn trong select
+        $('#attribute-select').on('change', function () {
+            const selectedOption = $(this).find('option:selected').text();
+            const selectedValue = $(this).val();
+
+            // Hiển thị giá trị trong input
+            $('#attribute').val(selectedOption);
+
+            // Gán giá trị vào input ẩn để gửi form
+            $('#selected-attribute').val(selectedValue);
+
+            // Ẩn danh sách tùy chọn
+            $(this).hide();
+        });
+
+        // Ẩn select khi nhấn ra ngoài
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.form-group').length) {
+                $('#attribute-select').hide();
+            }
+        });
+    });
+
+    // Nút ẩn danh mục
+    document.addEventListener('DOMContentLoaded', function () {
+        // Chọn tất cả các toggle button
+        const toggles = document.querySelectorAll('.toggle');
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                // Lấy ID mục tiêu từ data-target
+                const targetId = toggle.getAttribute('data-target');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    // Toggle class 'show' để ẩn/hiện danh mục con
+                    targetElement.classList.toggle('show');
+
+                    // Toggle trạng thái quay của toggle
+                    toggle.classList.toggle('rotate');
+
+                    // Toggle trạng thái aria-expanded
+                    const isExpanded = targetElement.classList.contains('show');
+                    toggle.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                }
+            });
+        });
+    });
     </script>
 @endsection
 </style>

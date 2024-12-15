@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\AdminActivityLogged;
+use App\Http\Requests\PaymentGatewayRequest;
 use App\Models\PaymentGateway;
 use App\Services\PaymentGatewayService;
 use Illuminate\Http\Request;
@@ -18,49 +19,53 @@ class PaymentGatewayController extends Controller
         $this->paymentGatewayService = $paymentGatewayService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $paymentGateway = $this->paymentGatewayService->getAll();
+        $search = $request->input('search');
+        $paymentGateway = PaymentGateway::query();
+
+        if ($search) {
+            $paymentGateway = $paymentGateway->where('name', 'LIKE', "%$search%");
+        }
+
+        $paymentGateway = $paymentGateway->get();
 
         return view('admin.paymentgateways.index', compact('paymentGateway'));
     }
-
     public function add()
     {
-        return view('admin.paymentgateways.create'); 
+        return view('admin.paymentgateways.create');
     }
 
-    public function store(Request $request)
+    public function store(PaymentGatewayRequest $request)
     {
         try {
+            $data = $request->only(['name', 'api_key', 'secret_key', 'gateway_type']);
 
-            $data = $request->only([
-                'name',
-                'api_key',
-                'secret_key',
-                'gateway_type',
-            ]);
+            // Kiểm tra tên có trùng không
+            $existing = PaymentGateway::where('name', $data['name'])->exists();
+            if ($existing) {
+                return redirect()->back()->withErrors(['name' => 'Tên đã tồn tại'])->withInput();
+            }
 
             $paymentGateway = $this->paymentGatewayService->createPaymentGateway($data);
 
+            // Ghi nhật ký hoạt động
             $logDetails = sprintf(
                 'Thêm mới cổng thanh toán: Tên - %s',
                 $paymentGateway->name,
             );
-    
-            // Ghi nhật ký hoạt động
+
             event(new AdminActivityLogged(
-                auth()->user()->id, 
-                'Thêm mới',         
-                $logDetails         
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
             ));
 
-            return redirect()->route('admin.paymentgateways.index')->with([
-                'paymentGateway' => $paymentGateway
-            ]);
+            return redirect()->route('admin.paymentgateways.index')->with('success', 'Thêm mới cổng thanh toán thành công');
         } catch (\Exception $e) {
-            Log::error("Error creating paymentgateways: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Có lỗi xảy ra khi tạo cổng.');
+            Log::error("Error creating payment gateways: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi tạo cổng.')->withInput();
         }
     }
 
@@ -78,27 +83,37 @@ class PaymentGatewayController extends Controller
         return view('admin.paymentgateways.update', compact('paymentGateway'));
     }
 
-    public function update(Request $request, $id)
+    public function update(PaymentGatewayRequest $request, $id)
     {
-        $data = $request->all();
+        try {
+            $data = $request->only(['name', 'api_key', 'secret_key', 'gateway_type']);
 
-        $paymentGateway = $this->paymentGatewayService->updatePaymentGateway($id, $data);
+            // Kiểm tra tên có trùng với tên khác không
+            $existing = PaymentGateway::where('name', $data['name'])
+                ->where('id', '!=', $id) // Loại trừ chính bản ghi đang chỉnh sửa
+                ->exists();
+            if ($existing) {
+                return redirect()->back()->withErrors(['name' => 'Tên đã tồn tại'])->withInput();
+            }
 
-        $logDetails = sprintf(
-            'Sửa cổng thanh toán: Tên - %s',
-            $paymentGateway->name,
-        );
+            $paymentGateway = $this->paymentGatewayService->updatePaymentGateway($id, $data);
 
-        // Ghi nhật ký hoạt động
-        event(new AdminActivityLogged(
-            auth()->user()->id, 
-            'Sửa',         
-            $logDetails         
-        ));
+            $logDetails = sprintf(
+                'Sửa cổng thanh toán: Tên - %s',
+                $paymentGateway->name,
+            );
 
-        return redirect()->route('admin.paymentgateways.index')->with([
-            'paymentGateway' => $paymentGateway
-        ]);
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Sửa',
+                $logDetails
+            ));
+
+            return redirect()->route('admin.paymentgateways.index')->with('success', 'Cập nhật thành công');
+        } catch (\Exception $e) {
+            Log::error("Error updating payment gateways: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi cập nhật.')->withInput();
+        }
     }
 
     public function destroy($id, Request $request)
@@ -110,7 +125,7 @@ class PaymentGatewayController extends Controller
         } else {
             $paymentGateway->delete();
         }
-        
+
         $logDetails = sprintf(
             'Xóa cổng thanh toán: Tên - %s',
             $paymentGateway->name,
@@ -118,23 +133,23 @@ class PaymentGatewayController extends Controller
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
-            auth()->user()->id, 
-            'Xóa',         
-            $logDetails         
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
         ));
 
-        return redirect()->route('admin.paymentgateways.index');
+        return redirect()->route('admin.paymentgateways.index')->with('success', 'Xóa thành công');
     }
 
     public function deleteMultiple(Request $request)
     {
-        $ids = json_decode($request->ids); 
-        $forceDelete = $request->forceDelete === 'true'; 
+        $ids = json_decode($request->ids);
+        $forceDelete = $request->forceDelete === 'true';
 
         foreach ($ids as $id) {
             $paymentGateway = PaymentGateway::find($id);
             if ($forceDelete) {
-                $paymentGateway->forceDelete(); 
+                $paymentGateway->forceDelete();
             } else {
                 $paymentGateway->delete();
             }

@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Dashboard
+@endsection
 @section('libray_css')
     <!-- jsvectormap css -->
     <link href="{{ asset('theme/assets/libs/jsvectormap/css/jsvectormap.min.css') }}" rel="stylesheet" type="text/css" />
@@ -12,33 +16,30 @@
 
             <div class="row">
                 <div class="col">
-
+                    @include('admin.layouts.component.page-header', [
+                        'title' => 'Dashboard',
+                        'breadcrumb' => [
+                            // ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                            ['name' => 'Dashboard', 'url' => '#'],
+                        ],
+                    ])
                     <div class="h-100">
                         <div class="row mb-3 pb-1">
                             <div class="col-12">
                                 <div class="d-flex align-items-lg-center flex-lg-row flex-column">
-                                    <div class="mt-3 mt-lg-0">
-                                        <form action="javascript:void(0);">
-                                            <div class="row g-3 mb-0 align-items-center">
-                                                {{-- <div class="col-sm-auto">
-                                                    <div class="input-group">
-                                                        <input type="text"
-                                                            class="form-control border-0 dash-filter-picker shadow">
-                                                        <div class="input-group-text bg-primary border-primary text-white">
-                                                            <i class="ri-calendar-2-line"></i>
-                                                        </div>
-                                                    </div>
-                                                </div> --}}
-                                                <!--end col-->
-                                                <div class="col-auto">
-                                                    <a href="{{ route('admin.products.addProduct') }}"
-                                                        class="btn btn-soft-success"><i
-                                                            class="ri-add-circle-line align-middle me-1"></i>
-                                                        Thêm mới sản phẩm</a>
-                                                </div>
-                                                <!--end col-->
+                                    <div class="mt-3 mt-lg-0" >
+                                        <form method="GET" action="{{ route('admin.dashboard') }}">
+                                            <div class="form-group">
+                                                <label style=" width: 288px" for="month">Chọn tháng:</label>
+                                                <select  name="month" id="month" class="form-control" onchange="this.form.submit()">
+                                                    @foreach(range(1, 12) as $month)
+                                                        <option value="{{ now()->year }}-{{ str_pad($month, 2, '0', STR_PAD_LEFT) }}"
+                                                            @if ($selectedMonth == now()->year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT)) selected @endif>
+                                                            Tháng {{ $month }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <!--end row-->
                                         </form>
                                     </div>
                                 </div><!-- end card header -->
@@ -145,7 +146,7 @@
                                         <div class="d-flex align-items-end justify-content-between mt-4">
                                             <div>
                                                 <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                                    <span>{{ number_format($totalCustomers) }}</span> Tài khoản
+                                                    <span>{{$totalCustomers }}</span> Tài khoản
                                                 </h4>
                                                 <a href="{{ route('admin.users.index') }}"
                                                     class="text-decoration-underline">Xem tất cả tài khoản</a>

@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -107,13 +110,8 @@
                                                         style="display: none;">
                                                         <i class="ri-delete-bin-5-fill"></i>
                                                     </button>
-                                                    <a class="btn btn-success add-btn me-1"
-                                                        href="{{ route('admin.coupons.create') }}">
-                                                        <i class="ri-add-box-fill"></i> Thêm
-                                                    </a>
                                                     <a href="{{ route('admin.coupons.index') }}"
-                                                        class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>
+                                                        class="btn btn-primary">Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -137,8 +135,6 @@
                                                 <th data-sort="discountValue">Giá Trị Giảm Giá</th>
                                                 <th data-sort="minOrderValue">Giá Trị Đơn Hàng Tối Thiểu</th>
                                                 <th data-sort="is_active">Trạng Thái</th>
-                                                <th data-sort="created_at">Ngày Tạo</th>
-                                                <th data-sort="updated_at">Cập Nhật</th>
                                                 <th data-sort="action">Hành Động</th>
                                             </tr>
                                         </thead>
@@ -168,8 +164,6 @@
                                                             {{ $item->is_active == 1 ? 'active' : 'inactive' }}
                                                         </span>
                                                     </td>
-                                                    <td>{{ $item->created_at->format('d-m-Y H:i:s') }}</td>
-                                                    <td>{{ $item->updated_at->format('d-m-Y H:i:s') }}</td>
                                                     <td>
                                                         <form action="{{ route('admin.coupons.restore', $item->id) }}"
                                                             method="POST" style="display:inline;">

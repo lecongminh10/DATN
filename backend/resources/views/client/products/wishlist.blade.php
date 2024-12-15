@@ -48,7 +48,7 @@
 <main class="main">
     <div class="page-header">
         <div class="container d-flex flex-column align-items-center">
-            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+            {{-- <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <div class="container">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{  route('client') }}">Trang chủ</a></li>
@@ -57,7 +57,7 @@
                         </li>
                     </ol>
                 </div>
-            </nav>
+            </nav> --}}
 
             <h1>Yêu thích</h1>
         </div>

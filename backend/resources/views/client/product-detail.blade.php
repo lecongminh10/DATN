@@ -129,46 +129,7 @@
         }
 
     @endphp
-    <header class="header">
-        <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
-            <div class="container">
-                <nav class="main-nav w-100">
-                    <ul class="menu">
-                        <li>
-                            <a href="{{ route('client') }}">Trang chủ</a>
-                        </li>
-                        <li>
-                            <a href="#">Danh mục</a>
-                            <div class="megamenu megamenu-fixed-width megamenu-3cols">
-                                <div class="row">
-                                    @foreach ($categories as $parent)
-                                        <div class="col-lg-4">
-                                            <a href="#" class="nolink pl-0">{{ $parent->name }}</a>
-                                            @if($parent->children->isNotEmpty())
-                                                <ul class="submenu">
-                                                    @foreach ($parent->children as $child)
-                                                        <li><a href="{{ route('client.products.Category',$child->id) }}">{{ $child->name }}</a></li>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                        </div>
-                                      @endforeach
-                                </div>
-                            </div>
-                            <!-- End .megamenu -->
-                        </li>
-                        <li><a href="{{route('client.products')}}">Sản phẩm </a></li>
-                        <li>
-                            <a href="#">Bài viết </a>
-                        </li>
-                        <li><a href="blog.html">Liên hệ chúng tôi</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <!-- End .container -->
-        </div>
-        <!-- End .header-bottom -->
-    </header>
+    @include('client.layouts.nav')
     <main class="main">
         <div class="container">
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -230,7 +191,7 @@
                                 @foreach ($allImages as $item)
                                     <div class="product-item">
                                         <img class="product-single-image" src="{{ \Storage::url($item) }}"
-                                            data-zoom-image="{{ \Storage::url($item) }}" width="468" height="468"
+                                            data-zoom-image="" width="468" height="468"
                                             alt="product" />
                                     </div>
                                 @endforeach
@@ -311,8 +272,8 @@
                             @if ($data->price_sale == null)
                                 <span class="new-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                             @else
-                                <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                                 <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
+                                <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                             @endif
                         </div>
                         <!-- End .price-box -->

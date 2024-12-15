@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Thẻ
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -25,17 +28,6 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button class="btn btn-soft-danger" id="deleteMultipleBtn" style="display: none;">
-                                            <i class="ri-delete-bin-5-fill"></i>
-                                        </button>
-                                        <a href="{{ route('admin.tags.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i>Thêm thẻ</a>
-                                        <a href="{{ route('admin.tags.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         @if (session('success'))
@@ -59,8 +51,8 @@
                                             <div class="col-sm-3">
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
-                                                    <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm kiếm
+                                                    <button type="submit" form="search-form" class="btn btn-primary">
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm
                                                     </button>
                                                 </div>
                                             </div>
@@ -69,9 +61,15 @@
                                     <div class="col-xl-4">
                                         <div class="row g-4 d-flex justify-content-end">
                                             <div class="col-sm-auto">
-                                                <a href="{{ route('admin.tags.deleted') }}" class="btn btn-soft-danger">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none;">
+                                                    <i class="ri-delete-bin-5-fill  align-bottom"></i>
+                                                </button>
+                                                <a href="{{ route('admin.tags.create') }}" class="btn btn-success me-2 add-btn"
+                                                    id="create-btn"><i class="ri-add-line align-bottom"></i> Thêm mới</a>
+                                                <a href="{{ route('admin.tags.deleted') }}" class="btn btn-warning">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
+
                                             </div>
                                         </div>
                                     </div>
@@ -138,13 +136,13 @@
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                     <div class="results-info ms-3">
                                         <p class="pagination mb-0">
-                                            Showing
+                                            Hiển thị
                                             {{ $tags->firstItem() }}
-                                            to
+                                            đến
                                             {{ $tags->lastItem() }}
-                                            of
+                                            của
                                             {{ $tags->total() }}
-                                            results
+                                            kết quả
                                         </p>
                                     </div>
                                     <div class="pagination-wrap me-3">

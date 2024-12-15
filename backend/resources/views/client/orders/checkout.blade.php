@@ -1,398 +1,8 @@
 @extends('client.layouts.app')
 
 @section('style_css')
-    <style>
-        .checkout-steps {
-            margin-top: -39px;
-        }
-
-        /* Địa chỉ nhận hàng */
-        .name-phone {
-            margin-right: 10px;
-        }
-
-        .name {
-            /* margin-right: -60px; */
-            width: 100px;
-        }
-
-        .address {}
-
-        .small-text {
-            font-size: 10px;
-            width: 75px;
-            text-align: center;
-            padding: 6px 6px;
-            margin: 0 12px;
-            border: 1px solid #2a78b0;
-        }
-
-        .small-link {
-            font-size: 12px;
-            text-align: center;
-            margin-right: 6px;
-            width: 60px;
-        }
-
-        /* Sản phẩm */
-        .product-container {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-
-        .product-image {
-            margin-right: 15px;
-        }
-
-        .img-thumbnail {
-            width: 50px;
-            height: 50px;
-        }
-
-        .product-info {
-            flex-grow: 1;
-        }
-
-        .product-price,
-        .product-quantity,
-        .product-total {
-            text-align: center;
-        }
-
-        .text-end {
-            text-align: center;
-            width: 70px;
-        }
-
-        .product-quantity {
-            width: 70px;
-        }
-
-        .text-muted {
-            color: #6c757d;
-        }
-
-        .fw-bold {
-            font-weight: bold;
-        }
-
-        .namePro {
-            width: 190px;
-        }
-
-        /* Modal */
-        .modal-dialog {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 1rem);
-        }
-
-        #addAddressModal .modal-dialog {
-            max-width: 625px;
-        }
-
-        #editAddressModal .modal-dialog {
-            max-width: 625px;
-        }
-
-
-        .small-title {
-            font-size: 10px;
-            width: 75px;
-            text-align: center;
-            padding: 6px 6px;
-            border: 1px solid #2a78b0;
-        }
-
-        .btn-close-address {
-            font-size: 30px;
-            font-weight: 100;
-            color: #dcdcdc;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-        }
-
-        .btn-close-address:hover {
-            color: #6c757d;
-        }
-
-        .btnAddAddress {
-            border: 1px solid #dcdcdc;
-            color: #6c757d;
-            background-color: transparent;
-            padding: 10px 10px;
-            cursor: pointer;
-            margin-left: 300px;
-        }
-
-        .btnAddAddress:hover {
-            background: #f3f3f3c0;
-        }
-
-        .btnHuy {
-            border: 1px solid #dcdcdc;
-            color: #6c757d;
-            width: 130px;
-            background-color: transparent;
-            padding: 10px 10px;
-            cursor: pointer;
-        }
-
-        .btnHuy:hover {
-            background: #f3f3f3c0;
-        }
-
-        .btnEdit {
-            border: 1px solid #dcdcdc;
-            color: white;
-            width: 130px;
-            background-color: #2a78b0;
-            padding: 10px 10px;
-            cursor: pointer;
-        }
-
-        .btnEdit:hover {
-            background-color: #4689b9;
-        }
-
-        .btnAdd {
-            border: 1px solid #dcdcdc;
-            color: white;
-            width: 130px;
-            background-color: #2a78b0;
-            padding: 10px 10px;
-            cursor: pointer;
-        }
-
-        .btnAdd:hover {
-            background-color: #4689b9;
-        }
-
-        .btnBack {
-            border: 1px solid #dcdcdc;
-            color: #6c757d;
-            width: 130px;
-            background-color: transparent;
-            padding: 10px 10px;
-            cursor: pointer;
-        }
-
-        .btnBack:hover {
-            background: #f3f3f3c0;
-        }
-
-        .btnText {
-            border: 1px solid #dcdcdc;
-            color: #6c757d;
-            width: 100px;
-            background-color: transparent;
-            padding: 5px 5px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        .btnText:focus {
-            border: 1px solid #2a78b0;
-            color: #2a78b0;
-        }
-
-        .form-check-label {
-            margin-left: 10px;
-        }
-
-        .form-control {
-            max-height: 30px !important;
-        }
-
-        select.form-control {
-            max-height: 30px !important;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
-            /* Biểu tượng mũi tên */
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 26px;
-            padding-right: 30px;
-        }
-
-        .add-address-button {
-            font-size: 0.85rem;
-            /* Smaller font size */
-            padding: 6px 12px;
-            /* Reduced padding for a compact look */
-            font-weight: 500;
-            /* Medium font weight for readability */
-            border-radius: 5px;
-            /* Slightly rounded corners */
-            background-color: #007bff;
-            /* Primary color */
-            border: none;
-            /* Remove default border */
-            color: white;
-            /* White text */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            /* Subtle shadow for depth */
-            transition: background-color 0.3s, transform 0.2s;
-            /* Smooth transitions */
-        }
-
-        .add-address-button:hover {
-            background-color: #0056b3;
-            /* Darker blue on hover */
-            transform: translateY(-2px);
-            /* Lift effect on hover */
-        }
-
-        .add-address-button:active {
-            background-color: #004080;
-            /* Darker shade on click */
-            transform: translateY(0);
-            /* Remove lift effect */
-        }
-
-        /* Address Item */
-        .address-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            transition: background-color 0.3s;
-        }
-
-        .address-checkbox {
-            margin-right: 12px;
-        }
-
-        /* Address Label with Flex Alignment */
-        .address-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .address-info {
-            max-width: 80%;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .address-text {
-            white-space: normal;
-            word-wrap: break-word;
-        }
-
-        .small-title {
-            font-size: 0.85rem;
-            color: #2a78b0;
-            font-weight: bold;
-            margin-left: 8px;
-        }
-
-        .edit-address-link {
-            color: #007bff;
-            font-weight: 500;
-            text-decoration: none;
-            white-space: nowrap;
-            margin-left: 8px;
-        }
-
-        .no-address {
-            color: #666;
-            font-size: 0.9rem;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-        }
-
-        .modal-backdrop.show {
-            opacity: 0.5;
-            /* Điều chỉnh độ mờ lớp phủ tối */
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .namePro {
-            margin: 7px;
-            /* Set margin for the item */
-            font-size: 15px;
-        }
-
-        .namePro .product-details {
-            padding-left: 10px;
-        }
-
-        .namePro .attribute-item {
-            font-size: 12px;
-            margin-bottom: 5px !important;
-        }
-
-        .namePro .text-muted {
-            font-size: 12px;
-        }
-
-        .namePro .attribute-item strong {
-            color: rgba(0, 0, 0, 0.6);
-            font-weight: 300;
-            font-size: 12px;
-        }
-
-        .checkout-container textarea.form-control {
-            min-height: 70px;
-        }
-
-        #discount-info {
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #d9e2eb59;
-            border: 1px solid #bde1f5
-        }
-
-        /* Cải thiện giao diện của phần thông tin giảm giá */
-        .alert-info {
-            box-shadow: inset 0px 0px 1px 0px #0088cc;
-            background-color: #ffffff;
-            border-color: #e0ebf0;
-            color: #3d4143;
-            padding: 5px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            font-size: 14px;
-            padding: 5px;
-        }
-
-        .alert-info p {
-            margin: 0;
-            line-height: 1.6;
-            padding: 5px;
-        }
-
-        .alert-info p strong {
-            font-weight: bold;
-            color: #3d4349;
-        }
-
-        .alert-info p span {
-            font-size: 5px;
-            color: #2980b9;
-        }
-
-        .alert-info p {
-            margin-bottom: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{asset('css/client/checkout.css')}}">
 @endsection
-
-
 @section('content')
 
     @php
@@ -405,20 +15,20 @@
         <div class="container checkout-container">
             <ul class="checkout-progress-bar d-flex justify-content-center flex-wrap">
                 <li>
-                    <a href="{{ route('shopping-cart') }}">Mua sắm</a>
+                    <a href="{{ route('shopping-cart') }}">Giỏ hàng</a>
                 </li>
                 <li class="active">
                     <a href="{{ route('checkout') }}">Thanh toán đơn hàng</a>
                 </li>
-                {{-- <li class="disabled">
-                    <a href="#"></a>
-                </li> --}}
+                <li class="disabled">
+                    <a href="#">Đơn hàng hoàn tất</a>
+                </li>
             </ul>
 
             <div class="checkout-discount">
                 <h4>Mã giảm giá?
                     <button data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
-                        aria-controls="collapseTwo" class="btn btn-link btn-toggle">ENTER YOUR CODE</button>
+                        aria-controls="collapseTwo" class="btn btn-link btn-toggle">Nhập ở đây</button>
                 </h4>
                 <div id="collapseTwo" class="collapse">
                     <div class="feature-box">
@@ -431,7 +41,7 @@
                                             placeholder="Nhập mã" required name="coupon_code" id="coupon_code" />
                                         <div class="input-group-append">
                                             <button class="btn btn-sm mt-0" type="button" onclick="applyCoupon()"
-                                                data-toggle="modal" data-target="#applyToCoupon" id="messageAlert">Nhập
+                                                data-toggle="modal" data-target="#messageapplyCoupone" id="messageAlert">Nhập
                                                 mã giảm giá</button>
                                         </div>
                                     </div>
@@ -485,13 +95,17 @@
                                                 if (Auth::check()) {
                                                     $displayAddress = Auth::user()->addresses;
                                                 }
+                                                $hasAddress = Auth::check() && !empty(Auth::user()->addresses) && count($displayAddress)>0;
+                                                $checkdisable= $hasAddress ? true : false
                                             @endphp
                                             @if (count($displayAddress))
                                                 @foreach ($displayAddress as $address)
                                                     @if ($address->active == true)
-                                                        <span id="displayAddress"> {{ $address->specific_address }},
-                                                            {{ $address->ward }}, {{ $address->district }},
-                                                            {{ $address->city }}</span>
+                                                         <div >
+                                                            <span id="displayAddress"> {{ $address->specific_address }},
+                                                                {{ $address->ward }}, {{ $address->district }},
+                                                                {{ $address->city }}</span>
+                                                         </div>
                                                         <br>
                                                         <span class="small-text ms-2 my-2" style="color: #2a78b0">Mặc
                                                             Định</span>
@@ -501,11 +115,6 @@
                                                             value="{{ $address->id }}">
                                                     @endif
                                                 @endforeach
-                                            @else
-                                                <span>Chưa có địa chỉ</span>
-                                                <button type="button" class="btnAddAddress my-3" id="btnAddAddress"
-                                                    data-bs-toggle="modal" data-bs-target="#addAddressModal">+ Thêm Địa
-                                                    Chỉ Mới</button>
                                             @endif
                                         </div>
                                     </div>
@@ -562,7 +171,7 @@
                                                 </div>
                                                 <div class="text-end">
                                                     <span class="text-muted">Đơn giá</span>
-                                                    <div class="fw-bold">
+                                                    <div class="fw-bold" style="width: 100px">
                                                         @if ($item->productVariant)
                                                             @if (!empty($item->productVariant->price_modifier))
                                                                 {{ number_format($item->productVariant->price_modifier, 0, ',', '.') }}
@@ -814,7 +423,7 @@
                                 </div> --}}
 
                             <input type="hidden" name="price" id="totalAmountInput" value="{{ $subTotal }}">
-                            <button type="submit" class="btn btn-dark btn-place-order" form="checkout-form">
+                            <button type="submit" class="btn btn-dark btn-place-order" form="checkout-form" {{ $checkdisable ? '' : 'disabled' }}>
                                 Đặt hàng
                             </button>
                         </div>
@@ -830,26 +439,9 @@
 
     </main>
     {{-- Modal thông báo lỗi khi áp dụng mã giảm giá --}}
-
+    @include('client.orders.modal.message')
     <!-- Modal -->
-    <div class="modal fade" id="applyToCoupon" tabindex="-1" role="dialog" aria-labelledby="applyToCouponLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="max-width: 550px">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="applyToCouponLabel">Thông báo </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 @endsection
 
 
@@ -863,8 +455,14 @@
 
 @section('scripte_logic')
     <script>
+        let check = {{ $hasAddress ? 'false' : 'true' }};
+        console.log(check);
+        if (check === true) {
+            let modal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+            modal.show();
+        }
         $(document).ready(function() {
-            $('button[data-dismiss="modal"]').on('click', function() {
+            $('#applyToCoupon button[data-dismiss="modal"]').on('click', function() {
                 $('#applyToCoupon').modal('hide');  // Đóng modal
                 location.reload();  // Tải lại trang
             });
@@ -957,7 +555,7 @@
             const discountInfo = document.getElementById("discount-info");
             const couponInfo = document.getElementById("couponInfo");
             if (!couponCode) {
-                document.querySelector("#applyToCoupon .modal-body").innerHTML =
+                document.querySelector("#messageapplyCoupone .modal-body").innerHTML =
                     `<p style="color: red;">Vui lòng nhập mã giảm giá</p>`
                 return;
             }
@@ -966,7 +564,7 @@
 
             // Kiểm tra xem mã giảm giá đã được áp dụng hay chưa
             if (appliedCoupons.includes(couponCode)) {
-                document.querySelector("#applyToCoupon .modal-body").innerHTML =
+                document.querySelector("#messageapplyCoupone .modal-body").innerHTML =
                     `<p style="color: red;">Mã giảm giá này đã được áp dụng</p>`
                 return;
             }
@@ -1014,12 +612,12 @@
                             `;
                         couponInfo.insertAdjacentHTML('beforebegin', newRow);
 
-                        document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="">${data.message}</p>`
+                        document.querySelector("#messageapplyCoupone .modal-body").innerHTML= `<p style="">${data.message}</p>`
                         // Tính tổng giảm giá từ tất cả các mã đã áp dụng
                         const totalPriceDisplay = document.getElementById("totalPriceDisplay");
                         const currentTotal = parseFloat(totalPriceDisplay.innerText.replace(/[^\d.-]/g, ''));
                         const discountAmount = parseFloat(data.coupon.discount_amount);                    
-                        const newTotal = currentTotal*1000 - discountAmount;
+                        const newTotal = currentTotal*1000000 - discountAmount;
                         console.log('currentTotal',currentTotal);
                         console.log('discountAmount',discountAmount);
                         console.log('newTotal',newTotal);                      
@@ -1032,13 +630,13 @@
                     } else {
                         console.log(data.message);
                         
-                         document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">${data.message}</p>`
+                         document.querySelector("#messageapplyCoupone .modal-body").innerHTML= `<p style="color: red;">${data.message}</p>`
                        //  updateShipping(); // Cập nhật lại tổng với phí vận chuyển
                     }
                 })
                 .catch(error => {
                      document.getElementById("coupon_code").value=""
-                     document.querySelector("#applyToCoupon .modal-body").innerHTML= `<p style="color: red;">Đã có lỗi khi thêm mã giảm giá</p>`
+                     document.querySelector("#messageapplyCoupone .modal-body").innerHTML= `<p style="color: red;">Đã có lỗi khi thêm mã giảm giá</p>`
                 });
         }
 

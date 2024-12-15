@@ -16,7 +16,7 @@ use App\Models\UserReview;
 use Illuminate\Http\Request;
 use App\Models\OrderLocation;
 use App\Services\UserService;
-use App\Services\ProductService;
+use App\Models\ProductVariant;
 use App\Services\AddressServices;
 use App\Events\AdminActivityLogged;
 use Illuminate\Support\Facades\Log;
@@ -32,10 +32,9 @@ class UserController extends Controller
     protected $userRepository;
     protected $productService;
 
-    public function __construct(UserService $userService, AddressServices $addressServices, ProductService $productService,)
+    public function __construct(UserService $userService, AddressServices $addressServices)
     {
         $this->userService = $userService;
-        $this->productService = $productService;
     }
 
 
@@ -199,8 +198,20 @@ class UserController extends Controller
             $logDetails
         ));
 
-        // Quay lại trang danh sách người dùng
-        return redirect()->route('admin.users.index')->with('success', 'Người dùng được xóa thành công');
+        //nhật ký
+        $logDetails = sprintf(
+            'Xóa người dùng: Tên - %s',
+            $user->username,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+
+        return redirect()->route('admin.users.index')->with('success', 'Xóa tài khoản thành công');
     }
 
     public function deleteMultiple(Request $request)
@@ -378,7 +389,7 @@ class UserController extends Controller
         $locations = OrderLocation::where('order_id', $id)->get();
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
             ->select('payments.*', 'payment_gateways.name as gateway_name')
-            ->where('order_id', $id)
+            ->where('payments.order_id',$orders->id)
             ->get();
 
         $userId = auth()->id();
@@ -556,20 +567,31 @@ class UserController extends Controller
 
     public function cancelOrder($orderId)
     {
-        $order = Order::findOrFail($orderId);
-
-        // Kiểm tra xem trạng thái có phải là "Chờ xác nhận" không
+        $order = Order::with('items')->findOrFail($orderId);
         if ($order->status === 'Chờ xác nhận') {
-            // Cập nhật trạng thái của đơn hàng thành "Đã hủy"
             $order->status = 'Đã hủy';
             $order->save();
-
-            // Trả về thông báo thành công hoặc chuyển hướng về trang chi tiết đơn hàng
+            if ($order && $order->items) {
+                foreach ($order->items as $item) {
+                    $this->restoreStock($item->product_id, $item->variant_id, $item->quantity);
+                }
+            }
             return redirect()->back()->with('success', 'Đơn hàng đã được hủy.');
         }
 
-        // Nếu không phải "Chờ xác nhận", trả về thông báo lỗi
         return redirect()->back()->with('error', 'Không thể hủy đơn hàng này.');
+    }
+    private function restoreStock($productId, $productVariantId, $quantity)
+    {
+        $product = Product::find($productId);
+        if (!empty($productVariantId)) {
+            $productVariant = ProductVariant::find($productVariantId);
+            $newStockVariant = $productVariant->stock + $quantity;
+            $productVariant->update(['stock' => $newStockVariant]);
+        }
+        $newStockProduct = $product->stock + $quantity;
+        $newBuyCount = $product->buycount - $quantity;
+        $product->update(['stock' => $newStockProduct , 'buycount'=>$newBuyCount]);
     }
 
     public function submitReview(Request $request, $productId)

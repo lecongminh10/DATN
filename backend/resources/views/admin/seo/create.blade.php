@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Thêm mới seo
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -22,10 +24,6 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button type="button" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -117,12 +115,10 @@
 
 
                                             <!-- Submit Button -->
-                                            <div class="text-end me-3 mb-3">
-                                                <button type="submit" class="btn btn-success w-sm">
-                                                    <i class="ri-check-double-line me-2"></i>Gửi
+                                            <div class="text-start mt-2 mb-3">
+                                                <button type="submit" class="btn btn-success w-sm me-2"> Thêm mới
                                                 </button>
-                                                <a href="{{ route('admin.seo.index') }}" class="btn btn-secondary w-sm">
-                                                    <i class="ri-arrow-left-line"></i> Quay lại
+                                                <a href="{{ route('admin.seo.index') }}" class="btn btn-primary w-sm"> Quay lại
                                                 </a>
                                             </div>
                                         </form>
