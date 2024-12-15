@@ -75,7 +75,7 @@ class ProductRepository extends BaseRepository
             ->select('products.*', 'categories.name as category_name')
             ->join('categories', 'categories.id', '=', 'products.category_id')
             ->latest('id');
-    
+
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('products.name', 'LIKE', '%' . $search . '%')
@@ -83,81 +83,55 @@ class ProductRepository extends BaseRepository
                     ->orWhere('products.short_description', 'LIKE', '%' . $search . '%')
                     ->orWhere('products.content', 'LIKE', '%' . $search . '%');
             });
-    
+
             // Lọc theo tên tag
             $query->orWhereHas('tags', function ($q) use ($search) {
                 $q->where('tags.name', 'LIKE', '%' . $search . '%');
             });
-    
+
             // Lọc theo tên danh mục (categories)
             $query->orWhere('categories.name', 'LIKE', '%' . $search . '%');
-    
+
             // Thêm điều kiện lọc theo các thuộc tính khác nếu cần
             // $query->orWhereHas('variants', function ($q) use ($search) {
             //     $q->where('color', 'LIKE', '%' . $search . '%')
             //         ->orWhere('ram', 'LIKE', '%' . $search . '%');
             // });
         }
-    
+
         // Sử dụng paginate để phân trang
         return $query->paginate($perPage);
     }
-    
 
+    public function filterByProducts($data)
+    {
 
+        $minPrice = $data['minPrice'] ?? null;
+        $maxPrice = $data['maxPrice'] ?? null;
+        $attributeValues = $data['attributeValues'] ?? [];
 
-    // public function getById($id)
-    // {
-    //     return $this->model->findOrFail($id);
-    // }
-    // public function paginate($perPage = 10)
-    // {
-    //     return $this->model->paginate($perPage);
-    // }
+        $query = Product::query()->select('products.*')->distinct();
 
+        if ($minPrice !== null && $maxPrice !== null) {
+            $query->whereBetween('price_sale', [$minPrice, $maxPrice]);
+        } else if ($minPrice == null && $maxPrice !== null) {
+            $query->where('price_sale', "<", $maxPrice);
+        } else if ($minPrice != null && $maxPrice == null) {
+            $query->where('price_sale', ">", $minPrice);
+        }
 
-    // public function delete(int $id)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         if (isset($id)) {
-    //             $result = $this->model->findOrFail($id);
-    //             if ($result) {
-    //                 $result->delete();
-    //             }
-    //         }
-    //         DB::commit();
+        if (!empty($attributeValues)) {
+            $query->whereHas('variants', function ($variantQuery) use ($attributeValues) {
+                $variantQuery->whereHas('attributeValues', function ($attributeQuery) use ($attributeValues) {
+                    $attributeQuery->whereIn('attributes_values.id', $attributeValues)
+                        ->whereNull('attributes_values.deleted_at');
+                })->whereNull('product_variants.deleted_at');
+            });
+        }
 
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         throw $e;
-    //     }
-    // }
+        $query->whereNull('deleted_at');
 
-    // public function saveOrUpdateItem(array $data, int $id = null)
-    // {
+        return $query->get();
+    }
 
-    //     try {
-    //         DB::beginTransaction();
-    //         if (isset($id)) {
-    //             $result = $this->model->findOrFail($id);
-    //             if (!$result) {
-    //                 return null;
-    //             }
-    //             $result->update($data);
-    //         } else {
-    //             $result = $this->model->create($data);
-    //         }
-
-    //         DB::commit();
-    //         if ($result) {
-    //             return $result;
-    //         } else {
-    //             throw new Exception("Cant save or update information");
-    //         }
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         throw $e;
-    //     }
-    // }
 }

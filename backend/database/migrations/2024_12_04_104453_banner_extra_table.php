@@ -19,12 +19,12 @@ return new class extends Migration
             $table->string('image_1')->nullable();
             $table->string('image_2')->nullable();
             $table->string('image_3')->nullable();
-            $table->decimal('price_1', 10, 2)->nullable();
-            $table->decimal('price_2', 10, 2)->nullable();
-            $table->decimal('price_3', 10, 2)->nullable();
-            $table->string('title_button_1')->nullable();
-            $table->string('title_button_2')->nullable();
-            $table->string('title_button_3')->nullable();
+            // $table->decimal('price_1', 10, 2)->nullable();
+            // $table->decimal('price_2', 10, 2)->nullable();
+            // $table->decimal('price_3', 10, 2)->nullable();
+            // $table->string('title_button_1')->nullable();
+            // $table->string('title_button_2')->nullable();
+            // $table->string('title_button_3')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

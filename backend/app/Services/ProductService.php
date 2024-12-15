@@ -127,4 +127,9 @@ class ProductService extends BaseService
             ->limit(10)
             ->get();
     }
+
+    public function filterbyProducts($data)
+    {
+        return $this->productService->filterbyProducts($data);
+    }
 }

@@ -111,6 +111,7 @@ class ProductController extends Controller
         $wishlistCount = WishList::where('user_id',$userId)->count();
         $products = $this->productService->searchProducts($query, $categoryId);
         $categories = $this->getCategoriesForMenu();
+        $attributes = Attribute::with('attributeValues')->get();
 
         return view('client.products.search-results',
         [
@@ -119,6 +120,7 @@ class ProductController extends Controller
             'products'       => $products,
             'categories'     =>$categories,
             'wishlistCount'   =>$wishlistCount,
+            'attributes'     =>$attributes,
         ]);
     }
     public function getCategoriesForMenu()

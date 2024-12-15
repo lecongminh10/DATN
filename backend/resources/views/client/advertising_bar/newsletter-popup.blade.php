@@ -1,4 +1,4 @@
-{{-- @php
+@php
     $popuphome = App\Models\Popuphome::first();
 @endphp
 
@@ -16,4 +16,4 @@
     </div>
 
     <button title="Close (Esc)" type="button" class="mfp-close">×</button>
-</div> --}}
+</div>

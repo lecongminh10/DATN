@@ -11,8 +11,10 @@ use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Services\ProductService;
 use App\Services\CategoryService;
+use Illuminate\Queue\Failed\NullFailedJobProvider;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Attribute;
 use App\Models\BannerMain;
 use App\Models\WishList;
 use App\Services\AttributeValueService;
@@ -50,11 +52,11 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $userId = auth()->id();
-        $carts  = collect();
-        if($userId) {
+        $carts = collect();
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
-        $wishlistCount = WishList::where('user_id',$userId)->count();
+        $wishlistCount = WishList::where('user_id', $userId)->count();
         $cartCount = $carts->sum('quantity');
         $products = $this->productService->getFeaturedProducts();
         $topRatedProducts = $this->productService->topRatedProducts();
@@ -63,38 +65,40 @@ class HomeController extends Controller
         $ratingProducts = $this->productService->ratingProducts();
         $categories = $this->getCategoriesForMenu();
         $bannerMain = BannerMain::all();
-        return view('client.home', compact('categories','products','topRatedProducts', 'bestSellingProducts', 'latestProducts', 'ratingProducts', 'carts', 'cartCount', 'bannerMain','wishlistCount'));
+        return view('client.home', compact('categories', 'products', 'topRatedProducts', 'bestSellingProducts', 'latestProducts', 'ratingProducts', 'carts', 'cartCount', 'bannerMain', 'wishlistCount'));
     }
 
-    public function showProducts(Request  $request)
+    public function showProducts(Request $request)
     {
         $userId = auth()->id();
         $count = $request->input('count', 12);
-        $carts  = collect();
-        if($userId) {
+        $carts = collect();
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $cartCount = $carts->sum('quantity');
-        $wishlistCount = WishList::where('user_id',$userId)->count();
-        $minprice = $request ->input('min');
+        $wishlistCount = WishList::where('user_id', $userId)->count();
+        $minprice = $request->input('min');
         $maxprice = $request->input('max');
-        $products = $this->productService->getAllProducts($count , $minprice , $maxprice);
+        $products = $this->productService->getAllProducts($count, $minprice, $maxprice);
         $sale = $this->productService->getSaleProducts();
         $categories = $this->categoryService->getAll();
-        return view('client.products.list', compact('products', 'sale', 'categories', 'carts', 'cartCount','wishlistCount'));
+        $attributes = Attribute::with('attributeValues')->get();
+        return view('client.products.list', compact('products', 'sale', 'categories', 'carts', 'cartCount', 'wishlistCount', 'attributes'));
     }
     // sắp xếp sản phẩm
     public function sortProducts(Request $request)
     {
         $categories = $this->categoryService->getAll();
         $orderby = $request->input('orderby', 'price-asc');
-        $carts  = collect();
+        $carts = collect();
         $userId = auth()->id();
-        if($userId) {
+        if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
         $cartCount = $carts->sum('quantity');
-        $wishlistCount = WishList::where('user_id',$userId)->count();
+        $wishlistCount = WishList::where('user_id', $userId)->count();
+        $attributes = Attribute::with('attributeValues')->get();
         switch ($orderby) {
             case 'price-asc':
                 $products = Product::orderBy('price_regular', 'asc')->paginate(12); // Giá thấp đến cao
@@ -119,7 +123,7 @@ class HomeController extends Controller
                 break;
         }
 
-        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount','wishlistCount'));
+        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount','wishlistCount', 'attributes'));
     }
     // lọc sản phẩm theo danh mục
     public function getByCategory($id)
@@ -134,12 +138,16 @@ class HomeController extends Controller
         $wishlistCount = WishList::where('user_id',$userId)->count();
         $category = Category::with('products')->where('id', $id)->firstOrFail();
         $products = $category->products()->paginate(12);
+        $attributes = Attribute::with('attributeValues')->get();
 
-        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount','wishlistCount'));
+        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount','wishlistCount', 'attributes'));
     }
-    // lọc sản phẩm theo giá
-    public function filterByPrice(Request $request)
+
+    public function filterByProducts(Request $request)
     {
+        // Lấy danh sách thuộc tính và giá trị của chúng
+        $attributes = Attribute::with('attributeValues')->get();
+
         $categories = $this->categoryService->getAll();
         $carts  = collect();
         $userId = auth()->id();
@@ -148,13 +156,43 @@ class HomeController extends Controller
         }
         $cartCount = $carts->sum('quantity');
         $wishlistCount = WishList::where('user_id',$userId)->count();
-        $minPrice = $request->input('min', 0);
-        $maxPrice = $request->input('max', 100000000);
 
-        $products = Product::whereBetween('price_sale', [$minPrice, $maxPrice])
-            ->paginate(10);
 
-        return view('client.products.list', compact('products', 'categories', 'minPrice', 'maxPrice', 'carts', 'cartCount','wishlistCount'));
+        // Lấy giá trị min và max từ request
+        $minPrice = $request->input('min') != null ? floatval($request->input('min')) : null;
+        $maxPrice = $request->input('max') != null ? floatval($request->input('max')) : null;
+
+
+        //dd($maxPrice);
+        $data = [
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'attributeValues' => collect($request->input('attributes'))->flatten()->filter()->toArray(), // Lấy danh sách ID của attribute_values
+
+        ];
+
+        // Lọc sản phẩm qua service
+        $products = $this->productService->filterbyProducts($data);
+
+        // Format giá
+        $minPriceFormatted = $request->input('min') != null ?
+            number_format($minPrice, 0, ',', '.') :
+            null;
+        $maxPriceFormatted = $request->input('max') != null ?
+            number_format($maxPrice, 0, ',', '.') :
+            null;
+
+        // Trả về view
+        return view('client.products.list', compact(
+            'products',
+            'categories',
+            'attributes',
+            'minPriceFormatted',
+            'maxPriceFormatted',
+            'carts',
+            'cartCount',
+            'wishlistCount'
+        ));
     }
 
     public function getCategoriesForMenu()
@@ -166,6 +204,7 @@ class HomeController extends Controller
             // Lấy danh mục con bằng cách sử dụng parent_id của danh mục cha
             $parent->children = $this->categoryService->getChildCategories($parent->id);
         }
+        // $attributes = Attribute::with('attributeValues')->get();
         return $parentCategories; // Trả về danh mục cha với danh mục con
     }
 }
