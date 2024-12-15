@@ -52,7 +52,7 @@ class BannerController extends Controller
         $bannerMain->save(); // Dùng save() để lưu bản ghi mới
 
         // Trả về thông báo thành công
-        return redirect()->back()->with('success', 'Thêm banner chính thành công.');
+        return redirect()->route('admin.banner.list_banner_main')->with('success', 'Thêm banner chính thành công.');
     }
 
     public function banner_main_edit($id)
@@ -99,6 +99,17 @@ class BannerController extends Controller
         // Trả về thông báo thành công
         return redirect()->route('admin.banner.list_banner_main')->with('success', 'Banner chính cập nhật thành công.');
     }
+
+        // public function delete_banner_main($id)
+        // {
+        //     $banner = BannerMain::findOrFail($id); // Tìm banner theo ID
+
+        //     // Xóa banner
+        //     $banner->delete();
+
+        //     // Trả về với thông báo thành công
+        //     return redirect()->route('admin.banner.list_banner_main')->with(['success' => true, 'message' => 'Banner đã được xóa thành công!']);
+        // }
 
     // Banner Extra
     public function banner_extra_edit()

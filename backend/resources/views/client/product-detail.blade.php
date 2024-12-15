@@ -5,12 +5,11 @@
 @section('style_css')
     <style>
         /* .icon-wishlist-2 {
-                                                                                                                                                              color: #ccc;
-                                                                                                                                                       }
+         color: #ccc;
+         }
 
-                                                                                                                                                       .icon-wishlist-filled {
-                                                                                                                                                               color: red;
-                                                                                                                                                      } */
+          .icon-wishlist-filled {
+         } */
 
         /* .wishlist-modal {
                                                                                                                                                                 position: fixed;
@@ -200,6 +199,7 @@
         </div>
         <!-- End .header-bottom -->
     </header>
+    @include('client.layouts.nav')
     <main class="main">
         <div class="container">
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -260,7 +260,7 @@
                                 @foreach ($allImages as $item)
                                     <div class="product-item">
                                         <img class="product-single-image" src="{{ \Storage::url($item) }}"
-                                            data-zoom-image="{{ \Storage::url($item) }}" width="468" height="468"
+                                            data-zoom-image="" width="468" height="468"
                                             alt="product" />
                                     </div>
                                 @endforeach

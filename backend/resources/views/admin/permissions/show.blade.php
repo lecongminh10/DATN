@@ -34,12 +34,12 @@
                                         <div class="mb-4">
                                             <label for="created_at" class="form-label fw-bold">Ngày tạo :</label>
                                             <p class="form-control-plaintext">
-                                                {{ $permission->created_at->format('d/m/Y H:i:s') }}</p>
+                                                {{ $permission->created_at->format('H:i d-m-Y') }}</p>
                                         </div>
                                         <div class="mb-4">
                                             <label for="updated_at" class="form-label fw-bold">Ngày cập nhật :</label>
                                             <p class="form-control-plaintext">
-                                                {{ $permission->updated_at->format('d/m/Y H:i:s') }}</p>
+                                                {{ $permission->updated_at->format('H:i d-m-Y') }}</p>
                                         </div>
 
                                         <div class="mb-4">

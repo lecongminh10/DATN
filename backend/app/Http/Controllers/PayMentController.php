@@ -192,6 +192,7 @@ class PayMentController extends Controller
                     'discount' => $value['discount'] ?? null,
                 ];
                  OrderItem::create($dataItem);
+                 $this->updateCountProducts($value['product_id'],$value['product_variant_id'],$value['quantity']);
                 if(!$check){
                     $idCard = $value['id_cart'];
                     $this->removeFromCart($idCard);
@@ -279,7 +280,6 @@ class PayMentController extends Controller
 
     public function vnpayReturn(Request $request)
     {
-        Log::info('Returning to application. Current session data: ', session()->all());
         Log::info('request' , $request->all());
         // Retrieve the response from VNPAY
         $vnp_SecureHash = $request->input('vnp_SecureHash');
@@ -345,6 +345,11 @@ class PayMentController extends Controller
                 Order::where('code', $order->code)->update(['status' =>Order::DA_HUY]);
                 shippingMethods::where('order_id',$order->id)->update(['transaction_id'=> $payment->transaction_id,'status'=>shippingMethods::FAILED]);
                 $this->placeOrder($order ,2);
+                if ($order && $order->items) {
+                    foreach ($order->items as $item) {
+                        $this->restoreStock($item->product_id, $item->product_variant_id, $item->quantity);
+                    }
+                }
             }
         }
         $order = Order::with(['items.product', 'items.productVariant.attributeValues.attribute', 'payment.paymentGateway','shippingMethod'])
@@ -491,6 +496,10 @@ class PayMentController extends Controller
                                 'order_id'        => $id,
                                 'discount_value'  => $value['discount_amount']
                             ]);
+                            if ($coupone->usage_limit > 0) {
+                                $coupone->usage_limit--;
+                                $coupone->save();
+                            }
                         } else {
                             // Log hoặc xử lý khi không tìm thấy coupon
                             Log::warning("Coupon not found for code: $value");
@@ -508,7 +517,7 @@ class PayMentController extends Controller
         
             if ($order) {
                 if ($status == 1) {
-                    $message = "Đơn hàng đã được đặt! Mã: $order->code";
+                    $message = "Đơn hàng $order->code | đã đặt với số tiền " . number_format($order->total_price, 0, ',', '.') . "₫";
                 } elseif ($status == 2) {
                     $message = "Đơn hàng đã hủy! Mã: $order->code";
                 } elseif ($status == 3) {
@@ -517,5 +526,34 @@ class PayMentController extends Controller
         
                 broadcast(new OrderPlaced($order, $user, $message));
             }
-        }        
+        }      
+        private function updateCountProducts($productId , $products_variant_id, $quantity)
+        {
+            $product = Product::find($productId);
+            if (!empty($products_variant_id)) {
+                $productVariant = ProductVariant::find($products_variant_id);
+
+                $newStockVariant = $productVariant->stock - $quantity;
+  
+                $productVariant->update(['stock' => $newStockVariant]);
+            }
+            $newStockProduct = $product->stock - $quantity;
+            $newBuyCount = $product->buycount + $quantity;
+            $product->update(['stock' => $newStockProduct ,'buycount' =>$newBuyCount]);
+        } 
+        private function restoreStock($productId, $productVariantId, $quantity)
+        {
+            $product = Product::find($productId);
+            if (!empty($productVariantId)) {
+                $productVariant = ProductVariant::find($productVariantId);
+                // Cộng lại số lượng tồn kho của biến thể
+                $newStockVariant = $productVariant->stock + $quantity;
+                $productVariant->update(['stock' => $newStockVariant]);
+            }
+            // Cộng lại số lượng tồn kho của sản phẩm
+            $newStockProduct = $product->stock + $quantity;
+            $newBuyCount = $product->buycount - $quantity;
+            $product->update(['stock' => $newStockProduct , 'buycount' =>$newBuyCount]);
+        }
+
 }

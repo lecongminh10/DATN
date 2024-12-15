@@ -53,7 +53,7 @@
                                 <table class="table table-bordered ">
                                     <thead>
                                         <tr>
-                                            <th scope="col">ID</th>
+                                            <th scope="col">STT</th>
                                             <th scope="col">Người dùng</th>
                                             <th scope="col">Sản phẩm</th>
                                             {{-- <th scope="col">Loại</th> --}}
@@ -66,9 +66,9 @@
                                     </thead>
                                     <tbody>
 
-                                        @foreach ($comment as $item)
+                                        @foreach ($comment as $key => $item)
                                             <tr>
-                                                <td>{{ $item->id }}</td>
+                                                <td class="text-center">{{ $key+1 }}</td>
                                                 <td>{{ $item->user->username }}</td>
                                                 <td>{{ $item->product->name }}</td>
                                                 {{-- <td>
