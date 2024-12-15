@@ -7,13 +7,14 @@
                     $infoBox = App\Models\InfoBox::first(); // Lấy dữ liệu từ DB
                 @endphp
 
-                <div style ="display:{{($infoBox->active) ? '':'none'}}" class="info-boxes-container row row-joined mb-2 font2">
+                <div style ="display:{{ $infoBox->active ? '' : 'none' }}"
+                    class="info-boxes-container row row-joined mb-2 font2">
                     <!-- Info Box 1 -->
                     <div class="info-box info-box-icon-left col-lg-4">
                         <i class="icon-shipping"></i>
 
                         <div class="info-box-content">
-                            <h4>{{$infoBox->title1 ?? 'No information available'}}</h4>
+                            <h4>{{ $infoBox->title1 ?? 'No information available' }}</h4>
                             <p class="">{{ $infoBox->description_shopping ?? 'No information available' }}</p>
                         </div>
                     </div>
@@ -23,7 +24,7 @@
                         <i class="icon-money"></i>
 
                         <div class="info-box-content">
-                            <h4>{{$infoBox->title2 ?? 'No information available'}}</h4>
+                            <h4>{{ $infoBox->title2 ?? 'No information available' }}</h4>
                             <p class="text-body">{{ $infoBox->description_money ?? 'No information available' }}</p>
                         </div>
                     </div>
@@ -33,7 +34,7 @@
                         <i class="icon-support"></i>
 
                         <div class="info-box-content">
-                            <h4>{{$infoBox->title3 ?? 'No information available'}}</h4>
+                            <h4>{{ $infoBox->title3 ?? 'No information available' }}</h4>
                             <p class="text-body">{{ $infoBox->description_support ?? 'No information available' }}</p>
                         </div>
                     </div>
@@ -72,22 +73,19 @@
                     </div>
 
                     @include('client.components-home.products', [
-                        'title' => 'Truy cập nhiều nhất',
-                        'products' => $products,
-                    ])
-                    @include('client.components-home.products', [
-                        'title' => 'Lượt đánh giá cao nhất',
-                        'products' => $topRatedProducts,
-                    ])
-                    @include('client.components-home.products', [
-                        'title' => 'Giảm giá nhiều nhất',
-                        'products' => $bestSellingProducts,
-                    ])
-                    @include('client.components-home.products', [
                         'title' => 'Mới nhất',
                         'products' => $latestProducts,
                     ])
 
+                    @include('client.components-home.products', [
+                        'title' => 'Truy cập nhiều nhất',
+                        'products' => $products,
+                    ])
+
+                    @include('client.components-home.products', [
+                        'title' => 'Lượt mua nhiều nhất',
+                        'products' => $buyCountProducts,
+                    ])
                     <!-- End .brands-slider -->
                     @include('client.banner.trademark')
                     <div class="row products-widgets">
@@ -103,7 +101,7 @@
                         @php
                             $infoBoxFooter = App\Models\infoBoxFooter::first(); // Lấy dữ liệu từ DB
                         @endphp
-                        <div class="row" style ="display:{{($infoBoxFooter->active) ? '':'none'}}">
+                        <div class="row" style ="display:{{ $infoBoxFooter->active ? '' : 'none' }}">
                             <div class="col-md-4 appear-animate" data-animation-name="fadeInRightShorter"
                                 data-animation-delay="200">
                                 <div class="feature-box  feature-box-simple text-center">

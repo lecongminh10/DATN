@@ -116,11 +116,11 @@ class User extends Authenticatable
     public function getMembershipLevelAttribute()
     {
         // Kiểm tra số điểm loyalty và trả về hạng thành viên tương ứng
-        if ($this->loyalty_points < 5000) {
+        if ($this->loyalty_points < 50000) {
             return 'Bronze';
-        } elseif ($this->loyalty_points <= 10000) {
+        } elseif ($this->loyalty_points <= 100000) {
             return 'Silver';
-        } elseif ($this->loyalty_points <= 20000) {
+        } elseif ($this->loyalty_points <= 200000) {
             return 'Gold';
         } else {
             return 'Platinum';
