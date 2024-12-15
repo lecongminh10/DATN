@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Cổng Thanh Toán
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -11,8 +14,8 @@
                 ],
             ])
             <div class="card">
-                <div class="p-4" style="min-height: 800px;">
-                    <h4 class="text-primary mb-4">Thêm mới thanh toán</h4>
+                <div class="p-4">
+                    <h4 class="text-primary mb-4">Thêm mới cổng thanh toán</h4>
                     <form action="{{ route('admin.paymentgateways.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">

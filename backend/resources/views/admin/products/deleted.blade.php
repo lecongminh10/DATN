@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Thùng Rác
+@endsection
 @section('style_css')
     <style>
     </style>
@@ -24,7 +28,7 @@
                                     <div class="col-sm">
                                         <div>
                                             <h5 class="card-title mb-0 "><a class="text-dark"
-                                                    href="{{ route('admin.products.deleted') }}">Danh sách đã xóa</a></h5>
+                                                    href="{{ route('admin.products.deleted') }}">Thùng rác</a></h5>
                                         </div>
                                     </div>
                                     <div class="col-sm-auto">
@@ -54,7 +58,7 @@
                                                     <i class="ri-add-box-fill"></i> Thêm
                                                 </a> --}}
                                                 <a href="{{ route('admin.products.listProduct') }}"
-                                                    class="btn btn-soft-primary ms-2">Quay lại
+                                                    class="btn btn-primary ms-2">Quay lại
                                                 </a>
                                             </div>
                                         </div>

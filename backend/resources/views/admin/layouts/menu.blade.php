@@ -1,22 +1,22 @@
 <div class="app-menu navbar-menu">
     <!-- LOGO -->
-    <div class="navbar-brand-box">
+    <div class="navbar-brand-box py-3">
         <!-- Dark Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
+                <img src="{{ asset('logo.png') }}" alt="" width="130">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
+                <img src="{{ asset('logo.png') }}" alt="" width="130">
             </span>
         </a>
         <!-- Light Logo-->
         <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
+                <img src="{{ asset('logo.png') }}" alt="" width="130">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('logo.png') }}" alt="" height="120" width="200">
+                <img src="{{ asset('logo.png') }}" alt="" width="130">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -326,13 +326,6 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </li>
-                            <!-- Quản lý danh mục -->
-                            <li class="nav-item">
-                                <a href="#sidebar-admin" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebar-admin" data-key="t-admin">
-                                    Giao diện admin
-                                </a>
                             </li>
                         </ul>
                     </div>

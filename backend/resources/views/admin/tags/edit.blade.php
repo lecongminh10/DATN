@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Cập Nhật Thẻ
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -18,13 +21,7 @@
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Thêm Thẻ </h5>
-                                    </div>
-                                </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button type="button" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</button>
+                                        <h5 class="card-title mb-0">Cập nhật thẻ </h5>
                                     </div>
                                 </div>
                             </div>
@@ -36,7 +33,7 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="card-body">
-                                        <div class="mb-3">
+                                        <div class="mb-1">
                                             <label class="form-label" for="carrier-name-input">Tên</label>
                                             <input type="text" class="form-control" id="carrier-name-input"
                                                 name="name" placeholder="Nhập tên thẻ" value="{{$tags->name}}" required>
@@ -45,11 +42,9 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="text-end me-3 mb-3">
-                                        <button type="submit" class="btn btn-success w-sm"><i
-                                                class="ri-check-double-line me-2"></i>Gửi</button>
-                                        <a href="{{ route('admin.tags.index') }}" class="btn btn-secondary btn w-sm">
-                                            <i class="ri-arrow-left-line"></i> Quay lại
+                                    <div class="text-start ms-3 mb-3">
+                                        <button type="submit" class="btn btn-success w-sm me-2">Cập nhật</button>
+                                        <a href="{{ route('admin.tags.index') }}" class="btn btn-primary btn w-sm">Quay lại
                                         </a>
                                     </div>
                                 </div>

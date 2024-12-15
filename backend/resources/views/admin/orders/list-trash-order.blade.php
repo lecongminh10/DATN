@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('libray_css')
     <!-- Sweet Alert css-->
     <link href="{{ asset('theme/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -54,13 +57,13 @@ if (!function_exists('isStatus')) {
                         <div class="card-header border-0">
                             <div class="row align-items-center gy-3">
                                 <div class="col-sm">
-                                    <h5 class="card-title mb-0">Danh sách đơn hàng đã xóa</h5>
+                                    <h5 class="card-title mb-0">Thùng rác</h5>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="restorySelected" class="btn btn-info waves-effect waves-light d-none"><i class="ri-pencil-fill fs-12"></i></button>
                                         <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-12"></i></button>
-                                        <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
+                                        <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary"> Quay lại</a>
                                     </div>
                                 </div>
                             </div>

@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Danh sách seo
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -27,13 +29,7 @@
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button class="btn btn-soft-danger" id="deleteMultipleBtn" style="display: none;">
-                                            <i class="ri-delete-bin-5-fill"></i>
-                                        </button>
-                                        <a href="{{ route('admin.seo.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Thêm Seo</a>
-                                        <a href="{{ route('admin.seo.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Nhập</a>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -54,8 +50,8 @@
                                             <div class="col-sm-3">
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
-                                                    <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm kiếm
+                                                    <button type="submit" form="search-form" class="btn btn-primary">
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm 
                                                     </button>
                                                 </div>
                                             </div>
@@ -64,8 +60,13 @@
                                     <div class="col-xl-4">
                                         <div class="row g-4 d-flex justify-content-end">
                                             <div class="col-sm-auto">
-                                                <a href="{{ route('admin.seo.deleted') }}" class="btn btn-soft-danger">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none;">
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
+                                                </button>
+                                                <a href="{{ route('admin.seo.create') }}" class="btn btn-success add-btn me-2"
+                                                    id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Thêm mới</a>
+                                                <a href="{{ route('admin.seo.deleted') }}" class="btn btn-warning">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
                                             </div>
                                         </div>
@@ -86,7 +87,7 @@
                                                             value="option">
                                                     </div>
                                                 </th>
-                                                <th>ID</th>
+                                                <th>STT</th>
                                                 <th data-sort="meta_title">Tiêu đề meta</th>
                                                 <th data-sort="meta_description">Mô tả Meta</th>
                                                 <th data-sort="meta_keywords">Từ khóa meta</th>
@@ -96,7 +97,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
-                                            @foreach ($seo as $item)
+                                            @foreach ($seo as $key => $item)
                                                 <tr>
                                                     <!-- Checkbox -->
                                                     <th scope="row">
@@ -107,7 +108,7 @@
                                                     </th>
 
                                                     <!-- SEO Details -->
-                                                    <td>{{ $item->id }}</td>
+                                                    <td>{{ $key + 1 }}</td>
                                                     <td class="meta_title">{{ $item->meta_title }}</td>
                                                     <td class="meta_description">
                                                         {{ Str::limit($item->meta_description, 50) }}</td>
@@ -187,7 +188,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-primary"
-                                                    data-bs-dismiss="modal">Close</button>
+                                                    data-bs-dismiss="modal">Đóng</button>
                                             </div>
                                         </div>
                                     </div>

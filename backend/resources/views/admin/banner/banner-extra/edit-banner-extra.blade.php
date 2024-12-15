@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Banner phụ
+@endsection
 @section('style_css')
 <style>
    .d-none {
@@ -201,7 +204,7 @@
                                     <input type="checkbox" name="active" id="active" {{ !empty($bannerExtra->active) ? 'checked' : '' }}>
                                 </div>
                             
-                                <button type="submit" class="btn btn-primary">Cập nhật Banner Phụ</button>
+                                <button type="submit" class="btn btn-success">Cập nhật</button>
                             </form>
                             
                     </div>

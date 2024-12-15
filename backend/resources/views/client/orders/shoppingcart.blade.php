@@ -78,13 +78,13 @@
     <div class="container">
         <ul class="checkout-progress-bar d-flex justify-content-center flex-wrap">
             <li class="active">
-                <a href="{{ route('shopping-cart') }}">Shopping Cart</a>
+                <a href="{{ route('shopping-cart') }}">Giỏ hàng</a>
             </li>
             <li>
-                <a href="{{ route('checkout') }}">Checkout</a>
+                <a href="{{ route('checkout') }}">Thanh toán</a>
             </li>
             <li class="disabled">
-                <a href="#">Order Complete</a>
+                <a href="#">Đơn hàng hoàn tất</a>
             </li>
         </ul>
         <div class="row">

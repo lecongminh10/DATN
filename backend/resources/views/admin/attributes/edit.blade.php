@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Cập Nhật Thuộc Tính
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -37,12 +40,6 @@
                                             <h5 class="card-title mb-0">Cập nhật thuộc tính</h5>
                                         </div>
                                     </div>
-                                    <div class="col-sm-auto">
-                                        <div class="d-flex flex-wrap align-items-start gap-2">
-                                            <button type="button" class="btn btn-info"><i
-                                                    class="ri-file-download-line align-bottom me-1"></i> Import</button>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -63,7 +60,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>                                
-                                <div class="mb-3">
+                                <div class="">
                                     <label class="form-label">Giá trị của thuộc tính</label>
                                     <div id="attribute-values">
                                         @foreach ($attribute->attributeValues as $value)
@@ -85,10 +82,9 @@
                                     <button type="button" class="btn btn-outline-secondary" onclick="addAttributeValue()">Thêm</button>
                                 </div>
                             </div>
-                            <div class="text-end mb-3">
-                                <button type="submit" class="btn btn-success w-sm"><i class="ri-check-double-line me-2"></i>Cập nhật</button>
-                                <a href="{{ route('admin.attributes.index') }}" class=" btn btn-secondary w-sm"><i
-                                    class="ri-arrow-left-line"></i> Quay lại</a>
+                            <div class="text-start ms-3 mb-3">
+                                <button type="submit" class="btn btn-success me-2 w-sm">Cập nhật</button>
+                                <a href="{{ route('admin.attributes.index') }}" class=" btn btn-primary w-sm">Quay lại</a>
                             </div>
                         </div>
                         <!-- Nút submit -->

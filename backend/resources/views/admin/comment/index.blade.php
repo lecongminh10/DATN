@@ -1,6 +1,8 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Danh sách bình luận')
+@section('title')
+    Danh Sách Bình Luận
+@endsection
 
 @section('style_css')
     {{-- Thêm style nếu cần --}}
@@ -51,10 +53,10 @@
                                 <table class="table table-bordered ">
                                     <thead>
                                         <tr>
-                                            <th scope="col">ID</th>
+                                            <th scope="col">STT</th>
                                             <th scope="col">Người dùng</th>
                                             <th scope="col">Sản phẩm</th>
-                                            <th scope="col">Loại</th>
+                                            {{-- <th scope="col">Loại</th> --}}
                                             <th scope="col">Xếp hạng</th>
                                             <th scope="col">Nội dung</th>
                                             <th scope="col">Hình ảnh/Video</th>
@@ -64,12 +66,12 @@
                                     </thead>
                                     <tbody>
 
-                                        @foreach ($comment as $item)
+                                        @foreach ($comment as $key => $item)
                                             <tr>
-                                                <td>{{ $item->id }}</td>
+                                                <td class="text-center">{{ $key+1 }}</td>
                                                 <td>{{ $item->user->username }}</td>
                                                 <td>{{ $item->product->name }}</td>
-                                                <td>
+                                                {{-- <td>
                                                     @if ($item->productVariant->attributeValues)
                                                         @foreach ($item->productVariant->attributeValues as $attributeValue)
                                                             <p class="attribute-item">
@@ -79,7 +81,7 @@
                                                         @endforeach
                                                     @endif
 
-                                                </td>
+                                                </td> --}}
                                                 <td>{{ $item->rating }}</td>
                                                 <td>{{ $item->review_text }}</td>
                                                 <td>

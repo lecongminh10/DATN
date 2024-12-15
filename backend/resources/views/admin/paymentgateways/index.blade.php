@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Cổng Thanh Toán
+@endsection
 @section('content')
     <?php
     // $paymentGateway = ['VNPay', 'Cash'];

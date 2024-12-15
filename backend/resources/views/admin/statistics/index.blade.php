@@ -5,7 +5,9 @@
 </style>
 
 @extends('admin.layouts.app')
-
+@section('title')
+    Thống kê sản phẩm
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">

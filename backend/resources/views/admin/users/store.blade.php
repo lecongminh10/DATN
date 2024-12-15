@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm mới tài khoản
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -111,14 +114,10 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-12 mt-4">
-                                <div class="d-flex justify-content">
-                                    <div class="text-start">
-                                        <button type="submit" class="btn btn-primary me-2">Thêm mới</button>
-                                    </div>
-                                    <div class="text-end">
-                                        <a href="{{ route('admin.users.index') }}" class="btn btn-info">Quay lại</a>
-                                    </div>
+                            <div class="col-12 ">
+                                <div class="text-start">
+                                    <button type="submit" class="btn btn-success me-2">Thêm mới</button>
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-primary">Quay lại</a>
                                 </div>
                             </div>
 
