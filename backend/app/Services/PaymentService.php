@@ -34,4 +34,9 @@ class PaymentService extends BaseService
     {
         return $this->paymentService->delete($id);
     }
+
+    public function getCheckOrderById($id)
+    {
+        return $this->paymentService->getCheckOrderById($id);
+    }
 }

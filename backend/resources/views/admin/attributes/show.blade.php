@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Chi Tiết Thuộc Tính: {{ $attribute->attribute_name }}
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -54,9 +57,8 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="text-end mb-3">
-                            <a href="{{ route('admin.attributes.index') }}" class=" btn btn-secondary btn w-sm"><i
-                                    class="ri-arrow-left-line"></i> Quay lại</a>
+                        <div class="text-start mb-3">
+                            <a href="{{ route('admin.attributes.index') }}" class=" btn btn-primary btn w-sm">Quay lại</a>
                         </div>
                     </div>
                 </div>

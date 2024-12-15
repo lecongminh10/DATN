@@ -17,8 +17,9 @@ class UserService extends BaseService
         $this ->userService = $userService;
     }
 
-    public function getAll(){
-        return $this->userService->getAllUser();
+    public function getAll($perPage = 10)
+    {
+        return User::paginate($perPage);
     }
 
 
@@ -39,5 +40,10 @@ class UserService extends BaseService
 
     public function getAllTrashedUsers(){
         return $this->userService->getAllTrashedUsers();
+    }
+
+    public function getAllClient($type)
+    {
+        return $this->userService->getAllClient($type);
     }
 }

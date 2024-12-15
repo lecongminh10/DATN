@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Sản Phẩm
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -316,7 +319,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Thêm mới sản phẩm</h4>
                                     </div><!-- end card header -->
                                     <div class="card-body">
                                         <div class="live-preview">
@@ -393,7 +396,7 @@
                                                     </div>
                                                     <div class="mt-3">
                                                         <label for="product_tags"
-                                                            class="form-label text-muted">Thẻ  </label>
+                                                            class="form-label ">Thẻ  </label>
                                                         <select class="form-control" name="product_tags[]"
                                                             id="choices-multiple-remove-button"
                                                             placeholder="This is a placeholder" multiple>
@@ -404,6 +407,21 @@
                                                         </label>
                                                         <input type="number" class="form-control" name="warranty_period" value="{{old('warranty_period')}}"
                                                             id="warranty_period">
+                                                    </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="height" id="height"  value="{{old('height')}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="length" id="length"  value="{{old('length')}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="width" id="width"  value="{{old('width')}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="weight" id="weight"  value="{{old('weight')}}" placeholder="Cân nặng (gr)">
+                                                            </div>
                                                     </div>
                                                     <div class="row">
                                                         @php
@@ -416,7 +434,7 @@
                                                             ];
                                                         @endphp
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Trạng thái</h4>
+                                                            <label for="price_sale" class="form-label">Trạng thái </label>
                                                         </div>
                                                         <div class="card">
                                                             <div class="card-body">
@@ -480,19 +498,20 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content <span class="text-danger">*</span></label></h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Nội dung <span class="text-danger">*</span></label></h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
                                         <textarea name="content" id="editor-container" style="height: 300px;" value="{{old('content')}}"></textarea>
-                                        @error('content')
+                                        
+                                    </div>
+                                    @error('content')
                                             <div>
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
                                                 </div>
                                             </div>
                                         @enderror
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -554,6 +573,7 @@
                                                             <table class="table table-bordered" id="attributeTable">
                                                                 <thead>
                                                                     <tr>
+                                                                        <th>Mã </th>
                                                                         <th>Giá trị</th>
                                                                         <th>Giá Gốc</th>
                                                                         <th>Giá Mới</th>
@@ -600,6 +620,13 @@
                                                                                     {!! $attributeString !!}
                                                                                 </td>
                                                                                 <td>
+                                                                                    <input type="text"
+                                                                                        name="product_variants[{{ $i }}][sku]"
+                                                                                        value="{{ strtoupper(\Str::random(8)) }}"
+                                                                                        class="form-control sku"
+                                                                                        id="sku_{{ $i }}" />
+                                                                                </td>
+                                                                                <td>
                                                                                     <input type="number"
                                                                                         name="product_variants[{{ $i }}][original_price]"
                                                                                         class="form-control original_price"
@@ -623,12 +650,9 @@
                                                                                         name="product_variants[{{ $i }}][status]">
                                                                                         <option value="none">None
                                                                                         </option>
-                                                                                        <option value="available">Available
-                                                                                        </option>
-                                                                                        <option value="out_of_stock">Out of
-                                                                                            Stock</option>
-                                                                                        <option value="discontinued">
-                                                                                            Discontinued</option>
+                                                                                        <option value="available">Còn hàng</option>
+                                                                                        <option value="out_of_stock">Hết hàng</option>
+                                                                                        <option value="discontinued">Ngừng sản xuất</option>
                                                                                     </select>
                                                                                 </td>
                                                                                 <td>
@@ -726,9 +750,9 @@
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header align-items-center d-flex">
-                                            <button class="btn btn-primary" type="submit"
-                                                id="uploadButton">Save</button>
-                                                <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                            <button class="btn btn-success me-2" style="width:100px; cursor: pointer" type="submit"
+                                                id="uploadButton">Thêm mới</button>
+                                                <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2" style="width:90px; cursor: pointer">Quay lại</a>
                                         </div>
                                     </div>
                                 </div>
@@ -1025,7 +1049,9 @@
 
                                 // Construct attribute strings
                                 for (const [key, item] of Object.entries(attribute)) {
-                                    attributeString += `${key}: ${item}<br>`;
+                                    attributeString += `<strong style="font-size: 12px; color: #888;">${key}:</strong> 
+                                                       <span style="font-size: 11px;">${item}</span>
+                                                       <br>`;
                                     attributeValueString += `${item},`;
                                 }
 
@@ -1036,6 +1062,15 @@
                                 // Build the HTML for the row
                                 htmlContent += `
                                 <tr>
+                                    <td>
+                                      <input type="text"
+                                        name="
+                                        product_variants[${index + 1}][sku]
+                                        "
+                                        value="{{ strtoupper(\Str::random(8)) }}_${index + 1}"
+                                        class="form-control sku"
+                                        id="sku_${index + 1}" />
+                                    </td>
                                     <td>
                                         <input type="hidden" name="product_variants[${index + 1}][attributes_values]" value="${attributeValueString}" class="product_variants">
                                         ${attributeString}
@@ -1051,10 +1086,9 @@
                                     </td>
                                     <td>
                                         <select class="form-control status_attribute" name="product_variants[${index + 1}][status]">
-                                            <option value="none">None</option>
-                                            <option value="available">Available</option>
-                                            <option value="out_of_stock">Out of Stock</option>
-                                            <option value="discontinued">Discontinued</option>
+                                            <option value="available">Có sẵn</option>
+                                            <option value="out_of_stock">Hết hàng </option>
+                                            <option value="discontinued">Đã ngừng sản xuất</option>
                                         </select>
                                     </td>
                                     <td>

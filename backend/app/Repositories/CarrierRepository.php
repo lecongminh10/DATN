@@ -18,6 +18,7 @@ class CarrierRepository extends BaseRepository
     {
         $query = Carrier::query()->latest('id');
 
+        // Tìm kiếm theo tên, điện thoại hoặc email
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', '%' . $search . '%')
@@ -25,10 +26,13 @@ class CarrierRepository extends BaseRepository
                     ->orWhere('email', 'LIKE', '%' . $search . '%');
             });
         }
+
+        // Tìm kiếm theo trạng thái (active/inactive)
         if ($status) {
             $query->where('is_active', $status);
         }
 
+        // Trả về kết quả với phân trang
         return $query->paginate($perPage);
     }
 
@@ -65,5 +69,10 @@ class CarrierRepository extends BaseRepository
                 ->whereNull('deleted_at')
                 ->update(['is_active' => 'inactive']);
         }
+    }
+
+    public function getByCode (string $code)
+    {
+        return Carrier::where('code', $code)->first();
     }
 }

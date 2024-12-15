@@ -14,7 +14,7 @@ class PermissionService extends BaseService
         parent::__construct($permissionSevice);
         $this->permissionSevice = $permissionSevice;
     }
-    public function getSeachPermission($search, $perPage)
+    public function getSeachPermission($search, $perPage = 10)
     {
         return $this->permissionSevice->getSearch($search, $perPage);
     }

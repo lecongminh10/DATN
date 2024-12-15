@@ -12,11 +12,12 @@ class PaymentGatewayService extends BaseService
     public function __construct(PaymentGatewayRepository $paymentGatewayService)
     {
         parent::__construct($paymentGatewayService);
-        $this ->paymentGatewayService = $paymentGatewayService;
+        $this->paymentGatewayService = $paymentGatewayService;
     }
 
-    public function getAll(){
-        return $this->paymentGatewayService->getAllPaymentGateway();
+    public function getAllPaymentGateway($search)
+    {
+        return $this->paymentGatewayService->getAll($search);
     }
 
 

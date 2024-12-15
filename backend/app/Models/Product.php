@@ -66,21 +66,25 @@ class Product extends Model
         return $this->hasMany(ProductGallery::class);
     }
 
+    public function gallery(){
+        return $this->hasOne(ProductGallery::class);
+    }
+
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);
     }
 
     public function getMainImage(){
-        return $this->galleries()->where('is_main', operator: true)->first();
+        return $this->galleries()->where('is_main', true)->first();
     }
-
+    
     public function coupons()
     {
         return $this->belongsToMany(Coupon::class, 'coupons_products')
                     ->withTimestamps();
     }
-    
+
     //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
     protected static function boot()
     {
@@ -98,8 +102,21 @@ class Product extends Model
             event(new ProductEvent());
         });
     }
+    public function seos()
+    {
+        return $this->belongsToMany(SEO::class, 'seo_product')->withTimestamps()->withTrashed();
+    }
 
-    
+
+    public function productDimension()
+    {
+        return $this->hasOne(ProductDimension::class, 'product_id');  // Sử dụng hasOne vì mỗi sản phẩm chỉ có một bảng kích thước
+    }
+
+    public function wishList()
+    {
+        return $this->hasOne(WishList::class, 'product_id');
+    }
 }
 
 

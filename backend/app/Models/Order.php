@@ -13,17 +13,17 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-          'user_id',
-          'code',
-          'total_price',
-          'shipping_address_id',
-          'payment_id',
-          'note',
-          'status',
-          'carrier_id',
-          'tracking_number',
-          'deleted_at',
-          'deleted_by'
+        'user_id',
+        'code',
+        'total_price',
+        'shipping_address_id',
+        'payment_id',
+        'note',
+        'status',
+        'carrier_id',
+        'tracking_number',
+        'deleted_at',
+        'deleted_by'
     ];
 
     public const CHO_XAC_NHAN = 'Chờ xác nhận';
@@ -37,19 +37,23 @@ class Order extends Model
         'deleted_at' => 'boolean',
     ];
 
-    public function items() {
+    public function items()
+    {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function locations() {
+    public function locations()
+    {
         return $this->hasMany(OrderLocation::class);
     }
 
-    public function payment() {
+    public function payment()
+    {
         return $this->hasOne(Payment::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
@@ -58,7 +62,16 @@ class Order extends Model
         return $this->hasOne(shippingMethods::class, 'order_id');
     }
     public static function getCanceledOrders()
-{
-    return self::where('status', self::DA_HUY)->get();
-}
+    {
+        return self::where('status', self::DA_HUY)->get();
+    }
+    public function carrier()
+    {
+        return $this->belongsTo(Carrier::class);
+    }  
+
+    public function couponUsage()
+    {
+        return $this->hasOne(CouponUsage::class, 'order_id');
+    }
 }

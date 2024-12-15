@@ -1,195 +1,215 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Tài Khoản
+@endsection
 @section('content')
-<div class="page-content">
-    <div class="container-fluid">
-        @include('admin.layouts.component.page-header', [
-            'title' => 'Người dùng  ',
-            'breadcrumb' => [
-                ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                ['name' => 'Người dùng ', 'url' => '#']
-            ]
-        ])
-        <div class="roư">
-            <div class="col-lg-12">
-                <div class="card" id="tasksList">
-                    <div class="card-header border-0">
-                        <div class="d-flex align-items-center">
-                            <h5 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h5>
-                            <div class="flex-shrink-0">
-                                <div class="d-flex flex-wrap gap-2">
-                                    <div class="">
-                                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm người dùng...">
-                                    </div>
-                                    <a href="{{ route('admin.users.add') }}">
-                                        <button class="btn btn-danger add-btn" data-bs-toggle="modal" data-bs-target="#showModal">
-                                            <i class="ri-add-line align-bottom me-1"></i>Thêm mới
+    <div class="page-content">
+        <div class="container-fluid">
+            @include('admin.layouts.component.page-header', [
+                'title' => 'Người dùng  ',
+                'breadcrumb' => [
+                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Người dùng ', 'url' => '#'],
+                ],
+            ])
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card" id="tasksList">
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                                <h5 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h5>
+                                <div class="flex-shrink-0">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <div class="me-2">
+                                            <input type="text" id="searchInput" class="form-control "
+                                                placeholder="Tìm kiếm người dùng...">
+                                        </div>
+                                        <a href="{{ route('admin.users.add') }}">
+                                            <button class="btn btn-success me-2 add-btn" data-bs-toggle="modal"
+                                                data-bs-target="#showModal">
+                                                <i class="ri-add-line align-bottom "></i> Thêm mới
+                                            </button>
+                                        </a>
+                                        <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-warning me-2"><i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác</a>
+                                        <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
+                                            <i class="ri-delete-bin-2-line align-bottom"></i>
                                         </button>
-                                    </a>
-                                    <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-primary">Đã xóa</a>
-                                    <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
-                                        <i class="ri-delete-bin-2-line"></i> Xóa Nhiều
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
+                            <!-- Thêm ô tìm kiếm -->
                         </div>
-                        <!-- Thêm ô tìm kiếm -->
-                    </div>
-    
-                    <div class="card-body">
-                        <div class="table-responsive table-card mb-4">
-                            <table class="table align-middle table-nowrap mb-0" id="tasksTable">
-                                <thead class="table-light text-muted">
-                                    <tr>
-                                        <th scope="col" style="width: 40px;">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="checkAll" value="option">
-                                            </div>
-                                        </th>
-                                        <th class="sort" data-sort="id">ID</th>
-                                        <th class="sort" data-sort="username">Tên</th>
-                                        <th class="sort" data-sort="email">Email</th>
-                                        <th class="sort" data-sort="permission">Quyền</th>
-                                        <th class="sort" data-sort="status">Status</th>
-                                        <th class="sort" data-sort="gender">Giới Tính</th>
-                                        <th class="sort" data-sort="date_of_birth">Ngày Sinh</th>
-                                        <th class="sort" data-sort="phone_number">Số Điện Thoại</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="list form-check-all" id="userTableBody">
-                                    @foreach ($user as $key => $value)
+                        @if (session('success'))
+                            <div class="w-full alert alert-success " style="margin-bottom: 20px">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        <div class="card-body">
+                            <div class="table-responsive table-card mb-4">
+                                <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+                                    <thead class="table-light text-muted">
                                         <tr>
-                                            <th scope="row">
+                                            <th scope="col" style="width: 40px;">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="chk_child" value="{{ $value->id }}" class="user-checkbox">
+                                                    <input class="form-check-input" type="checkbox" id="checkAll"
+                                                        value="option">
                                                 </div>
                                             </th>
-                                            <td class="id"><a href="apps-tasks-details.html" class="fw-medium link-primary">{{ $value->id }}</a></td>
-                                            <td>
-                                                <div class="d-flex">
-                                                    <div class="flex-grow-1 tasks_name">{{ $value->username }}</div>
-                                                    <div class="flex-shrink-0 ms-4">
-                                                        <ul class="list-inline tasks-list-menu mb-0">
-                                                            <li class="list-inline-item">
-                                                                <a href="{{route('admin.users.show', $value->id)}}">
-                                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li class="list-inline-item">
-                                                                <a href="{{route('admin.users.edit', $value->id)}}">
-                                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li class="list-inline-item">
-                                                                <button class="btn btn-link text-danger p-0" title="Xóa" onclick="confirmDelete('{{ $value->id }}', '{{ $value->username }}')">
-                                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                                                </button>
-                                                                <form id="deleteForm-{{ $value->id }}" action="{{ route('admin.users.delete', $value->id) }}" method="POST" style="display:none;">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <input type="hidden" name="forceDelete" id="forceDeleteInput-{{ $value->id }}" value="false">
-                                                                </form>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="client_name">{{ $value->email }}</td>
-                                            <td class="project_name">
-                                                @foreach ($value->permissionsValues as $permission)
-                                                    <span class="badge {{ $permission->value == 'admin_role' ? 'bg-primary' : ($permission->value == 'client_role' ? 'bg-info' : 'bg-secondary') }}">
-                                                        {{ $permission->value == 'admin_role' ? 'Admin' : ($permission->value == 'client_role' ? 'Client' : 'Unknown Role') }}
-                                                    </span>
-                                                @endforeach 
-                                            </td>                                        
-                                            <td>
-                                                    <span class="badge {{ $value->status == 'active' ? 'bg-success' : 'bg-danger' }}">
-                                                        {{ $value->status == 'active' ? $value->status : 'Inactive' }}
-                                                    </span>
-                                            </td>
-                                            <td class="assignedto">
-                                                @if ($value->gender === 'male')
-                                                    <span class="badge bg-primary">Nam</span>
-                                                @elseif ($value->gender === 'female')
-                                                    <span class="badge bg-danger">Nữ</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Khác</span>
-                                                @endif
-                                            </td>                                        
-                                            <td class="due_date">{{ $value->date_of_birth }}</td>
-                                            <td class="status">
-                                                <span class="badge bg-secondary-subtle text-secondary text-uppercase">{{ $value->phone_number }}</span>
-                                            </td>
+                                            <th data-sort="id">ID</th>
+                                            <th data-sort="username">Tên</th>
+                                            <th data-sort="avatar">Ảnh</th>
+                                            <th data-sort="email">Email</th>
+                                            <th data-sort="permission">Quyền</th>
+                                            <th data-sort="status">Trạng thái</th>
+                                            <th data-sort="gender">Giới Tính</th>
+                                            <th data-sort="date_of_birth">Ngày Sinh</th>
+                                            <th data-sort="phone_number">Số Điện Thoại</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            <div class="noresult" style="display: none">
-                                <div class="text-center">
-                                    <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
-                                    <h5 class="mt-2">Xin lỗi! Không tìm thấy kết quả</h5>
-                                    <p class="text-muted mb-0">Chúng tôi đã tìm kiếm hơn 200k+ nhiệm vụ nhưng không tìm thấy nhiệm vụ nào cho bạn.</p>
+                                    </thead>
+                                    <tbody class="list form-check-all" id="userTableBody">
+                                        @foreach ($user as $key => $value)
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="chk_child"
+                                                            value="{{ $value->id }}" class="user-checkbox">
+                                                    </div>
+                                                </th>
+                                                <td class="id"><a href="apps-tasks-details.html"
+                                                        class="fw-medium link-primary">{{ $value->id }}</a></td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <div class="flex-grow-1 tasks_name">{{ $value->username }}</div>
+                                                        <div class="flex-shrink-0 ms-4">
+                                                            <ul class="list-inline tasks-list-menu mb-0">
+                                                                <li class="list-inline-item">
+                                                                    <a href="{{ route('admin.users.show', $value->id) }}">
+                                                                        <i
+                                                                            class="ri-eye-fill align-bottom me-2 text-muted"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="list-inline-item">
+                                                                    <a href="{{ route('admin.users.edit', $value->id) }}">
+                                                                        <i
+                                                                            class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="list-inline-item">
+                                                                    <button class="btn btn-link text-danger p-0"
+                                                                        title="Xóa"
+                                                                        onclick="confirmDelete('{{ $value->id }}', '{{ $value->username }}')">
+                                                                        <i
+                                                                            class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                                    </button>
+                                                                    <form id="deleteForm-{{ $value->id }}"
+                                                                        action="{{ route('admin.users.delete', $value->id) }}"
+                                                                        method="POST" style="display:none;">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <input type="hidden" name="forceDelete"
+                                                                            id="forceDeleteInput-{{ $value->id }}"
+                                                                            value="false">
+                                                                    </form>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    // Lấy đường dẫn ảnh từ Storage
+                                                    $image = $value->profile_picture ? Storage::url($value->profile_picture) : null;
+                                                    // Đường dẫn ảnh mặc định từ mạng
+                                                    $defaultImage = 'https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png';
+                                                    ?>
+                                                    <img src="{{ $image ? $image : $defaultImage }}" alt="Ảnh đại diện"
+                                                        style="border-radius: 5px" width="80px" height="80px">
+                                                </td>
+                                                <td class="client_name">{{ $value->email }}</td>
+                                                <td class="project_name">
+                                                    @foreach ($value->permissionsValues as $permission)
+                                                        <span
+                                                            class="badge {{ $permission->value == 'admin_role' ? 'bg-primary' : ($permission->value == 'client_role' ? 'bg-info' : 'bg-secondary') }}">
+                                                            {{ $permission->value == 'admin_role' ? 'Admin' : ($permission->value == 'client_role' ? 'Client' : 'Unknown Role') }}
+                                                        </span>
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    @if ($value->status == 'active')
+                                                        <span class="badge bg-success">Kích hoạt</span>
+                                                    @else
+                                                        <span class="badge bg-danger">Không kích hoạt</span>
+                                                    @endif
+                                                    
+                                                </td>
+                                                <td class="assignedto">
+                                                    @if ($value->gender === 'male')
+                                                        <span class="badge bg-primary">Nam</span>
+                                                    @elseif ($value->gender === 'female')
+                                                        <span class="badge bg-danger">Nữ</span>
+                                                    @else
+                                                        <span class="badge bg-secondary">Khác</span>
+                                                    @endif
+                                                </td>
+                                                <td class="due_date">
+                                                    {{ \Carbon\Carbon::parse($value->date_of_birth)->format('d-m-Y') }}
+                                                </td>
+                                                <td class="status">
+                                                    <span
+                                                        class="badge bg-secondary-subtle text-secondary text-uppercase">{{ $value->phone_number }}</span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <div class="noresult" style="display: none">
+                                    <div class="text-center">
+                                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
+                                            colors="primary:#121331,secondary:#08a88a"
+                                            style="width:75px;height:75px"></lord-icon>
+                                        <h5 class="mt-2">Xin lỗi! Không tìm thấy kết quả</h5>
+                                        <p class="text-muted mb-0"></p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="d-flex justify-content-end mt-2">
-                            <div class="pagination-wrap hstack gap-2">
-                                <a class="page-item pagination-prev disabled" href="#">
-                                    Previous
-                                </a>
-                                <ul class="pagination listjs-pagination mb-0"></ul>
-                                <a class="page-item pagination-next" href="#">
-                                    Next
-                                </a>
+                            <!-- Modal xác nhận xóa -->
+                            <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-5 text-center">
+                                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                                                colors="primary:#405189,secondary:#f06548"
+                                                style="width:90px;height:90px"></lord-icon>
+                                            <div class="mt-4 text-center">
+                                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?
+                                                </h4>
+                                                <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="forceDeleteCheckbox">
+                                                    <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh
+                                                        viễn</label>
+                                                </div>
+                                                <div class="hstack gap-2 justify-content-center remove mt-3">
+                                                    <button
+                                                        class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
+                                                        id="deleteRecord-close" data-bs-dismiss="modal">
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
+                                                    </button>
+                                                    <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-2">
+                                @include('admin.components.pagination', ['data' => $user])
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-body p-5 text-center">
-                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
-                            <div class="mt-4 text-center">
-                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?</h4>
-                                <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
-                                    <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
-                                </div>
-                                <div class="hstack gap-2 justify-content-center remove mt-3">
-                                    <button class="btn btn-link btn-ghost-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal">
-                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
-                                    </button>
-                                    <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
-    
-                <!-- Modal xác nhận xóa -->
-                <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-body p-5 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
-                                <div class="mt-4 text-center">
-                                    <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?</h4>
-                                    <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
-                                        <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
-                                    </div>
-                                    <div class="hstack gap-2 justify-content-center remove mt-3">
-                                        <button class="btn btn-link btn-ghost-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal">
-                                            <i class="ri-close-line me-1 align-middle"></i> Đóng
-                                        </button>
-                                        <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
             </div>
         </div>
     </div>
@@ -213,7 +233,7 @@
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
                 });
-                deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none'; 
+                deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none';
             });
 
             deleteMultipleBtn.addEventListener('click', function() {
@@ -226,38 +246,38 @@
                     return;
                 }
 
-                document.getElementById('modalUsername').innerText = `Người dùng: ${selectedIds.length} người`;
-                document.getElementById('modalTitle').innerText = 'Bạn có chắc chắn muốn xóa những người dùng này?';
+                document.getElementById('modalUsername').innerText =
+                    `Người dùng: ${selectedIds.length} người`;
+                document.getElementById('modalTitle').innerText =
+                    'Bạn có chắc chắn muốn xóa những người dùng này?';
 
                 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
                 const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
                 confirmDeleteBtn.onclick = function() {
                     const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content');
+
                     fetch('/admin/users/deleteMultiple', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        body: JSON.stringify({
-                            ids: JSON.stringify(selectedIds),
-                            forceDelete: forceDeleteValue,
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                ids: JSON.stringify(selectedIds),
+                                forceDelete: forceDeleteValue,
+                            }),
+                        })
+                        .then(response => response.text()) // Nhận dữ liệu dưới dạng text
+                        .then(data => {
+                            // Tải lại trang để hiển thị thông báo
                             location.reload();
-                        } else {
-                            alert('Có lỗi xảy ra khi xóa người dùng.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 };
 
                 deleteModal.show();
@@ -273,8 +293,9 @@
                     const username = row.querySelector('.tasks_name').innerText.toLowerCase();
                     const email = row.querySelector('.client_name').innerText.toLowerCase();
                     const phoneNumber = row.querySelector('.status').innerText.toLowerCase();
-                    
-                    if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(filter)) {
+
+                    if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(
+                            filter)) {
                         row.style.display = '';
                         noResults = false;
                     } else {
@@ -303,5 +324,4 @@
             deleteModal.show();
         }
     </script>
-
 @endsection

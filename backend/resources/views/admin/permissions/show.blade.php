@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Chi Tiết Quyền: {{ $permission->permission_name }}
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -13,7 +16,7 @@
             <div class="row">
                 <div class="card">
                     <div class="card-header">
-                        <h1 class="h5 mb-0">Chi Tiết Permission</h1>
+                        <h1 class="h5 mb-0">Chi tiết quyền</h1>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -21,26 +24,26 @@
                                 <div class="card shadow-sm">
                                     <div class="card-body">
                                         <div class="mb-4">
-                                            <label for="permission_name" class="form-label fw-bold">Tên Permission :</label>
+                                            <label for="permission_name" class="form-label fw-bold">Tên quyền :</label>
                                             <p class="form-control-plaintext">{{ $permission->permission_name }}</p>
                                         </div>
                                         <div class="mb-4">
-                                            <label for="description" class="form-label fw-bold">Mô Tả :</label>
+                                            <label for="description" class="form-label fw-bold">Mô tả :</label>
                                             <p class="form-control-plaintext">{{ $permission->description }}</p>
                                         </div>
                                         <div class="mb-4">
-                                            <label for="created_at" class="form-label fw-bold">Ngày Tạo :</label>
+                                            <label for="created_at" class="form-label fw-bold">Ngày tạo :</label>
                                             <p class="form-control-plaintext">
-                                                {{ $permission->created_at->format('d/m/Y H:i:s') }}</p>
+                                                {{ $permission->created_at->format('H:i d-m-Y') }}</p>
                                         </div>
                                         <div class="mb-4">
-                                            <label for="updated_at" class="form-label fw-bold">Ngày Cập Nhật :</label>
+                                            <label for="updated_at" class="form-label fw-bold">Ngày cập nhật :</label>
                                             <p class="form-control-plaintext">
-                                                {{ $permission->updated_at->format('d/m/Y H:i:s') }}</p>
+                                                {{ $permission->updated_at->format('H:i d-m-Y') }}</p>
                                         </div>
 
                                         <div class="mb-4">
-                                            <h5 class="fw-bold">Danh Sách Permission Values :</h5>
+                                            <h5 class="fw-bold">Danh sách giá trị quyền :</h5>
                                             <ul class="list-group">
                                                 @foreach ($permission->permissionValues as $item)
                                                     <li
@@ -56,11 +59,11 @@
                                 </div> <!-- end card -->
                             </div>
                         </div>
-                        <div class="float-end mt-4">
-                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary"> Quay lại
+                        <div class="text-start ">
+                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-primary"> Quay lại
                             </a>
-                            <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-warning">Chỉnh
-                                sửa</a>
+                            {{-- <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-warning">Chỉnh
+                                sửa</a> --}}
                         </div> <!-- end col -->
                     </div>
                 </div>

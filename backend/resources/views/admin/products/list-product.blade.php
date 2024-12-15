@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Danh Sách Sản Phẩm
+@endsection
 {{-- @section('style_css')
     <style>
 
@@ -33,29 +37,25 @@
                                         <div class="col-sm-auto">
                                             <div class="search-box mb-3">
                                                 <form method="GET" action="{{ route('admin.products.listProduct') }}">
-                                                    <input type="text" class="form-control search" name="search"
+                                                    <input type="text" class="form-control search" name="search" style="width: 290px"
                                                         placeholder="Nhập từ khóa tìm kiếm..."
                                                         value="{{ request()->input('search') }}">
                                                     <i class="ri-search-line search-icon"></i>
                                                 </form>
-                                                <div>
-                                                </div>
-                                                <div>
-                                                </div>
                                                 <div class="mt-3 float-end">
                                                     <div class="d-flex justify-content-between mb-3">
                                                         <div class="me-2"> <!-- Added margin for spacing -->
                                                             <button class="btn btn-soft-danger" id="deleteMultipleBtn"
                                                                 style="display: none;">
-                                                                <i class="ri-delete-bin-5-fill"></i>
+                                                                <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                             </button>
                                                         </div>
                                                         <div>
                                                             <a href="{{ route('admin.products.addProduct') }}"
-                                                                class="btn btn-primary">Thêm mới</a>
+                                                                class="btn btn-success "><i class="ri-add-line align-bottom"></i> Thêm mới</a>
                                                             <a href="{{ route('admin.products.deleted') }}"
-                                                                class="btn btn-soft-danger ms-2">
-                                                                <i class="ri-delete-bin-2-line"></i> Thùng rác
+                                                                class="btn btn-warning ms-2 align-bottom me-">
+                                                                <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                             </a>
                                                         </div>
                                                     </div>
@@ -83,7 +83,7 @@
                                                         <th>Tên </th>
                                                         <th>Ảnh đại diện</th>
                                                         <th>Danh mục</th>
-                                                        <th>Slug</th>
+                                                        <th>Số lượng</th>
                                                         <th>Giá gốc</th>
                                                         <th>Giá khuyến mãi</th>
                                                         <th>Hành động</th>
@@ -116,9 +116,9 @@
                                                                     style="max-height: 100px !important; max-width:100px !important">
                                                             </td>
                                                             <td>{{ $value->category_name }}</td>
-                                                            <td>{{ $value->slug }}</td>
-                                                            <td>{{ $value->price_regular }}</td>
-                                                            <td>{{ $value->price_sale }}</td>
+                                                            <td>{{ $value->stock }}</td>
+                                                            <td>{{ number_format($value->price_regular, 0, ',', '.') }} ₫</td>
+                                                            <td>{{ number_format($value->price_sale, 0, ',', '.') }} ₫</td>
                                                             <td>
                                                                 <div class="dropdown d-inline-block">
                                                                     <button class="btn btn-soft-secondary btn-sm dropdown"
@@ -168,9 +168,9 @@
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
-
                                             </table>
                                         </div>
+                                        @include('admin.components.pagination', ['data' => $products])
                                     </div>
                                 </div><!--end col-->
                             </div>
@@ -183,7 +183,7 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="myExtraLargeModalLabel">Product Variants</h5>
+                            <h5 class="modal-title" id="myExtraLargeModalLabel">Danh sách biến thể</h5>
                             <div class="ms-auto d-flex align-items-center">
                                 <input type="text" id="search" placeholder="Search variants..."
                                     class="form-control me-2" style="width: 250px;" />
@@ -211,7 +211,7 @@
                         </div>
                         <div class="modal-footer">
                             <button id="closeModalVariant" type="button" class="btn btn-primary"
-                                data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Close</button>
+                                data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Đóng</button>
                         </div>
                     </div>
                 </div>
@@ -230,7 +230,7 @@
                             @if (session('message'))
                                 <p>{{ session('message') }}</p>
                             @else
-                                <p>No message available.</p>
+                                <p>Không có thông báo .</p>
                             @endif
                         </div>
                         <div class="modal-footer">
@@ -290,17 +290,25 @@
                                             }).join('<br>'); // Sử dụng <br> để ngắt dòng
 
                                         variantsHtml += `
-                            <tr>
-                                <td>${index++}</td>
-                                <td>${attributes}</td>
-                                <td>${variant.sku}</td>
-                                <td>${variant.original_price !== null ? variant.original_price : 'N/A'}</td>
-                                <td>${variant.price_modifier}</td>
-                                <td>${variant.status}</td>
-                                <td>${variant.stock}</td>
-                                <td><img src="/storage/${variant.variant_image}" alt="Variant Image" style="max-width: 70px; max-height: 70px"/></td>
-                            </tr>
-                        `;
+                                            <tr>
+                                                <td>${index++}</td>
+                                                <td>${attributes}</td>
+                                                <td>${variant.sku}</td>
+                                                <td>${variant.original_price !== null ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(variant.original_price) : 'N/A'}</td>
+                                                <td>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(variant.price_modifier)}</td>
+                                                <td>
+                                                  ${
+                                                    // Kiểm tra trạng thái của variant và hiển thị bằng tiếng Việt
+                                                    variant.status === 'available' ? 'Có sẵn' :
+                                                    variant.status === 'out_of_stock' ? 'Hết hàng' :
+                                                    variant.status === 'discontinued' ? 'Đã ngừng sản xuất' :
+                                                    'Chưa xác định'  // Nếu không thuộc ba trạng thái trên, hiển thị 'Chưa xác định'
+                                                }    
+                                                </td>
+                                                <td>${variant.stock}</td>
+                                                <td><img src="/storage/${variant.variant_image}" alt="Variant Image" style="max-width: 70px; max-height: 70px"/></td>
+                                            </tr>
+                                        `;
                                     });
 
                                     // Tạo nút phân trang

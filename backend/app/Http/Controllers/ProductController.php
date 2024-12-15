@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -15,6 +16,7 @@ use App\Services\TagService;
 use App\Services\AttributeService;
 use App\Services\AttributeValueService;
 use App\Models\Attribute;
+use App\Models\ProductDimension;
 use App\Services\CouponService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
@@ -73,7 +75,7 @@ class ProductController extends Controller
     {
         Artisan::call('generate:attributes-json');
         Artisan::call('generate:tags-json');
-        $product = $this->productService->getById($id)->load(['category', 'tags', 'galleries']);
+        $product = $this->productService->getById($id)->load(['category', 'tags', 'galleries','productDimension']);
         if (!$product) {
             return redirect()->route('admin.products.index')->with('error', 'Product not found');
         }
@@ -81,7 +83,7 @@ class ProductController extends Controller
         $selectedTags = $product->tags->pluck('id')->toArray();
         $variants = $this->productVariantService->getProductVariant($id);
         return view('admin.products.show-product' ,compact('product','categories','selectedTags','variants'));
-        
+
     }
 
 
@@ -107,7 +109,7 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $dataProduct = $request->validated();
-        unset($dataProduct['product_variants'], $dataProduct['product_galaries'] , $dataProduct['coupon'] , $dataProduct['addcoupon']);
+        unset($dataProduct['product_variants'], $dataProduct['product_galaries'] , $dataProduct['coupon'] , $dataProduct['addcoupon'], $dataProduct['height'], $dataProduct['length'], $dataProduct['width'], $dataProduct['weight']);
 
         $dataProduct['is_active'] ??= 0;
         $dataProduct['is_hot_deal'] ??= 0;
@@ -115,11 +117,19 @@ class ProductController extends Controller
         $dataProduct['is_new'] ??= 0;
         $dataProduct['is_good_deal'] ??= 0;
 
+
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         }
         $product = $this->productService->saveOrUpdate($dataProduct);
 
+        ProductDimension::create([
+            'product_id' =>  $product->id,
+            'height' => $request->height,
+            'length' =>  $request->length,
+            'weight' =>  $request->weight,
+            'width' =>  $request->width
+        ]);
         if ($request->has('product_variants')) {
             foreach ($request->product_variants as $item) {
                 $dataProductVariants = [
@@ -128,7 +138,7 @@ class ProductController extends Controller
                     'original_price' =>$item['original_price'],
                     'stock' => $item['stock'] ?? 0,
                     'status' => $item['status'] ?? '',
-                    'sku' => substr(bin2hex(random_bytes(5)), 0, 10)
+                    'sku' => $item['sku'] ??  strtoupper(Str::random(8))
                 ];
                 if (isset($item['variant_image']) && $item['variant_image'] instanceof UploadedFile) {
                     $extension = $item['variant_image']->getClientOriginalExtension();
@@ -142,8 +152,8 @@ class ProductController extends Controller
                 if(count($attributes)>0){
                     foreach($attributes as $value){
                       $id = $this->attributeValueService->getIdbyAttribute($value)->id;
-                        if ($id) { 
-                            $attributeValueIds[] = $id; 
+                        if ($id) {
+                            $attributeValueIds[] = $id;
                         }
                     }
                 }
@@ -158,9 +168,9 @@ class ProductController extends Controller
             foreach ($request->product_galaries as $image_gallery) {
                 $dataProductGallery = [
                     'product_id' => $product->id,
-                    'is_main' => $image_gallery['is_main'] ?? 0, 
+                    'is_main' => $image_gallery['is_main'] ?? 0,
                 ];
-                if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {  
+                if (isset($image_gallery['image_gallery']) && $image_gallery['image_gallery'] instanceof UploadedFile) {
                     $extension = $image_gallery['image_gallery']->getClientOriginalExtension();
                     $imageName = time() . '_' . uniqid() . '.' . $extension;
                     $relativePath = $image_gallery['image_gallery']->storeAs('public/products/gallery', $imageName);
@@ -174,6 +184,16 @@ class ProductController extends Controller
                 $product->tags()->attach($tag_id);
             }
         }
+        $logDetails = sprintf(
+            'Thêm sản phẩm: Mã - %s',
+            $dataProduct['code']
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Thêm',
+            $logDetails
+        ));
         if($request->has('coupon')){
             $coupons = $request->coupon;
             foreach($coupons as $coupon){
@@ -209,6 +229,7 @@ class ProductController extends Controller
             if($setCoupon){
                 $product->coupons()->attach($setCoupon->id);
             }
+
         }
         return redirect()->route('admin.products.listProduct')->with(['message'=>'Thêm sản phẩm thành công ']);
     }
@@ -223,11 +244,12 @@ class ProductController extends Controller
         }
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $selectedTags = $product->tags->pluck('id')->toArray();
+        $productDemension = ProductDimension::where('product_id' ,$id)->first();
         $variants = $this->productVariantService->getProductVariant($id);
         session()->forget('product_attributes');
-        return view('admin.products.update-product', compact('product','categories','selectedTags','variants'));
+        return view('admin.products.update-product', compact('product','categories','selectedTags','variants','productDemension'));
     }
-    
+
 
     /**
      * Update the specified resource in storage.
@@ -241,7 +263,7 @@ class ProductController extends Controller
             ], 404);
         }
 
-        $dataProduct = $request->except(['product_variants', 'product_galaries']);
+        $dataProduct = $request->except(['product_variants', 'product_galaries','height','length','weight','width']);
 
         $dataProduct['is_active'] ??= 0;
         $dataProduct['is_hot_deal'] ??= 0;
@@ -252,10 +274,15 @@ class ProductController extends Controller
         if (!empty($dataProduct['name']) && !empty($dataProduct['code'])) {
             $dataProduct['slug'] = Str::slug($dataProduct['name']) . '-' . $dataProduct['code'];
         }
-
+        ProductDimension::where('product_id', $id)->update([
+            'height' => $request->height ?? null,
+            'length' => $request->length ?? null,
+            'weight' => $request->weight ?? null,
+            'width'  => $request->width  ?? null,
+        ]);
         $product = $this->productService->saveOrUpdate($dataProduct, $product->id);
         if ($request->has('product_variants')) {
-            $currentVariants = $this->productVariantService->getVariantByProduct($id); 
+            $currentVariants = $this->productVariantService->getVariantByProduct($id);
             $submittedVariantIds = [];
             foreach ($request->product_variants as $item) {
                 $dataProductVariants = [
@@ -272,11 +299,11 @@ class ProductController extends Controller
                     $imagePath = $item['variant_image']->storeAs('public/products/variant_images', $imageName);
                     $dataProductVariants['variant_image'] = str_replace('public/', '', $imagePath);
                 }
-        
+
                 if (isset($item['id'])) {
                     $submittedVariantIds[] = $item['id'];
                     $productVariant = $this->productVariantService->saveOrUpdate($dataProductVariants, $item['id']);
-                } 
+                }
                 else {
                     $existingVariant = $this->productVariantService->getVariantByAttributes($item['attributes_values'], $product->id);
                     $existingVariantData=[];
@@ -298,7 +325,7 @@ class ProductController extends Controller
                             $attributeValueIds[] = $attributeValue->id;
                         }
                     }
-                }   
+                }
                 if (!empty($attributeValueIds)) {
                     $productVariant->attributeValues()->sync($attributeValueIds);
                 }
@@ -315,7 +342,7 @@ class ProductController extends Controller
             }
         }
         if(empty($request->has('product_variants'))){
-            $currentVariants = $this->productVariantService->getVariantByProduct($id); 
+            $currentVariants = $this->productVariantService->getVariantByProduct($id);
             if($currentVariants){
                 foreach($currentVariants as $variant){
                     $variantImagePath = public_path('storage/' . $variant->variant_image);
@@ -329,7 +356,7 @@ class ProductController extends Controller
         if ($request->has('product_galaries')) {
             $currentGalary = $this->productGalleryService->getGalaryByProduct($id);
             $submittedGalleryIds = [];
-        
+
             foreach ($request->product_galaries as $image_gallery) {
                 $dataProductGallery = [
                     'product_id' => $product->id,
@@ -347,7 +374,7 @@ class ProductController extends Controller
                     $this->productGalleryService->saveOrUpdate($dataProductGallery, $image_gallery['id']);
                 }
             }
-        
+
             foreach ($currentGalary as $item) {
                 if (!in_array($item->id, $submittedGalleryIds)) {
                     $imagePath = public_path('storage/' . $item->image_gallery);
@@ -358,12 +385,23 @@ class ProductController extends Controller
                 }
             }
         }
-        
-        
+
+
 
         if ($request->has('product_tags')) {
             $product->tags()->sync($request->product_tags);
         }
+
+        $logDetails = sprintf(
+            'Sửa sản phẩm: Mã - %s',
+            $dataProduct['code']
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
 
         return back();
     }
@@ -375,28 +413,37 @@ class ProductController extends Controller
         if (!$data) {
             return response()->json(['message' => 'Product not found'], 404);
         }
+        $logDetails = sprintf(
+            'Xóa sản phẩm: Mã - %s',
+            $data->code
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Mềm',
+            $logDetails
+        ));
         $data->delete();
         if ($data->trashed()) {
             return back()->with(['message'=>'Xóa thành công']);
         }
-
         return response()->json(['message' => 'Product permanently deleted and cover file removed'], 200);
     }
 
     public function restore(int $id)
     {
         $product = Product::withTrashed()->find($id);
-        
+
         if ($product) {
             $product->restore();
-            
+
             return back()->with(['message'=>'Khôi phục sản phẩm thành công']);
         }
-           
+
         return back()->with(['message'=>'Khôi phục sản phẩm thất bại']);
-        
+
     }
-    
+
     public function deleteMuitpalt(Request $request)
     {
         // Xác thực yêu cầu
@@ -449,6 +496,16 @@ class ProductController extends Controller
         if (!$data) {
             return back()->with(['message'=>'Lỗi khi xóa sản phẩm']);
         }
+        $logDetails = sprintf(
+            'Xóa vĩnh viễn sản phẩm: Mã - %s',
+            $data->code
+        );
+
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Cứng',
+            $logDetails
+        ));
         $data->forceDelete();
         return back()->with(['message'=>'Xóa sản phẩm thành công']);
     }

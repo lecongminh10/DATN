@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Cập Nhật Sản Phẩm
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -410,6 +413,21 @@
                                                         <input type="number" class="form-control" name="warranty_period"
                                                             id="warranty_period" value="{{$product->warranty_period}}">
                                                     </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="height" id="height"  value="{{old('height',$productDemension->height)}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="length" id="length"  value="{{old('length',$productDemension->length)}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="width" id="width"  value="{{old('width',$productDemension->width)}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" class="form-control" name="weight" id="weight"  value="{{old('weight',$productDemension->weight)}}" placeholder="Cân nặng (gr)">
+                                                            </div>
+                                                    </div>
                                                     <div class="row">
                                                         @php
                                                             $status = [
@@ -628,14 +646,9 @@
                                                                                 <select
                                                                                     class="form-control status_attribute"
                                                                                     name="product_variants[{{ $i }}][status]">
-                                                                                    <option value="none">None
-                                                                                    </option>
-                                                                                    <option value="available">Available
-                                                                                    </option>
-                                                                                    <option value="out_of_stock">Out of
-                                                                                        Stock</option>
-                                                                                    <option value="discontinued">
-                                                                                        Discontinued</option>
+                                                                                    <option value="available">Có sẵn</option>
+                                                                                    <option value="out_of_stock">Hết hàng </option>
+                                                                                    <option value="discontinued">Đã ngừng sản xuất</option>
                                                                                 </select>
                                                                             </td>
                                                                             <td>
@@ -759,8 +772,8 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <button class="btn btn-primary" type="submit" id="uploadButton">Save</button>
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                        <button class="btn btn-success me-2" type="submit" id="uploadButton" style="cursor: pointer">Cập nhật</button>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2" style="cursor: pointer">Quay lại</a>
                                     </div>
                                 </div>
                             </div>
@@ -775,7 +788,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="viewImageModalLabel">Variant Image</h5>
+          <h5 class="modal-title" id="viewImageModalLabel">Ảnh biến thể</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center">
@@ -903,9 +916,9 @@
                     <td>
                         <select class="form-control status_attribute" name="product_variants[${variantData.id}][status]">
                             <option value="none">None</option>
-                            <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Available</option>
-                            <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Out of Stock</option>
-                            <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Discontinued</option>
+                            <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Có sẵn</option>
+                            <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Hết hàng </option>
+                            <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Đã ngừng sản xuất</option>
                         </select>
                     </td>
                     <td>

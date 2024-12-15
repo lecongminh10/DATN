@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use App\Events\CouponEvent;
 use App\Http\Requests\CouponRequest;
 use App\Models\Category;
@@ -57,7 +58,7 @@ class CouponController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $couponRequest)
+    public function store(CouponRequest $couponRequest)
     {
         $validatedData = $couponRequest->all();
 
@@ -76,6 +77,7 @@ class CouponController extends Controller
                 'start_date'          => $validatedData['start_date'] ?? null,
                 'end_date'            => $validatedData['end_date'] ?? null,
                 'usage_limit'         => $validatedData['usage_limit'] ?? null,
+                'per_user_limit'      => $validatedData['per_user_limit'] ?? null,
                 'is_active'           => $validatedData['is_active'] ? 1 : 0,
                 'is_stackable'        => $validatedData['is_stackable'] ? 1 : 0,
                 'eligible_users_only' => $validatedData['eligible_users_only'] ? 1 : 0,
@@ -133,6 +135,17 @@ class CouponController extends Controller
 
             // Phát broadcast coupon
             broadcast(new CouponEvent($coupon));
+
+            $logDetails = sprintf(
+                'Thêm mới mã khuyến mãi: Mã - %s',
+                $coupon->code,
+            );
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
             DB::commit();
             return redirect()->route('admin.coupons.index', compact('coupon'))->with('success', 'Thêm mới coupon thành công');
         } catch (\Exception $e) {
@@ -173,7 +186,7 @@ class CouponController extends Controller
         $categories = $coupon->categories()->select('categories.id', 'categories.name')->get();
         $products = $coupon->products()->select('products.id', 'products.name')->get();
         $users = $coupon->users()->select('users.id', 'users.username')->get();
-        // dd($categories); 
+        // dd($categories);
         return view('admin.coupons.edit', compact('coupon', 'categories', 'products', 'users'));
     }
 
@@ -289,6 +302,18 @@ class CouponController extends Controller
                     break;
             }
 
+            $logDetails = sprintf(
+                'Sửa mã khuyến mãi: Mã - %s',
+                $coupon->code,
+            );
+
+            // Ghi nhật ký hoạt động
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Sửa',
+                $logDetails
+            ));
+
             DB::commit();
             return redirect()->route('admin.coupons.index')->with('success', 'Cập nhật coupon thành công');
         } catch (\Exception $e) {
@@ -345,11 +370,21 @@ class CouponController extends Controller
         if (!$data) {
             return abort(404);
         }
+        $logDetails = sprintf(
+            'Xóa mã khuyến mãi: Mã - %s',
+            $data->code,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Mềm',
+            $logDetails
+        ));
         $data->delete();
         if ($data->trashed()) {
             return redirect()->route('admin.coupons.index')->with('success', 'Thuộc tính mềm đã được xóa không thành công');
         }
-
         return redirect()->route('admin.coupons.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
 
@@ -359,6 +394,17 @@ class CouponController extends Controller
         if (!$data) {
             return redirect()->route('admin.coupons.index')->with('error', 'Thuộc tính đã được xóa không thành công');
         }
+        $logDetails = sprintf(
+            'Xóa mã khuyến mãi: Mã - %s',
+            $data->code,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa Cứng',
+            $logDetails
+        ));
         DB::transaction(function () use ($data) {
             $data->users()->detach();
             $data->categories()->detach();
@@ -366,7 +412,6 @@ class CouponController extends Controller
             $data->usage()->forceDelete();
             $data->forceDelete();
         });
-
         return redirect()->route('admin.coupons.deleted')->with('success', 'Thuộc tính và các liên kết trung gian đã bị xóa vĩnh viễn');
     }
 
@@ -434,7 +479,7 @@ class CouponController extends Controller
         if ($coupon->usage_limit && $coupon->usage_limit <= 0) {
             return response()->json(['message' => 'Mã giảm giá đã đạt giới hạn sử dụng.'], 400);
         }
-        if($coupon->is_active==false){
+        if ($coupon->is_active == false) {
             return response()->json(['message' => 'Mã giảm giá không hoạt động.'], 400);
         }
         return response()->json([

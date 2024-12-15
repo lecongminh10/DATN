@@ -1,4 +1,8 @@
 @extends('admin.layouts.app')
+
+@section('title')
+    Thùng Rác
+@endsection
 @section('style_css')
     <style>
     </style>
@@ -24,7 +28,7 @@
                                     <div class="col-sm">
                                         <div>
                                             <h5 class="card-title mb-0 "><a class="text-dark"
-                                                    href="{{ route('admin.products.deleted') }}">Danh sách đã xóa</a></h5>
+                                                    href="{{ route('admin.products.deleted') }}">Thùng rác</a></h5>
                                         </div>
                                     </div>
                                     <div class="col-sm-auto">
@@ -54,8 +58,7 @@
                                                     <i class="ri-add-box-fill"></i> Thêm
                                                 </a> --}}
                                                 <a href="{{ route('admin.products.listProduct') }}"
-                                                    class="btn btn-soft-primary ms-2">
-                                                    <i class="ri-home-6-fill"></i>Quay lại
+                                                    class="btn btn-primary ms-2">Quay lại
                                                 </a>
                                             </div>
                                         </div>
@@ -108,8 +111,8 @@
                                                     </td>
                                                     <td>{{ $value->category_name }}</td>
                                                     <td>{{ $value->slug }}</td>
-                                                    <td>{{ $value->price_regular }}</td>
-                                                    <td>{{ $value->price_sale }}</td>
+                                                    <td>{{ number_format($value->price_regular, 0, ',', '.') }} ₫</td>
+                                                    <td>{{ number_format($value->price_sale, 0, ',', '.') }} ₫</td>
                                                     <td>
                                                         <div class="dropdown d-inline-block">
                                                             <button class="btn btn-soft-secondary btn-sm dropdown"
@@ -175,70 +178,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="results-info ms-3">
-                                        <p class="pagination mb-0">
-                                            Showing
-                                            {{ $data->firstItem() }}
-                                            to
-                                            {{ $data->lastItem() }}
-                                            of
-                                            {{ $data->total() }}
-                                            results
-                                        </p>
-                                    </div>
-                                    <div class="pagination-wrap me-3">
-                                        <nav aria-label="Page navigation">
-                                            <ul class="pagination mb-0">
-                                                @if ($data->onFirstPage())
-                                                    <li class="page-item disabled">
-                                                        <span class="page-link">Previous</span>
-                                                    </li>
-                                                @else
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="{{ $data->previousPageUrl() }}"
-                                                            aria-label="Previous">
-                                                            Previous
-                                                        </a>
-                                                    </li>
-                                                @endif
-                                                @foreach ($data->links()->elements as $element)
-                                                    @if (is_string($element))
-                                                        <li class="page-item disabled">
-                                                            <span class="page-link">{{ $element }}</span>
-                                                        </li>
-                                                    @endif
-                                                    @if (is_array($element))
-                                                        @foreach ($element as $page => $url)
-                                                            @if ($page == $data->currentPage())
-                                                                <li class="page-item active">
-                                                                    <span class="page-link">{{ $page }}</span>
-                                                                </li>
-                                                            @else
-                                                                <li class="page-item">
-                                                                    <a class="page-link"
-                                                                        href="{{ $url }}">{{ $page }}</a>
-                                                                </li>
-                                                            @endif
-                                                        @endforeach
-                                                    @endif
-                                                @endforeach
-                                                @if ($data->hasMorePages())
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="{{ $data->nextPageUrl() }}"
-                                                            aria-label="Next">
-                                                            Next
-                                                        </a>
-                                                    </li>
-                                                @else
-                                                    <li class="page-item disabled">
-                                                        <span class="page-link">Next</span>
-                                                    </li>
-                                                @endif
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                </div>
+                                @include('admin.components.pagination', ['data' => $data ])
                             </div>
                         </div>
                     </div>

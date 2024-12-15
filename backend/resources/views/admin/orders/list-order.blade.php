@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Đơn Hàng
+@endsection
 @section('libray_css')
     <!-- Sweet Alert css-->
     <link href="{{ asset('theme/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -43,12 +46,12 @@ if (!function_exists('isStatus')) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Orders</h4>
+                        <h4 class="mb-sm-0">Đơn hàng</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                                <li class="breadcrumb-item active">Orders</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Quản lí </a></li>
+                                <li class="breadcrumb-item active">Đơn hàng</li>
                             </ol>
                         </div>
 
@@ -63,12 +66,12 @@ if (!function_exists('isStatus')) {
                         <div class="card-header border-0">
                             <div class="row align-items-center gy-3">
                                 <div class="col-sm">
-                                    <h5 class="card-title mb-0">Order</h5>
+                                    <h5 class="card-title mb-0">Đơn hàng</h5>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
-                                        <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16"></i></button>
-                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-danger"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
+                                        <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16 align-bottom"></i></button>
+                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-warning"><i class="ri-delete-bin-5-fill fs-16 align-bottom"></i> Thùng rác</a>
                                     </div>
                                 </div>
                             </div>
@@ -80,22 +83,22 @@ if (!function_exists('isStatus')) {
                                     <!-- Search -->
                                     <div class="col-xxl-5 col-sm-6">
                                         <div class="search-box">
-                                            <input type="text" name="search" class="form-control search" placeholder="Search for order ID, customer, order status or something..." value="{{ request('search') }}">
+                                            <input type="text" name="search" class="form-control search" placeholder="Tìm kiểm ..." value="{{ request('search') }}">
                                             <i class="ri-search-line search-icon"></i>
                                         </div>
                                     </div>
                                     <!-- Date Filter -->
                                     <div class="col-xxl-2 col-sm-6">
                                         <div>
-                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Select date" value="{{ request('date') }}">
+                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Chọn ngày" value="{{ request('date') }}">
                                         </div>
                                     </div>
                                     <!-- Status Filter -->
                                     <div class="col-xxl-2 col-sm-4">
                                         <div>
                                             <select class="form-control" name="status" data-choices data-choices-search-false id="idStatus">
-                                                <option class="bg-light" value="" disabled>Status</option>
-                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All</option>
+                                                <option class="bg-light" value="" disabled>Trạng thái</option>
+                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tất cả</option>
                                                 <option value="Chờ xác nhận" {{ request('status') == 'Chờ xác nhận' ? 'selected' : '' }}>Chờ xác nhận</option>
                                                 <option value="Đã xác nhận" {{ request('status') == 'Đã xác nhận' ? 'selected' : '' }}>Đã xác nhận</option>
                                                 <option value="Đang giao" {{ request('status') == 'Đang giao' ? 'selected' : '' }}>Đang giao</option>
@@ -120,7 +123,7 @@ if (!function_exists('isStatus')) {
                                     <div class="col-xxl-1 col-sm-4">
                                         <div>
                                             <button type="submit" class="btn btn-primary w-100">
-                                                <i class="ri-equalizer-fill fs-13 align-bottom"></i> Filters
+                                                <i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm
                                             </button>
                                         </div>
                                     </div>
@@ -132,37 +135,37 @@ if (!function_exists('isStatus')) {
                             <div>
                                 <ul class="nav nav-tabs nav-tabs-custom nav-success mb-3" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active py-3" data-bs-toggle="tab" id="All" href="#all" role="tab" aria-selected="true">
+                                        <a class="nav-menu nav-link active py-3" data-bs-toggle="tab" id="All" href="#all" role="tab" aria-selected="true">
                                             <i class="ri-store-2-fill me-1 align-bottom"></i> All Orders
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Chờ xác nhận" href="#choxacnhan" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Chờ xác nhận" href="#choxacnhan" role="tab" aria-selected="false">
                                             <i class="ri-file-list-3-line me-1 align-bottom"></i> Chờ xác nhận
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đã xác nhận" href="#daxacnhan" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đã xác nhận" href="#daxacnhan" role="tab" aria-selected="false">
                                             <i class="ri-checkbox-line me-1 align-bottom"></i> Đã xác nhận
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đang giao" href="#danggiao" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đang giao" href="#danggiao" role="tab" aria-selected="false">
                                             <i class="ri-truck-line me-1 align-bottom"></i> Đang giao
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Hoàn thành" href="#hoanthanh" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Hoàn thành" href="#hoanthanh" role="tab" aria-selected="false">
                                             <i class="ri-checkbox-circle-line me-1 align-bottom"></i> Hoàn thành
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Hàng thất lạc" href="#hangthatlac" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Hàng thất lạc" href="#hangthatlac" role="tab" aria-selected="false">
                                             <i class="ri-spam-3-line me-1 align-bottom"></i> Hàng thất lạc
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đã hủy" href="#dahuy" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đã hủy" href="#dahuy" role="tab" aria-selected="false">
                                             <i class="ri-close-circle-line me-1 align-bottom"></i> Đã hủy
                                         </a>
                                     </li>
@@ -177,15 +180,15 @@ if (!function_exists('isStatus')) {
                                                         <input class="form-check-input" type="checkbox" id="checkAll" value="0">
                                                     </div>
                                                 </th>
-                                                <th class="sort" data-sort="stt">STT</th>
-                                                <th class="sort" data-sort="customer_email">Customer</th>
-                                                <th class="sort" data-sort="code">CODE</th>
-                                                <th class="sort" data-sort="total_price">Price total</th>
-                                                <th class="sort" data-sort="payment">Payment Method</th>
-                                                <th class="sort" data-sort="transport">Transport</th>
-                                                <th class="sort" data-sort="status">Status</th>
-                                                <th class="sort" data-sort="created_at">Order date</th>
-                                                <th class="sort" data-sort="action">Action</th>
+                                                <th data-sort="stt">STT</th>
+                                                <th data-sort="customer_email">Khách hàng </th>
+                                                <th data-sort="code">Mã</th>
+                                                <th data-sort="total_price">Tổng giá</th>
+                                                <th data-sort="payment">Phương thức thanh toán</th>
+                                                <th data-sort="transport">Mã giao dịch</th>
+                                                <th data-sort="status">Trạng thái</th>
+                                                <th data-sort="created_at">Ngày mua</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -199,12 +202,12 @@ if (!function_exists('isStatus')) {
                                                 <td class="stt">{{ $key + 1 }}</td>
                                                 <td class="customer_email">{{ $order->user->email }}</td>
                                                 <td class="code">{{ $order->code }}</td>
-                                                <td class="total_price">{{ $order->total_price }}</td>
+                                                <td class="total_price">{{ number_format($order->total_price, 0, ',', '.') }} ₫</td>
                                                 <td class="payment">
                                                     @if ($order->payment && $order->payment->paymentGateway)
                                                         {{ $order->payment->paymentGateway->name }}
                                                     @else
-                                                        <span class="text-muted">No Payment</span>
+                                                        <span class="text-muted">Không có </span>
                                                     @endif
                                                 </td>
                                                 <td class="transport">{{ $order->tracking_number }}</td>
@@ -236,8 +239,7 @@ if (!function_exists('isStatus')) {
                                     <div class="noresult" style="display: none">
                                         <div class="text-center">
                                             <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:75px;height:75px"></lord-icon>
-                                            <h5 class="mt-2">Sorry! No Result Found</h5>
-                                            <p class="text-muted">We've searched more than 150+ Orders We did not find any orders for you search.</p>
+                                            <h5 class="mt-2">Không tìm thấy đơn hàng nào </h5>
                                         </div>
                                     </div>
                                 </div>
@@ -245,7 +247,7 @@ if (!function_exists('isStatus')) {
                                 <div class="d-flex justify-content-end">
                                     <div class="pagination-wrap hstack gap-2">
                                         <a class="page-item pagination-prev {{ $orders->onFirstPage() ? 'disabled' : '' }}" href="{{ $orders->previousPageUrl() }}">
-                                            Previous
+                                            Trước
                                         </a>
                                         <ul class="pagination listjs-pagination mb-0">
                                             @for ($i = 1; $i <= $orders->lastPage(); $i++)
@@ -255,7 +257,7 @@ if (!function_exists('isStatus')) {
                                             @endfor
                                         </ul>
                                         <a class="page-item pagination-next {{ $orders->hasMorePages() ? '' : 'disabled' }}" href="{{ $orders->nextPageUrl() }}">
-                                            Next
+                                            Sau
                                         </a>
                                     </div>
                                 </div>
@@ -264,7 +266,7 @@ if (!function_exists('isStatus')) {
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header bg-light p-3">
-                                            <h5 class="modal-title" id="modalEditLabel">Update</h5>
+                                            <h5 class="modal-title" id="modalEditLabel">Cập nhật</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                                         </div>
                                         <form  method="post">
@@ -273,38 +275,21 @@ if (!function_exists('isStatus')) {
                                                 <input type="hidden" id="idOrder" />
 
                                                 <div class="mb-3">
-                                                    <label for="code" class="form-label">CODE</label>
+                                                    <label for="code" class="form-label">Mã </label>
                                                     <input type="text" name="code" id="idCode" class=" form-control" disabled  />
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="customername-field" class="form-label">Customer Name</label>
+                                                    <label for="customername-field" class="form-label">Khách hàng </label>
                                                     <input type="text" name="customerName" id="customerName" class="form-control" disabled  />
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="date-field" class="form-label">Order Date</label>
+                                                    <label for="date-field" class="form-label">Ngày tạo</label>
                                                     <input type="text" id="date" name="date" class="form-control" data-provider="flatpickr" required data-date-format="d-m-Y" data-enable-time disabled />
                                                 </div>
-
-                                                {{-- <div class="row gy-4 mb-3">
-                                                    {{-- <div class="col-md-6">
-                                                        <div>
-                                                            <label for="amount-field" class="form-label">Amount</label>
-                                                            <input type="text" id="amount-field" class="form-control" placeholder="Total amount" required />
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <label for="payment-field" class="form-label">Payment Method</label>
-                                                        <select class="form-control" data-trigger name="payment" required id="payment" disabled>
-                                                            <option value="Stripe">Stripe</option>
-                                                            <option value="Paypal">Paypal</option>
-                                                        </select>
-                                                    </div>
-                                                </div> --}}
-
                                                 <div>
-                                                    <label for="delivered-status" class="form-label">Delivery Status</label>
+                                                    <label for="delivered-status" class="form-label">Trạng thái</label>
                                                     <select class="form-control" name="status" data-choices data-choices-search-false id="idStatusEdit" data-current-status="">
                                                         <option value="Chờ xác nhận">Chờ xác nhận</option>
                                                         <option value="Đã xác nhận">Đã xác nhận</option>
@@ -317,8 +302,8 @@ if (!function_exists('isStatus')) {
                                             </div>
                                             <div class="modal-footer">
                                                 <div class="hstack gap-2 justify-content-end">
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-success" id="edit-btn">Update</button>
+                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                                                    <button type="submit" class="btn btn-success" id="edit-btn">Lưu</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -337,9 +322,9 @@ if (!function_exists('isStatus')) {
                                                 <p class="text-muted fs-15 mb-4">Khi bạn chuyển vào thùng rác bạn vẫn có thể khôi phục lại!</p>
                                                 <div class="hstack gap-2 justify-content-center remove">
                                                     <button class="btn btn-link link-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal">
-                                                        <i class="ri-close-line me-1 align-middle"></i> Close
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
                                                     </button>
-                                                    <button class="btn btn-danger" id="delete-record">Yes, Delete It</button>
+                                                    <button class="btn btn-danger" id="delete-record">Đúng , Tôi muốn xóa </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -359,9 +344,9 @@ if (!function_exists('isStatus')) {
                                                 <p class="text-muted fs-15 mb-4">Khi bạn chuyển vào thùng rác bạn vẫn có thể khôi phục lại!</p>
                                                 <div class="hstack gap-2 justify-content-center remove">
                                                     <button class="btn btn-link link-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal">
-                                                        <i class="ri-close-line me-1 align-middle"></i> Close
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
                                                     </button>
-                                                    <button class="btn btn-danger" id="deleteManyrecord">Yes, Delete It</button>
+                                                    <button class="btn btn-danger" id="deleteManyrecord">Đúng , Tôi muốn xóa</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -446,7 +431,7 @@ if (!function_exists('isStatus')) {
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 @endsection
-@section('script_logic')
+@section('scripte_logic')
     <script>
     $(document).ready(function() {
     $('#demo-datepicker').flatpickr({
@@ -526,7 +511,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>
                         <ul class="list-inline hstack gap-2 mb-0">
                             <li class="list-inline-item">
-                                <a href="/order/${order.id}/detail" class="text-primary d-inline-block">
+                                <a href="order-detail/${order.id}" class="text-primary d-inline-block">
                                     <i class="ri-eye-fill fs-16"></i>
                                 </a>
                             </li>
@@ -536,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </button>
                             </li>
                             <li class="list-inline-item">
-                                <a class="text-danger d-inline-block remove-item-btn" data-bs-toggle="modal" href="#deleteOrder">
+                                <a class="text-danger d-inline-block remove-item-btn" data-bs-toggle="modal" href="#deleteOrder" data-id="${order.id}">
                                     <i class="ri-delete-bin-5-fill fs-16"></i>
                                 </a>
                             </li>
@@ -591,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Bắt sự kiện khi nhấp tab
-    document.querySelectorAll('.nav-link').forEach(tab => {
+    document.querySelectorAll('.nav-menu').forEach(tab => {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
             let status = this.id; // Lấy status từ ID của tab
@@ -619,17 +604,19 @@ modalEdit.addEventListener('show.bs.modal', function (event) {
         },
     })
     .then((response) => response.json())
-    .then((data) => {
+    .then((data) => {     
         document.querySelector('#idOrder').value = data.id;
         document.querySelector('#idCode').value = data.code;
         document.querySelector('#customerName').value = data.user.email;
         document.querySelector('#date').value = new Date(data.created_at).toLocaleDateString('en-GB');
-        const statusSelect = document.querySelector('#idStatusEdit');
-        statusSelect.setAttribute('data-current-status', data.status);
+        document.querySelector('#idStatusEdit').value = data.status;
+        // const statusSelect = document.querySelector('#idStatusEdit');
+        
+        // statusSelect.setAttribute('data-current-status', data.status);
 
-        // Array.from(statusSelect.options).forEach(option => {
-        //     option.selected = (option.value === data.status);
-        // });
+        Array.from(statusSelect.options).forEach(option => {
+            option.selected = (option.value === data.status);
+        });
 
         // document.querySelector('#payment').value = data.payment.paymentGateway.name;
     })

@@ -36,162 +36,19 @@
         }
 
         .product-image img{
-            width: 100px;
-            height: 80px;
+            width: 80px;
+            height: 70px;
         }
     </style>
 @endsection
 
 @section('content')
-
-<header class="header">
-    <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
-        <div class="container">
-            <nav class="main-nav w-100">
-                <ul class="menu">
-                    <li>
-                        <a href="{{ route('client') }}">Home</a>
-                    </li>
-                    <li>
-                        <a href="category.html">Categories</a>
-                        <div class="megamenu megamenu-fixed-width megamenu-3cols">
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <a href="#" class="nolink">VARIATION 1</a>
-                                    <ul class="submenu">
-                                        <li><a href="category.html">Fullwidth Banner</a></li>
-                                        <li><a href="category-banner-boxed-slider.html">Boxed Slider Banner</a>
-                                        </li>
-                                        <li><a href="category-banner-boxed-image.html">Boxed Image Banner</a>
-                                        </li>
-                                        <li><a href="category.html">Left Sidebar</a></li>
-                                        <li><a href="category-sidebar-right.html">Right Sidebar</a></li>
-                                        <li><a href="category-off-canvas.html">Off Canvas Filter</a></li>
-                                        <li><a href="category-horizontal-filter1.html">Horizontal Filter1</a>
-                                        </li>
-                                        <li><a href="category-horizontal-filter2.html">Horizontal Filter2</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-lg-4">
-                                    <a href="#" class="nolink">VARIATION 2</a>
-                                    <ul class="submenu">
-                                        <li><a href="category-list.html">List Types</a></li>
-                                        <li><a href="category-infinite-scroll.html">Ajax Infinite Scroll</a>
-                                        </li>
-                                        <li><a href="category.html">3 Columns Products</a></li>
-                                        <li><a href="category-4col.html">4 Columns Products</a></li>
-                                        <li><a href="category-5col.html">5 Columns Products</a></li>
-                                        <li><a href="category-6col.html">6 Columns Products</a></li>
-                                        <li><a href="category-7col.html">7 Columns Products</a></li>
-                                        <li><a href="category-8col.html">8 Columns Products</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-lg-4 p-0">
-                                    <div class="menu-banner">
-                                        <figure>
-                                            <img src="assets/images/menu-banner.jpg" width="192" height="313"
-                                                alt="Menu banner">
-                                        </figure>
-                                        <div class="banner-content">
-                                            <h4>
-                                                <span class="">UP TO</span><br />
-                                                <b class="">50%</b>
-                                                <i>OFF</i>
-                                            </h4>
-                                            <a href="category.html" class="btn btn-sm btn-dark">SHOP NOW</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- End .megamenu -->
-                    </li>
-                    <li>
-                        <a href="product.html">Products</a>
-                        <div class="megamenu megamenu-fixed-width">
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <a href="#" class="nolink">PRODUCT PAGES</a>
-                                    <ul class="submenu">
-                                        <li><a href="product.html">SIMPLE PRODUCT</a></li>
-                                        <li><a href="product-variable.html">VARIABLE PRODUCT</a></li>
-                                        <li><a href="product.html">SALE PRODUCT</a></li>
-                                        <li><a href="product.html">FEATURED & ON SALE</a></li>
-                                        <li><a href="product-custom-tab.html">WITH CUSTOM TAB</a></li>
-                                        <li><a href="product-sidebar-left.html">WITH LEFT SIDEBAR</a></li>
-                                        <li><a href="product-sidebar-right.html">WITH RIGHT SIDEBAR</a></li>
-                                        <li><a href="product-addcart-sticky.html">ADD CART STICKY</a></li>
-                                    </ul>
-                                </div><!-- End .col-lg-4 -->
-
-                                <div class="col-lg-4">
-                                    <a href="#" class="nolink">PRODUCT LAYOUTS</a>
-                                    <ul class="submenu">
-                                        <li><a href="product-extended-layout.html">EXTENDED LAYOUT</a></li>
-                                        <li><a href="product-grid-layout.html">GRID IMAGE</a></li>
-                                        <li><a href="product-full-width.html">FULL WIDTH LAYOUT</a></li>
-                                        <li><a href="product-sticky-info.html">STICKY INFO</a></li>
-                                        <li><a href="product-sticky-both.html">LEFT & RIGHT STICKY</a></li>
-                                        <li><a href="product-transparent-image.html">TRANSPARENT IMAGE</a></li>
-                                        <li><a href="product-center-vertical.html">CENTER VERTICAL</a></li>
-                                        <li><a href="#">BUILD YOUR OWN</a></li>
-                                    </ul>
-                                </div><!-- End .col-lg-4 -->
-
-                                <div class="col-lg-4 p-0">
-                                    <div class="menu-banner menu-banner-2">
-                                        <figure>
-                                            <img src="assets/images/menu-banner-1.jpg" alt="Menu banner"
-                                                class="product-promo">
-                                        </figure>
-                                        <i>OFF</i>
-                                        <div class="banner-content">
-                                            <h4>
-                                                <span class="">UP TO</span><br />
-                                                <b class="">50%</b>
-                                            </h4>
-                                        </div>
-                                        <a href="category.html" class="btn btn-sm btn-dark">SHOP NOW</a>
-                                    </div>
-                                </div><!-- End .col-lg-4 -->
-                            </div><!-- End .row -->
-                        </div><!-- End .megamenu -->
-                    </li>
-                    <li class="">
-                        <a href="#">Pages</a>
-                        <ul>
-                            <li><a href="wishlist.html">Wishlist</a></li>
-                            <li><a href="cart.html">Shopping Cart</a></li>
-                            <li><a href="checkout.html">Checkout</a></li>
-                            <li><a href="dashboard.html">Dashboard</a></li>
-                            <li><a href="about.html">About Us</a></li>
-                            <li><a href="#">Blog</a>
-                                <ul>
-                                    <li><a href="blog.html">Blog</a></li>
-                                    <li><a href="single.html">Blog Post</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="contact.html">Contact Us</a></li>
-                            <li><a href="login.html">Login</a></li>
-                            <li><a href="forgot-password.html">Forgot Password</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="about.html">About Us</a></li>
-                    <li><a href="contact.html">Contact Us</a></li>
-                    <li class="float-right"><a href="https://1.envato.market/DdLk5" class="pl-5"
-                            target="_blank">Buy Porto!</a></li>
-                    <li class="float-right"><a href="#" class="pl-5">Special Offer!</a></li>
-                </ul>
-            </nav>
-        </div><!-- End .container -->
-    </div><!-- End .header-bottom -->
-</header><!-- End .header -->
+@include('client.layouts.nav')
 
 <main class="main">
     <div class="page-header">
         <div class="container d-flex flex-column align-items-center">
-            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+            {{-- <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <div class="container">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{  route('client') }}">Trang chủ</a></li>
@@ -200,7 +57,7 @@
                         </li>
                     </ol>
                 </div>
-            </nav>
+            </nav> --}}
 
             <h1>Yêu thích</h1>
         </div>
@@ -234,15 +91,16 @@
                             <td>
                                 <figure class="product-image-container">
                                     <a href="{{ route('client.showProduct', $value->product->id) }}" class="product-image">
-                                        {{-- @php
-                                            if ($value->productVariant && !empty($value->productVariant->variant_image)) {
-                                                $url = $value->productVariant->variant_image; 
-                                            } else {
-                                                $mainImage = $value->product->getMainImage(); 
-                                                $url = $mainImage ? $mainImage->image_gallery : 'default-image-path.jpg';
-                                            }
-                                        @endphp --}}
-                                        <img src="{{Storage::url($value->product->getMainImage()->image_gallery)}}" alt="{{ $value->product->getMainImage()->image_gallery }}" />
+                                        @php
+                                        if ($value->productVariant && !empty($value->productVariant->variant_image)) {
+                                            $url = $value->productVariant->variant_image; 
+                                        } else {
+                                            $mainImage = $value->product->getMainImage(); 
+                                            $url = $mainImage && !empty($mainImage->image_gallery) ? $mainImage->image_gallery : 'default-image-path.jpg';
+                                        }
+                                        @endphp
+                                        <img src="{{ $url ? Storage::url($url) : asset('default-image-path.jpg') }}" 
+                                            alt="{{ $value->product->name ?? 'No image available' }}" />
                                     </a>
 
                                     <a href="javascript:void(0);" class="btn-remove icon-cancel" 

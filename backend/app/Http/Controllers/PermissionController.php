@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdminActivityLogged;
 use Log;
 use App\Models\Permission;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Services\PermissionService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PermissionRequest;
 use App\Services\PermissionValueService;
+use Illuminate\Support\Facades\DB;
 
 class PermissionController extends Controller
 {
@@ -25,8 +27,7 @@ class PermissionController extends Controller
     {
         $search = $request->input('search');
         $perPage = $request->input('perPage');
-        $permission = $this->permissionService->getSeachPermission($search, $perPage);
-        $permissions = Permission::paginate(10);
+        $permissions = $this->permissionService->getSeachPermission($search, $perPage);
         $permissionValues = $this->permissionValueService->paginate(10);
         return view('admin.permissions.list', compact('permissions', 'permissionValues','search'));
     }
@@ -43,20 +44,49 @@ class PermissionController extends Controller
     }
     public function store(PermissionRequest $request)
     {
-        // dd($request->all());
-        $permission = Permission::create([
-            'permission_name' => $request->permission_name,
-            'description' => $request->description1,
-        ]);
-
-        foreach ($request->value as $key => $value) {
-            PermissionValue::create([
-                'permissions_id' => $permission->id,
-                'value' => $value,
-                'description' => $request->description[$key],
+        DB::beginTransaction(); // Bắt đầu giao dịch
+        try {
+            // Tạo mới quyền
+            $permission = Permission::create([
+                'permission_name' => $request->permission_name,
+                'description' => $request->description1,
             ]);
+
+            // Tạo các giá trị quyền
+            foreach ($request->value as $key => $value) {
+                PermissionValue::create([
+                    'permissions_id' => $permission->id,
+                    'value' => $value,
+                    'description' => $request->description[$key],
+                ]);
+            }
+
+            // Ghi nhật ký hoạt động
+            $logDetails = sprintf(
+                'Thêm quyền: Tên - %s',
+                $permission->permission_name,
+            );
+
+            event(new AdminActivityLogged(
+                auth()->user()->id,
+                'Thêm mới',
+                $logDetails
+            ));
+
+            DB::commit(); // Xác nhận giao dịch
+            return redirect()->route('admin.permissions.index')->with('success', 'Thêm mới quyền thành công.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack(); // Hoàn tác giao dịch
+            if ($e->getCode() == '23000') { // Lỗi unique
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "Giá trị '{$value}' đã tồn tại. Vui lòng kiểm tra lại.");
+            }
+            throw $e; // Ném lại lỗi nếu không phải unique
+        } catch (\Exception $e) {
+            DB::rollBack(); // Hoàn tác giao dịch
+            return redirect()->back()->withInput()->with('error', 'Đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại.');
         }
-        return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully.');
     }
     public function edit($id)
     {
@@ -89,7 +119,20 @@ class PermissionController extends Controller
                 ]);
             }
         }
-        return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully.');
+
+        $logDetails = sprintf(
+            'Sửa quyền: Tên - %s',
+            $permission->permission_name,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Sửa',
+            $logDetails
+        ));
+
+        return redirect()->route('admin.permissions.index')->with('success', 'Cập nhật quyền thành công.');
     }
     public function destroyPermission($id)
     {
@@ -105,9 +148,21 @@ class PermissionController extends Controller
         }
         $permission->delete();
         if ($permission->trashed()) {
-            return redirect()->route('permissions.index')->with('success', 'Permission soft deleted successfully.');
+            return redirect()->route('admin.permissions.index')->with('success', 'Xóa quyền thành công.');
         }
-        return redirect()->route('admin.permissions.index')->with('error', 'An error occurred while deleting the category.');
+
+        $logDetails = sprintf(
+            'Xóa quyền: Tên - %s',
+            $permission->permission_name,
+        );
+
+        // Ghi nhật ký hoạt động
+        event(new AdminActivityLogged(
+            auth()->user()->id,
+            'Xóa',
+            $logDetails
+        ));
+        return redirect()->route('admin.permissions.index')->with('error', 'Đã xảy ra lỗi khi xóa danh mục.');
     }
     public function destroyPermissionHard($id)
     {
@@ -120,7 +175,7 @@ class PermissionController extends Controller
             return redirect()->back()->with('error', 'Permission not found.');
         }
         $permission->forceDelete();
-        return redirect()->route('admin.permissions.index')->with('success', 'Permission deleted successfully.');
+        return redirect()->route('admin.permissions.index')->with('success', 'Đã xóa quyền thành công.');
     }
     public function destroyPermissionValue($id)
     {
@@ -138,7 +193,7 @@ class PermissionController extends Controller
         }
         $data->forceDelete();
         if ($data->trashed()) {
-            return redirect()->route('admin.permissions.index')->with('success', 'Permission value soft deleted successfully.');
+            return redirect()->route('admin.permissions.index')->with('success', 'Giá trị quyền đã được xóa thành công.');
         }
     }
     public function destroy($id, Request $request)
@@ -151,7 +206,7 @@ class PermissionController extends Controller
             $permission->delete();
         }
 
-        return redirect()->route('admin.permissions.index')->with('success', 'User deleted successfully');
+        return redirect()->route('admin.permissions.index')->with('success', 'Người dùng đã xóa thành công');
     }
 
     public function destroyMultiple(Request $request)
@@ -166,7 +221,7 @@ class PermissionController extends Controller
                 }
             }
 
-            return redirect()->route('admin.permissions.index')->with('success', 'Permissions and their values deleted successfully.');
+            return redirect()->route('admin.permissions.index')->with('success', 'Quyền và giá trị của chúng đã được xóa thành công.');
         } else {
             return redirect()->route('admin.permissions.index')->with('error', 'No permissions were selected to delete.');
         }

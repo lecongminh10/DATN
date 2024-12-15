@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -19,5 +20,19 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 
 Broadcast::channel('broadcast-coupon', function () {
+    return true;
+});
+Broadcast::channel('message', function ($user) {
+    return true; // Hoặc điều kiện xác thực người dùng
+});
+
+Broadcast::channel('usersonline', function ($user) {
+    return true;
+});
+
+Broadcast::channel('chat.{romId}', function () {
+    return true; 
+});
+Broadcast::channel('notification_message', function ($user) {
     return true;
 });

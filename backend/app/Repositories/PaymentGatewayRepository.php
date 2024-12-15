@@ -15,9 +15,14 @@ class PaymentGatewayRepository extends BaseRepository
         $this->paymentGatewayRepository = $paymentGatewayRepository;
     }
 
-    public function getAllPaymentGateway()
+    public function getAll($search = null)
     {
-        return PaymentGateway::get();
+        $query = PaymentGateway::query();
+        // Kiểm tra xem có giá trị tìm kiếm không
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');  // Tìm kiếm theo tên
+        }
+        return $query->get();  // Trả về kết quả sau khi tìm kiếm
     }
 
     public function create(array $data)
@@ -42,6 +47,4 @@ class PaymentGatewayRepository extends BaseRepository
         $paymentGateway = PaymentGateway::findOrFail($id);
         $paymentGateway->delete();
     }
-
-   
 }

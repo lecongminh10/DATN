@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Chi Tiết Sản Phẩm: {{ $product->name }}
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -315,7 +318,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin sản phẩm</h4>
                                     </div><!-- end card header -->
                                     <div class="card-body">
                                         <div class="live-preview">
@@ -410,6 +413,21 @@
                                                         <input type="number" class="form-control" name="warranty_period"
                                                             id="warranty_period" value="{{$product->warranty_period}}" disabled>
                                                     </div>
+                                                    <div class="row mt-3">
+                                                        <label for="price_sale" class="form-label">Đặc tính </label>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="height" id="height"  value="{{$product->productDimension->height}}" placeholder="Chiều cao (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="length" id="length"  value="{{$product->productDimension->length}}" placeholder="Chiều dài (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="width" id="width"  value="{{$product->productDimension->width}}" placeholder="Chiều rộng (cm)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input type="number" disabled class="form-control" name="weight" id="weight"  value="{{$product->productDimension->weight}}" placeholder="Cân nặng (gr)">
+                                                            </div>
+                                                    </div>
                                                     <div class="row">
                                                         @php
                                                             $status = [
@@ -454,7 +472,7 @@
                                                 <div class="col-md-4">
                                                     <div class="card">
                                                         <div class="card-header align-items-center d-flex">
-                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục</h4>
+                                                            <h4 class="card-title mb-0 flex-grow-1">Danh mục <span class="text-danger">*</span></label></h4>
                                                             @error('category_id')
                                                                 <div>
                                                                     <div class="invalid-feedback">
@@ -464,7 +482,8 @@
                                                             @enderror
                                                         </div>
                                                         <div class="card-body">
-                                                            <div class="list-group col nested-list nested-sortable"
+                                                            <div data-simplebar style="max-height: 525px;">
+                                                                <div class="list-group col nested-list nested-sortable"
                                                                 id="nested-sortable">
                                                                 @foreach ($categories as $category)
                                                                     @include(
@@ -472,6 +491,7 @@
                                                                         ['category' => $category]
                                                                     )
                                                                 @endforeach
+                                                            </div>
                                                             </div>
                                                         </div><!-- end card-body -->
                                                     </div><!-- end card -->
@@ -488,7 +508,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Content</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Nội dung</h4>
                                     </div>
                                     <div class="card-body">
                                         <!-- Editor container -->
@@ -526,11 +546,6 @@
                                                         aria-controls="v-pills-profile" aria-selected="false">
                                                         Các biến thể
                                                     </a>
-                                                    <a class="nav-link mb-2" id="coupon-tab" data-bs-toggle="pill"
-                                                        href="#v-pills-coupons" role="tab"
-                                                        aria-controls="v-pills-coupons" aria-selected="false">
-                                                        Khuyến mãi
-                                                    </a>
                                                 </div>
                                             </div>
                                             <div class="col-md-10">
@@ -553,101 +568,6 @@
                                                     <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
                                                         aria-labelledby="product_variant">
                                                         <div id="selectedAttributes">
-                                                            <table class="table table-bordered" id="attributeTable">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Giá trị</th>
-                                                                        <th>Giá Gốc</th>
-                                                                        <th>Giá Mới</th>
-                                                                        <th>Kho</th>
-                                                                        <th>Trạng thái</th>
-                                                                        <th>Ảnh</th>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody id="attributeList">
-                                                                    @php
-                                                                    $i = 0;
-                                                                    @endphp
-                                                                  @if (session('product_attributes') && count(session('product_attributes')) > 0)
-                                                                    @foreach (session('product_attributes') as $attribute)
-                                                                        @php
-                                                                            ++$i;
-                                                                        @endphp
-                                                                        <tr>
-                                                                            <td>
-                                                                                @php
-                                                                                    $attributeString = '';
-                                                                                    $attributeValueString = '';
-                                                                                    foreach (
-                                                                                        $attribute
-                                                                                        as $key => $item
-                                                                                    ) {
-                                                                                        $attributeString .= "{$key}: {$item}<br>";
-                                                                                        $attributeValueString .= "{$item},";
-                                                                                    }
-                                                                                    $attributeString = rtrim(
-                                                                                        $attributeString,
-                                                                                        '<br>',
-                                                                                    );
-                                                                                    $attributeValueString = rtrim(
-                                                                                        $attributeValueString,
-                                                                                        ', ',
-                                                                                    );
-                                                                                @endphp
-                                                                                <input type="hidden"
-                                                                                    name="product_variants[{{ $i }}][attributes_values]"
-                                                                                    value="{{ $attributeValueString }}"
-                                                                                    class="product_variants">
-                                                                                {!! $attributeString !!}
-                                                                            </td>
-                                                                            <td>
-                                                                                <input type="number"
-                                                                                    name="product_variants[{{ $i }}][original_price]"
-                                                                                    class="form-control original_price"
-                                                                                    id="original_price_{{ $i }}" />
-                                                                            </td>
-                                                                            <td>
-                                                                                <input disabled type="number"
-                                                                                    name="product_variants[{{ $i }}][price_modifier]"
-                                                                                    class="form-control price_modifier"
-                                                                                    id="price_modifier_{{ $i }}" />
-                                                                            </td>
-                                                                            <td>
-                                                                                <input disabled type="number"
-                                                                                    name="product_variants[{{ $i }}][stock]"
-                                                                                    class="form-control stock"
-                                                                                    min="0" />
-                                                                            </td>
-                                                                            <td>
-                                                                                <select disabled
-                                                                                    class="form-control status_attribute"
-                                                                                    name="product_variants[{{ $i }}][status]">
-                                                                                    <option value="none">None
-                                                                                    </option>
-                                                                                    <option value="available">Available
-                                                                                    </option>
-                                                                                    <option value="out_of_stock">Out of
-                                                                                        Stock</option>
-                                                                                    <option value="discontinued">
-                                                                                        Discontinued</option>
-                                                                                </select>
-                                                                            </td>
-                                                                            <td>
-                                                                                <input type="file" disabled
-                                                                                    class="form-control"
-                                                                                    name="product_variants[{{ $i }}][variant_image]" />
-                                                                            </td>
-                                                                            <td>
-                                                                                <i
-                                                                                    class="ri-delete-bin-5-fill remove-attribute-values"></i>
-                                                                            </td>
-                                                                        </tr>
-                                                                    @endforeach
-                                                                @endif
-                                                                </tbody>
-                                                            </table>
-
                                                         </div>
                                                     </div>
                                                     <div class="tab-pane fade" id="v-pills-coupons" role="tabpanel"
@@ -669,14 +589,7 @@
                                                                 </div>
 
                                                             </div>
-                                                            <!-- Coupon Code & Discount Type -->
-                                                            <div class="card">
-                                                                <div class="card-header">
-                                                                    <h5>Mã khuyến mãi</h5>
-                                                                </div>
-                                                                <div class="card-body" id="addCoupone">
-                                                                </div>
-                                                            </div>
+                                                           
                                                         </div>
                                                     </div>
                                                 </div>
@@ -742,7 +655,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary">Quay lại</a>
                                     </div>
                                 </div>
                             </div>

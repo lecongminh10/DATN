@@ -53,7 +53,6 @@ class User extends Authenticatable
 
     protected $casts = [
         'is_verified' => 'boolean',
-        'deleted_at' => 'boolean'
     ];
 
     public function permissionsValues()
@@ -76,6 +75,12 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isClient()
+    {
+        return $this->permissionsValues()
+            ->whereIn('value', [self::TYPE_CLIENT])
+            ->exists();
+    }
     //Gọi Sự Kiện Khi Có Thay Đổi Trong Cơ Sở Dữ Liệu
     protected static function boot()
     {
@@ -106,5 +111,32 @@ class User extends Authenticatable
     public function reviews()
     {
         return DB::table('users_reviews')->where('user_id', $this->id)->get();
+    }
+
+    public function getMembershipLevelAttribute()
+    {
+        // Kiểm tra số điểm loyalty và trả về hạng thành viên tương ứng
+        if ($this->loyalty_points < 50000) {
+            return 'Bronze';
+        } elseif ($this->loyalty_points <= 100000) {
+            return 'Silver';
+        } elseif ($this->loyalty_points <= 200000) {
+            return 'Gold';
+        } else {
+            return 'Platinum';
+        }
+    }
+    public function scopeClients($query)
+    {
+        return $query->whereHas('permissionsValues', function ($q) {
+            $q->where('value', self::TYPE_CLIENT);
+        });
+    }
+
+    // Trong Model User.php
+    public function getDeletedByNameAttribute()
+    {
+        // Kiểm tra nếu deleted_by không phải null và có liên kết tới một User khác
+        return $this->deleted_by ? $this->deleted_by->username : 'Không xác định';
     }
 }

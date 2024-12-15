@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Thuộc Tính
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -24,7 +27,12 @@
                                                         href="{{ route('admin.attributes.index') }}">Danh sách</a></h5>
                                             </div>
                                         </div>
-                                        <div class="col-sm-auto">
+                                    </div>
+                                </div>
+                                <div class="listjs-table" id="customerList">
+                                    
+                                    <div class="card-header border-0 mt-1">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
                                             <div class="search-box mb-2">
                                                 <form method="GET" action="{{ route('admin.attributes.index') }}">
                                                     <input type="text" class="form-control search" name="search"
@@ -33,25 +41,17 @@
                                                     <i class="ri-search-line search-icon"></i>
                                                 </form>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="listjs-table" id="customerList">
-                                    <div class="card-header border-0 mt-1">
-                                        <div class="d-flex justify-content-between align-items-center w-100">
-                                            <h1 class="card-title fw-semibold mb-0"></h1>
                                             <div class="d-flex align-items-center">
-                                                <button class="btn btn-soft-danger" id="deleteMultipleBtn"
-                                                    style="display: none;">
-                                                    <i class="ri-delete-bin-5-fill"></i>
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none">
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                 </button>
-                                                <a class="btn btn-success add-btn ms-2"
+                                                <a class="btn btn-success add-btn me-2"
                                                     href="{{ route('admin.attributes.create') }}">
-                                                    <i class="ri-add-box-fill"></i> Thêm
+                                                    <i class="ri-add-line  align-bottom"></i> Thêm mới
                                                 </a>
                                                 <a href="{{ route('admin.attributes.attributeshortdeleted') }}"
-                                                    class="btn btn-soft-danger ms-2">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                    class="btn btn-warning ">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
                                             </div>
                                         </div>
@@ -67,7 +67,7 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>Stt</th>
+                                                    <th>STT</th>
                                                     <th>Tên </th>
                                                     <th>Mô tả </th>
                                                     <th>Ngày tạo</th>
@@ -147,67 +147,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-                            <div class="results-info ms-3">
-                                <p class="pagination mb-0">
-                                    Showing
-                                    {{ $attributes->firstItem() }}
-                                    to
-                                    {{ $attributes->lastItem() }}
-                                    of
-                                    {{ $attributes->total() }}
-                                    results
-                                </p>
-                            </div>
-                            <div class="pagination-wrap me-3">
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination mb-0">
-                                        @if ($attributes->onFirstPage())
-                                            <li class="page-item disabled">
-                                                <span class="page-link">Previous</span>
-                                            </li>
-                                        @else
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $attributes->previousPageUrl() }}" aria-label="Previous">
-                                                    Previous
-                                                </a>
-                                            </li>
-                                        @endif
-                                        @foreach ($attributes->links()->elements as $element)
-                                            @if (is_string($element))
-                                                <li class="page-item disabled">
-                                                    <span class="page-link">{{ $element }}</span>
-                                                </li>
-                                            @endif
-                                            @if (is_array($element))
-                                                @foreach ($element as $page => $url)
-                                                    @if ($page == $attributes->currentPage())
-                                                        <li class="page-item active">
-                                                            <span class="page-link">{{ $page }}</span>
-                                                        </li>
-                                                    @else
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                                        </li>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        @endforeach                       
-                                        @if ($attributes->hasMorePages())
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $attributes->nextPageUrl() }}" aria-label="Next">
-                                                    Next
-                                                </a>
-                                            </li>
-                                        @else
-                                            <li class="page-item disabled">
-                                                <span class="page-link">Next</span>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>      
+                        @include('admin.components.pagination', ['data' => $attributes])
                     </div>
                 </div><!-- end card -->
             </div>

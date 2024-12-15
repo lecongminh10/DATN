@@ -10,7 +10,7 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{asset('theme/assets/images/favicon.ico')}}">
+    <link rel="shortcut icon" href="{{asset('favicon.ico')}}">
 
     <!-- Layout config Js -->
     <script src="{{asset('theme/assets/js/layout.js')}}"></script>
@@ -29,37 +29,40 @@
 
 <body>
     <?php
-     $vnp_TmnCode = env('VNP_TMN_CODE'); 
-     $vnp_HashSecret = env('VNP_HASH_SECRET');
-     $vnp_Url = env('VNP_URL');
-    $vnp_Returnurl = "http://localhost/vnpay_php/vnpay_return.php";
-    $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
-    $apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
-    $startTime = date("YmdHis");
-    $expire = date('YmdHis',strtotime('+15 minutes',strtotime($startTime)));
+     if($check){
+        $vnp_TmnCode = env('VNP_TMN_CODE'); 
+        $vnp_HashSecret = env('VNP_HASH_SECRET');
+        $vnp_Url = env('VNP_URL');
+        $vnp_Returnurl = "http://localhost/vnpay_php/vnpay_return.php";
+        $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
+        $apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+        $startTime = date("YmdHis");
+        $expire = date('YmdHis',strtotime('+15 minutes',strtotime($startTime)));
 
-    $vnp_SecureHash = $_GET['vnp_SecureHash'];
-    $inputData = array();
-    foreach ($_GET as $key => $value) {
-        if (substr($key, 0, 4) == "vnp_") {
-            $inputData[$key] = $value;
+        $vnp_SecureHash = $_GET['vnp_SecureHash'];
+        $inputData = array();
+        foreach ($_GET as $key => $value) {
+            if (substr($key, 0, 4) == "vnp_") {
+                $inputData[$key] = $value;
+            }
         }
-    }
-    
-    unset($inputData['vnp_SecureHash']);
-    ksort($inputData);
-    $i = 0;
-    $hashData = "";
-    foreach ($inputData as $key => $value) {
-        if ($i == 1) {
-            $hashData .= '&' . urlencode($key) . "=" . urlencode($value);
-        } else {
-            $hashData .= urlencode($key) . "=" . urlencode($value);
-            $i = 1;
+        
+        unset($inputData['vnp_SecureHash']);
+        ksort($inputData);
+        $i = 0;
+        $hashData = "";
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashData .= '&' . urlencode($key) . "=" . urlencode($value);
+            } else {
+                $hashData .= urlencode($key) . "=" . urlencode($value);
+                $i = 1;
+            }
         }
-    }
 
-    $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
+        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
+        $code= htmlspecialchars($_GET['vnp_TxnRef']);
+     }
     ?>
     {{-- @php
         dd($order)
@@ -77,11 +80,22 @@
                                         <div class="card-header border-bottom-dashed p-4">
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
-                                                    <img src="{{asset('theme/assets/images/logo-dark.png')}}" class="card-logo card-logo-dark" alt="logo dark" height="17">
-                                                    <img src="{{asset('theme/assets/images/logo-light.png')}}" class="card-logo card-logo-light" alt="logo light" height="17">
+                                                    <img src="{{asset('logo.png')}}" class="card-logo card-logo-dark" alt="logo dark" width="100px" height="60px">
+                                                    <img src="{{asset('logo.png')}}" class="card-logo card-logo-light" alt="logo light" width="100px" height="60px">
                                                     <div class="mt-sm-5 mt-4">
-                                                        <h6 class="text-muted text-uppercase fw-semibold">Địa chỉ : Trường CĐ FPT PolyTechnic , Đường Trịnh Văn Bô , Bắc Từ Liên , Hà Nội</h6>
-                                                        <p class="text-muted mb-1" id="address-details">Số điện thoại : 0392853609</p>
+                                                        <h6 class="text-muted text-uppercase fw-semibold">Địa chỉ : 
+                                                             @if ($addressShop && $addressShop['address']!==null)
+                                                            {{ $addressShop['address']}}
+                                                           @else
+                                                            Trường CĐ FPT
+                                                           @endif</h6>
+                                                        <p class="text-muted mb-1" id="address-details">Số điện thoại :
+                                                            @if ($addressShop && $addressShop['phone']!==null)
+                                                            {{ $addressShop['phone']}}
+                                                            @else
+                                                            0392853609
+                                                            @endif  
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -93,7 +107,7 @@
                                             <div class="row g-3">
                                                 <div class="col-lg-3 col-6">
                                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Mã hóa đơn </p>
-                                                    <h5 class="fs-14 mb-0"><span id="invoice-no">{{htmlspecialchars($_GET['vnp_TxnRef'])}}</span></h5>
+                                                    <h5 class="fs-14 mb-0"><span id="invoice-no">{{isset($code)? $code :$order->code}}</span></h5>
                                                 </div>
                                                 <!--end col-->
                                                 <div class="col-lg-3 col-6">
@@ -109,7 +123,31 @@
                                                 <!--end col-->
                                                 <div class="col-lg-3 col-6">
                                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Trạng thái thanh toán</p>
-                                                    <span class="badge bg-success-subtle text-success fs-11" id="payment-status">{{$order->payment->status}}</span>
+                                                    @php
+                                                        if($order->payment !==null){
+                                                            $status =$order->payment->status;
+                                                            if($status=='failed'){
+                                                                $status='Đã hủy';
+                                                                $style="bg-danger-subtle text-danger";
+                                                            }
+                                                            if( $status=='completed'){
+                                                                $status='Thanh toán thành công';
+                                                                $style="bg-success-subtle text-success";
+                                                            }
+                                                            if( $status=="pending"){
+                                                                $status='Thanh toán sau khi nhận hàng';
+                                                                $style="bg-success-subtle text-success";
+                                                            }
+                                                            if( $status=="refunded"){
+                                                                $status='Đơn hàng hoàn trả';
+                                                                $style="bg-success-subtle text-success";
+                                                            }
+                                                         }else{
+                                                            $status='Đã hủy khi thanh toán ';
+                                                            $style="bg-success-subtle text-success";
+                                                        }
+                                                    @endphp
+                                                    <span class="badge {{$style}} fs-11" id="payment-status">{{ $status}}</span>
                                                 </div>
                                                 <!--end col-->
                                                 <div class="col-lg-3 col-6">
@@ -127,9 +165,27 @@
                                             <div class="row g-3">
                                                 <div class="col-6">
                                                     <h6 class="text-muted text-uppercase fw-semibold mb-3">Địa chỉ giao hàng </h6>
-                                                    <p class="fw-medium mb-2" id="billing-name">{{ config('app.name') }}</p>
-                                                    <p class="text-muted mb-1" id="billing-address-line-1">Trường CĐ FPT</p>
-                                                    <p class="text-muted mb-1"><span>Sđt: +</span><span id="billing-phone-no">0392853609</span></p>
+                                                    <p class="fw-medium mb-2" id="billing-name">
+                                                        @if ($addressShop && $addressShop['name']!==null)
+                                                            {{ $addressShop['name']}}
+                                                        @else
+                                                        {{ config('app.name') }}
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-muted mb-1" id="billing-address-line-1">
+                                                        @if ($addressShop && $addressShop['address']!==null)
+                                                         {{ $addressShop['address']}}
+                                                        @else
+                                                         Trường CĐ FPT
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-muted mb-1"><span>Sđt: +</span><span id="billing-phone-no">
+                                                        @if ($addressShop && $addressShop['phone']!==null)
+                                                          {{ $addressShop['phone']}}
+                                                        @else
+                                                        0392853609
+                                                        @endif    
+                                                    </span></p>
                                                 </div>
                                                 <!--end col-->
                                                 <div class="col-6">
@@ -153,6 +209,7 @@
                                                         <tr class="table-active">
                                                             <th scope="col" style="width: 50px;">#</th>
                                                             <th scope="col">Sản phẩm</th>
+                                                            <th scope="col">Ảnh</th>
                                                             <th scope="col">Giá</th>
                                                             <th scope="col">Số lượng</th>
                                                             <th scope="col" class="text-end">Thành tiền</th>
@@ -183,7 +240,19 @@
                                                                 @else
                                                                     <p class="text-muted mb-0">No variant available</p> <!-- Message for no variant -->
                                                                 @endif
-                                                            </td>                                                            
+                                                            </td>
+                                                            <td>
+                                                                @php
+                                                                    $img="";
+                                                                    $variant = $value->productVariant;
+                                                                    if(!empty($variant)){
+                                                                        $img = $value->productVariant->variant_image;
+                                                                    }else{
+                                                                        $img = $value->product->getMainImage()->image_gallery;
+                                                                    }
+                                                                @endphp
+                                                            <img src="{{Storage::url( $img)}}" alt="" style="max-height: 100px; max-width: 100px;">
+                                                            </td>                                                         
                                                             @if ($variant)
                                                                 @php
                                                                     // Determine the price based on variant price modifier or original price
@@ -198,7 +267,7 @@
                                                                 <td>{{ number_format($price, 0, ',', '.') }} đ</td>
                                                             @endif
                                                             <td>{{ $value->quantity }}</td>
-                                                            <td class="text-end">{{ number_format($price * $value->quantity,  0, ',', '.') }} đ</td>
+                                                            <td class="text-end price">{{ number_format($price * $value->quantity,  0, ',', '.') }} đ</td>
                                                         </tr>    
                                                         @endforeach
                                                     </tbody>
@@ -207,22 +276,36 @@
                                             <div class="border-top border-top-dashed mt-2">
                                                 <table class="table table-borderless table-nowrap align-middle mb-0 ms-auto" style="width:250px">
                                                     <tbody>
-                                                        {{-- <tr>
+                                                        <tr>
                                                             <td>Tổng giá gốc</td>
-                                                            <td class="text-end"></td>
+                                                            <td class="text-end total-price" ></td>
                                                         </tr>
-                                                        <tr>
-                                                            <td>Estimated Tax (12.5%)</td>
-                                                            <td class="text-end">$44.99</td>
+                                                        @php
+                                                            $price = 0;
+                                                            if(count($couponUsage)>0){
+                                                                foreach ($couponUsage as $key => $value) {
+                                                                 {
+                                                                    $price += $value->usage_discount_value;
+                                                                 }
+                                                                }
+                                                            }
+                                                        @endphp
+                                                         <tr>
+                                                              <td>Voucher</td>
+                                                               <td class="text-end">-{{ number_format($price,  0, ',', '.') }} đ</td>
                                                         </tr>
+                                                        @if (count($couponUsage)>0)
+                                                            @foreach ($couponUsage as $item)
+                                                            <tr>
+                                                                <td style="font-size: 11px; padding-left: 30px; font-weight: 100;">{{$item->coupon_code}}</td>
+                                                                <td class="text-end">{{ number_format($item->usage_discount_value,  0, ',', '.') }} đ</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        @endif
                                                         <tr>
-                                                            <td>Discount <small class="text-muted">(VELZON15)</small></td>
-                                                            <td class="text-end">- $53.99</td>
+                                                            <td>Phí vận chuyển </td>
+                                                            <td class="text-end">+{{ number_format($order->shippingMethod->shipping_fee,  0, ',', '.') }} đ</td>
                                                         </tr>
-                                                        <tr>
-                                                            <td>Shipping Charge</td>
-                                                            <td class="text-end">$65.00</td>
-                                                        </tr> --}}
                                                         <tr class="border-top border-top-dashed fs-15">
                                                             <th scope="row">Tổng giá </th>
                                                             <th class="text-end">{{ number_format($order->total_price,  0, ',', '.') }} đ</th>
@@ -233,21 +316,25 @@
                                             </div>
                                             <div class="mt-3">
                                                 <h6 class="text-muted text-uppercase fw-semibold mb-3">Phương thức thanh toán :</h6>
-                                                <p class="text-muted mb-1">Loại thanh toán : <span class="fw-medium" id="payment-method">{{$order->payment->paymentGateway->name}}</span></p>
+                                                @php
+                                                    if($order->payment !==null){
+                                                        $payment=$order->payment->paymentGateway->name;
+                                                    }else{
+                                                        $payment='Đã hủy ';
+                                                    }
+                                                @endphp
+                                                <p class="text-muted mb-1">Loại thanh toán : <span class="fw-medium" id="payment-method">{{$payment}}</span></p>
                                                 <p class="text-muted mb-1">Ngân hàng : <span class="fw-medium" id="card-holder-name">{{$responseData['bank_code']}}</span></p>
                                                 <p class="text-muted mb-1">Loại : <span class="fw-medium" id="card-number">{{$responseData['vnp_CardType']}}</span></p>
                                                 <p class="text-muted">Giá : <span class="fw-medium" id=""></span><span id="card-total-amount">{{ number_format($order->total_price,  0, ',', '.') }} đ</span></p>
                                             </div>
                                             <div class="mt-4">
-                                                {{-- <div class="alert alert-info">
+                                                <div class="alert alert-info">
                                                     <p class="mb-0"><span class="fw-semibold">NOTES:</span>
-                                                        <span id="note">All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or
-                                                            credit card or direct payment online. If account is not paid within 7
-                                                            days the credits details supplied as confirmation of work undertaken
-                                                            will be charged the agreed quoted fee noted above.
+                                                        <span id="note">{{$order->note}}
                                                         </span>
                                                     </p>
-                                                </div> --}}
+                                                </div>
                                             </div>
                                             <div class="hstack gap-2 justify-content-end d-print-none mt-4">
                                                 {{-- <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Print</a> --}}
@@ -282,6 +369,42 @@
 
     <!-- App js -->
     <script src="{{asset('theme/assets/js/app.js')}}"></script>
+    <script>
+        const prices = document.querySelectorAll('.price');
+
+        let total = 0;
+
+        // Loop through each element and sum up the values
+        prices.forEach(priceElement => {
+            // Get the text content (e.g., "157.795 đ")
+            let priceText = priceElement.textContent.trim();
+            console.log(`Giá: ${priceText}`);
+
+            // Remove the currency symbol (e.g., "đ") and change "." (thousands separator) to ""
+            // Change "," (decimal separator) to "." for numeric conversion if needed
+            let numericValue = parseFloat(priceText
+                .replace(/[^\d,.-]/g, '') // Remove any characters that are not digits, commas, dots, or negative signs
+                .replace(/\./g, '') // Remove thousands separator
+                .replace(',', '.')); // Replace decimal separator with a dot
+
+            console.log(`Numeric Giá: ${numericValue}`);
+            
+            // Add the value to the total (only if it's a valid number)
+            if (!isNaN(numericValue)) {
+                total += numericValue;
+            }
+        });
+
+        function numberFormat(value, decimals = 0, decPoint = ',', thousandsSep = '.') {
+            const parts = value.toFixed(decimals).split('.'); // Ensure fixed decimal places
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep); // Format thousands
+            return parts[0]; // Return only the integer part
+        }
+
+        document.querySelector('.total-price').innerHTML=numberFormat(total, 2) +'đ'
+
+
+    </script>
 
 </body>
 

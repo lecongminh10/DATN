@@ -4,7 +4,7 @@
     <div class="page-content">
         <div class="container-fluid">
             <div class="card">
-                <div class="p-4" style="min-height: 800px;">
+                <div class="p-4">
                     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
                         <div class="flex-grow-1">
                             <h4 class="fs-18 fw-semibold m-0 text-primary">Chi tiết thanh toán</h4>

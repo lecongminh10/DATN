@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Thuộc Tính
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -45,12 +48,6 @@
                                             <h5 class="card-title mb-0">Thêm mới</h5>
                                         </div>
                                     </div>
-                                    <div class="col-sm-auto">
-                                        <div class="d-flex flex-wrap align-items-start gap-2">
-                                            <button type="button" class="btn btn-info"><i
-                                                    class="ri-file-download-line align-bottom me-1"></i> Import</button>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -93,10 +90,9 @@
 
                             </div>
                                                     <!-- Submit Button -->
-                            <div class="text-end mb-3">
-                                <button type="submit" class="btn btn-success w-sm"><i class="ri-check-double-line me-2"></i>Gửi</button>
-                                <a href="{{ route('admin.attributes.index') }}" class=" btn btn-secondary btn w-sm"><i
-                                        class="ri-arrow-left-line"></i> Quay lại</a>
+                            <div class="text-start ms-3 mb-3">
+                                <button type="submit" class="btn btn-success me-2 w-sm">Thêm mới</button>
+                                <a href="{{ route('admin.attributes.index') }}" class=" btn btn-primary btn w-sm"> Quay lại</a>
                             </div>
                         </div>
                     </div>
