@@ -11,8 +11,8 @@
                 'title' => 'Thẻ ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Thẻ', 'url' => '#']
-                ]
+                    ['name' => 'Thẻ', 'url' => '#'],
+                ],
             ])
             <div class="row">
                 <div class="col-lg-12">
@@ -39,6 +39,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if (session('success'))
+                                    <div class="w-full alert alert-success " style="margin-bottom: 20px">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
                                 <div class="card-body">
                                     <form>
                                         <div class="row g-3">
@@ -88,42 +93,55 @@
                                                 </th>
                                                 <th>ID</th>
                                                 <th data-sort="carrier_name">Tên thẻ</th>
+                                                <th data-sort="carrier_name">Ngày xóa</th>
+                                                <th data-sort="carrier_name">Người xóa</th>
                                                 <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
-                                            @foreach ($tags as $item)
+                                            @foreach ($tags as $key => $value)
                                                 <tr>
                                                     <th scope="row">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox" name="chk_child"
-                                                                value="{{ $item->id }}">
+                                                                value="{{ $value->id }}">
                                                         </div>
                                                     </th>
-                                                    <td>{{ $item->id }}</td>
-                                                    <td class="carrier_name">{{ $item->name }}</td>
-
+                                                    <td>{{ $value->id }}</td>
+                                                    <td class="carrier_name">{{ $value->name }}</td>
+                                                    <td class="due_date">
+                                                        @if ($value->deleted_at)
+                                                            {{ $value->deleted_at->format('H:i d-m-Y') }}
+                                                        @else
+                                                            Chưa xóa
+                                                        @endif
+                                                    </td>
+                                                    <td class="due_date">
+                                                        @if ($value->deleted_by)
+                                                            <?php
+                                                            $deletedBy = \App\Models\User::find($value->deleted_by); // Lấy thông tin người dùng
+                                                            ?>
+                                                            @if ($deletedBy)
+                                                                {{ $deletedBy->username }} <!-- Hiển thị tên người xóa -->
+                                                            @else
+                                                                Không xác định
+                                                            @endif
+                                                        @else
+                                                            Không xác định
+                                                        @endif
+                                                    </td>
                                                     <td>
-                                                        <form action="{{ route('admin.tags.restore', $item->id) }}"
-                                                            method="POST" style="display:inline;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button
-                                                                onclick="return confirm('Bạn có chắc muốn khôi phục không?')"
-                                                                type="submit"
-                                                                class="btn btn-sm btn-info edit-item-btn">Khôi
-                                                                phục</button>
-                                                        </form>
-                                                        <form action="{{ route('admin.tags.hardDelete', $item->id) }}"
-                                                            method="POST" style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button
-                                                                onclick="return confirm('Bạn có chắc chắn xóa vĩnh viễn không?')"
-                                                                type="submit"
-                                                                class="btn btn-sm btn-danger remove-item-btn">Xóa
-                                                                vĩnh viễn</button>
-                                                        </form>
+                                                        <!-- Nút bấm để kích hoạt modal khôi phục -->
+                                                        <button type="button" class="btn btn-sm btn-info edit-item-btn"
+                                                            data-id="{{ $value->id }}" data-name="{{ $value->name }}"
+                                                            data-action="{{ route('admin.tags.restore', $value->id) }}">Khôi
+                                                            phục</button>
+
+                                                        <!-- Nút bấm để kích hoạt modal xóa vĩnh viễn -->
+                                                        <button type="button" class="btn btn-sm btn-danger remove-item-btn"
+                                                            data-id="{{ $value->id }}" data-name="{{ $value->name }}"
+                                                            data-action="{{ route('admin.tags.hardDelete', $value->id) }}">Xóa
+                                                            vĩnh viễn</button>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -185,8 +203,7 @@
 
                                         @if ($tags->hasMorePages())
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $tags->nextPageUrl() }}"
-                                                    aria-label="Next">
+                                                <a class="page-link" href="{{ $tags->nextPageUrl() }}" aria-label="Next">
                                                     Next
                                                 </a>
                                             </li>
@@ -205,6 +222,49 @@
         </div>
         <!-- end row -->
     </div>
+    <div class="modal fade" id="restoreModal" tabindex="-1" role="dialog" aria-labelledby="restoreModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="restoreModalLabel">Khôi phục Tag</h5>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc muốn khôi phục tag <strong id="itemName"></strong> này không?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <form id="restoreForm" action="" method="POST" style="display:inline;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-info">Khôi phục</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xóa Vĩnh Viễn -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Xóa Vĩnh Viễn Tag</h5>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa vĩnh viễn tag <strong id="deleteItemName"></strong> này không?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <form id="deleteForm" action="" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Xóa vĩnh viễn</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @section('script_libray')
@@ -279,6 +339,41 @@
                         }
                     });
                 }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Khi người dùng nhấn vào nút khôi phục
+            $('.edit-item-btn').on('click', function() {
+                var itemId = $(this).data('id');
+                var itemName = $(this).data('name');
+                var actionUrl = $(this).data('action');
+
+                $('#itemName').text(itemName);
+
+                $('#restoreForm').attr('action', actionUrl);
+
+                $('#restoreModal').modal('show');
+            });
+
+            $('.remove-item-btn').on('click', function() {
+                var itemId = $(this).data('id');
+                var itemName = $(this).data('name');
+                var actionUrl = $(this).data('action');
+
+                $('#deleteItemName').text(itemName);
+
+                $('#deleteForm').attr('action', actionUrl);
+
+                $('#deleteModal').modal('show');
+            });
+
+            //hủy
+            $('#restoreModal .btn-secondary, #deleteModal .btn-secondary').on('click', function() {
+                // Đóng modal khi nhấn nút "Hủy"
+                $('#restoreModal').modal('hide');
+                $('#deleteModal').modal('hide');
             });
         });
     </script>

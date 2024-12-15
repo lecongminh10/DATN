@@ -21,10 +21,6 @@
                                 <h4 class="fs-18 fw-semibold m-0 text-primary">Chi tiết người dùng</h4>
                             </div>
                         </div>
-                    </div>
-                    <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
                         <div class="row">
                             <!-- Cột trái -->
                             <div class="col-md-6">
@@ -40,76 +36,91 @@
                                         <li class="list-group-item">{{ $user->username }}</li>
                                     </ul>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">{{ $user->phone_number }}</li>
-                                    </ul>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Ngày sinh</label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">{{ \Carbon\Carbon::parse($user->date_of_birth)->format('d-m-Y') }}</li>
-                                    </ul>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">{{ $user->email }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- Cột phải -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
+                                <div class="col-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Mật khẩu</label>
+                                        <label for="phonenumberInput" class="form-label">Ảnh </label>
                                         <ul class="list-group">
-                                            <li class="list-group-item">{{ str_repeat('•', strlen($user->password)) }}</li>
+                                            <img src="{{ Storage::url($user->profile_picture) }}" alt="Ảnh đại diện"
+                                                width="150px" height="150px">
                                         </ul>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Điểm khách hàng thân thiết</label>
+                                        <label for="phonenumberInput" class="form-label">Số điện thoại</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->phone_number }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="phonenumberInput" class="form-label">Điểm khách hàng thân thiết</label>
                                         <ul class="list-group">
                                             <li class="list-group-item">{{ $user->loyalty_points }}</li>
                                         </ul>
                                     </div>
-                                    <label class="form-label">Hạng thành viên</label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">{{ $user->membership_level }}</li>
-                                    </ul>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Giới tính</label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">{{ $user->gender }}</li>
-                                    </ul>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="phonenumberInput" class="form-label">Hạng thành viên</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->membership_level }}</li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Trạng thái</label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">{{ $user->status }}</li>
-                                    </ul>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="address1ControlTextarea" class="form-label">Ngày sinh</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->date_of_birth }}</li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Quyền</label>
-                                    <ul class="list-group">
-                                        @foreach ($permissions as $permission)
-                                            <li class="list-group-item">{{ $permission->value }}</li>
-                                        @endforeach
-                                    </ul>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="emailidInput" class="form-label">Email</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->email }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="genderInput" class="form-label">Giới tính</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->gender }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="genderInput" class="form-label">Trạng thái</label>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{ $user->status }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="permissionList" class="form-label">Quyền</label>
+                                        <ul class="list-group">
+                                            @foreach ($permissions as $permission)
+                                                <li class="list-group-item">{{ $permission->value }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-12 text-start">
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-primary">Quay lại</a>
+                            <div class="col-12">
+                                <div class="text-end">
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-info">Danh sách người
+                                        dùng</a>
+                                </div>
                             </div>
-                        </div>
                     </form>
                 </div>
             </div>
-            
         </div>
     </div>
     </div>

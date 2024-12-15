@@ -117,8 +117,10 @@
             background-color: #f44336;
             color: white;
             border: none;
+            margin-top: -20px;
+            margin-bottom: 20px;
             padding: 10px 20px;
-            border-radius: 50px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -453,7 +455,13 @@
                                 @foreach ($payments as $key => $value)
                                     <tr>
                                         <td>Loại thanh toán:</td>
-                                        <td>{{ $value->gateway_name }}</td>
+                                        <td>
+                                            @if ($value->gateway_name == 'cash')
+                                                Thanh toán tiền mặt
+                                            @else
+                                                {{ $value->gateway_name }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Giá:</td>
@@ -463,7 +471,6 @@
 
                             </table>
                         </div>
-
                     </div>
                     <!-- Modal xác nhận hủy đơn hàng -->
                     <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel"

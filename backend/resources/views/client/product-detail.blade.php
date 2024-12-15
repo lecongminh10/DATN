@@ -513,10 +513,10 @@
                 <!-- End .tab-content -->
             </div>
             <!-- End .product-single-tabs -->
-            @include('client.components-home.products', [
+            {{-- @include('client.components-home.products', [
                 'title' => 'Lượt đánh giá cao nhất',
                 'products' => $topRatedProducts,
-            ])
+            ]) --}}
             @include('client.components-home.products', [
                 'title' => 'Giảm giá nhiều nhất',
                 'products' => $bestSellingProducts,
