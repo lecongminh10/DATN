@@ -1,3 +1,10 @@
+<style>
+    .img-brand img{
+        max-width: 140px;
+        max-height: 100px;
+        background-color:transparent ;
+    }
+</style>
 <div class="brands-slider owl-carousel owl-theme images-center appear-animate" data-animation-name="fadeIn"
     data-animation-duration="700"
     data-owl-options="{
@@ -15,9 +22,12 @@
     }
 }">
     @foreach ($brands as $item)
-        @if ($item->active == 1)
-            <img src="{{ Storage::url($item->image) }}" width="140px" height="60" alt="{{ $item->name }}">
-        @endif
+        <div class="img-brand">
+            @if ($item->active == 1)
+                <img src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}">
+            @endif
+
+        </div>
     @endforeach
 
     {{-- <img src="{{ asset('themeclient/assets/images/brands/small/brand1.png') }}" width="140" height="60"

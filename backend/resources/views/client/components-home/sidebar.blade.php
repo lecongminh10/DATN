@@ -56,28 +56,20 @@
         </nav>
     </div>
     <!-- End .side-menu-container -->
-
     <div class="widget widget-banners px-3 pb-3 text-center">
         <div class="owl-carousel owl-theme dots-small">
             @foreach ($bannerLeft as $banner)
                 @if ($banner->active == 1)
                     <div class="banner d-flex flex-column align-items-center text-center">
-                        <h3
-                            class="badge-sale bg-primary d-flex flex-column align-items-center justify-content-center text-uppercase mb-3">
-                            <em>{{ $banner->title ?? 'Mới nhất' }}</em>
-                            <span>{{ $banner->sub_title ?? 'Nhiều sản phẩm' }}</span>
-                        </h3>
-                        <h4 class="sale-text text-uppercase mb-3">
+                        <figure class="mb-4">
+                            <img src="{{ Storage::url($banner->image) }}" alt="{{$banner->title}}"
+                                class="img-fluid rounded shadow-lg">
+                        </figure>
+                        <h4 class="sale-text text-uppercase mb-1">
                             <small>Khuyến mãi </small>
                             <span>{{ $banner->sale ?? 0 }}<sup>%</sup><sub>off</sub></span>
                         </h4>
-
-                        <p class="mb-4">{{ $banner->description ?? 'Nhiều loại sản phẩm khác nhau' }}</p>
-
-                        <figure class="mb-4">
-                            <img src="{{ Storage::url($banner->image) }}" alt="banner"
-                                class="img-fluid rounded shadow-lg">
-                        </figure>
+                        <p class="mb-1">{{ $banner->description ?? 'Nhiều loại sản phẩm khác nhau' }}</p>
                     </div>
                 @endif
             @endforeach
