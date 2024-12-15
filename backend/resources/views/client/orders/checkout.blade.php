@@ -617,7 +617,7 @@
                         const totalPriceDisplay = document.getElementById("totalPriceDisplay");
                         const currentTotal = parseFloat(totalPriceDisplay.innerText.replace(/[^\d.-]/g, ''));
                         const discountAmount = parseFloat(data.coupon.discount_amount);                    
-                        const newTotal = currentTotal*1000 - discountAmount;
+                        const newTotal = currentTotal*1000000 - discountAmount;
                         console.log('currentTotal',currentTotal);
                         console.log('discountAmount',discountAmount);
                         console.log('newTotal',newTotal);                      

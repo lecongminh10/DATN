@@ -496,6 +496,10 @@ class PayMentController extends Controller
                                 'order_id'        => $id,
                                 'discount_value'  => $value['discount_amount']
                             ]);
+                            if ($coupone->usage_limit > 0) {
+                                $coupone->usage_limit--;
+                                $coupone->save();
+                            }
                         } else {
                             // Log hoặc xử lý khi không tìm thấy coupon
                             Log::warning("Coupon not found for code: $value");
