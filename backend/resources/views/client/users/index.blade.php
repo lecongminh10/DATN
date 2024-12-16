@@ -202,15 +202,11 @@
                         </div>
                         <div class="card-footer">
                             <div class="icon-section">
-                                <a href="#order-history" class="icon-item">
+                                <a href="{{ route('users.showOrder') }}" class="icon-item">
                                     <div class="icon"><i class="fas fa-history"></i></div>
                                     <span class="label">Lịch sử mua hàng</span>
                                 </a>
-                                <a href="#s-student" class="icon-item">
-                                    <div class="icon"><i class="fas fa-graduation-cap"></i></div>
-                                    <span class="label">Hỗ trợ</span>
-                                </a>
-                                <a href="#discounts" class="icon-item">
+                                <a href="{{ route( 'users.listVoucher' ) }}" class="icon-item">
                                     <div class="icon"><i class="fas fa-ticket-alt"></i></div>
                                     <span class="label">Mã giảm giá</span>
                                     <span class="badge badge-hot">HOT</span>
@@ -218,11 +214,6 @@
                                 <a href="{{ route('users.showRank', Auth::user()->id) }}" class="icon-item">
                                     <div class="icon"><i class="fas fa-medal"></i></div>
                                     <span class="label">Hạng thành viên</span>
-                                    <span class="badge badge-new">MỚI</span>
-                                </a>
-                                <a href="#account-link" class="icon-item">
-                                    <div class="icon"><i class="fas fa-link"></i></div>
-                                    <span class="label">Liên kết tài khoản</span>
                                     <span class="badge badge-new">MỚI</span>
                                 </a>
                             </div>

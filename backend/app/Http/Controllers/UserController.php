@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserStoreRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Coupon;
 
 class UserController extends Controller
 {
@@ -621,4 +622,34 @@ class UserController extends Controller
     {
         Product::where('id', $productId)->update(['rating' => $averageRating]);
     }
+
+    public function listVoucher(Request $request)
+    {
+        $userId = auth()->id();
+        $carts = collect();
+        $coupons = collect();
+        
+        $searchCode = $request->input('search_code');
+        
+        if ($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+
+            $couponsQuery = Coupon::where('applies_to', 'all')
+                ->with(['users' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }]);
+            
+            if ($searchCode) {
+                $couponsQuery->where('code', 'like', '%' . $searchCode . '%');
+            }
+
+            $coupons = $couponsQuery->get();
+        }
+
+        $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id', $userId)->count();
+
+        return view('client.users.voucher', compact('cartCount', 'wishlistCount', 'coupons'));
+    }
+
 }

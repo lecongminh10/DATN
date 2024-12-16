@@ -26,6 +26,7 @@ Route::prefix('/')->group(function () {
     Route::get('show-rank/{id}', [UserController::class, 'showRank'])->name('users.showRank');
     Route::post('/order/{orderId}/cancel', [UserController::class, 'cancelOrder'])->name('users.cancel');
     Route::post('/order/{order}/review', [UserController::class, 'submitReview'])->name('users.submitReview');
+    Route::get('/list-voucher', [UserController:: class, 'listVoucher'])->name('users.listVoucher');
 
 
     //product
