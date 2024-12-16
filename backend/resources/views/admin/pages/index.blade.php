@@ -4,6 +4,15 @@
     Danh Sách Trang
 @endsection
 @section('content')
+<style>
+    td.description, td.content {
+    white-space: nowrap; /* Không cho xuống dòng */
+    overflow: hidden; /* Ẩn phần vượt quá */
+    text-overflow: ellipsis; /* Thêm dấu "..." khi nội dung bị cắt */
+    max-width: 200px; /* Giới hạn chiều rộng */
+}
+
+</style>
     <div class="page-content">
         <div class="container-fluid">
 
@@ -91,8 +100,6 @@
                                                 <th data-sort="phone">Nội dung</th>
                                                 <th data-sort="email">Trạng thái</th>
                                                 <th data-sort="is_active">Bản mẫu</th>
-                                                {{-- <th data-sort="is_active">seo_title</th>
-                                                <th data-sort="is_active">seo_description</th> --}}
                                                 <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>

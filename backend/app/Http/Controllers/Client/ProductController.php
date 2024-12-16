@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Models\Seo;
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\WishList;
 use App\Models\Attribute;
 use App\Services\TagService;
@@ -80,6 +81,7 @@ class ProductController extends Controller
             ->select('id', 'attribute_name')
             ->get();
         $categories = $this->getCategoriesForMenu();
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         return view('client.product-detail')->with([
             'data'           => $data,
             'attributes'     => $attributesWithValues,
@@ -94,6 +96,7 @@ class ProductController extends Controller
             'latestProducts'    =>$latestProducts,
             'categories'     =>$categories,
              'wishlistCount'   =>$wishlistCount,
+             'pages'=>$pages
         ]);
     }
     public function search(Request $request)
@@ -112,7 +115,7 @@ class ProductController extends Controller
         $products = $this->productService->searchProducts($query, $categoryId);
         $categories = $this->getCategoriesForMenu();
         $attributes = Attribute::with('attributeValues')->get();
-
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         return view('client.products.search-results',
         [
             'carts'          => $carts,
@@ -121,6 +124,7 @@ class ProductController extends Controller
             'categories'     =>$categories,
             'wishlistCount'   =>$wishlistCount,
             'attributes'     =>$attributes,
+            'pages'    =>$pages,
         ]);
     }
     public function getCategoriesForMenu()

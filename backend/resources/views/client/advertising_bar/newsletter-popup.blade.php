@@ -1,8 +1,8 @@
-@php
+{{-- @php
     $popuphome = App\Models\Popuphome::first();
 @endphp
 
-<div style="display: none; 
+<div style="display: ; 
       height:400px; 
      background: no-repeat center/cover url('{{ Storage::url($popuphome->image) }}');"
     class="newsletter-popup mfp-hide bg-img" id="newsletter-popup-form">
@@ -34,6 +34,8 @@
 
     function closePopup() {
         const popupForm = document.getElementById('newsletter-popup-form');
+        let mfpNewsletter=document.querySelector('.mfp-newsletter');
         popupForm.style.display = 'none'; // Ẩn popup khi người dùng đóng
+        mfpNewsletter.style.display = 'none';
     }
-</script>
+</script> --}}

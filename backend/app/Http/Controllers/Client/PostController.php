@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Tag;
-use App\Models\Post;
 use App\Models\Cart;
+use App\Models\Page;
+use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\Product;
 use App\Models\Category;
@@ -30,7 +31,8 @@ class PostController extends Controller
         $tags = Tag::all();
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $wishlistCount = WishList::where('user_id', $userId)->count();
-        return view('client.blogs.index', compact('posts', 'categories', 'carts', 'cartCount', 'tags', 'wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.blogs.index', compact('posts', 'categories', 'carts', 'cartCount', 'tags', 'wishlistCount','pages'));
     }
 
 
@@ -65,8 +67,8 @@ class PostController extends Controller
             ->get();
 
         $this->countCartWish();
-
-        return view('client.blogs.show', compact('post', 'posts', 'cartCount','tags','wishlistCount', 'relatedProducts'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.blogs.show', compact('pages','post', 'posts', 'cartCount','tags','wishlistCount', 'relatedProducts'));
     }
 
 
@@ -88,7 +90,8 @@ class PostController extends Controller
         $posts = $tag->posts;  // Giả sử có mối quan hệ 'posts' trong mô hình Tag
         $this->countCartWish();
         // Trả về view 'tag.blade.php' kèm theo dữ liệu
-        return view('client.blogs.tag', compact('tag', 'posts', 'cartCount','tags','wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.blogs.tag', compact('pages','tag', 'posts', 'cartCount','tags','wishlistCount'));
     }
 
     private function countCartWish()

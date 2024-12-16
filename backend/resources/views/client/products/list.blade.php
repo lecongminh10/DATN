@@ -115,7 +115,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
         <div class="row">
             <div class="col-lg-9 main-content">
-                <nav class="toolbox sticky-header" data-sticky-options="{'mobile': false}">
+                <nav class="toolbox">
                     <div class="toolbox-left">
                         <a href="#" class="sidebar-toggle">
                             <svg data-name="Layer 3" id="Layer_3" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
