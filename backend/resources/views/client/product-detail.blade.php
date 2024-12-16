@@ -311,7 +311,10 @@
                                         class="product-category">{{ $data->category->name }}</a>
                                 </strong>
                             </li>
-
+                            <li>
+                                Thời giàn bảo hành:
+                                <strong> {{ $data->warranty_period }} tháng</strong>
+                            </li>
                             <li>
                                 <strong>Thẻ:</strong>
                                 <span class="product-tags">
@@ -651,7 +654,8 @@
                         selectedAttributes[attr.attribute_name] === attr.attribute_value
                     )
                 );
-
+                console.log(matchedVariant);
+                
                 // Hiển thị giá và cập nhật ID biến thể
                 priceBox.innerHTML = `
         ${matchedVariant.original_price && parseInt(matchedVariant.original_price) > parseInt(matchedVariant.price_modifier)

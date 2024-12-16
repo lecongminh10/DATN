@@ -114,14 +114,23 @@ class ProductService extends BaseService
 
     public function latestProducts()
     {
+        $latestProduct = Product::orderByDesc('created_at')->first();
+
+        if (!$latestProduct) {
+            return collect();
+        }
+        $latestMonth = $latestProduct->created_at->month;
+        $latestYear = $latestProduct->created_at->year;
+
+        // Lọc sản phẩm theo tháng và năm mới nhất
         return Product::with(['galleries', 'category', 'wishList'])
-            ->whereNotNull('rating')
-            ->whereMonth('created_at', now()->month) // Lọc theo tháng hiện tại
-            ->whereYear('created_at', now()->year) // Lọc theo năm hiện tại
-            ->orderByDesc('id')
-            ->limit(10)
+            ->whereMonth('created_at', $latestMonth) 
+            ->whereYear('created_at', $latestYear)  
+            ->orderByDesc('id')            
+            ->limit(10)              
             ->get();
     }
+
 
     public function searchProducts($search, $categoryId = null)
     {
