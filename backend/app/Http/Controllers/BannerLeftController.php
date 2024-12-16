@@ -20,7 +20,7 @@ class BannerLeftController extends Controller
     {
         return view('admin.banner.banner-left.create');
     }
-    public function store(Request $request)
+    public function store(BannerLeftRequest $request)
     {
         $request->validated();
         $bannerLeft = new BannerLeft();
