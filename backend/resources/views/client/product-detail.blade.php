@@ -5,30 +5,30 @@
 @section('style_css')
     <style>
         /* .icon-wishlist-2 {
-         color: #ccc;
-         }
+                                                     color: #ccc;
+                                                     }
 
-          .icon-wishlist-filled {
-         } */
+                                                      .icon-wishlist-filled {
+                                                     } */
 
         /* .wishlist-modal {
-                                                                                                                                                                position: fixed;
-                                                                                                                                                                right: 20px;
-                                                                                                                                                                bottom: 20px;
-                                                                                                                                                                background-color: #333;
-                                                                                                                                                                color: #fff;
-                                                                                                                                                                padding: 10px 15px;
-                                                                                                                                                                border-radius: 5px;
-                                                                                                                                                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-                                                                                                                                                                z-index: 9999;
-                                                                                                                                                                opacity: 0;
-    transition: opacity 0.3s, bottom 0.3s;
-                                                                                                                                                                }
+                                                                                                                                                                                                            position: fixed;
+                                                                                                                                                                                                            right: 20px;
+                                                                                                                                                                                                            bottom: 20px;
+                                                                                                                                                                                                            background-color: #333;
+                                                                                                                                                                                                            color: #fff;
+                                                                                                                                                                                                            padding: 10px 15px;
+                                                                                                                                                                                                            border-radius: 5px;
+                                                                                                                                                                                                            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+                                                                                                                                                                                                            z-index: 9999;
+                                                                                                                                                                                                            opacity: 0;
+                                                transition: opacity 0.3s, bottom 0.3s;
+                                                                                                                                                                                                            }
 
-                                                                                                                                                                .wishlist-modal.show {
-                                                                                                                                                                    opacity: 1;
-                                                                                                                                                                    bottom: 40px;
-                                                                                                                                                                } */
+                                                                                                                                                                                                            .wishlist-modal.show {
+                                                                                                                                                                                                                opacity: 1;
+                                                                                                                                                                                                                bottom: 40px;
+                                                                                                                                                                                                            } */
         #priceBox {
             display: flex;
             align-items: center;
@@ -157,48 +157,6 @@
         }
 
     @endphp
-    <header class="header">
-        <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
-            <div class="container">
-                <nav class="main-nav w-100">
-                    <ul class="menu">
-                        <li>
-                            <a href="{{ route('client') }}">Trang chủ</a>
-                        </li>
-                        <li>
-                            <a href="#">Danh mục</a>
-                            <div class="megamenu megamenu-fixed-width megamenu-3cols">
-                                <div class="row">
-                                    @foreach ($categories as $parent)
-                                        <div class="col-lg-4">
-                                            <a href="#" class="nolink pl-0">{{ $parent->name }}</a>
-                                            @if ($parent->children->isNotEmpty())
-                                                <ul class="submenu">
-                                                    @foreach ($parent->children as $child)
-                                                        <li><a
-                                                                href="{{ route('client.products.Category', $child->id) }}">{{ $child->name }}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <!-- End .megamenu -->
-                        </li>
-                        <li><a href="{{ route('client.products') }}">Sản phẩm </a></li>
-                        <li>
-                            <a href="#">Bài viết </a>
-                        </li>
-                        <li><a href="blog.html">Liên hệ chúng tôi</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <!-- End .container -->
-        </div>
-        <!-- End .header-bottom -->
-    </header>
     @include('client.layouts.nav')
     <main class="main">
         <div class="container">
@@ -248,11 +206,7 @@
                     <div class="col-lg-5 col-md-6 product-single-gallery">
                         <div class="product-slider-container">
                             <div class="label-group">
-                                {{-- <div class="product-label label-hot">HOT</div> --}}
-
-                                {{-- <div class="product-label label-sale">
-                                    -16%
-                                </div> --}}
+                                <!-- Optional labels (e.g., sale, new) -->
                             </div>
 
                             <!-- Slider chính hiển thị hình ảnh sản phẩm -->
@@ -260,12 +214,17 @@
                                 @foreach ($allImages as $item)
                                     <div class="product-item">
                                         <img class="product-single-image" src="{{ \Storage::url($item) }}"
-                                            data-zoom-image="" width="468" height="468"
+                                            data-zoom-image="{{ \Storage::url($item) }}" width="468" height="468"
                                             alt="product" />
                                     </div>
                                 @endforeach
                             </div>
+                            {{-- <img class="product-single-image" src="{{ asset('storage/' . $item) }}"
+                                data-zoom-image="{{ asset('storage/' . $item) }}" width="468" height="468"
+                                alt="product" /> --}}
+
                             <!-- End .product-single-carousel -->
+
                             <div class="product-gallery">
                                 <img id="product-image" src="{{ asset('path_to_default_image.jpg') }}" alt="">
                             </div>
@@ -275,16 +234,17 @@
                             </span>
                         </div>
 
-                        <!-- Hiển thị ảnh dưới dạng thumbnail -->
                         <div class="prod-thumbnail owl-dots">
                             @foreach ($allImages as $item)
-                                <div class="owl-dot">
+                                <div class="owl-dot" data-image="{{ \Storage::url($item) }}">
                                     <img src="{{ \Storage::url($item) }}" width="110" height="110"
                                         alt="product-thumbnail" />
                                 </div>
                             @endforeach
                         </div>
+
                     </div>
+
                     <!-- End .product-single-gallery -->
 
 
@@ -694,18 +654,51 @@
 
                 // Hiển thị giá và cập nhật ID biến thể
                 priceBox.innerHTML = `
-${matchedVariant.original_price && parseInt(matchedVariant.original_price) > parseInt(matchedVariant.price_modifier)
-                        ? `<span class="old-price">${parseInt(matchedVariant.original_price).toLocaleString('vi-VN')} VNĐ</span>`
-                        : ''
-                    }
-                    <span class="new-price">
-                        ${parseInt(matchedVariant.price_modifier).toLocaleString('vi-VN')} VNĐ
-                    </span>
-                `;
+        ${matchedVariant.original_price && parseInt(matchedVariant.original_price) > parseInt(matchedVariant.price_modifier)
+            ? `<span class="old-price">${parseInt(matchedVariant.original_price).toLocaleString('vi-VN')} VNĐ</span>`
+            : ''
+        }
+        <span class="new-price">
+            ${parseInt(matchedVariant.price_modifier).toLocaleString('vi-VN')} VNĐ
+        </span>
+    `;
 
                 if (variantInput) {
                     variantInput.setAttribute("data-variant-id", matchedVariant.id);
                 }
+
+                // Cập nhật hình ảnh chính
+                const mainImage = document.getElementById('product-image');
+                mainImage.src = `{{ asset('storage/') }}/${matchedVariant.variant_image}`;
+
+                // Cập nhật carousel ảnh biến thể
+                const productCarousel = document.querySelector('.product-single-carousel');
+                productCarousel.innerHTML = ''; // Clear existing images
+
+                matchedVariant.images.forEach(imageUrl => {
+                    const productItem = document.createElement('div');
+                    productItem.className = 'product-item';
+                    productItem.innerHTML = `
+            <img class="product-single-image" 
+                 src="{{ asset('storage/') }}/${imageUrl}" 
+                 data-zoom-image="{{ asset('storage/') }}/${imageUrl}" 
+                 width="468" height="468" alt="product" />
+        `;
+                    productCarousel.appendChild(productItem);
+                });
+
+                // Cập nhật ảnh thu nhỏ
+                const productThumbnails = document.querySelector('.prod-thumbnail');
+                productThumbnails.innerHTML = ''; // Clear existing thumbnails
+
+                matchedVariant.images.forEach(imageUrl => {
+                    const thumbnailItem = document.createElement('div');
+                    thumbnailItem.className = 'owl-dot';
+                    thumbnailItem.innerHTML = `
+            <img src="{{ asset('storage/') }}/${imageUrl}" width="110" height="110" alt="product-thumbnail" />
+        `;
+                    productThumbnails.appendChild(thumbnailItem);
+                });
             }
         });
 
@@ -800,5 +793,20 @@ ${matchedVariant.original_price && parseInt(matchedVariant.original_price) > par
                 })();
             })
         })
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.owl-dot');
+            const mainImage = document.getElementById('product-image');
+
+            // Lắng nghe sự kiện click trên từng thumbnail
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    const imageUrl = thumbnail.getAttribute(
+                        'data-image'); // Lấy đường dẫn ảnh từ thuộc tính data-image
+                    mainImage.src = imageUrl; // Cập nhật ảnh chính
+                });
+            });
+        });
     </script>
 @endsection
