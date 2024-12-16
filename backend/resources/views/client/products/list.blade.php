@@ -115,7 +115,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
         <div class="row">
             <div class="col-lg-9 main-content">
-                <nav class="toolbox sticky-header" data-sticky-options="{'mobile': true}">
+                <nav class="toolbox sticky-header" data-sticky-options="{'mobile': false}">
                     <div class="toolbox-left">
                         <a href="#" class="sidebar-toggle">
                             <svg data-name="Layer 3" id="Layer_3" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -135,7 +135,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             <span>Filter</span>
                         </a>
                         <form action="{{ route('client.products.sort') }}" method="GET">
-                            <div class="toolbox-item toolbox-sort">
+                            <div class="toolbox-item toolbox-sort ">
                                 <label>Sắp Xếp:</label>
                                 <div class="select-custom">
                                     <select name="orderby" class="form-control" id="sort-options"
@@ -177,7 +177,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                 @php
                     // dd($products)
                 @endphp
-                <div class="row" style="margin-top: -30px">
+                <div class="row" style="margin-top: -25px">
                     @foreach ($products as $item)
                         <div class="col-6 col-sm-4">
                             <div class="product-default">
