@@ -5,30 +5,30 @@
 @section('style_css')
     <style>
         /* .icon-wishlist-2 {
-                                                     color: #ccc;
-                                                     }
+                                                                                     color: #ccc;
+                                                                                     }
 
-                                                      .icon-wishlist-filled {
-                                                     } */
+                                                                                      .icon-wishlist-filled {
+                                                                                     } */
 
         /* .wishlist-modal {
-                                                                                                                                                                                                            position: fixed;
-                                                                                                                                                                                                            right: 20px;
-                                                                                                                                                                                                            bottom: 20px;
-                                                                                                                                                                                                            background-color: #333;
-                                                                                                                                                                                                            color: #fff;
-                                                                                                                                                                                                            padding: 10px 15px;
-                                                                                                                                                                                                            border-radius: 5px;
-                                                                                                                                                                                                            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-                                                                                                                                                                                                            z-index: 9999;
-                                                                                                                                                                                                            opacity: 0;
-                                                transition: opacity 0.3s, bottom 0.3s;
-                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                            position: fixed;
+                                                                                                                                                                                                                                            right: 20px;
+                                                                                                                                                                                                                                            bottom: 20px;
+                                                                                                                                                                                                                                            background-color: #333;
+                                                                                                                                                                                                                                            color: #fff;
+                                                                                                                                                                                                                                            padding: 10px 15px;
+                                                                                                                                                                                                                                            border-radius: 5px;
+                                                                                                                                                                                                                                            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+                                                                                                                                                                                                                                            z-index: 9999;
+                                                                                                                                                                                                                                            opacity: 0;
+                                                                                transition: opacity 0.3s, bottom 0.3s;
+                                                                                                                                                                                                                                            }
 
-                                                                                                                                                                                                            .wishlist-modal.show {
-                                                                                                                                                                                                                opacity: 1;
-                                                                                                                                                                                                                bottom: 40px;
-                                                                                                                                                                                                            } */
+                                                                                                                                                                                                                                            .wishlist-modal.show {
+                                                                                                                                                                                                                                                opacity: 1;
+                                                                                                                                                                                                                                                bottom: 40px;
+                                                                                                                                                                                                                                            } */
         #priceBox {
             display: flex;
             align-items: center;
@@ -36,6 +36,11 @@
             gap: 10px;
             /* Khoảng cách giữa giá cũ và giá mới */
         }
+
+        .carousel-hidden {
+            display: none !important;
+        }
+
 
         .old-price {
             text-decoration: line-through;
@@ -209,8 +214,8 @@
                                 <!-- Optional labels (e.g., sale, new) -->
                             </div>
 
-                            <!-- Slider chính hiển thị hình ảnh sản phẩm -->
-                            <div class="product-single-carousel owl-carousel owl-theme show-nav-hover">
+                            <div id="product-single-carousel"
+                                class="product-single-carousel owl-carousel owl-theme show-nav-hover">
                                 @foreach ($allImages as $item)
                                     <div class="product-item">
                                         <img class="product-single-image" src="{{ \Storage::url($item) }}"
@@ -226,7 +231,7 @@
                             <!-- End .product-single-carousel -->
 
                             <div class="product-gallery">
-                                <img id="product-image" src="{{ asset('path_to_default_image.jpg') }}" alt="">
+                                <img id="product-image" src="" alt="">
                             </div>
 
                             <span class="prod-full-screen">
@@ -234,7 +239,8 @@
                             </span>
                         </div>
 
-                        <div class="prod-thumbnail owl-dots">
+                        <!-- Thumbnails -->
+                        <div class="prod-thumbnail ">
                             @foreach ($allImages as $item)
                                 <div class="owl-dot" data-image="{{ \Storage::url($item) }}">
                                     <img src="{{ \Storage::url($item) }}" width="110" height="110"
@@ -655,7 +661,7 @@
                     )
                 );
                 console.log(matchedVariant);
-                
+
                 // Hiển thị giá và cập nhật ID biến thể
                 priceBox.innerHTML = `
         ${matchedVariant.original_price && parseInt(matchedVariant.original_price) > parseInt(matchedVariant.price_modifier)
@@ -801,7 +807,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const thumbnails = document.querySelectorAll('.owl-dot');
-            const mainImage = document.getElementById('product-image');
+            const mainImage = document.getElementById('product-image'); // Ảnh chính
+            const productCarousel = document.getElementById('product-single-carousel'); // Carousel chính
 
             // Lắng nghe sự kiện click trên từng thumbnail
             thumbnails.forEach(thumbnail => {
@@ -809,6 +816,10 @@
                     const imageUrl = thumbnail.getAttribute(
                         'data-image'); // Lấy đường dẫn ảnh từ thuộc tính data-image
                     mainImage.src = imageUrl; // Cập nhật ảnh chính
+
+                    // Không ẩn carousel, nhưng có thể thay đổi trạng thái khác nếu cần
+                    productCarousel.classList.add(
+                        'carousel-hidden'); // Nếu bạn muốn ẩn carousel tạm thời
                 });
             });
         });
