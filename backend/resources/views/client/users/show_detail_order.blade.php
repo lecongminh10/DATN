@@ -305,13 +305,11 @@
 @endsection
 
 @section('content')
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-
+@if (session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+@endif
     <main class="main home mt-3">
         <div class="container mb-2">
             <div class="row mb-3 pb-3">
@@ -583,10 +581,6 @@
                 </div>
                 @include('client.users.left_menu')
             </div>
-            @include('client.components-home.products', [
-                'title' => 'Sản phẩm tương tự',
-                'products' => $similarProducts,
-            ])
         </div>
     </main>
 

@@ -25,7 +25,7 @@ class ProductService extends BaseService
     }
     public function getFeaturedProducts()
     {
-        return Product::with(['galleries', 'category', 'wishList'])
+        return Product::with(['galleries', 'category', 'wishList' ,'variants'])
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->orderByDesc('view')
@@ -35,13 +35,13 @@ class ProductService extends BaseService
 
     public function getTopProducts()
     {
-        return Product::with(['galleries', 'category', 'wishList'])
+        return Product::with(['galleries', 'category', 'wishList' ,'variants'])
             ->orderByDesc('view')
             ->get();
     }
     public function getAllProducts($count, $minprice = null, $maxprice = null)
     {
-        $query = Product::with(['galleries', 'category', 'wishList']);
+        $query = Product::with(['galleries', 'category', 'wishList' ,'variants']);
 
         if (!is_null($minprice) && !is_null($maxprice)) {
             $query->whereBetween('price_regular', [$minprice, $maxprice])
@@ -53,7 +53,7 @@ class ProductService extends BaseService
 
     public function getSaleProducts()
     {
-        return Product::with(['galleries', 'category', 'wishList'])
+        return Product::with(['galleries', 'category', 'wishList','variants'])
             ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
             ->orderBy('discount_percentage', 'desc')
             ->take(4)
@@ -94,7 +94,7 @@ class ProductService extends BaseService
 
     public function bestSellingProducts()
     {
-        return Product::with(['galleries', 'category', 'wishList'])
+        return Product::with(['galleries', 'category', 'wishList','variants'])
             ->select('*', DB::raw('((price_regular - price_sale) / price_regular) * 100 as discount_percentage'))
             ->orderBy('discount_percentage', 'desc')
             ->take(10)
@@ -103,7 +103,7 @@ class ProductService extends BaseService
 
     public function buyCountProducts()
     {
-        return Product::with(['galleries', 'category', 'wishList'])
+        return Product::with(['galleries', 'category', 'wishList' ,'variants'])
             ->whereMonth('created_at', now()->month) 
             ->whereYear('created_at', now()->year)  
             ->orderByDesc('buycount')          
@@ -123,7 +123,7 @@ class ProductService extends BaseService
         $latestYear = $latestProduct->created_at->year;
 
         // Lọc sản phẩm theo tháng và năm mới nhất
-        return Product::with(['galleries', 'category', 'wishList'])
+        return Product::with(['galleries', 'category', 'wishList','variants'])
             ->whereMonth('created_at', $latestMonth) 
             ->whereYear('created_at', $latestYear)  
             ->orderByDesc('id')            
@@ -134,7 +134,7 @@ class ProductService extends BaseService
 
     public function searchProducts($search, $categoryId = null)
     {
-        $query = Product::with(['galleries', 'category', 'wishList']);
+        $query = Product::with(['galleries', 'category', 'wishList','variants']);
         if ($search !== null) {
             $query = $query->where('name', 'like', "%{$search}%");
         }
@@ -147,7 +147,7 @@ class ProductService extends BaseService
 
     public function ratingProducts()
     {
-        return Product::with(['galleries', 'category', 'wishList'])
+        return Product::with(['galleries', 'category', 'wishList','variants'])
             ->whereNotNull('rating')
             ->orderByDesc('rating')
             ->limit(10)

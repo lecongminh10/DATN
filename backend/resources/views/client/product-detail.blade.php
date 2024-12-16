@@ -453,7 +453,7 @@
                                                     </div>
 
                                                     <span class="comment-by">
-                                                        <strong>{{ $comment->user->name }}</strong> –
+                                                        <strong>{{ $comment->user->username }}</strong> –
                                                         {{ \Carbon\Carbon::parse($comment->review_date)->locale('vi')->isoFormat('D MMMM YYYY') }}
                                                     </span>
                                                 </div>
@@ -463,7 +463,7 @@
                                                 </div>
                                                 @if ($comment->reply_text)
                                                     <div class="admin-reply">
-                                                        <p><strong>{{ $comment->user->username }} trả lời:</strong>
+                                                        <p><strong>Zomart:</strong>
                                                             {{ $comment->reply_text }}</p>
                                                     </div>
                                                 @endif
