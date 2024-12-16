@@ -135,7 +135,7 @@ class HomeController extends Controller
 
         $products = $query->paginate(12);
 
-        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount', 'wishlistCount'));
+        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount', 'wishlistCount','attributes'));
     }
     // lọc sản phẩm theo danh mục
     public function getByCategory($id)
