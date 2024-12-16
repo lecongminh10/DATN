@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('banner_main', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
-            $table->string('sub_title')->nullable();
+            // $table->string('sub_title')->nullable();
             $table->string('image')->nullable();
-            $table->decimal('price', 10, 2)->nullable();
+            // $table->decimal('price', 10, 2)->nullable();
             $table->string('title_button')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();

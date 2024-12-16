@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $table = 'posts';
     protected $fillable = [
         'title',
@@ -25,7 +25,8 @@ class Post extends Model
     ];
 
     protected $casts = [
-        'deleted_at' => 'boolean',
+        'published_at',
+        'deleted_at',
     ];
 
     // Quan hệ với User

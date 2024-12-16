@@ -42,6 +42,64 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
             cursor: pointer;
             margin-top: 10px;
         }
+
+        
+        .scrollable-content {
+            max-height: 300px; /* Giới hạn chiều cao */
+            overflow-y: auto; /* Hiển thị thanh cuộn dọc khi nội dung vượt quá */
+            padding-right: 10px; /* Khoảng cách cho thanh cuộn */
+        }
+
+        /* Thanh cuộn cơ bản */
+        .scrollable-content::-webkit-scrollbar {
+            width: 8px; /* Độ rộng thanh cuộn */
+            height: 8px; /* Độ cao thanh cuộn ngang (nếu có) */
+        }
+
+        /* Đường dẫn thanh cuộn */
+        .scrollable-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Đối với Firefox */
+        .scrollable-content {
+            scrollbar-width: thin;
+        }
+
+        /* Nút thu gọn danh mục */
+        .toggle {
+            cursor: pointer;
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+            position: relative;
+            transition: transform 0.3s ease; /* Hiệu ứng xoay */
+        }
+
+        .toggle::before {
+            content: ''; /* Mũi tên lên  */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #000000;
+        }
+
+        /* Xoay xuống khi danh mục con được mở */
+        .toggle.rotate {
+            transform: rotate(180deg);
+        }
+
+        .toggle::before {
+            content: ''; /* Mũi tên lên  */
+        }
+
+        .toggle.rotate::before {
+            content: ''; /* Mũi tên xuống  */
+        }
     </style>
 @endsection
 @section('content')
@@ -104,7 +162,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                 @php
                     // dd($products)
                 @endphp
-                <div class="row">
+                <div class="row" style="margin-top: -30px">
                     @foreach ($products as $item)
                         <div class="col-6 col-sm-4">
                             <div class="product-default">
@@ -132,15 +190,21 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                             {{-- <div class="product-label label-hot">HOT</div> --}}
 
                                         @php
-                                            // Xác định giá sản phẩm
-                                            if (isset($item->productVariant)) {
-                                                // Nếu có product_variant, lấy giá từ biến thể  
-                                                $price = $item->productVariant->price_modifier;
+                                             if (isset($item->variants) && $item->variants->isNotEmpty()) {
+                                                $minPrice = $item->variants->filter(function ($variant) {
+                                                    return $variant->price_modifier !== null;
+                                                })->isNotEmpty()
+                                                    ? $item->variants->min('price_modifier')
+                                                    : $item->variants->min('original_price');
+                                                
+                                                $maxPrice = $item->variants->filter(function ($variant) {
+                                                    return $variant->price_modifier !== null;
+                                                })->isNotEmpty()
+                                                    ? $item->variants->max('price_modifier')
+                                                    : $item->variants->max('original_price');
                                             } else {
-                                                // Nếu không có product_variant, kiểm tra giá sale của sản phẩm
-                                                $price = ($item->price_sale !== null && $item->price_sale < $item->price_regular)
-                                                    ? $item->price_sale // Lấy giá sale nếu có
-                                                    : $item->price_regular; // Nếu không có giá sale, lấy giá thường
+                                                $minPrice = $item->price_sale;
+                                                $maxPrice = $item->price_regular;
                                             }
 
                                             // Tính toán phần trăm giảm giá nếu có giá sale hợp lệ
@@ -178,12 +242,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     <!-- End .product-container -->
 
                                     <div class="price-box">
-                                        @if ($item->price_sale == null)
-                                            <span class="new-price" style="color: #08c; font-size: 1.2em;">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
-                                        @else
-                                            <span class="new-price" style="color: #08c;  font-size: 1.2em;">{{ number_format($item->price_sale, 0, ',', '.') }} ₫</span>
-                                            <span class="old-price">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
-                                        @endif                                 
+                                        <span class="new-price" style="color: #08c;  font-size: 1em;">{{number_format($minPrice, 0, ',', '.')}} đ ~ {{number_format($maxPrice, 0, ',', '.')}} đ</span>                                
                                     </div>
 
                                     <!-- End .price-box -->
@@ -204,7 +263,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                 <!-- End .row -->
                 <nav class="toolbox toolbox-pagination">
                     <div class="toolbox-item toolbox-show">
-                        <label>Show:</label>
+                        <label style="margin-bottom: 50px;">Show:</label>
                         <form action="{{ url()->current() }}" method="GET">
                             <div class="select-custom">
                                 <select name="count" class="form-control" onchange="this.form.submit()">
@@ -276,39 +335,56 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
                     <div class="widget border border-bottom">
                         <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-body-3" role="button" aria-expanded="true"
-                                aria-controls="widget-body-3">Giá</a>
+                            <a data-toggle="collapse" href="#widget-body-3" role="button" aria-expanded="true" aria-controls="widget-body-3">
+                                Đặc tính
+                            </a>
                         </h3>
-
+                    
                         <div class="collapse show" id="widget-body-3">
                             <div class="widget-body pb-0">
-                                <form action="{{ route('client.products.filterByPrice') }}" method="GET">
-                                    <div class="price-slider-wrapper">
-                                        <div id="price-slider"></div>
-                                    </div>
-
-                                    <div
-                                        class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
-                                        <div class="filter-price-text">
-                                            Giá:
-                                            <span id="filter-price-range">₫{{ $minPrice ?? 0 }} -
-                                                ₫{{ $maxPrice ?? 100000000 }}</span>
+                                <!-- Thêm lớp cuộn -->
+                                <div class="scrollable-content">
+                                    <form action="{{ route('client.products.filterByProducts') }}" method="GET">
+                                        <div class="price-input-wrapper">
+                                            <!-- Input kết hợp select -->
+                                            <div class="form-group">
+                                                @foreach($attributes as $attribute)
+                                          
+                                                    <!-- Tên thuộc tính -->
+                                                    <label for="attribute-{{ $attribute->id }}">{{ $attribute->attribute_name }}:</label>
+                                                    <!-- Select chứa giá trị của thuộc tính -->
+                                                    <select name="attributes[]" id="attribute-{{ $attribute->id }}" class="form-control mb-2" style="height: 45px">
+                                                        <option value="" selected>Chọn {{ $attribute->attribute_name }}</option>
+                                                        @foreach($attribute->attributeValues as $value)
+                                                            <option value="{{ $value->id }}">{{ $value->attribute_value }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @endforeach
+                                            </div>
+                    
+                                            <!-- Input giá tối thiểu -->
+                                            <div class="form-group">
+                                                <label for="min">Giá tối thiểu (₫):</label>
+                                                <input type="text" class="form-control" name="min" id="min" 
+                                                    value="{{ $minPriceFormatted ?? '' }}" min="0">
+                                            </div>
+                                            <!-- Input giá tối đa -->
+                                            <div class="form-group">
+                                                <label for="max">Giá tối đa (₫):</label>
+                                                <input type="text" class="form-control" name="max" id="max" 
+                                                    value="{{ $maxPriceFormatted ?? '' }}" min="0">
+                                            </div>
                                         </div>
-
-                                        <input type="hidden" name="min" id="min"
-                                            value="{{ $minPrice ?? 0 }}">
-                                        <input type="hidden" name="max" id="max"
-                                            value="{{ $maxPrice ?? 100000000 }}">
-
-                                        <button type="submit" class="btn btn-primary">Lọc</button>
-                                    </div>
-                                </form>
-
+                    
+                                        <div class="filter-price-action d-flex align-items-center justify-content-between flex-wrap">
+                                            <button type="submit" class="btn btn-primary">Lọc</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <!-- End .widget-body -->
                         </div>
                         <!-- End .collapse -->
-                    </div>
+                    </div> 
 
                     <!-- End .widget -->
 
@@ -506,6 +582,62 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
 
     // Modal thông báo thêm giỏ hàng
     document.querySelector("#addToCart .modal-body").innerHTML= `<p style="">Thêm vào giỏ hàng thành công</p>`
+    
+    
+    $(document).ready(function () {
+        // Khi nhấn vào input, hiển thị danh sách tùy chọn
+        $('#attribute').on('focus click', function () {
+            $('#attribute-select').show();
+        });
+
+        // Khi chọn một tùy chọn trong select
+        $('#attribute-select').on('change', function () {
+            const selectedOption = $(this).find('option:selected').text();
+            const selectedValue = $(this).val();
+
+            // Hiển thị giá trị trong input
+            $('#attribute').val(selectedOption);
+
+            // Gán giá trị vào input ẩn để gửi form
+            $('#selected-attribute').val(selectedValue);
+
+            // Ẩn danh sách tùy chọn
+            $(this).hide();
+        });
+
+        // Ẩn select khi nhấn ra ngoài
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.form-group').length) {
+                $('#attribute-select').hide();
+            }
+        });
+    });
+
+    // Nút ẩn danh mục
+    document.addEventListener('DOMContentLoaded', function () {
+        // Chọn tất cả các toggle button
+        const toggles = document.querySelectorAll('.toggle');
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                // Lấy ID mục tiêu từ data-target
+                const targetId = toggle.getAttribute('data-target');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    // Toggle class 'show' để ẩn/hiện danh mục con
+                    targetElement.classList.toggle('show');
+
+                    // Toggle trạng thái quay của toggle
+                    toggle.classList.toggle('rotate');
+
+                    // Toggle trạng thái aria-expanded
+                    const isExpanded = targetElement.classList.contains('show');
+                    toggle.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                }
+            });
+        });
+    });
     </script>
 @endsection
 </style>

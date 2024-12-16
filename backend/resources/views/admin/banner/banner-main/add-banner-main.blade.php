@@ -78,14 +78,6 @@
                             <h3 class="mb-4">Thêm Banner Main</h3>
                         </div>
                         <div class="card-body">
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-
                             <form action="{{ route('admin.banner.banner_main_add') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="banner gap-3">
@@ -107,18 +99,6 @@
                                 <div class="mb-3">
                                     <label for="title" class="form-label">Tiêu đề</label>
                                     <input type="text" name="title" id="title" class="form-control">
-                                </div>
-                                <!-- Sub Title -->
-                                <div class="mb-3">
-                                    <label for="sub_title" class="form-label">Phụ đề</label>
-                                    <input type="text" name="sub_title" id="sub_title" class="form-control">
-                                </div>
-                                
-                            
-                                <!-- Prices -->
-                                <div class="mb-3">
-                                    <label for="price" class="form-label">Giá</label>
-                                    <input type="text" name="price" id="price" class="form-control">
                                 </div>
                             
                                 <!-- Title Buttons -->
@@ -166,16 +146,16 @@
 
             reader.onload = function(e) {
                 container.style.backgroundImage = `url('${e.target.result}')`;
-                container.style.backgroundSize = 'cover'; // Đảm bảo ảnh bao phủ vùng chứa
-                container.style.backgroundPosition = 'center'; // Căn giữa ảnh
-                // container.style.height = '200px'; // Đặt chiều cao cho vùng chứa ảnh
-                container.style.display = 'block'; // Hiển thị vùng chứa khi có ảnh
+                container.style.backgroundSize = 'cover';
+                container.style.backgroundPosition = 'center';
+                // container.style.height = '200px';
+                container.style.display = 'block';
             };
 
             reader.readAsDataURL(input.files[0]);
         } else {
             container.style.backgroundImage = '';
-            container.style.display = 'none'; // Ẩn vùng chứa nếu không có ảnh
+            container.style.display = 'none'; 
         }
     }
 

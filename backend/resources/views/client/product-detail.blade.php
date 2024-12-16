@@ -5,49 +5,75 @@
 @section('style_css')
     <style>
         /* .icon-wishlist-2 {
-                      color: #ccc;
-               }
+                                                                                     color: #ccc;
+                                                                                     }
 
-               .icon-wishlist-filled {
-                       color: red;
-              } */
+                                                                                      .icon-wishlist-filled {
+                                                                                     } */
 
         /* .wishlist-modal {
-                        position: fixed;
-                        right: 20px;
-                        bottom: 20px;
-                        background-color: #333;
-                        color: #fff;
-                        padding: 10px 15px;
-                        border-radius: 5px;
-                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-                        z-index: 9999;
-                        opacity: 0;
-                        transition: opacity 0.3s, bottom 0.3s;
-                        }
+                                                                                                                                                                                                                                            position: fixed;
+                                                                                                                                                                                                                                            right: 20px;
+                                                                                                                                                                                                                                            bottom: 20px;
+                                                                                                                                                                                                                                            background-color: #333;
+                                                                                                                                                                                                                                            color: #fff;
+                                                                                                                                                                                                                                            padding: 10px 15px;
+                                                                                                                                                                                                                                            border-radius: 5px;
+                                                                                                                                                                                                                                            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+                                                                                                                                                                                                                                            z-index: 9999;
+                                                                                                                                                                                                                                            opacity: 0;
+                                                                                transition: opacity 0.3s, bottom 0.3s;
+                                                                                                                                                                                                                                            }
 
-                        .wishlist-modal.show {
-                            opacity: 1;
-                            bottom: 40px;
-                        } */
+                                                                                                                                                                                                                                            .wishlist-modal.show {
+                                                                                                                                                                                                                                                opacity: 1;
+                                                                                                                                                                                                                                                bottom: 40px;
+                                                                                                                                                                                                                                            } */
+        #priceBox {
+            display: flex;
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+            gap: 10px;
+            /* Khoảng cách giữa giá cũ và giá mới */
+        }
+
+        .carousel-hidden {
+            display: none !important;
+        }
+
+
+        .old-price {
+            text-decoration: line-through;
+            /* Gạch ngang giá cũ */
+            color: #999;
+            /* Màu sắc cho giá cũ */
+        }
+
+        .new-price {
+            font-weight: bold;
+            /* Làm đậm giá mới */
+            color: #e74c3c;
+            /* Màu sắc cho giá mới */
+        }
+
 
         .cart-modal {
+            display: none;
             position: fixed;
-            right: 20px;
-            top: 80px;
-            background-color: #333;
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            /* Màu nền mờ */
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
         }
 
         .cart-modal.show {
-            opacity: 1;
-            bottom: 100px;
+            display: flex;
         }
 
         .attribute-link {
@@ -88,13 +114,20 @@
             line-height: 0.8;
             margin-left: 3px;
         }
+
         .product-desc-content {
-            max-width: 100%; /* Chiều rộng tối đa */
-            max-height: 300px; /* Chiều cao tối đa (tùy chỉnh theo nhu cầu) */
-            overflow: auto; /* Thêm thanh cuộn nếu nội dung vượt quá */
-            padding: 10px; /* Khoảng cách bên trong */
-            border: 1px solid #cccccc44; /* Viền để phân biệt khung */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0); /* Thêm bóng mờ nhẹ */
+            max-width: 100%;
+            /* Chiều rộng tối đa */
+            max-height: 300px;
+            /* Chiều cao tối đa (tùy chỉnh theo nhu cầu) */
+            overflow: auto;
+            /* Thêm thanh cuộn nếu nội dung vượt quá */
+            padding: 10px;
+            /* Khoảng cách bên trong */
+            border: 1px solid #cccccc44;
+            /* Viền để phân biệt khung */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0);
+            /* Thêm bóng mờ nhẹ */
         }
     </style>
 @endsection
@@ -129,46 +162,7 @@
         }
 
     @endphp
-    <header class="header">
-        <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': true}">
-            <div class="container">
-                <nav class="main-nav w-100">
-                    <ul class="menu">
-                        <li>
-                            <a href="{{ route('client') }}">Trang chủ</a>
-                        </li>
-                        <li>
-                            <a href="#">Danh mục</a>
-                            <div class="megamenu megamenu-fixed-width megamenu-3cols">
-                                <div class="row">
-                                    @foreach ($categories as $parent)
-                                        <div class="col-lg-4">
-                                            <a href="#" class="nolink pl-0">{{ $parent->name }}</a>
-                                            @if($parent->children->isNotEmpty())
-                                                <ul class="submenu">
-                                                    @foreach ($parent->children as $child)
-                                                        <li><a href="{{ route('client.products.Category',$child->id) }}">{{ $child->name }}</a></li>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                        </div>
-                                      @endforeach
-                                </div>
-                            </div>
-                            <!-- End .megamenu -->
-                        </li>
-                        <li><a href="{{route('client.products')}}">Sản phẩm </a></li>
-                        <li>
-                            <a href="#">Bài viết </a>
-                        </li>
-                        <li><a href="blog.html">Liên hệ chúng tôi</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <!-- End .container -->
-        </div>
-        <!-- End .header-bottom -->
-    </header>
+    @include('client.layouts.nav')
     <main class="main">
         <div class="container">
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -214,19 +208,14 @@
                             }
                         }
                     @endphp
-
                     <div class="col-lg-5 col-md-6 product-single-gallery">
                         <div class="product-slider-container">
                             <div class="label-group">
-                                {{-- <div class="product-label label-hot">HOT</div> --}}
-
-                                {{-- <div class="product-label label-sale">
-                                    -16%
-                                </div> --}}
+                                <!-- Optional labels (e.g., sale, new) -->
                             </div>
 
-                            <!-- Slider chính hiển thị hình ảnh sản phẩm -->
-                            <div class="product-single-carousel owl-carousel owl-theme show-nav-hover">
+                            <div id="product-single-carousel"
+                                class="product-single-carousel owl-carousel owl-theme show-nav-hover">
                                 @foreach ($allImages as $item)
                                     <div class="product-item">
                                         <img class="product-single-image" src="{{ \Storage::url($item) }}"
@@ -235,9 +224,14 @@
                                     </div>
                                 @endforeach
                             </div>
+                            {{-- <img class="product-single-image" src="{{ asset('storage/' . $item) }}"
+                                data-zoom-image="{{ asset('storage/' . $item) }}" width="468" height="468"
+                                alt="product" /> --}}
+
                             <!-- End .product-single-carousel -->
+
                             <div class="product-gallery">
-                                <img id="product-image" src="{{ asset('path_to_default_image.jpg') }}" alt="">
+                                <img id="product-image" src="" alt="">
                             </div>
 
                             <span class="prod-full-screen">
@@ -245,77 +239,62 @@
                             </span>
                         </div>
 
-                        <!-- Hiển thị ảnh dưới dạng thumbnail -->
-                        <div class="prod-thumbnail owl-dots">
+                        <!-- Thumbnails -->
+                        <div class="prod-thumbnail ">
                             @foreach ($allImages as $item)
-                                <div class="owl-dot">
+                                <div class="owl-dot" data-image="{{ \Storage::url($item) }}">
                                     <img src="{{ \Storage::url($item) }}" width="110" height="110"
                                         alt="product-thumbnail" />
                                 </div>
                             @endforeach
                         </div>
+
                     </div>
+
                     <!-- End .product-single-gallery -->
 
 
                     <div class="col-lg-7 col-md-6 product-single-details">
                         <h1 class="product-title">{{ $data->name }}</h1>
-
-                        {{-- <div class="product-nav">
-                            <div class="product-prev">
-                                <a href="#">
-                                    <span class="product-link"></span>
-
-                                    <span class="product-popup">
-                                        <span class="box-content">
-                                            <img alt="product" width="150" height="150"
-                                                src="assets/images/products/product-3.jpg" style="padding-top: 0px;">
-
-                                            <span>Circled Ultimate 3D Speaker</span>
-                                        </span>
-                                    </span>
-                                </a>
-                            </div>
-
-                            <div class="product-next">
-                                <a href="#">
-                                    <span class="product-link"></span>
-
-                                    <span class="product-popup">
-                                        <span class="box-content">
-                                            <img alt="product" width="150" height="150"
-                                                src="assets/images/products/product-4.jpg" style="padding-top: 0px;">
-
-                                            <span>Blue Backpack for the Young</span>
-                                        </span>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="ratings-container">
-                            <div class="product-ratings">
-                                <span class="ratings" style="width:60%"></span>
-                                <!-- End .ratings -->
-                                <span class="tooltiptext tooltip-top"></span>
-                            </div>
-                            <!-- End .product-ratings -->
-
-                            {{-- <a href="#" class="rating-link">( 6 Reviews )</a>
-                        </div> --}}
-                        <!-- End .ratings-container -->
-
-                        <hr class="short-divider">
-
-                        <div class="price-box">
+                        {{-- <div class="price-box">
                             @if ($data->price_sale == null)
                                 <span class="new-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
                             @else
-                                <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
                                 <span class="old-price">{{ number_format($data->price_regular, 0, ',', '.') }} ₫</span>
+                                <span class="new-price">{{ number_format($data->price_sale, 0, ',', '.') }} ₫</span>
+                            @endif
+</div> --}}
+
+                        @php
+                            $lowestPriceVariant = null;
+
+                            if (!empty($variants)) {
+                                $lowestPriceVariant = collect($variants)->reduce(function ($lowest, $variant) {
+                                    return !$lowest || $variant['price_modifier'] < $lowest['price_modifier']
+                                        ? $variant
+                                        : $lowest;
+                                });
+                            }
+                        @endphp
+
+                        <div id="price-box" class="price-box">
+                            @if ($lowestPriceVariant)
+                                @if (
+                                    !empty($lowestPriceVariant['original_price']) &&
+                                        $lowestPriceVariant['original_price'] > $lowestPriceVariant['price_modifier']
+                                )
+                                    <span class="old-price" id="old-price-variant">
+                                        {{ number_format($lowestPriceVariant['original_price'], 0, ',', '.') }} VNĐ
+                                    </span>
+                                @endif
+                                <span class="new-price" id="new-price-variant">
+                                    {{ number_format($lowestPriceVariant['price_modifier'], 0, ',', '.') }} VNĐ
+                                </span>
+                            @else
+                                <p class="new-price">Không có biến thể nào khả dụng</p>
                             @endif
                         </div>
-                        <!-- End .price-box -->
+
 
                         <div class="product-desc">
                             <p>
@@ -334,38 +313,38 @@
                             <li>
                                 Danh mục:
                                 <strong>
-                                    <a href="{{route('client.products.Category',['id'=> $data->category->id])}}" class="product-category">{{ $data->category->name }}</a>
+                                    <a href="{{ route('client.products.Category', ['id' => $data->category->id]) }}"
+                                        class="product-category">{{ $data->category->name }}</a>
                                 </strong>
                             </li>
-
+                            <li>
+                                Thời giàn bảo hành:
+                                <strong> {{ $data->warranty_period }} tháng</strong>
+                            </li>
                             <li>
                                 <strong>Thẻ:</strong>
                                 <span class="product-tags">
                                     @foreach ($data->tags as $tag)
-                                        <a href="#" class="badge bg-primary text-white product-category p-2">{{ $tag->name }}</a>
+                                        <a href="#"
+                                            class="badge bg-primary text-white product-category p-2">{{ $tag->name }}</a>
                                         @if (!$loop->last)
                                             <span class="text-muted">, </span>
                                         @endif
                                     @endforeach
                                 </span>
-                            </li>                            
+                            </li>
                         </ul>
 
                         @php
-                            // Mảng để nhóm các thuộc tính và giá trị của chúng từ tất cả các biến thể
                             $attributesGrouped = [];
 
-                            // Duyệt qua từng biến thể
                             if (count($variants) > 0) {
                                 foreach ($variants as $variant) {
                                     if (count($variant['attributes']) > 0) {
                                         foreach ($variant['attributes'] as $attribute) {
-                                            // Nhóm các giá trị thuộc tính theo tên thuộc tính
                                             if (!isset($attributesGrouped[$attribute['attribute_name']])) {
                                                 $attributesGrouped[$attribute['attribute_name']] = [];
                                             }
-
-                                            // Thêm giá trị vào mảng nếu chưa tồn tại để tránh trùng lặp
                                             if (
                                                 !in_array(
                                                     $attribute['attribute_value'],
@@ -388,11 +367,10 @@
                                     <ul class="config-size-list">
                                         @foreach ($values as $value)
                                             <li>
-                                                <a href="javascript:;"
-                                                    class="d-flex align-items-center justify-content-center attribute-link"
-                                                    style="min-height: 30px ; min-width:70px"
+                                                <a href="javascript:;" class="attribute-link"
                                                     data-attribute-name="{{ $attributeName }}"
-                                                    data-attribute-value="{{ $value }}">
+                                                    data-attribute-value="{{ $value }}"
+                                                    style="min-height: 30px; min-width: 70px;">
                                                     {{ $value }}
                                                 </a>
                                             </li>
@@ -402,6 +380,7 @@
                             @endforeach
                         @endif
 
+
                         {{-- <div class="product-single-filter">
                                 <label></label>
                                 <a class="font1 text-uppercase clear-btn" href="#">Clear</a>
@@ -409,15 +388,6 @@
                         <!---->
 
                         <div class="product-action">
-                            <div class="price-box product-filtered-price" style="display: flex;">
-                            </div>
-
-                            <div class="product-single-qty">
-                                <input class="horizontal-quantity form-control" onchange="updateQuantity()"
-                                    id="quantity-product" type="text">
-                            </div>
-                            <!-- End .product-single-qty -->
-
                             <a href="javascript:;" data-quantity-product="1" onchange="updateQuantity()"
                                 data-product-id="{{ $data->id }}" data-variant-id="" id="product-variant-id"
                                 class="btn btn-dark add-cart mr-2" title="Add to Cart">Thêm vào giỏ hàng</a>
@@ -483,7 +453,7 @@
                                                     </div>
 
                                                     <span class="comment-by">
-                                                        <strong>{{ $comment->user->name }}</strong> –
+                                                        <strong>{{ $comment->user->username }}</strong> –
                                                         {{ \Carbon\Carbon::parse($comment->review_date)->locale('vi')->isoFormat('D MMMM YYYY') }}
                                                     </span>
                                                 </div>
@@ -493,7 +463,7 @@
                                                 </div>
                                                 @if ($comment->reply_text)
                                                     <div class="admin-reply">
-                                                        <p><strong>{{ $comment->user->username }} trả lời:</strong>
+                                                        <p><strong>Zomart:</strong>
                                                             {{ $comment->reply_text }}</p>
                                                     </div>
                                                 @endif
@@ -512,10 +482,10 @@
                 <!-- End .tab-content -->
             </div>
             <!-- End .product-single-tabs -->
-            @include('client.components-home.products', [
+            {{-- @include('client.components-home.products', [
                 'title' => 'Lượt đánh giá cao nhất',
                 'products' => $topRatedProducts,
-            ])
+            ]) --}}
             @include('client.components-home.products', [
                 'title' => 'Giảm giá nhiều nhất',
                 'products' => $bestSellingProducts,
@@ -545,13 +515,31 @@
         </div>
     </div>
     <!-- Modal thông báo thêm vào giỏ hàng -->
-    <div id="cart-add-modal" class="cart-modal" style="display: none;">
-        <div class="modal-content">
-            <p>Sản phẩm đã được thêm vào giỏ hàng!</p>
+    <!-- Modal thông báo khi xóa danh mục -->
+    <!-- Modal thông báo khi thêm vào giỏ hàng -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModal">Thông Báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="stock-alert-message">Sản phẩm đã được thêm vào giỏ hàng.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
+@section('script_libray')
+    <!-- Bao gồm JS của Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
 
+
+@endsection
 @section('scripte_logic')
     <script>
         (function() {
@@ -579,217 +567,261 @@
     </script>
     <script>
         document.querySelectorAll('.rating-stars a').forEach(function(star) {
-             star.addEventListener('click', function(event) {
-                 event.preventDefault();
-                 let rating = star.getAttribute('data-rating');
-                 document.getElementById('rating').value = rating; // Cập nhật giá trị của input hidden
-                 // Làm nổi bật các sao đã chọn
-                 document.querySelectorAll('.rating-stars a').forEach(function(s) {
-                     s.classList.remove('selected');
-                 });
-                 star.classList.add('selected');
-             });
-         });
-         document.addEventListener('DOMContentLoaded', function() {
-             // Lắng nghe sự kiện thay đổi trên các input để thực hiện thêm các hành động
-             const attributeInputs = document.querySelectorAll('.attribute-input');
- 
-             attributeInputs.forEach(input => {
-                 input.addEventListener('change', function() {
-                     // Có thể thực hiện các hành động khi một thuộc tính được chọn, ví dụ:
-                     console.log(`Selected ${this.name}: ${this.value}`);
-                 });
-             });
-         });
- 
-         // Đổi giá variant 
- 
-         // Biến để lưu trữ giá của từng biến thể
-         const variants = @json($variants);
- 
-         document.addEventListener('DOMContentLoaded', function() {
-             const priceBox = document.querySelector('.product-filtered-price');
-             let selectedAttributes = {};
- 
-             document.querySelectorAll('.attribute-link').forEach(link => {
-                 link.addEventListener('click', function() {
-                     const filterContainer = this.closest('.product-single-filter');
-                     const attributeName = this.dataset.attributeName;
-                     const attributeValue = this.dataset.attributeValue;
- 
-                     // Kiểm tra nếu thuộc tính hiện tại đã được chọn
-                     const isAlreadyActive = this.classList.contains('active');
- 
-                     // Bỏ chọn các lựa chọn khác trong cùng một nhóm thuộc tính
-                     filterContainer.querySelectorAll('.attribute-link').forEach(otherLink => {
-                         otherLink.classList.remove('active');
-                     });
- 
-                     if (isAlreadyActive) {
-                         // Nếu đã chọn, bỏ chọn và xóa khỏi selectedAttributes
-                         delete selectedAttributes[attributeName];
-                     } else {
-                         // Chọn thuộc tính được nhấn và cập nhật vào selectedAttributes
-                         this.classList.add('active');
-                         selectedAttributes[attributeName] = attributeValue;
-                     }
- 
-                     // Tìm biến thể khớp với thuộc tính đã chọn
-                     const matchedVariant = variants.find(variant =>
-                         variant.attributes.every(attr =>
-                             selectedAttributes[attr.attribute_name] === attr.attribute_value
-                         )
-                     );
- 
-                     // Cập nhật hiển thị giá
-                     if (matchedVariant) {
-                         // Kiểm tra nếu phần tử có tồn tại
-                         let variantInput = document.getElementById("product-variant-id");
-                         let variantWishlist = document.getElementById("wishlist-variant-id");
-                         // if (variantInput && variantWishlist ) {
-                         variantInput.setAttribute("data-variant-id", matchedVariant.id);
-                         variantWishlist.setAttribute("data-variant-id", matchedVariant.id);
-                         console.log("Product Variant ID:", matchedVariant.id); // Log the variant ID
-                         // console.log(variantWishlist);
-                         // console.log(variantInput);
- 
- 
-                         // } else {
-                         //     console.log("Element with ID 'product_variant_id' does not exist.");
-                         // }
-                         priceBox.innerHTML = `
-                     <del class="old-price" id="old-price-variant">${matchedVariant.original_price ? parseInt(matchedVariant.original_price).toLocaleString('vi-VN') + " VNĐ" : ''}</del>
-                     <p class="new-price" id="new-price-variant">${parseInt(matchedVariant.price_modifier).toLocaleString('vi-VN')} VNĐ</p>
-                 `;
-                         // console.log(matchedVariant.price_modifier);
-                     } else {
-                         // Đặt lại hiển thị giá nếu không có biến thể nào khớp
-                         priceBox.innerHTML = `
-                     <p class="new-price" id="new-price-variant">Chọn các thuộc tính để xem giá</p>
-                 `;
-                     }
- 
-                     console.log(matchedVariant.id);
-                 });
-             });
-         });
- 
- 
-         function updateQuantity() {
-             let quantity = document.getElementById("quantity-product").value;
-             let variantInput = document.getElementById("product-variant-id");
- 
-             // Check if quantity is a valid number
-             if (quantity && !isNaN(quantity)) {
-                 variantInput.setAttribute("data-quantity-product", quantity);
-                 console.log("Quantity set to:", quantity); // Log for verification
-             } else {
-                 console.log("Invalid quantity value");
-             }
-         }
- 
- 
-         // Thêm giỏ hàng
-         document.addEventListener('DOMContentLoaded', function() {
-             const productVariant = document.getElementById('product-variant-id');
- 
-             productVariant.addEventListener('click', function() {
-                 const productId = productVariant.getAttribute('data-product-id');
-                 const productVariantId = productVariant.getAttribute('data-variant-id');
-                 const quantity = productVariant.getAttribute('data-quantity-product');
- 
-                 // Gọi AJAX để thêm sản phẩm vào giỏ hàng
-                 $.ajax({
-                     type: "POST",
-                     url: "{{ route('addCart') }}", // Thay bằng route tương ứng
-                     data: {
-                         product_id: productId,
-                         product_variants_id: productVariantId,
-                         quantity: quantity,
-                         _token: '{{ csrf_token() }}' // CSRF token
-                     },
-                     success: function(response) {
-                         // Hiển thị thông báo thêm vào giỏ hàng thành công hoặc xử lý UI nếu cần
-                         showCartModal(); // Gọi hàm hiển thị modal (tương tự như wishlist)
-                         // location.reload();
-                     },
-                     error: function(xhr) {
-                         if (xhr.status === 401) {
-                             // alert('You need to be logged in to add items to your cart.'); // Bỏ thông báo nếu không cần thiết
-                         } else {
-                             // alert('An error occurred. Please try again.'); // Bỏ thông báo nếu không cần thiết
-                         }
-                     }
-                 });
-             });
- 
-             function showCartModal() {
-                 // Hiển thị modal thông báo thêm vào giỏ hàng thành công
-                 const cartModal = document.getElementById('cart-add-modal');
-                 cartModal.classList.add('show');
-                 setTimeout(function() {
-                     cartModal.classList.remove('show');
-                 }, 3000); // Modal sẽ tự động ẩn sau 3 giây
-             }
-         });
-     </script>
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Lắng nghe sự kiện thay đổi trên các input để thực hiện thêm các hành động
-    const attributeInputs = document.querySelectorAll('.attribute-input');
-
-    attributeInputs.forEach(input => {
-        input.addEventListener('change', function () {
-            // Có thể thực hiện các hành động khi một thuộc tính được chọn, ví dụ:
-            console.log(`Selected ${this.name}: ${this.value}`);
+            star.addEventListener('click', function(event) {
+                event.preventDefault();
+                let rating = star.getAttribute('data-rating');
+                document.getElementById('rating').value = rating; // Cập nhật giá trị của input hidden
+                // Làm nổi bật các sao đã chọn
+                document.querySelectorAll('.rating-stars a').forEach(function(s) {
+                    s.classList.remove('selected');
+                });
+                star.classList.add('selected');
+            });
         });
-    });
-});
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lắng nghe sự kiện thay đổi trên các input để thực hiện thêm các hành động
+            const attributeInputs = document.querySelectorAll('.attribute-input');
 
-// Đổi giá variant
+            attributeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    // Có thể thực hiện các hành động khi một thuộc tính được chọn, ví dụ:
+                    console.log(`Selected ${this.name}: ${this.value}`);
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const variants = @json($variants);
+            const priceBox = document.getElementById('price-box');
+            const attributeLinks = document.querySelectorAll('.attribute-link');
+            const variantInput = document.getElementById('product-variant-id');
+            let selectedAttributes = {};
+            showLowestPrice();
 
-// Biến để lưu trữ giá của từng biến thể
+            // Gắn sự kiện cho các liên kết thuộc tính
+            attributeLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const filterContainer = this.closest('.product-single-filter');
+                    const attributeName = this.dataset.attributeName;
+                    const attributeValue = this.dataset.attributeValue;
+                    const isAlreadyActive = this.classList.contains('active');
 
-document.addEventListener('DOMContentLoaded', function () {
-    const variants = @json($variants);
-    const priceBox = document.querySelector('.product-filtered-price');
-    let selectedAttributes = {};
+                    filterContainer.querySelectorAll('.attribute-link').forEach(otherLink => {
+                        otherLink.classList.remove('active');
+                    });
 
-    document.querySelectorAll('.attribute-link').forEach(link => {
-        link.addEventListener('click', function () {
-            const filterContainer = this.closest('.product-single-filter');
-            const attributeName = this.dataset.attributeName;
-            const attributeValue = this.dataset.attributeValue;
-
-            // Kiểm tra nếu thuộc tính hiện tại đã được chọn
-            const isAlreadyActive = this.classList.contains('active');
-
-            // Bỏ chọn các lựa chọn khác trong cùng một nhóm thuộc tính
-            filterContainer.querySelectorAll('.attribute-link').forEach(otherLink => {
-                otherLink.classList.remove('active');
+                    if (isAlreadyActive) {
+                        delete selectedAttributes[attributeName];
+                    } else {
+                        this.classList.add('active');
+                        selectedAttributes[attributeName] = attributeValue;
+                    }
+                    updatePriceAndVariant();
+                });
             });
 
-            if (isAlreadyActive) {
-                // Nếu đã chọn, bỏ chọn và xóa khỏi selectedAttributes
-                delete selectedAttributes[attributeName];
-            }
-            if (document.readyState !== 'loading') {
-                handler();
-            } else if (window.addEventListener) {
-                document.addEventListener('DOMContentLoaded', handler);
-            } else {
-                var prev = document.onreadystatechange || function() {};
-                document.onreadystatechange = function(e) {
-                    prev(e);
-                    if (document.readyState !== 'loading') {
-                        document.onreadystatechange = prev;
-                        handler();
-                    }
-                };
-            }
-        })();
-    })
-})
-    </script>
+            /**
+             * Hiển thị giá nhỏ nhất từ danh sách biến thể
+             */
+            function showLowestPrice() {
+                if (variants && variants.length > 0) {
+                    const lowestPriceVariant = variants.reduce((prev, current) =>
+                        parseInt(current.price_modifier) < parseInt(prev.price_modifier) ? current : prev
+                    );
 
+                    priceBox.innerHTML = `
+                        ${lowestPriceVariant.original_price && parseInt(lowestPriceVariant.original_price) > parseInt(lowestPriceVariant.price_modifier)
+                            ? `<span class="old-price">${parseInt(lowestPriceVariant.original_price).toLocaleString('vi-VN')} VNĐ</span>`
+                            : ''
+                        }
+                        <span class="new-price">
+                            ${parseInt(lowestPriceVariant.price_modifier).toLocaleString('vi-VN')} VNĐ
+                        </span>
+                    `;
+                    lowestPriceVariant.attributes.forEach(attr => {
+                        const attributeLink = document.querySelector(
+                            `.attribute-link[data-attribute-name="${attr.attribute_name}"][data-attribute-value="${attr.attribute_value}"]`
+                        );
+                        if (attributeLink) {
+                            attributeLink.classList.add(
+                                'active');
+                        }
+                    });
+                } else {
+                    priceBox.innerHTML = `<p class="new-price">Không có biến thể nào khả dụng</p>`;
+                }
+            }
+
+            function updatePriceAndVariant() {
+                // Tìm biến thể phù hợp với các thuộc tính đã chọn
+                const matchedVariant = variants.find(variant =>
+                    variant.attributes.every(attr =>
+                        selectedAttributes[attr.attribute_name] === attr.attribute_value
+                    )
+                );
+                console.log(matchedVariant);
+
+                // Hiển thị giá và cập nhật ID biến thể
+                priceBox.innerHTML = `
+        ${matchedVariant.original_price && parseInt(matchedVariant.original_price) > parseInt(matchedVariant.price_modifier)
+            ? `<span class="old-price">${parseInt(matchedVariant.original_price).toLocaleString('vi-VN')} VNĐ</span>`
+            : ''
+        }
+        <span class="new-price">
+            ${parseInt(matchedVariant.price_modifier).toLocaleString('vi-VN')} VNĐ
+        </span>
+    `;
+
+                if (variantInput) {
+                    variantInput.setAttribute("data-variant-id", matchedVariant.id);
+                }
+
+                // Cập nhật hình ảnh chính
+                const mainImage = document.getElementById('product-image');
+                mainImage.src = `{{ asset('storage/') }}/${matchedVariant.variant_image}`;
+
+                // Cập nhật carousel ảnh biến thể
+                const productCarousel = document.querySelector('.product-single-carousel');
+                productCarousel.innerHTML = ''; // Clear existing images
+
+                matchedVariant.images.forEach(imageUrl => {
+                    const productItem = document.createElement('div');
+                    productItem.className = 'product-item';
+                    productItem.innerHTML = `
+            <img class="product-single-image" 
+                 src="{{ asset('storage/') }}/${imageUrl}" 
+                 data-zoom-image="{{ asset('storage/') }}/${imageUrl}" 
+                 width="468" height="468" alt="product" />
+        `;
+                    productCarousel.appendChild(productItem);
+                });
+
+                // Cập nhật ảnh thu nhỏ
+                const productThumbnails = document.querySelector('.prod-thumbnail');
+                productThumbnails.innerHTML = ''; // Clear existing thumbnails
+
+                matchedVariant.images.forEach(imageUrl => {
+                    const thumbnailItem = document.createElement('div');
+                    thumbnailItem.className = 'owl-dot';
+                    thumbnailItem.innerHTML = `
+            <img src="{{ asset('storage/') }}/${imageUrl}" width="110" height="110" alt="product-thumbnail" />
+        `;
+                    productThumbnails.appendChild(thumbnailItem);
+                });
+            }
+        });
+
+        const productVariant = document.getElementById('product-variant-id');
+        if (productVariant) {
+            productVariant.addEventListener('click', function() {
+                const productId = productVariant.getAttribute('data-product-id');
+                const productVariantId = productVariant.getAttribute('data-variant-id');
+                const quantity = 1; // Mặc định là 1 sản phẩm
+
+                // Gửi yêu cầu Ajax để thêm sản phẩm vào giỏ hàng
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('addCart') }}",
+                    data: {
+                        product_id: productId,
+                        product_variants_id: productVariantId,
+                        quantity: quantity, // Sử dụng số lượng là 1
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        showCartModal();
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 401) {
+                            alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.');
+                        } else {
+                            alert('Đã có lỗi xảy ra. Vui lòng thử lại.');
+                        }
+                    }
+                });
+            });
+
+            // Hàm hiển thị modal khi thêm sản phẩm vào giỏ hàng thành công
+            function showCartModal() {
+                var cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+                cartModal.show(); // Hiển thị modal
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const attributeInputs = document.querySelectorAll('.attribute-input');
+
+            attributeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    console.log(`Selected ${this.name}: ${this.value}`);
+                });
+            });
+        });
+
+        // Đổi giá variant
+
+        // Biến để lưu trữ giá của từng biến thể
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const variants = @json($variants);
+            const priceBox = document.querySelector('.product-filtered-price');
+            let selectedAttributes = {};
+
+            document.querySelectorAll('.attribute-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    const filterContainer = this.closest('.product-single-filter');
+                    const attributeName = this.dataset.attributeName;
+                    const attributeValue = this.dataset.attributeValue;
+
+                    // Kiểm tra nếu thuộc tính hiện tại đã được chọn
+                    const isAlreadyActive = this.classList.contains('active');
+
+                    // Bỏ chọn các lựa chọn khác trong cùng một nhóm thuộc tính
+                    filterContainer.querySelectorAll('.attribute-link').forEach(otherLink => {
+                        otherLink.classList.remove('active');
+                    });
+
+                    if (isAlreadyActive) {
+                        delete selectedAttributes[attributeName];
+                    }
+                    if (document.readyState !== 'loading') {
+                        handler();
+                    } else if (window.addEventListener) {
+                        document.addEventListener('DOMContentLoaded', handler);
+                    } else {
+                        var prev = document.onreadystatechange || function() {};
+                        document.onreadystatechange = function(e) {
+                            prev(e);
+                            if (document.readyState !== 'loading') {
+                                document.onreadystatechange = prev;
+                                handler();
+                            }
+                        };
+                    }
+                })();
+            })
+        })
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.owl-dot');
+            const mainImage = document.getElementById('product-image'); // Ảnh chính
+            const productCarousel = document.getElementById('product-single-carousel'); // Carousel chính
+
+            // Lắng nghe sự kiện click trên từng thumbnail
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    const imageUrl = thumbnail.getAttribute(
+                        'data-image'); // Lấy đường dẫn ảnh từ thuộc tính data-image
+                    mainImage.src = imageUrl; // Cập nhật ảnh chính
+
+                    // Không ẩn carousel, nhưng có thể thay đổi trạng thái khác nếu cần
+                    productCarousel.classList.add(
+                        'carousel-hidden'); // Nếu bạn muốn ẩn carousel tạm thời
+                });
+            });
+        });
+    </script>
 @endsection

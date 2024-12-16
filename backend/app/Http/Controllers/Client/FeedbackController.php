@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\Feedback;
 use App\Models\WishList;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ class FeedbackController extends Controller
         $user = Auth::user();
         $wishlistCount = WishList::where('user_id',$userId)->count();
         // Truyền dữ liệu vào view
-        return view('client.feedbacks.create', compact('user','carts', 'cartCount','wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.feedbacks.create', compact('pages','user','carts', 'cartCount','wishlistCount'));
     }
 }

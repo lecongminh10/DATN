@@ -57,6 +57,9 @@
             color: #545454;
             line-height: 1.5;
         }
+        .cke_notification {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -115,8 +118,8 @@
                                                         <div class="card-body">
                                                             <select class="form-select @error('is_active') is-invalid @enderror" name="is_active">
                                                                 <option value="" disabled {{ old('is_active') ? '' : 'selected' }}>-- Chọn Trạng thái --</option>
-                                                                <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Active</option>
-                                                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
+                                                                <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Kích hoạt</option>
+                                                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Không kích hoạt</option>
                                                             </select>
                                                             @error('is_active')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -136,12 +139,12 @@
                                                                 </option>
                                                                 <option value="default"
                                                                     {{ old('template') == 'default' ? 'selected' : '' }}>
-                                                                    Default</option>
+                                                                    Mặc định</option>
                                                                 <option value="coming_soon"
                                                                     {{ old('template') == 'coming_soon' ? 'selected' : '' }}>
-                                                                    Coming Soon</option>
+                                                                   Ra mắt</option>
                                                                 <option value="blog"
-                                                                    {{ old('template') == 'blog' ? 'selected' : '' }}>Blog
+                                                                    {{ old('template') == 'blog' ? 'selected' : '' }}>Bài viết 
                                                                 </option>
                                                             </select>
                                                             @error('template')
@@ -278,10 +281,23 @@
         CKEDITOR.replace('editor-container');
     </script>
     <script>
-        document.getElementById('name').addEventListener('input', function() {
-            const name = this.value.trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-            document.getElementById('permalink').textContent = `http://127.0.0.1:8000/${name}`;
+        document.getElementById('name').addEventListener('input', function () {
+            // Hàm chuyển đổi tất cả các ký tự có dấu thành không dấu
+            const removeAccents = (str) => {
+                return str
+                    .normalize("NFD") // Chuẩn hóa Unicode để tách ký tự gốc và dấu
+                    .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu (như sắc, huyền, hỏi, ngã, nặng)
+            };
+
+            const name = this.value.trim();
+            const slug = removeAccents(name) // Loại bỏ dấu
+                .toLowerCase() // Chuyển thành chữ thường
+                .replace(/[^a-zA-Z0-9]+/g, '-') // Thay thế các ký tự không hợp lệ bằng dấu '-'
+                .replace(/^-+|-+$/g, ''); // Xóa dấu '-' ở đầu và cuối chuỗi
+
+            document.getElementById('permalink').textContent = `http://127.0.0.1:8000/${slug}`;
         });
+
     </script>
     <script>
         // Get a reference to the modal element

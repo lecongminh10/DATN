@@ -13,6 +13,104 @@
         <div class="container-fluid">
             <div class="col-lg-12">
                 <div class="row">
+                    <div class="row mb-3 pb-1">
+                        <div class="col-12">
+                            <div class="d-flex align-items-lg-center flex-lg-row flex-column">
+                                <div class="mt-3 mt-lg-0">
+                                    <form method="GET" action="{{ route('admin.statistics.index') }}">
+                                        <div class="form-group">
+                                            <label style="width: 260px" for="month">Chọn tháng:</label>
+                                            <select name="month" id="month" class="form-control"
+                                                onchange="this.form.submit()">
+                                                @foreach (range(1, 12) as $month)
+                                                    <option
+                                                        value="{{ now()->year }}-{{ str_pad($month, 2, '0', STR_PAD_LEFT) }}"
+                                                        @if (request('month') == now()->year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT)) selected @endif>
+                                                        Tháng {{ $month }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div><!-- end card header -->
+                        </div>
+                        <!--end col-->
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card card-animate">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Tổng sản phẩm ban
+                                            đầu</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                    <div>
+                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                                            {{ $totalProductStockAndBuycount }}
+                                        </h4>
+                                    </div>
+                                    <div class="avatar-sm flex-shrink-0">
+                                        <span class="avatar-title bg-info-subtle rounded fs-3">
+                                            <i class="bx bx-cube text-info"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card card-animate">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Tổng sản phẩm bán
+                                            ra</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                    <div>
+                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                                            {{ $totalProductBuyCount }}
+                                        </h4>
+                                    </div>
+                                    <div class="avatar-sm flex-shrink-0">
+                                        <span class="avatar-title bg-info-subtle rounded fs-3">
+                                            <i class="bx bx-shopping-bag text-info"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card card-animate">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Tổng số lượng tồn
+                                            kho</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-end justify-content-between mt-4">
+                                    <div>
+                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                                            {{ $totalProductStock }}
+                                        </h4>
+                                    </div>
+                                    <div class="avatar-sm flex-shrink-0">
+                                        <span class="avatar-title bg-success-subtle rounded fs-3">
+                                            <i class="bx bx-box text-success"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header border-0 align-items-center d-flex">
@@ -21,8 +119,8 @@
                                     <select id="chartType" class="form-select">
                                         <optgroup label="Sản Phẩm">
                                             <option value="top-selling">Sản Phẩm Bán Chạy</option>
-                                            <option value="most-viewed">Sản Phẩm Có Lượt Xem Cao Nhất</option>
-                                            <option value="low-stock">Số Lượng Sản Phẩm</option>
+                                            <option value="most-viewed">Lượt Xem Của Sản Phẩm</option>
+                                            <option value="low-stock">Sản Phẩm Tồn Kho</option>
                                             <option value="total-sales">Tổng Số Lượng Bán Ra Theo Ngày</option>
                                         </optgroup>
                                         <optgroup label="Doanh Thu">
@@ -94,7 +192,7 @@
                 // lấy dữ liệu
                 let topSellingProducts = @json($topSellingProducts);
                 let mostViewedProducts = @json($mostViewedProducts);
-                let lowStockProducts = @json($lowStockProducts);
+                let productStockData = @json($productStockData);
                 let totalSalesData = @json($totalSalesData);
                 let revenueData = @json($revenueData);
                 let profitData = @json($profitData);
@@ -183,9 +281,8 @@
                             renderChart(selectedData, "Lượt Xem");
                             break;
                         case "low-stock":
-                            const lowStockThreshold = 10;
-                            selectedData = lowStockProducts;
-                            renderChart(selectedData, "Số lượng", false, false, lowStockThreshold);
+                            selectedData = productStockData;
+                            renderChart(selectedData, "Sản Phẩm Tồn Kho", false);
                             break;
 
                         case "total-sales":

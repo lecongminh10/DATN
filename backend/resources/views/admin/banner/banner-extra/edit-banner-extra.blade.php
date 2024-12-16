@@ -81,8 +81,6 @@
                             @if (session('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
                                 </div>
                             @endif
 
@@ -155,46 +153,6 @@
                                     <div class="col-md-4 mb-3">
                                         <label for="title_3" class="form-label">Tiêu đề 3</label>
                                         <input type="text" name="title_3" id="title_3" class="form-control" value="{{ $bannerExtra->title_3 ?? '' }}">
-                                    </div>
-                                </div>
-                            
-                                <div class="row">
-                                    <!-- Price 1 -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="price_1" class="form-label">Giá 1</label>
-                                        <input type="text" name="price_1" id="price_1" class="form-control" value="{{ $bannerExtra->price_1 ?? '' }}">
-                                    </div>
-                            
-                                    <!-- Price 2 -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="price_2" class="form-label">Giá 2</label>
-                                        <input type="text" name="price_2" id="price_2" class="form-control" value="{{ $bannerExtra->price_2 ?? '' }}">
-                                    </div>
-                            
-                                    <!-- Price 3 -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="price_3" class="form-label">Giá 3</label>
-                                        <input type="text" name="price_3" id="price_3" class="form-control" value="{{ $bannerExtra->price_3 ?? '' }}">
-                                    </div>
-                                </div>
-                            
-                                <div class="row">
-                                    <!-- Title Button 1 -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="title_button_1" class="form-label">Tiêu đề nút 1</label>
-                                        <input type="text" name="title_button_1" id="title_button_1" class="form-control" value="{{ $bannerExtra->title_button_1 ?? '' }}">
-                                    </div>
-                                    
-                                    <!-- Title Button 2 -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="title_button_2" class="form-label">Tiêu đề nút 2</label>
-                                        <input type="text" name="title_button_2" id="title_button_2" class="form-control" value="{{ $bannerExtra->title_button_2 ?? '' }}">
-                                    </div>
-                                    
-                                    <!-- Title Button 3 -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="title_button_3" class="form-label">Tiêu đề nút 3</label>
-                                        <input type="text" name="title_button_3" id="title_button_3" class="form-control" value="{{ $bannerExtra->title_button_3 ?? '' }}">
                                     </div>
                                 </div>
                             

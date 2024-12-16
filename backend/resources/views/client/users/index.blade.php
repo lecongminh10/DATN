@@ -164,7 +164,7 @@
                             <?php
                                 $image = Auth::user()->profile_picture;
                             ?>
-                            <img src="{{ Storage::url($image) }}" class="rounded-circle me-2" alt="Ảnh đại diện" width="100px" height="100px">
+                            <img src="{{ Storage::url($image) }}" class="rounded-circle me-2" alt="Ảnh đại diện" width="100px" style="height: 100px;">
                             <h5 class="mb-0 mx-2">{{ Auth::user()->username }}</h5>
                         </div> 
                         <div id="dashboard" class="dashboard-section">

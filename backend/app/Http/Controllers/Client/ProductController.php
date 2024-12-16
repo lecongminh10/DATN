@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Models\Seo;
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\WishList;
 use App\Models\Attribute;
 use App\Services\TagService;
@@ -53,7 +54,7 @@ class ProductController extends Controller
         $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries','seos','wishList']);
         // Lấy biến thể sản phẩm
         $variants = $this->productVariantService->getProductVariant($id);
-        $topRatedProducts = $this->productService->topRatedProducts();
+        // $topRatedProducts = $this->productService->topRatedProducts();
         $bestSellingProducts = $this->productService->bestSellingProducts();
         $latestProducts = $this->productService->latestProducts();
         // dd($variants);
@@ -80,6 +81,7 @@ class ProductController extends Controller
             ->select('id', 'attribute_name')
             ->get();
         $categories = $this->getCategoriesForMenu();
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         return view('client.product-detail')->with([
             'data'           => $data,
             'attributes'     => $attributesWithValues,
@@ -89,11 +91,12 @@ class ProductController extends Controller
             'meta_title'       => $meta_title,
             'meta_description' => $meta_description,
             'meta_keywords'    => $meta_keywords,
-            'topRatedProducts'=>$topRatedProducts,
+            // 'topRatedProducts'=>$topRatedProducts,
             'bestSellingProducts'=>$bestSellingProducts,
             'latestProducts'    =>$latestProducts,
             'categories'     =>$categories,
              'wishlistCount'   =>$wishlistCount,
+             'pages'=>$pages
         ]);
     }
     public function search(Request $request)
@@ -111,7 +114,8 @@ class ProductController extends Controller
         $wishlistCount = WishList::where('user_id',$userId)->count();
         $products = $this->productService->searchProducts($query, $categoryId);
         $categories = $this->getCategoriesForMenu();
-
+        $attributes = Attribute::with('attributeValues')->get();
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         return view('client.products.search-results',
         [
             'carts'          => $carts,
@@ -119,6 +123,8 @@ class ProductController extends Controller
             'products'       => $products,
             'categories'     =>$categories,
             'wishlistCount'   =>$wishlistCount,
+            'attributes'     =>$attributes,
+            'pages'    =>$pages,
         ]);
     }
     public function getCategoriesForMenu()

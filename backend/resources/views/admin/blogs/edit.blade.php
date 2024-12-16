@@ -2,6 +2,13 @@
 @section('title')
     Cập nhật bài viết
 @endsection
+@section('style_css')
+    <style>
+        .cke_notification {
+            display: none;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -14,29 +21,6 @@
                     ['name' => 'Cập nhật bài viết', 'url' => '#'],
                 ],
             ])
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            @if (session()->has('success') && session()->get('success'))
-                <div class="alert alert-primary" role="alert">
-                    <strong>Thao Tác Thành Công</strong>
-                </div>
-            @endif
-
-            @if (session()->has('success') && !session()->get('success'))
-                <div class="alert alert-danger" role="alert">
-                    <strong>Thao Tác Không Thành Công</strong> {{ session()->get('error') }}
-                </div>
-            @endif
-
 
             <form id="update-blog-form" method="POST" action="{{ route('admin.blogs.update', $blog->id) }}"
                 enctype="multipart/form-data" autocomplete="off" class="needs-validation" novalidate>
@@ -90,8 +74,10 @@
 
 
                                 <div class="mb-3">
-                                    <label class="form-label" for="content">Nội dung</label>
-                                    <textarea class="form-control" id="content" name="content" required>{{ old('content', $blog->content) }}</textarea>
+                                    <label class="form-label" for="content">Nội dung </label>
+                                    <textarea class="form-control" id="editor-container" name="content" placeholder="Nhập nội dung bài viết" required>
+                                        {{ old('content', $blog->content) }}
+                                    </textarea>
                                     @error('content')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -195,6 +181,13 @@
             </form>
         </div>
     </div>
+@endsection
+
+@section('script_libray')
+    <script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('editor-container');
+    </script>
 @endsection
 
 @section('scripte_logic')

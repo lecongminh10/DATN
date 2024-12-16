@@ -1,19 +1,20 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\RefundController;
+use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\PayMentController;
 use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\FeedbackController as ClientFeedbackController; 
-use App\Http\Controllers\RefundController;
-use App\Http\Controllers\ReturnController;
-use Illuminate\Support\Facades\Auth;
 
 Route::prefix('/')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('client');
@@ -33,7 +34,7 @@ Route::prefix('/')->group(function () {
     Route::get('/products/sort', [HomeController::class, 'sortProducts'])->name('client.products.sort');
     Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
     Route::get('/products/category/{id}', [HomeController::class, 'getByCategory'])->name('client.products.Category');
-    Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
+    Route::get('/products/filter-by-product', [HomeController::class, 'filterByProducts'])->name('client.products.filterByProducts');
     Route::get('/search', [ClientProductController::class, 'search'])->name('search');
 
     //Oder
@@ -70,9 +71,10 @@ Route::prefix('/')->group(function () {
         $currentUrl = url()->current();
         if ($currentUrl == "http://localhost:8000/checkout") {
             return response()->json(['success' => false]);
+        }else{
+            session()->forget('coupons'); // Clear the coupons session
+            return response()->json(['success' => true]);
         }
-        session()->forget('coupons'); // Clear the coupons session
-        return response()->json(['success' => true]);
     });
     Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
 
@@ -99,3 +101,7 @@ Route::prefix('chat')->name('chat.')->group(function () {
 
 Route::get('/feedbacks/create', [ClientFeedbackController::class, 'create'])->name('feedbacks.create');
 Route::post('/feedbacks', [ClientFeedbackController::class, 'store'])->name('feedbacks.store');
+
+Route::get('/{permalink}', [PageController::class, 'showPage'])
+    ->where('permalink', '^[a-zA-Z0-9-]+$') 
+    ->name('pages.show');

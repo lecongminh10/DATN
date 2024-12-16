@@ -57,6 +57,9 @@
             color: #545454;
             line-height: 1.5;
         }
+        .cke_notification {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')

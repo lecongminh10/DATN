@@ -646,14 +646,9 @@
                                                                                 <select
                                                                                     class="form-control status_attribute"
                                                                                     name="product_variants[{{ $i }}][status]">
-                                                                                    <option value="none">None
-                                                                                    </option>
-                                                                                    <option value="available">Available
-                                                                                    </option>
-                                                                                    <option value="out_of_stock">Out of
-                                                                                        Stock</option>
-                                                                                    <option value="discontinued">
-                                                                                        Discontinued</option>
+                                                                                    <option value="available">Có sẵn</option>
+                                                                                    <option value="out_of_stock">Hết hàng </option>
+                                                                                    <option value="discontinued">Đã ngừng sản xuất</option>
                                                                                 </select>
                                                                             </td>
                                                                             <td>
@@ -921,9 +916,9 @@
                     <td>
                         <select class="form-control status_attribute" name="product_variants[${variantData.id}][status]">
                             <option value="none">None</option>
-                            <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Available</option>
-                            <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Out of Stock</option>
-                            <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Discontinued</option>
+                            <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Có sẵn</option>
+                            <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Hết hàng </option>
+                            <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Đã ngừng sản xuất</option>
                         </select>
                     </td>
                     <td>
