@@ -61,6 +61,9 @@
             color: #545454;
             line-height: 1.5;
         }
+        .cke_notification {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -139,12 +142,12 @@
                                                                 </option>
                                                                 <option value="default"
                                                                     {{ old('template') == 'default' ? 'selected' : '' }}>
-                                                                    Default</option>
+                                                                    Mặc định</option>
                                                                 <option value="coming_soon"
                                                                     {{ old('template') == 'coming_soon' ? 'selected' : '' }}>
-                                                                    Coming Soon</option>
+                                                                   Ra mắt</option>
                                                                 <option value="blog"
-                                                                    {{ old('template') == 'blog' ? 'selected' : '' }}>Blog
+                                                                    {{ old('template') == 'blog' ? 'selected' : '' }}>Bài viết 
                                                                 </option>
                                                             </select>
                                                             @error('template')
@@ -249,10 +252,23 @@
         CKEDITOR.replace('editor-container');
     </script>
     <script>
-        document.getElementById('name').addEventListener('input', function() {
-            const name = this.value.trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-            document.getElementById('permalink').textContent = `${name}`;
+        document.getElementById('name').addEventListener('input', function () {
+            // Hàm chuyển đổi tất cả các ký tự có dấu thành không dấu
+            const removeAccents = (str) => {
+                return str
+                    .normalize("NFD") // Chuẩn hóa Unicode để tách ký tự gốc và dấu
+                    .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu (như sắc, huyền, hỏi, ngã, nặng)
+            };
+
+            const name = this.value.trim();
+            const slug = removeAccents(name) // Loại bỏ dấu
+                .toLowerCase() // Chuyển thành chữ thường
+                .replace(/[^a-zA-Z0-9]+/g, '-') // Thay thế các ký tự không hợp lệ bằng dấu '-'
+                .replace(/^-+|-+$/g, ''); // Xóa dấu '-' ở đầu và cuối chuỗi
+
+            document.getElementById('permalink').textContent = `http://127.0.0.1:8000/${slug}`;
         });
+
     </script>
     <script>
         // Get a reference to the modal element

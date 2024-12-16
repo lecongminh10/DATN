@@ -76,6 +76,9 @@
                                                         <option value="category"
                                                             {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
                                                             Danh mục</option>
+                                                        <option value="user"
+                                                            {{ request()->get('applies_to') == 'user' ? 'selected' : '' }}>
+                                                            Người dùng</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2">
@@ -432,7 +435,7 @@
             let status = document.getElementById('idStatus').value;
             let appliesTo = document.getElementById('idAppliesTo').value;
             let discountType = document.getElementById('idDiscountType').value;
-            let filterUrl = '/listsotfdeleted?';
+            let filterUrl = '/admin/listsotfdeleted?';
 
             if (status !== '') {
                 filterUrl += 'status=' + status + '&';
@@ -448,7 +451,7 @@
         }
 
         function clearFilters() {
-            window.location.href = '/listsotfdeleted';
+            window.location.href = '/admin/listsotfdeleted';
         }
     </script>
     <script>

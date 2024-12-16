@@ -46,7 +46,7 @@
                                             <div class="d-flex align-items-center">
                                                 <button class="btn btn-soft-danger ms-2" id="deleteMultipleBtn"
                                                     style="display: none;">
-                                                    <i class="ri-delete-bin-5-fill"></i>
+                                                    <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                 </button>
                                                 <a href="{{ route('admin.attributes.index') }}"
                                                     class="btn btn-primary ms-2">Quay lại
@@ -65,7 +65,7 @@
                                                                 value="option">
                                                         </div>
                                                     </th>
-                                                    <th>Stt</th>
+                                                    <th>STT</th>
                                                     <th>Tên thuộc tính</th>
                                                     <th>Người xóa</th>
                                                     <th>Ngày xóa</th>

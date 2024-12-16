@@ -37,21 +37,17 @@
                                         <div class="col-sm-auto">
                                             <div class="search-box mb-3">
                                                 <form method="GET" action="{{ route('admin.products.listProduct') }}">
-                                                    <input type="text" class="form-control search" name="search"
+                                                    <input type="text" class="form-control search" name="search" style="width: 290px"
                                                         placeholder="Nhập từ khóa tìm kiếm..."
                                                         value="{{ request()->input('search') }}">
                                                     <i class="ri-search-line search-icon"></i>
                                                 </form>
-                                                <div>
-                                                </div>
-                                                <div>
-                                                </div>
                                                 <div class="mt-3 float-end">
                                                     <div class="d-flex justify-content-between mb-3">
                                                         <div class="me-2"> <!-- Added margin for spacing -->
                                                             <button class="btn btn-soft-danger" id="deleteMultipleBtn"
                                                                 style="display: none;">
-                                                                <i class="ri-delete-bin-5-fill"></i>
+                                                                <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                             </button>
                                                         </div>
                                                         <div>
@@ -87,7 +83,7 @@
                                                         <th>Tên </th>
                                                         <th>Ảnh đại diện</th>
                                                         <th>Danh mục</th>
-                                                        <th>Slug</th>
+                                                        <th>Số lượng</th>
                                                         <th>Giá gốc</th>
                                                         <th>Giá khuyến mãi</th>
                                                         <th>Hành động</th>
@@ -120,7 +116,7 @@
                                                                     style="max-height: 100px !important; max-width:100px !important">
                                                             </td>
                                                             <td>{{ $value->category_name }}</td>
-                                                            <td>{{ $value->slug }}</td>
+                                                            <td>{{ $value->stock }}</td>
                                                             <td>{{ number_format($value->price_regular, 0, ',', '.') }} ₫</td>
                                                             <td>{{ number_format($value->price_sale, 0, ',', '.') }} ₫</td>
                                                             <td>

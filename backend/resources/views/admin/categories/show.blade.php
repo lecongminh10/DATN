@@ -23,6 +23,7 @@
                     <div class="card-body">
                         <div class="live-preview">
                             <div class="row gy-4">
+                                
                                 <div class="col-md-6">
                                     <div>
                                         <label for="name" class="form-label">Tên</label>
@@ -49,7 +50,7 @@
                                     <label for="updated_at" class="form-label">Ngày cập nhật</label>
                                     <input disabled type="text" class="form-control" value="{{ $data['updated_at'] }}">
                                 </div>
-                                 <div class="col-md-6 mt-3">
+                                 <div class="col-md-6">
                                     <label class="form-label">Ảnh</label>
                                     <div class="border p-2 rounded">
                                         <img src="{{ Storage::url($data->image) }}" style="max-width: 100%; max-height: 100px;" alt="">

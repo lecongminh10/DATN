@@ -33,48 +33,40 @@
 
                         <div class="card-body">
                             <div class="live-preview">
-                                <div class="row g-4 mb-3">
+                                <div class="row g-4 ">
                                     <div class="col-sm-auto">
                                         <div>
                                             <a href="{{ route('admin.banner.banner_main_view_add') }}" class="btn btn-success">
                                                 <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                                             </a>
-                                            {{-- <button type="button" class="btn btn-soft-danger" id="delete-selected">
-                                                <i class="ri-delete-bin-2-line"></i>
-                                            </button>
-                                            <a href="{{ route('admin.categories.trashed') }}" class="btn btn-warning">
-                                                <i class="ri-delete-bin-5-line align-bottom me-1"></i> Thùng rác
-                                            </a> --}}
                                         </div>
                                     </div>
-                                    <div class="col-sm d-flex justify-content-end">
-                                    </div> 
                                 </div><br>
+                                    @if (session('success'))
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin: 0 10">
+                                            {{ session('success') }}
+                                        </div>
+                                    @endif
                                      <table class="table table-bordered align-middle table-nowrap mb-0">
                                             <thead>
-                                                <tr>
-                                                    <th scope="col">ID</th>
-                                                    <th scope="col">Ảnh</th>
-                                                    <th scope="col">Tiêu đề</th>
-                                                    <th scope="col">Phụ đề</th>
-                                                    <th scope="col">Giá</th>
-                                                    <th scope="col">Tiêu đề nút</th>
-                                                    <th scope="col">Hành động</th>
+                                                <tr class="text-center">
+                                                    <th scope="col" style="width: 50px">STT</th>
+                                                    <th scope="col" style="width: 230px">Ảnh</th>
+                                                    <th scope="col" style="width: 230px">Tiêu đề</th>
+                                                    <th scope="col" style="width: 230px">Tiêu đề nút</th>
+                                                    <th scope="col" style="width: 150px">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($parentBanner as $banner)
+                                                @foreach ($parentBanner as $key => $banner)
                                                     <tr>
-                                                        <td scope="col">{{$banner->id}}</td>
-                                                        <td scope="col"><img src="{{Storage::url($banner->image)}}" style="width: 80px;height: 80px; border-radius: 5px" alt=""></td>
+                                                        <td scope="col" class="text-center">{{$key+1}}</td>
+                                                        <td scope="col"><img src="{{Storage::url($banner->image)}}" style="width: 190px;height: 80px; border-radius: 5px" alt=""></td>
                                                         <td scope="col">{{$banner->title}}</td>
-                                                        <td scope="col">{{$banner->sub_title}}</td>
-                                                        <td scope="col">{{number_format($banner->price, 0, ',', '.')}}</td>
                                                         <td scope="col">{{$banner->title_button}}</td>
-                                                        <td scope="col">
-                                                            {{-- <a href="" class="btn text-primary d-inline-block edit-item-btn">Sửa</a> --}}
+                                                        <td scope="col" class="text-center">
                                                             <a href="{{ route('admin.banner.banner_main_edit', $banner->id) }}">
-                                                                <button type="button" class="btn btn-outline-secondary waves-effect waves-light">Sửa</button>
+                                                                <button type="button" class="btn btn-primary btn-sm">Sửa</button>
                                                             </a>
                                                         </td>
                                                     </tr>

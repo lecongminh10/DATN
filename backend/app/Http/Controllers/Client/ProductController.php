@@ -54,7 +54,7 @@ class ProductController extends Controller
         $data = $this->productService->getById($id)->load(['category', 'variants', 'tags', 'galleries','seos','wishList']);
         // Lấy biến thể sản phẩm
         $variants = $this->productVariantService->getProductVariant($id);
-        $topRatedProducts = $this->productService->topRatedProducts();
+        // $topRatedProducts = $this->productService->topRatedProducts();
         $bestSellingProducts = $this->productService->bestSellingProducts();
         $latestProducts = $this->productService->latestProducts();
         // dd($variants);
@@ -90,7 +90,7 @@ class ProductController extends Controller
             'meta_title'       => $meta_title,
             'meta_description' => $meta_description,
             'meta_keywords'    => $meta_keywords,
-            'topRatedProducts'=>$topRatedProducts,
+            // 'topRatedProducts'=>$topRatedProducts,
             'bestSellingProducts'=>$bestSellingProducts,
             'latestProducts'    =>$latestProducts,
             'categories'     =>$categories,
@@ -112,6 +112,7 @@ class ProductController extends Controller
         $wishlistCount = WishList::where('user_id',$userId)->count();
         $products = $this->productService->searchProducts($query, $categoryId);
         $categories = $this->getCategoriesForMenu();
+        $attributes = Attribute::with('attributeValues')->get();
 
         return view('client.products.search-results',
         [
@@ -120,6 +121,7 @@ class ProductController extends Controller
             'products'       => $products,
             'categories'     =>$categories,
             'wishlistCount'   =>$wishlistCount,
+            'attributes'     =>$attributes,
         ]);
     }
     public function getCategoriesForMenu()

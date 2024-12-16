@@ -4,7 +4,7 @@
 
         <nav class="side-nav">
             <ul class="menu menu-vertical sf-arrows">
-                <li class="active"><a href="/"><i class="icon-home"></i>Trang chủ</a></li>
+                <li class="active"><a href="{{route('client')}}"><i class="icon-home"></i>Trang chủ</a></li>
                 <li>
                     <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Danh mục</a>
                     <div class="megamenu megamenu-fixed-width megamenu-3cols">

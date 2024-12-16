@@ -26,7 +26,7 @@
                         <form action="{{ route('admin.permissions.update', $permission->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            @if ($errors->any())
+                            {{-- @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <ul>
                                         @foreach ($errors->all() as $error)
@@ -34,12 +34,17 @@
                                         @endforeach
                                     </ul>
                                 </div>
-                            @endif
+                            @endif --}}
 
                             <div class="mb-3">
                                 <label for="permission_name" class="form-label">Tên </label>
-                                <input type="text" class="form-control" id="permission_name" name="permission_name"
+                                <input type="text" class="form-control @error('permission_name') is-invalid @enderror" id="permission_name" name="permission_name"
                                     value="{{ $permission->permission_name }}" >
+                                    @error('permission_name')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Mô tả</label>
@@ -55,8 +60,13 @@
                                     <div class="row mb-3 permission-value-item">
                                         <div class="col-md-6">
                                             <label for="value" class="form-label">Giá trị quyền </label>
-                                            <input type="text" class="form-control" name="value[]"
+                                            <input type="text" class="form-control @error('value') is-invalid @enderror" name="value[]"
                                             value="{{ $item->value }}">
+                                            @error('value')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <label for="description" class="form-label">Mô tả </label>

@@ -34,7 +34,7 @@ Route::prefix('/')->group(function () {
     Route::get('/products/sort', [HomeController::class, 'sortProducts'])->name('client.products.sort');
     Route::get('/product/{id}', [ClientProductController::class, 'showProduct'])->name('client.showProduct');
     Route::get('/products/category/{id}', [HomeController::class, 'getByCategory'])->name('client.products.Category');
-    Route::get('/products/filter-by-price', [HomeController::class, 'filterByPrice'])->name('client.products.filterByPrice');
+    Route::get('/products/filter-by-product', [HomeController::class, 'filterByProducts'])->name('client.products.filterByProducts');
     Route::get('/search', [ClientProductController::class, 'search'])->name('search');
 
     //Oder
@@ -70,10 +70,11 @@ Route::prefix('/')->group(function () {
     Route::get('/clear-coupons', function () {
         $currentUrl = url()->current();
         if ($currentUrl == "http://localhost:8000/checkout") {
+            return response()->json(['success' => false]);
+        }else{
+            session()->forget('coupons'); // Clear the coupons session
             return response()->json(['success' => true]);
         }
-        session()->forget('coupons'); // Clear the coupons session
-        return response()->json(['success' => true]);
     });
     Route::get('/product/{id}/reviews', [UserReviewController::class, 'showProductReviews'])->name('client.product.reviews');
 

@@ -75,14 +75,6 @@
                             <h3 class="mb-4">Quản lý Banner Main</h3>
                         </div>
                         <div class="card-body">
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-
                             <form action="{{ route('admin.banner.banner_main_update', $bannerMain->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('POST') <!-- Hoặc PUT nếu bạn muốn sử dụng PUT -->
@@ -92,14 +84,7 @@
                                     <label for="title">Tiêu đề</label>
                                     <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $bannerMain->title) }}">
                                 </div>
-                                <div class="form-group mt-2">
-                                    <label for="sub_title">Phụ đề</label>
-                                    <input type="text" name="sub_title" id="sub_title" class="form-control" value="{{ old('sub_title', $bannerMain->sub_title) }}">
-                                </div>
-                                <div class="form-group mt-2">
-                                    <label for="price">Giá</label>
-                                    <input type="text" name="price" id="price" class="form-control" value="{{ old('price', $bannerMain->price) }} ">
-                                </div>
+                                
                                 <div class="form-group mt-2">
                                     <label for="title_button">Tiêu đề nút</label>
                                     <input type="text" name="title_button" id="title_button" class="form-control" value="{{ old('title_button', $bannerMain->title_button) }}">

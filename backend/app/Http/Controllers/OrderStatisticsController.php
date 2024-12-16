@@ -8,39 +8,43 @@ use Illuminate\Support\Facades\DB;
 
 class OrderStatisticsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-      // Lấy tất cả các đơn hàng có trạng thái "Hoàn thành"
-    $completedOrders = Order::where('status', Order::HOAN_THANH)->get();
+        // Lấy tháng được chọn từ request (nếu không có, mặc định là tháng hiện tại)
+        $selectedMonth = $request->input('month', now()->format('Y-m'));
 
-    // Tính tổng số đơn hàng hoàn thành
-    $totalOrders = $completedOrders->count();
+        // Parse năm và tháng từ chuỗi
+        [$year, $month] = explode('-', $selectedMonth);
 
-    // Tính tổng doanh thu từ các đơn hàng hoàn thành
-    $totalEarnings = $completedOrders->sum('total_price') ?: 0;
+        // Lọc các đơn hàng theo tháng và năm
+        $completedOrders = Order::where('status', Order::HOAN_THANH)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->get();
 
-    // Lấy tất cả các đơn hàng có trạng thái "Đã hủy"
-    $canceledOrders = Order::where('status', Order::DA_HUY)->get();
+        $canceledOrders = Order::where('status', Order::DA_HUY)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->get();
 
-    // Tính tổng số đơn hàng đã hủy
-    $totalCanceledOrders = $canceledOrders->count();
-    
-    // Tính tổng doanh thu từ các đơn hàng đã hủy
-    $totalCanceledEarnings = $canceledOrders->sum('total_price') ?: 0;
+        $lostOrders = Order::where('status', Order::HANG_THAT_LAC)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->get();
 
-    // Lấy tất cả các đơn hàng có trạng thái "Hàng thất lạc"
-    $lostOrders = Order::where('status', Order::HANG_THAT_LAC)->get();
+        // Tính toán dữ liệu thống kê
+        $totalOrders = $completedOrders->count();
+        $totalEarnings = $completedOrders->sum('total_price') ?: 0;
+        $totalCanceledOrders = $canceledOrders->count();
+        $totalLostOrders = $lostOrders->count();
 
-    // Tính tổng số đơn hàng thất lạc
-    $totalLostOrders = $lostOrders->count();
-
-    return view('admin.orders.statistics', compact(
-        'totalOrders',
-        'totalEarnings',
-        'totalCanceledOrders',
-        'totalCanceledEarnings',
-        'totalLostOrders'
-    ));
+        return view('admin.orders.statistics', compact(
+            'totalOrders',
+            'totalEarnings',
+            'totalCanceledOrders',
+            'totalLostOrders',
+            'selectedMonth'
+        ));
     }
 
     public function completedOrders()
