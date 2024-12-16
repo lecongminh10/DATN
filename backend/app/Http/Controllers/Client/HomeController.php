@@ -90,7 +90,8 @@ class HomeController extends Controller
         $sale = $this->productService->getSaleProducts();
         $categories = $this->categoryService->getAll();
         $attributes = Attribute::with('attributeValues')->get();
-        return view('client.products.list', compact('products', 'sale', 'categories', 'carts', 'cartCount', 'wishlistCount', 'attributes'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.products.list', compact('pages','products', 'sale', 'categories', 'carts', 'cartCount', 'wishlistCount', 'attributes'));
     }
     // sắp xếp sản phẩm
     public function sortProducts(Request $request)
