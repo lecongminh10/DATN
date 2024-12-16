@@ -3,23 +3,24 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\Address;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\WishList;
 use App\Events\TestEvent;
+use App\Models\Attribute;
+use App\Models\BannerMain;
 use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Services\ProductService;
 use App\Services\CategoryService;
-use Illuminate\Queue\Failed\NullFailedJobProvider;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Attribute;
-use App\Models\BannerMain;
-use App\Models\WishList;
 use App\Services\AttributeValueService;
 use App\Services\ProductGalleryService;
 use App\Services\ProductVariantService;
+use Illuminate\Queue\Failed\NullFailedJobProvider;
 
 class HomeController extends Controller
 {
@@ -65,7 +66,8 @@ class HomeController extends Controller
         $ratingProducts = $this->productService->ratingProducts();
         $categories = $this->getCategoriesForMenu();
         $bannerMain = BannerMain::all();
-        return view('client.home', compact('categories', 'products', 'buyCountProducts', 'latestProducts', 'ratingProducts', 'carts', 'cartCount', 'bannerMain', 'wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.home', compact('categories', 'products', 'buyCountProducts', 'latestProducts', 'ratingProducts', 'carts', 'cartCount', 'bannerMain', 'wishlistCount' ,'pages'));
     }
 
     public function showProducts(Request $request)

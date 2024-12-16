@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Page;
+use App\Models\WishList;
 use Illuminate\Http\Request;
 use App\Services\PageService;
 use App\Events\AdminActivityLogged;
@@ -237,5 +239,25 @@ class PageController extends Controller
         } else {
             return response()->json(['message' => 'Error: No IDs provided'], 500);
         }
+    }
+
+    public function showPage($permalink)
+    {
+        $fullUrl = 'http://127.0.0.1:8000/' . $permalink;
+
+        $page = Page::where('permalink', $fullUrl)->first();
+        if (!$page) {
+            abort(404, 'Trang không tồn tại');
+        }
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        $userId = auth()->id();
+        $carts = collect();
+        if ($userId) {
+            $carts = Cart::where('user_id', $userId)->with('product')->get();
+        }
+        $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id', $userId)->count();
+        
+        return view('client.pages.show', compact('page' ,'pages' , 'carts', 'cartCount', 'wishlistCount'));
     }
 }

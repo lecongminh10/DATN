@@ -19,8 +19,9 @@
                         <a href="#">Trang</a>
                     </li> --}}
                     <li><a href="{{route('client.blogs.index')}}">Bài viết</a></li>
-                    <li><a href="">Liên hệ</a></li>
-                    <li><a href="">Chúng tôi</a></li>
+                    @foreach ($pages as $item)
+                    <li><a href="{{ url($item->permalink) }}">{{$item->name}}</a></li> 
+                    @endforeach
                 </ul>
             </nav>
         </div>
