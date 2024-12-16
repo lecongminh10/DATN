@@ -107,6 +107,7 @@ class HomeController extends Controller
         if ($month) {
             $query->whereMonth('created_at', $month);
         }
+        $attributes = Attribute::with('attributeValues')->get();
 
         // Sắp xếp theo điều kiện
         switch ($orderby) {
@@ -134,7 +135,7 @@ class HomeController extends Controller
 
         $products = $query->paginate(12);
 
-        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount', 'wishlistCount','attributes'));
+        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount', 'wishlistCount', 'attributes'));
     }
     // lọc sản phẩm theo danh mục
     public function getByCategory($id)

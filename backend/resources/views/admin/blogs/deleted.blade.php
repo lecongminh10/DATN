@@ -1,6 +1,17 @@
 @extends('admin.layouts.app')
 
 @section('content')
+    <style>
+        .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            /* Chiều cao tối thiểu bằng chiều cao của màn hình */
+            margin: 0 auto;
+            /* Căn giữa ngang */
+        }
+    </style>
     <div class="page-content">
         <div class="container-fluid">
             <!-- start page title -->
@@ -8,8 +19,8 @@
                 'title' => 'Bài viết ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Bài viết', 'url' => '#']
-                ]
+                    ['name' => 'Bài viết', 'url' => '#'],
+                ],
             ])
             <div class="row">
                 <div class="col-lg-12">
@@ -20,13 +31,12 @@
                                     <div class="row g-4 align-items-center">
                                         <div class="col-sm">
                                             <div>
-                                                <h5 class="card-title mb-0"><a class="text-dark"
-                                                        href="{{ route('admin.blogs.deleted') }}">Danh sách đã xóa</a></h5>
+                                                <h5 class="card-title mb-0"><a class="text-dark" href="">Thùng rác</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
                                             <div class="search-box mb-3">
-                                                <form method="GET" action="{{ route('admin.blogs.deleted') }}">
+                                                <form method="GET" action="{{ route('admin.blogs.listTrash') }}">
                                                     <input type="text" class="form-control search" name="search"
                                                         placeholder="Nhập từ khóa tìm kiếm..."
                                                         value="{{ request()->input('search') }}">
@@ -45,17 +55,18 @@
                                                     style="display: none;">
                                                     <i class="ri-delete-bin-5-fill"></i>
                                                 </button>
-                                                <a class="btn btn-success add-btn ms-2"
-                                                    href="{{ route('admin.blogs.create') }}">
-                                                    <i class="ri-add-box-fill"></i> Thêm
-                                                </a>
+
                                                 <a href="{{ route('admin.blogs.index') }}"
-                                                    class="btn btn-soft-primary ms-2">
-                                                    <i class="ri-home-6-fill"></i>Trang list
+                                                    class="btn btn-primary ms-2"> Quay lại
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
+                                    @if (session('success'))
+                                        <div class="w-full alert alert-success">
+                                            {{ session('success') }}
+                                        </div>
+                                    @endif
                                     <div class="table-responsive table-card mt-2 mb-1">
                                         <table
                                             class="table table-bordered table-hover table-striped align-middle table-nowrap">
@@ -69,7 +80,7 @@
                                                     </th>
                                                     <th>Stt</th>
                                                     <th>Tiêu đề bài viết</th>
-                                                    <th>Người xóa</th>
+                                                    <th>Ảnh đại diện</th>
                                                     <th>Ngày xóa</th>
                                                     <th>Thao tác</th>
                                                 </tr>
@@ -83,34 +94,75 @@
                                                                     name="chk_child" value="{{ $item->id }}">
                                                             </div>
                                                         </th>
-                                                        <td>{{ $index+1 }}</td>
+                                                        <td>{{ $index + 1 }}</td>
                                                         <td>{{ $item->title }}</td>
-                                                        <td>{{ $item->deleted_by }}</td>
-                                                        <td>{{ ($item->deleted_at) ? $item->deleted_at->format('d-m-Y H:i:s') : ''}}</td>
+                                                        <td class="text-center"> <!-- Căn giữa nội dung -->
+                                                            <div
+                                                                style="width: 50px; height: 50px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                                                                <img src="{{ Storage::url($item->thumbnail) }}"
+                                                                    style="width: 100%; height: 100%; object-fit: cover;"
+                                                                    alt="">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            {{ $item->deleted_at instanceof \Carbon\Carbon ? $item->deleted_at->format('d-m-Y H:i:s') : '' }}
+                                                        </td>
+
+
+
 
                                                         <td>
-                                                            <form
+                                                            <form id="restoreForm-{{ $item->id }}"
                                                                 action="{{ route('admin.blogs.restore', $item->id) }}"
                                                                 method="POST" style="display:inline;">
                                                                 @csrf
                                                                 @method('PATCH')
-                                                                <button
-                                                                    onclick="return confirm('Bạn có chắc muốn khôi phục không?')"
-                                                                    type="submit"
-                                                                    class="btn btn-sm btn-info edit-item-btn">Khôi
-                                                                    phục</button>
+
+                                                                <!-- Nút Button để mở Modal -->
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-primary edit-item-btn"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#restoreModal-{{ $item->id }}">
+                                                                    Khôi phục
+                                                                </button>
+
+                                                                <!-- Modal xác nhận khôi phục -->
+                                                                <div class="modal fade"
+                                                                    id="restoreModal-{{ $item->id }}" tabindex="-1"
+                                                                    aria-labelledby="restoreModalLabel-{{ $item->id }}"
+                                                                    aria-hidden="true">
+                                                                    <div class="modal-dialog">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title"
+                                                                                    id="restoreModalLabel-{{ $item->id }}">
+                                                                                    Xác nhận khôi phục</h5>
+                                                                                <button type="button" class="btn-close"
+                                                                                    data-bs-dismiss="modal"
+                                                                                    aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                Bạn có chắc chắn muốn khôi phục bài viết này
+                                                                                không?
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button"
+                                                                                    class="btn btn-primary"
+                                                                                    data-bs-dismiss="modal">Hủy</button>
+                                                                                <!-- Nút gửi form khôi phục -->
+                                                                                <button type="submit"
+                                                                                    class="btn btn-success">Khôi phục</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </form>
-                                                            <form
-                                                                action="{{ route('admin.blogs.hardDelete', $item->id) }}"
-                                                                method="POST" style="display:inline;">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button
-                                                                    onclick="return confirm('Bạn có chắc chắn xóa vĩnh viễn không?')"
-                                                                    type="submit"
-                                                                    class="btn btn-sm btn-danger remove-item-btn">Xóa
-                                                                    vĩnh viễn</button>
-                                                            </form>
+
+                                                            <button data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" 
+                                                                    data-id="{{ $item->id }}" 
+                                                                    class="btn btn-sm btn-danger remove-item-btn">
+                                                                Xóa
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -170,7 +222,8 @@
                                         @endforeach
                                         @if ($data->hasMorePages())
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $data->nextPageUrl() }}" aria-label="Next">
+                                                <a class="page-link" href="{{ $data->nextPageUrl() }}"
+                                                    aria-label="Next">
                                                     Next
                                                 </a>
                                             </li>
@@ -189,6 +242,30 @@
             <!-- end row -->
         </div>
     </div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" 
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa dữ liệu này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                <!-- Form được đặt trong modal -->
+                <form id="deleteForm" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Modal xác nhận khôi phục -->
 @endsection
 @section('script_libray')
     <!-- Nạp jQuery từ CDN -->
@@ -199,7 +276,12 @@
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxes = document.querySelectorAll('input[name="chk_child"]');
             const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
-            const checkAll = document.getElementById('checkAll'); // Checkbox "Chọn tất cả"
+            const checkAll = document.getElementById('checkAll');
+            const confirmDeleteModal = new bootstrap.Modal(document.getElementById(
+                'confirmDeleteModal')); // Khởi tạo modal
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn'); // Nút Xóa trong modal
+
+            let selectedIds = []; // Biến lưu ID đã chọn
 
             // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
             checkboxes.forEach(checkbox => {
@@ -210,51 +292,110 @@
                 });
             });
 
-            // Thêm sự kiện cho checkbox "Chọn tất cả"
+            // Checkbox "Chọn tất cả"
             checkAll.addEventListener('change', function() {
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
                 });
-                deleteMultipleBtn.style.display = checkAll.checked ? 'block' :
-                    'none'; // Hiển thị/ẩn nút xóa nhiều
+                deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none';
             });
 
-            // Thêm sự kiện click cho nút xóa nhiều
+            // Nút xóa nhiều - Hiển thị modal xác nhận
             deleteMultipleBtn.addEventListener('click', function() {
-                const selectedIds = Array.from(checkboxes)
+                selectedIds = Array.from(checkboxes)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
-                console.log(selectedIds);
+
                 if (selectedIds.length === 0) {
-                    alert('Vui lòng chọn ít nhất một blog để xóa.');
+                    alert('Vui lòng chọn ít nhất một thuộc tính để xóa.');
                     return;
                 }
 
-                const action = 'hard_delete_blog';
-                if (confirm('Bạn có chắc chắn muốn xóa những blog đã chọn không?')) {
-                    $.ajax({
-                        url: `{{ route('admin.blogs.deleteMultiple') }}`,
-                        method: 'POST',
-                        data: {
-                            ids: selectedIds,
-                            action: action,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            alert(response.message);
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            console.log(xhr); // Hiển thị thông tin lỗi chi tiết
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
-                            } else {
-                                alert('Có lỗi xảy ra: ' + xhr.statusText);
-                            }
+                // Hiển thị modal xác nhận
+                confirmDeleteModal.show();
+            });
+
+            // Nút Xóa trong modal
+            confirmDeleteBtn.addEventListener('click', function() {
+                const action = 'soft_delete_attribute';
+
+                // Gửi request AJAX
+                $.ajax({
+                    url: `{{ route('admin.attributes.deleteMultiple') }}`,
+                    method: 'POST',
+                    data: {
+                        ids: selectedIds,
+                        action: action,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        console.log(xhr); // Hiển thị thông tin lỗi chi tiết
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
+                        } else {
+                            alert('Có lỗi xảy ra: ' + xhr.statusText);
                         }
-                    });
-                }
+                    }
+                });
+
+                // Ẩn modal sau khi thực thi
+                confirmDeleteModal.hide();
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const restoreModal = new bootstrap.Modal(document.getElementById('restoreModal'));
+            const confirmRestoreBtn = document.getElementById("confirmRestoreBtn");
+            let restoreId = null;
+
+            // Khi nút "Khôi phục" trong modal được nhấn
+            document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#restoreModal"]').forEach(
+                button => {
+                    button.addEventListener('click', function() {
+                        restoreId = this.getAttribute('data-id');
+                        console.log('ID mục cần khôi phục:', restoreId); // Kiểm tra ID có đúng không
+                    });
+                });
+
+            // Khi nhấn nút "Khôi phục" trong modal
+            if (confirmRestoreBtn) {
+                confirmRestoreBtn.addEventListener("click", function() {
+                    if (restoreId) {
+                        // Cập nhật lại URL form với ID cần khôi phục
+                        const form = document.getElementById('restoreForm');
+                        form.action = `{{ route('admin.blogs.restore', '') }}/${restoreId}`;
+
+                        // Submit form sau khi xác nhận
+                        form.submit();
+
+                        // Đóng modal
+                        restoreModal.hide();
+                    } else {
+                        alert("Không có mục nào để khôi phục.");
+                    }
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lấy modal và form
+            const modal = document.getElementById('confirmDeleteModal');
+            const deleteForm = document.getElementById('deleteForm');
+
+            // Gắn sự kiện khi nút mở modal được nhấn
+            modal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget; // Nút được nhấn
+                const itemId = button.getAttribute('data-id'); // Lấy id từ data-id
+                const actionUrl = `{{ route('admin.blogs.hardDelete', ':id') }}`.replace(':id', itemId);
+                deleteForm.setAttribute('action', actionUrl); // Cập nhật action của form
+            });
+        });
+    </script>
+    
 @endsection

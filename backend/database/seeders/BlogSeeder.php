@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\Blog;
+use App\Models\Post;
 use Illuminate\Database\Seeder;
 
 class BlogSeeder extends Seeder
 {
     public function run()
     {
-        Blog::create([
+        Post::create([
             'title' => 'Blog Post 1',
             'content' => 'Nội dung của bài viết 1.',
             'slug' => 'blog-post-1',
@@ -21,7 +21,7 @@ class BlogSeeder extends Seeder
             'published_at' => now(),
         ]);
 
-        Blog::create([
+        Post::create([
             'title' => 'Blog Post 2',
             'content' => 'Nội dung của bài viết 2.',
             'slug' => 'blog-post-2',
