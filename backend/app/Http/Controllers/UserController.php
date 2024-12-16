@@ -11,6 +11,7 @@ use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\WishList;
+use App\Models\OrderItem;
 use App\Models\Permission;
 use App\Models\UserReview;
 use Illuminate\Http\Request;
@@ -326,26 +327,21 @@ class UserController extends Controller
         $userId = Auth::user()->id;
         $status = $request->input('status', 'all');
 
-        // Query cơ bản để lấy tất cả đơn hàng của người dùng
         $baseQuery = Order::where('user_id', $userId);
 
-        // Lọc theo trạng thái nếu có
         if ($status !== 'all') {
             $baseQuery->where('status', $status);
         }
 
-        // Tổng số đơn hàng không thay đổi theo phân trang
         $totalOrders = $baseQuery->count();
 
-        // Lấy dữ liệu với phân trang
         $orders = $baseQuery->with([
             'items.product',
             'items.productVariant.attributeValues.attribute',
             'payment.paymentGateway',
             'shippingMethod'
-        ])->simplePaginate(5);
+        ])->orderByDesc('id')->simplePaginate(5);
 
-        // Giỏ hàng và số lượng giỏ hàng
         $carts = Cart::where('user_id', $userId)
             ->with('product')
             ->get();
@@ -405,12 +401,10 @@ class UserController extends Controller
 
         $orderItems = $orders->items;
         $firstProduct = $orderItems->first()->product;
-        $similarProducts = Product::where('category_id', $firstProduct->category_id)
+        $similarProducts = Product::with(['variants' ,'galleries'])->where('category_id', $firstProduct->category_id)
             ->where('id', '!=', $firstProduct->id)
             ->take(5)
             ->get();
-        $bestSellingProducts = $this->productService->bestSellingProducts();
-
         return view('client.users.show_detail_order', compact(
             'orders', 
             'locations', 
@@ -426,7 +420,6 @@ class UserController extends Controller
             'dateTimeOrders',
             'messageStatus',
             'wishlistCount',
-            'bestSellingProducts'
         ));
     }
 
@@ -594,32 +587,38 @@ class UserController extends Controller
         $product->update(['stock' => $newStockProduct , 'buycount'=>$newBuyCount]);
     }
 
-    public function submitReview(Request $request, $productId)
+    public function submitReview(Request $request, $orderId)
     {
         $userId = Auth::id();
-        $existingReview = UserReview::where('user_id', Auth::id())
-            ->where('product_id', $productId)
-            ->first();
-
-        if ($existingReview) {
-            return redirect()->back()->with('error', 'Bạn đã đánh giá cho đơn hàng này rồi.');
-        }
-
-        // Validate dữ liệu form
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'review_text' => 'required|string',
         ]);
+        $productIds = OrderItem::where('order_id', $orderId)->pluck('product_id');
 
-        // Lưu dữ liệu vào bảng users_reviews
-        UserReview::create([
-            'user_id' => $userId,
-            'product_id' => $productId,
-            'rating' => $request->input('rating'),
-            'review_text' => $request->input('review_text'),
-            'review_date' => Carbon::now(),
-        ]);
+        $existingReview = UserReview::where('user_id', Auth::id())
+            ->whereIn('product_id', $productIds)
+            ->first();
+        if ($existingReview) {
+            return redirect()->back()->with('error', 'Bạn đã đánh giá cho đơn hàng này rồi.');
+        }
 
+        foreach ($productIds as $productId) {
+            UserReview::create([
+                'user_id' => $userId,
+                'product_id' => $productId,
+                'rating' => $request->input('rating'),
+                'review_text' => $request->input('review_text'),
+                'review_date' => Carbon::now(),
+            ]);
+            $averageRating = UserReview::where('product_id', $productId)->avg('rating');
+            $this->updateRatingProducts($productId, $averageRating);
+        }
         return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi thành công!');
+    }
+
+    private function updateRatingProducts($productId, $averageRating)
+    {
+        Product::where('id', $productId)->update(['rating' => $averageRating]);
     }
 }

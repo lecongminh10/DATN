@@ -451,8 +451,8 @@ Route::group([
             'as' => 'comment.',
         ],
         function () {
-            Route::get('/comment', [UserReviewController::class, 'index'])->name('index');
-            Route::post('/comment/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
+            Route::get('/', [UserReviewController::class, 'index'])->name('index');
+            Route::post('/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
         }
     );
 

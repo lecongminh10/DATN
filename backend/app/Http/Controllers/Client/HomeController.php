@@ -59,8 +59,7 @@ class HomeController extends Controller
         $wishlistCount = WishList::where('user_id', $userId)->count();
         $cartCount = $carts->sum('quantity');
         $products = $this->productService->getFeaturedProducts();
-        // $topRatedProducts = $this->productService->topRatedProducts();
-        // $bestSellingProducts = $this->productService->bestSellingProducts();
+
         $latestProducts = $this->productService->latestProducts();
         $buyCountProducts = $this->productService->buyCountProducts();
         $ratingProducts = $this->productService->ratingProducts();

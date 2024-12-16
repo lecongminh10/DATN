@@ -190,15 +190,21 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                             {{-- <div class="product-label label-hot">HOT</div> --}}
 
                                         @php
-                                            // Xác định giá sản phẩm
-                                            if (isset($item->productVariant)) {
-                                                // Nếu có product_variant, lấy giá từ biến thể  
-                                                $price = $item->productVariant->price_modifier;
+                                             if (isset($item->variants) && $item->variants->isNotEmpty()) {
+                                                $minPrice = $item->variants->filter(function ($variant) {
+                                                    return $variant->price_modifier !== null;
+                                                })->isNotEmpty()
+                                                    ? $item->variants->min('price_modifier')
+                                                    : $item->variants->min('original_price');
+                                                
+                                                $maxPrice = $item->variants->filter(function ($variant) {
+                                                    return $variant->price_modifier !== null;
+                                                })->isNotEmpty()
+                                                    ? $item->variants->max('price_modifier')
+                                                    : $item->variants->max('original_price');
                                             } else {
-                                                // Nếu không có product_variant, kiểm tra giá sale của sản phẩm
-                                                $price = ($item->price_sale !== null && $item->price_sale < $item->price_regular)
-                                                    ? $item->price_sale // Lấy giá sale nếu có
-                                                    : $item->price_regular; // Nếu không có giá sale, lấy giá thường
+                                                $minPrice = $item->price_sale;
+                                                $maxPrice = $item->price_regular;
                                             }
 
                                             // Tính toán phần trăm giảm giá nếu có giá sale hợp lệ
@@ -236,12 +242,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     <!-- End .product-container -->
 
                                     <div class="price-box">
-                                        @if ($item->price_sale == null)
-                                            <span class="new-price" style="color: #08c; font-size: 1.2em;">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
-                                        @else
-                                            <span class="new-price" style="color: #08c;  font-size: 1.2em;">{{ number_format($item->price_sale, 0, ',', '.') }} ₫</span>
-                                            <span class="old-price">{{ number_format($item->price_regular, 0, ',', '.') }} ₫</span>
-                                        @endif                                 
+                                        <span class="new-price" style="color: #08c;  font-size: 1em;">{{number_format($minPrice, 0, ',', '.')}} đ ~ {{number_format($maxPrice, 0, ',', '.')}} đ</span>                                
                                     </div>
 
                                     <!-- End .price-box -->
