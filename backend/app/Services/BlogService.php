@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Blog;
+use App\Models\Post;
 use App\Repositories\BlogRepository;
 
 
@@ -37,7 +37,7 @@ class BlogService extends BaseService
     public function show_soft_delete($search, $perPage)
     {
         // Lọc các bài viết đã bị xóa mềm
-        $query = Blog::onlyTrashed();
+        $query = Post::onlyTrashed();
 
         // Nếu có từ khóa tìm kiếm, áp dụng điều kiện tìm kiếm
         if ($search) {
@@ -51,7 +51,7 @@ class BlogService extends BaseService
     public function findDeletedBlogById($id)
     {
         // Giả sử bạn có một cột 'deleted_at' để xác định blog đã bị xóa
-        return Blog::onlyTrashed()->find($id); // onlyTrashed() lấy các bản ghi bị xóa
+        return Post::onlyTrashed()->find($id); // onlyTrashed() lấy các bản ghi bị xóa
     }
 
     public function restoreDeletedBlog($id)
@@ -62,10 +62,10 @@ class BlogService extends BaseService
     public function restore_delete($id)
     {
         // Tìm kiếm blog bị xóa bằng ID
-        $blog = Blog::onlyTrashed()->find($id);
+        $blog = Post::onlyTrashed()->find($id);
 
         if (!$blog) {
-            throw new \Exception('Blog không tồn tại hoặc đã bị khôi phục.');
+            throw new \Exception('Bài viết không tồn tại hoặc đã bị khôi phục.');
         }
 
         // Thực hiện khôi phục

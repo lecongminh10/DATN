@@ -135,13 +135,13 @@
                                                             </a>
                                                         </td>
                                                         <td class="content-ellipsis">
-                                                            {{ $item->content }}
+                                                            {!! Str::words($item->content, 5, '...') !!}
                                                         </td>
                                                         <td>
                                                             {{ optional($item->user)->username ?? 'N/A' }}
                                                         </td>
 
-                                                        <td>{{ $item->created_at ? $item->created_at->format('d-m-Y H:i:s') : '' }}
+                                                        <td>{{ $item->created_at ? $item->created_at->format('H:i d-m-Y') : '' }}
                                                         </td>
                                                         <td>
                                                             @if ($item->is_published == 1)
@@ -175,22 +175,13 @@
                                                                                     class="ri-pencil-fill fs-16 align-bottom me-2"></i>
                                                                                 Sửa</a></li>
                                                                         <li>
-                                                                            <!-- Form Xóa -->
-                                                                            {{-- <form
-                                                                                action="{{ route('admin.blogs.destroy', $item->id) }}"
-                                                                                method="POST" style="display:inline;">
-                                                                                @csrf
-                                                                                @method('DELETE') --}}
-                                                                                <!-- Nút Button để mở Modal -->
-                                                                                <button type="button"
-                                                                                        class="dropdown-item text-danger"
-                                                                                        data-bs-toggle="modal"
-                                                                                        data-bs-target="#blogsDeleteModal"
-                                                                                        data-id="{{ $item->id }}">
-                                                                                    <i class="ri-delete-bin-5-fill fs-16 align-bottom me-2"></i> Xóa
-                                                                                </button>
-
-                                                                            {{-- </form> --}}
+                                                                            <button type="button"
+                                                                                class="dropdown-item text-danger"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#blogsDeleteModal"
+                                                                                data-id="{{ $item->id }}">
+                                                                                <i class="ri-delete-bin-5-fill fs-16 align-bottom me-2"></i> Xóa
+                                                                            </button>
                                                                         </li>
                                                                     </ul>
                                                                 </div>
@@ -287,7 +278,7 @@
                     Bạn có chắc chắn muốn xóa dữ liệu này không?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
                     <button type="button" class="btn btn-danger" id="confirmDeleteBtn">OK</button>
                 </div>
             </div>
@@ -307,7 +298,7 @@
                     Bạn có chắc chắn muốn xóa dữ liệu này không?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
                     <button type="button" class="btn btn-danger" id="confirm-delete-btn">Xóa</button>
                 </div>
             </div>
@@ -362,7 +353,7 @@
                     .map(checkbox => checkbox.value);
 
                 if (selectedIds.length === 0) {
-                    alert('Vui lòng chọn ít nhất một thuộc tính để xóa.');
+                    alert('Vui lòng chọn ít nhất một bài viết để xóa.');
                     return;
                 }
 
@@ -384,8 +375,15 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        // alert(response.message); // Show the success message
-                        location.reload(); // Reload the page after successful deletion
+                        // Lấy thông báo từ response
+                        const message = response.message;
+                        const successMessage = document.createElement('div');
+                        successMessage.classList.add('w-full', 'alert', 'alert-success');
+                        successMessage.textContent = message;
+                        const customerList = document.getElementById('customerList');
+                        const alertContainer = customerList.querySelector('.card-header');
+                        // alertContainer.insertAdjacentElement('afterend', successMessage);
+                        location.reload();
                     },
                     error: function(xhr) {
                         console.log(xhr); // Show detailed error information
@@ -405,36 +403,44 @@
     </script>
 
     <script>
-        let blogIdToDelete = null;
-
-        // Lắng nghe sự kiện khi người dùng nhấn nút "Xóa" trong modal
-        $('.dropdown-item.text-danger').on('click', function() {
-            // Lưu ID của bài viết cần xóa
-            blogIdToDelete = $(this).data('id');
+        // Xóa 1
+        document.querySelectorAll('[data-bs-target="#blogsDeleteModal"]').forEach(button => {
+            button.addEventListener('click', function () {
+                const blogId = this.getAttribute('data-id');
+                const confirmButton = document.getElementById('confirm-delete-btn');
+                confirmButton.setAttribute('data-id', blogId);
+            });
         });
 
-        // Lắng nghe sự kiện khi người dùng nhấn nút "Xóa" trong modal confirm
-        $('#confirm-delete-btn').on('click', function() {
-            if (blogIdToDelete !== null) {
-                // Gửi AJAX request để xóa bài viết
-                $.ajax({
-                    url: '/blogs/' + blogIdToDelete,  // URL đến route xóa bài viết
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'  // Thêm CSRF token vào request
-                    },
-                    success: function(response) {
-                        // Nếu xóa thành công, đóng modal và thông báo
-                        $('#blogsDeleteModal').modal('hide');
-                        alert('Bài viết đã được xóa thành công');
-                        location.reload();  // Reload lại trang để cập nhật danh sách
-                    },
-                    error: function(xhr, status, error) {
-                        // Xử lý lỗi nếu có
-                        alert('Không thể xóa bài viết. Vui lòng thử lại.');
+        document.getElementById('confirm-delete-btn').addEventListener('click', function () {
+            const blogId = this.getAttribute('data-id');
+            const url = `/admin/blogs/delete/${blogId}`;
+
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.reload) {
+                    location.reload(); // Tải lại trang nếu cần
+                } else {
+                    // Cập nhật thông báo mà không cần tải lại trang
+                    const alertContainer = document.querySelector('.alert-container');
+                    if (alertContainer) {
+                        alertContainer.innerHTML = `
+                            <div class="w-full alert alert-success">
+                                Xóa bài viết thành công.
+                            </div>`;
                     }
-                });
-            }
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi:', error);
+                alert('Không thể xóa dữ liệu.');
+            });
         });
 
     </script>

@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\Blog;
+use App\Models\Post;
 
 class BlogRepository extends BaseRepository
 {
     protected $model;
 
-    public function __construct(Blog $blogRepository)
+    public function __construct(Post $blogRepository)
     {
         parent::__construct($blogRepository);
         $this->model = $blogRepository;
@@ -16,7 +16,7 @@ class BlogRepository extends BaseRepository
 
     public function getAll($search = null, $perPage = null)
     {
-        $query = Blog::query()->latest('id');
+        $query = Post::query()->latest('id');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -47,8 +47,8 @@ class BlogRepository extends BaseRepository
     public function showSotfDelete($search, $perPage)
 {
     // Kiểm tra nếu đối tượng Blog không phải là null
-    if (Blog::exists()) {
-        return Blog::onlyTrashed()
+    if (Post::exists()) {
+        return Post::onlyTrashed()
                     
                    ->orWhere('title', 'like', "%$search%")
                    ->paginate($perPage);
@@ -62,7 +62,7 @@ class BlogRepository extends BaseRepository
 
     public function restoreDeleted($id)
     {
-        $model = Blog::onlyTrashed()->findOrFail($id);
+        $model = Post::onlyTrashed()->findOrFail($id);
         $model->restore();
     }
 

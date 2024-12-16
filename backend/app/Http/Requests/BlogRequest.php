@@ -55,7 +55,7 @@ class BlogRequest extends FormRequest
             'thumbnail.max' => 'Ảnh đại diện không được vượt quá 2MB.',
             'is_published.required' => 'Trạng thái xuất bản là bắt buộc.',
             'is_published.in' => 'Trạng thái xuất bản chỉ được là "0" (Chưa xuất bản) hoặc "1" (Đã xuất bản).',
-            'tags.required' => 'Thẻ bài viết không được để trống.',
+            'tags.required' => 'Phải chọn ít nhất 1 thẻ.',
             
         ];
     }

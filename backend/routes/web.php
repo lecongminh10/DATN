@@ -312,14 +312,13 @@ Route::group([
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('blogs.index');
         Route::get('/create', [BlogController::class, 'create'])->name('blogs.create');
-        Route::post('/', [BlogController::class, 'store'])->name('blogs.store');
+        Route::post('/store', [BlogController::class, 'store'])->name('blogs.store');
         Route::get('{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
-        Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update');
-        Route::get('/{id}', [BlogController::class, 'show'])->name('blogs.show');
+        Route::put('/update/{id}', [BlogController::class, 'update'])->name('blogs.update');
+        Route::get('/show/{id}', [BlogController::class, 'show'])->name('blogs.show');
         Route::get('/listTrash', [BlogController::class, 'listTrash'])->name('blogs.listTrash'); 
-        Route::delete('/blogs/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+        Route::delete('/delete/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
         Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); 
-        // Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore');
         Route::delete('/{id}/hard-delete', [BlogController::class, 'hardDeleteBlog'])->name('blogs.hardDelete');
         Route::delete('/values/{id}', [BlogController::class, 'destroyValue'])->name('blogValues.destroy');
         Route::delete('/values/{id}/hard-delete', [BlogController::class, 'hardDeleteBlogValue'])->name('blogValues.hardDelete');

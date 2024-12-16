@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Tag;
-use App\Models\Blog;
+use App\Models\Post;
 use App\Models\Cart;
 use App\Models\PostTag;
 use App\Models\Product;
@@ -25,7 +25,7 @@ class PostController extends Controller
 
         $cartCount = $carts->sum('quantity');
         $user = Auth::user();
-        $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+        $posts = Post::where('is_published', 1)->latest()->take(5)->get();
         $carts  = collect();
         $tags = Tag::all();
         $categories = Category::with('children')->whereNull('parent_id')->get();
@@ -48,10 +48,10 @@ class PostController extends Controller
         $cartCount = $carts->sum('quantity');
         $tags = Tag::all();
         // Lấy bài viết cụ thể
-        $post = Blog::where('id', $id)->where('is_published', 1)->firstOrFail();
+        $post = Post::where('id', $id)->where('is_published', 1)->firstOrFail();
 
         // Lấy 5 bài viết gần đây có trạng thái đã xuất bản cho sidebar
-        $posts = Blog::where('is_published', 1)->latest()->take(5)->get();
+        $posts = Post::where('is_published', 1)->latest()->take(5)->get();
 
         // Lấy các tags của bài viết hiện tại
         $tagIds = PostTag::where('post_id', $post->id)->pluck('tag_id');
@@ -66,7 +66,7 @@ class PostController extends Controller
 
         $this->countCartWish();
 
-        return view('client.blogs.show', compact('post', 'posts', 'cartCount','tags','wishlistCount'));
+        return view('client.blogs.show', compact('post', 'posts', 'cartCount','tags','wishlistCount', 'relatedProducts'));
     }
 
 

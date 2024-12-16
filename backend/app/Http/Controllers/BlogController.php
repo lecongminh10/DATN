@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BlogRequest;
-use App\Models\Blog;
+use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -33,7 +33,7 @@ class BlogController extends Controller
         $search = $request->input('search');
 
         // Query danh sách blogs với tìm kiếm
-        $blogs = Blog::query()
+        $blogs = Post::query()
             ->when($search, function ($query, $search) {
                 $query->where('title', 'LIKE', "%$search%") // Tìm kiếm theo tiêu đề
                     ->orWhere('content', 'LIKE', "%$search%"); // Tìm kiếm theo nội dung
@@ -63,7 +63,7 @@ class BlogController extends Controller
             $slug = Str::slug($validatedData['title']);
             $isPublished = $validatedData['is_published'] ?? 1;
 
-            $blog = Blog::create([
+            $blog = Post::create([
                 'title' => $validatedData['title'],
                 'content' => $validatedData['content'],
                 'slug' => $slug,
@@ -90,7 +90,7 @@ class BlogController extends Controller
             event(new AdminActivityLogged(auth()->user()->id, 'Thêm Mới', $logDetails));
 
             DB::commit();
-            return redirect()->route('admin.blogs.index')->with('success', 'Blog đã được tạo thành công.');
+            return redirect()->route('admin.blogs.index')->with('success', 'Bài viết đã được tạo thành công.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi tạo bài viết: ' . $e->getMessage()]);
@@ -103,7 +103,7 @@ class BlogController extends Controller
     // Hiển thị chi tiết một blog
     public function show($id)
     {
-        $blog = Blog::findOrFail($id);
+        $blog = Post::findOrFail($id);
         return view('admin.blogs.show', compact('blog'));
     }
 
@@ -116,7 +116,7 @@ class BlogController extends Controller
 
     public function edit($id)
     {
-        $blog = Blog::with('tags')->findOrFail($id);
+        $blog = Post::with('tags')->findOrFail($id);
 
         // Lấy danh sách ID của các thẻ đã chọn
         $selectedTags = $blog->tags->pluck('id')->toArray();
@@ -136,7 +136,7 @@ class BlogController extends Controller
             DB::beginTransaction();
 
             // Tìm blog theo ID
-            $blog = Blog::findOrFail($id);
+            $blog = Post::findOrFail($id);
 
             // Tạo slug từ tiêu đề
             $slug = Str::slug($validatedData['title']);
@@ -186,7 +186,7 @@ class BlogController extends Controller
             event(new AdminActivityLogged(auth()->user()->id, 'Sửa', $logDetails));
 
             DB::commit();
-            return redirect()->route('admin.blogs.index')->with('success', 'Blog đã được cập nhật thành công.');
+            return redirect()->route('admin.blogs.index')->with('success', 'Bài viết đã được cập nhật thành công.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Đã xảy ra lỗi khi cập nhật bài viết: ' . $e->getMessage()]);
@@ -225,7 +225,7 @@ class BlogController extends Controller
 
             // Kiểm tra xem blog có tồn tại không
             if (!$blog) {
-                return redirect()->route('admin.blogs.index')->with('error', 'Blog không tồn tại hoặc đã được khôi phục trước đó.');
+                return redirect()->route('admin.blogs.listTrash')->with('error', 'Bài viết không tồn tại hoặc đã được khôi phục trước đó.');
             }
 
             // Khôi phục blog đã bị xóa mềm
@@ -236,10 +236,10 @@ class BlogController extends Controller
             event(new AdminActivityLogged(auth()->user()->id, 'Khôi phục', $logDetails));
 
             // Trả về thông báo thành công
-            return redirect()->route('admin.blogs.index')->with('success', 'Khôi phục blog thành công!');
+            return redirect()->route('admin.blogs.listTrash')->with('success', 'Khôi phục bài viết thành công!');
         } catch (\Exception $e) {
             // Xử lý lỗi trong quá trình khôi phục
-            return redirect()->route('admin.blogs.index')->with('error', 'Không thể khôi phục blog: ' . $e->getMessage());
+            return redirect()->route('admin.blogs.listTrash')->with('error', 'Không thể khôi phục bài viết: ' . $e->getMessage());
         }
     }
 
@@ -249,34 +249,15 @@ class BlogController extends Controller
 
     public function destroy($id)
     {
-        try {
-            // Lấy blog theo ID
-            $blog = $this->blogService->getById($id);
+        $blog = Post::findOrFail($id);
 
-            // Kiểm tra xem blog có tồn tại không
-            if (!$blog) {
-                return response()->json(['message' => 'Blog không tồn tại!'], 404);  // Trả về lỗi nếu không tìm thấy blog
-            }
+        $blog->delete(); // Xóa mềm
 
-            // Ghi nhật ký chi tiết hành động xóa
-            $logDetails = sprintf('Xóa bài viết: Tiêu đề - %s', $blog->title);
-            event(new AdminActivityLogged(auth()->user()->id, 'Xóa', $logDetails));
+        session()->flash('success', 'Xóa bài viết thành công.');
 
-            // Thực hiện xóa blog (xóa mềm hoặc xóa vĩnh viễn tùy yêu cầu)
-            $blog->delete();
-
-            // Kiểm tra xem bài viết đã bị xóa thành công (xóa mềm)
-            if ($blog->trashed()) {
-                return response()->json(['message' => 'Blog đã được xóa thành công']);
-            }
-
-            // Nếu không thể xóa, trả về thông báo lỗi
-            return response()->json(['message' => 'Không thể xóa blog'], 500);
-        } catch (\Exception $e) {
-            // Xử lý lỗi trong quá trình xóa
-            \Log::error('Error deleting blog: ' . $e->getMessage());
-            return response()->json(['message' => 'Đã xảy ra lỗi khi xóa blog: ' . $e->getMessage()], 500);
-        }
+        return response()->json([
+            'reload' => true,
+        ]);
     }
 
     
@@ -285,7 +266,7 @@ class BlogController extends Controller
         try {
             $data = $this->blogValueService->getById($id);
             if (!$data) {
-                return response()->json(['message' => 'Blog Values not found'], 404);
+                return response()->json(['message' => 'Không tìm thấy giá trị bài viết'], 404);
             }
             $logDetails = sprintf(
                 'Xóa Value bài viết: Tiêu Đề - %s',
@@ -300,15 +281,15 @@ class BlogController extends Controller
             ));
             $data->delete();
             if ($data->trashed()) {
-                return response()->json(['message' => 'Giá trị blog đã được xóa thành công'], 200);
+                return response()->json(['message' => 'Giá trị bài viết đã được xóa thành công'], 200);
             }
             return response()->json([
-                'message' => 'Xóa thành công giá trị blog'
+                'message' => 'Xóa thành công giá trị bài viết'
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'error' => 'Đã xảy ra lỗi khi xóa giá trị blog',
+                'error' => 'Đã xảy ra lỗi khi xóa giá trị bài viết',
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -321,7 +302,7 @@ class BlogController extends Controller
             $data = $this->blogService->getIdWithTrashed($id);
 
             if (!$data) {
-                return redirect()->route('admin.blogs.index')->with('error', 'Blog không tồn tại hoặc đã bị xóa trước đó.');
+                return redirect()->route('admin.blogs.index')->with('error', 'Bài viết không tồn tại hoặc đã bị xóa trước đó.');
             }
 
             // Ghi log chi tiết xóa cứng
@@ -339,10 +320,10 @@ class BlogController extends Controller
             // Thực hiện xóa vĩnh viễn
             $data->forceDelete();
 
-            return redirect()->route('admin.blogs.index')->with('success', 'Blog đã bị xóa vĩnh viễn.');
+            return redirect()->route('admin.blogs.listTrash')->with('success', 'Xóa bài viết thành công.');
         } catch (\Exception $e) {
             // Bắt lỗi và hiển thị thông báo nếu xảy ra vấn đề
-            return redirect()->route('admin.blogs.index')->with('error', 'Không thể xóa blog: ' . $e->getMessage());
+            return redirect()->route('admin.blogs.listTrash')->with('error', 'Không thể xóa bài viết: ' . $e->getMessage());
         }
     }
 
@@ -391,7 +372,7 @@ class BlogController extends Controller
                                 $this->destroy($id);
                             }
                         }
-                        return response()->json(['message' => 'Xóa mềm thành công'], 200);
+                        return response()->json(['message' => 'Xóa thành công các bài viết đã chọn'], 200);
 
                     case 'hard_delete_blog':
                         foreach ($ids as $id) {
@@ -400,7 +381,7 @@ class BlogController extends Controller
                                 $this->hardDeleteBlog($id);
                             }
                         }
-                        return response()->json(['message' => 'Hard erase successful'], 200);
+                        return response()->json(['message' => 'Xóa thành công các bài viết đã chọn'], 200);
 
                     case 'soft_delete_blog_values':
                         foreach ($ids as $id) {
@@ -409,7 +390,7 @@ class BlogController extends Controller
                                 $this->destroyValue($id);
                             }
                         }
-                        return response()->json(['message' => 'Soft delete successful'], 200);
+                        return response()->json(['message' => 'Xóa giá trị bài viết thành công'], 200);
 
                     case 'hard_delete_blog_value':
                         foreach ($ids as $id) {
@@ -418,7 +399,7 @@ class BlogController extends Controller
                                 $this->hardDeleteBlogValue($id);
                             }
                         }
-                        return response()->json(['message' => 'Hard erase successful'], 200);
+                        return response()->json(['message' => 'Xóa giá trị bài viết thành công'], 200);
 
                     default:
                         return response()->json(['message' => 'Invalid action'], 400);

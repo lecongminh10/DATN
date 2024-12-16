@@ -31,8 +31,7 @@
                                     <div class="row g-4 align-items-center">
                                         <div class="col-sm">
                                             <div>
-                                                <h5 class="card-title mb-0"><a class="text-dark" href="">Danh sách đã
-                                                        xóa</a></h5>
+                                                <h5 class="card-title mb-0"><a class="text-dark" href="">Thùng rác</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -58,8 +57,7 @@
                                                 </button>
 
                                                 <a href="{{ route('admin.blogs.index') }}"
-                                                    class="btn btn-soft-primary ms-2">
-                                                    <i class="ri-home-6-fill"></i>Trang list
+                                                    class="btn btn-primary ms-2"> Quay lại
                                                 </a>
                                             </div>
                                         </div>
@@ -122,7 +120,7 @@
 
                                                                 <!-- Nút Button để mở Modal -->
                                                                 <button type="button"
-                                                                    class="btn btn-sm btn-info edit-item-btn"
+                                                                    class="btn btn-sm btn-primary edit-item-btn"
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#restoreModal-{{ $item->id }}">
                                                                     Khôi phục
@@ -149,32 +147,22 @@
                                                                             </div>
                                                                             <div class="modal-footer">
                                                                                 <button type="button"
-                                                                                    class="btn btn-secondary"
+                                                                                    class="btn btn-primary"
                                                                                     data-bs-dismiss="modal">Hủy</button>
                                                                                 <!-- Nút gửi form khôi phục -->
                                                                                 <button type="submit"
-                                                                                    class="btn btn-info">Khôi phục</button>
+                                                                                    class="btn btn-success">Khôi phục</button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </form>
 
-
-                                                            <form action="{{ route('admin.blogs.hardDelete', $item->id) }}"
-                                                                method="POST" style="display:inline;">
-                                                                @csrf
-                                                                @method('DELETE')
-
-
-
-                                                                <button data-bs-toggle="modal"
-                                                                    data-bs-target="#confirmDeleteModal"
-                                                                    data-id="{{ $item->id }}"
+                                                            <button data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" 
+                                                                    data-id="{{ $item->id }}" 
                                                                     class="btn btn-sm btn-danger remove-item-btn">
-                                                                    Xóa vĩnh viễn
-                                                                </button>
-                                                            </form>
+                                                                Xóa
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -254,24 +242,29 @@
             <!-- end row -->
         </div>
     </div>
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Bạn có chắc chắn muốn xóa dữ liệu này không?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">OK</button>
-                </div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" 
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa dữ liệu này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                <!-- Form được đặt trong modal -->
+                <form id="deleteForm" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
             </div>
         </div>
     </div>
+</div>
     <!-- Modal xác nhận khôi phục -->
 @endsection
 @section('script_libray')
@@ -388,6 +381,20 @@
                     }
                 });
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lấy modal và form
+            const modal = document.getElementById('confirmDeleteModal');
+            const deleteForm = document.getElementById('deleteForm');
+
+            // Gắn sự kiện khi nút mở modal được nhấn
+            modal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget; // Nút được nhấn
+                const itemId = button.getAttribute('data-id'); // Lấy id từ data-id
+                const actionUrl = `{{ route('admin.blogs.hardDelete', ':id') }}`.replace(':id', itemId);
+                deleteForm.setAttribute('action', actionUrl); // Cập nhật action của form
+            });
         });
     </script>
     

@@ -163,6 +163,18 @@
                                         <div class="product-default">
                                             <div class="product-details">
                                                 <div class="category-wrap">
+                                                    <figure>
+                                                        <a href="{{ route('client.showProduct', $item->id) }}">
+                                                            @php
+                                                                $mainImage = $item->galleries->where('is_main', true)->first();
+                                                            @endphp
+                    
+                                                            @if ($mainImage)
+                                                                <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205"
+                                                                    height="205" alt="{{ $item->name }}" />
+                                                            @endif
+                                                        </a>
+                                                    </figure>
                                                     <div class="category-list">
                                                         <a href="{{ route('client.products.Category', ['id' => $item->category->id]) }}"
                                                             class="product-category">{{ $item->category->name }}</a>
