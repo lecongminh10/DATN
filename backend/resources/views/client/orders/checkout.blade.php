@@ -1,7 +1,7 @@
 @extends('client.layouts.app')
 
 @section('style_css')
-    <link rel="stylesheet" href="{{asset('css/client/checkout.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/client/checkout.css') }}">
 @endsection
 @section('content')
 
@@ -41,7 +41,8 @@
                                             placeholder="Nhập mã" required name="coupon_code" id="coupon_code" />
                                         <div class="input-group-append">
                                             <button class="btn btn-sm mt-0" type="button" onclick="applyCoupon()"
-                                                data-toggle="modal" data-target="#messageapplyCoupone" id="messageAlert">Nhập
+                                                data-toggle="modal" data-target="#messageapplyCoupone"
+                                                id="messageAlert">Nhập
                                                 mã giảm giá</button>
                                         </div>
                                     </div>
@@ -95,17 +96,20 @@
                                                 if (Auth::check()) {
                                                     $displayAddress = Auth::user()->addresses;
                                                 }
-                                                $hasAddress = Auth::check() && !empty(Auth::user()->addresses) && count($displayAddress)>0;
-                                                $checkdisable= $hasAddress ? true : false
+                                                $hasAddress =
+                                                    Auth::check() &&
+                                                    !empty(Auth::user()->addresses) &&
+                                                    count($displayAddress) > 0;
+                                                $checkdisable = $hasAddress ? true : false;
                                             @endphp
                                             @if (count($displayAddress))
                                                 @foreach ($displayAddress as $address)
                                                     @if ($address->active == true)
-                                                         <div >
+                                                        <div>
                                                             <span id="displayAddress"> {{ $address->specific_address }},
                                                                 {{ $address->ward }}, {{ $address->district }},
                                                                 {{ $address->city }}</span>
-                                                         </div>
+                                                        </div>
                                                         <br>
                                                         <span class="small-text ms-2 my-2" style="color: #2a78b0">Mặc
                                                             Định</span>
@@ -423,7 +427,8 @@
                                 </div> --}}
 
                             <input type="hidden" name="price" id="totalAmountInput" value="{{ $subTotal }}">
-                            <button type="submit" class="btn btn-dark btn-place-order" form="checkout-form" {{ $checkdisable ? '' : 'disabled' }}>
+                            <button type="submit" class="btn btn-dark btn-place-order" form="checkout-form"
+                                {{ $checkdisable ? '' : 'disabled' }}>
                                 Đặt hàng
                             </button>
                         </div>
@@ -441,7 +446,7 @@
     {{-- Modal thông báo lỗi khi áp dụng mã giảm giá --}}
     @include('client.orders.modal.message')
     <!-- Modal -->
-   
+
 @endsection
 
 
@@ -463,15 +468,15 @@
         }
         $(document).ready(function() {
             $('#applyToCoupon button[data-dismiss="modal"]').on('click', function() {
-                $('#applyToCoupon').modal('hide');  // Đóng modal
-                location.reload();  // Tải lại trang
+                $('#applyToCoupon').modal('hide'); // Đóng modal
+                location.reload(); // Tải lại trang
             });
 
             // Khi nhấn ra ngoài modal để đóng modal và tải lại trang
-            $('#applyToCoupon').on('click', function (e) {
+            $('#applyToCoupon').on('click', function(e) {
                 if ($(e.target).hasClass('modal')) {
-                    $('#applyToCoupon').modal('hide');  // Đóng modal nếu người dùng nhấn ngoài modal
-                    location.reload();  // Tải lại trang
+                    $('#applyToCoupon').modal('hide'); // Đóng modal nếu người dùng nhấn ngoài modal
+                    location.reload(); // Tải lại trang
                 }
             });
         });
@@ -492,9 +497,9 @@
 
         // Hàm định dạng tiền tệ
         function formatCurrency(value) {
-            const number = Number(value).toFixed(2);
+            const number = Number(value).toFixed(2); // Đảm bảo giá trị luôn có 2 chữ số thập phân
             const [whole, decimal] = number.split('.');
-            const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Định dạng phân cách hàng nghìn
             return `${formattedWhole} đ`;
         }
         // Hàm định dạng giá trị giảm giá
@@ -515,11 +520,11 @@
         // Hàm cập nhật phí vận chuyển
         function updateShipping() {
             const shippingCost = parseFloat(document.querySelector('input[name="radio-ship"]:checked').value);
-            console.log('phí vận chuyển là ',shippingCost);
-            
+            console.log('phí vận chuyển là ', shippingCost);
+
             const subtotal = parseFloat('{{ $subTotal }}'); // Giá trị tổng phụ từ server
             const discount = parseFloat(document.getElementById('discountAmountInput')?.value ||
-                0); // Lấy giá trị giảm giá từ input (nếu có)
+            0); // Lấy giá trị giảm giá từ input (nếu có)
             calculateTotal(subtotal, discount, shippingCost); // Tính tổng với giá trị giảm giá và phí vận chuyển
         }
 
@@ -527,13 +532,15 @@
             const subtotal = parseFloat('{{ $subTotal }}');
             const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
             let discountTotal = 0;
+
+            // Tính tổng giảm giá từ các mã giảm giá
             @if (session('coupons'))
                 @foreach (session('coupons') as $coupon)
                     discountTotal += {{ $coupon['discount_amount'] }};
                 @endforeach
             @endif
-            let total = 0;
-            total = subtotal + shippingCost - discountTotal;
+
+            let total = subtotal + shippingCost - discountTotal;
             if (total < 0) {
                 total = 0;
             }
@@ -546,99 +553,99 @@
             updateTotal();
         });
 
-        let appliedCoupons = []; // Mảng lưu trữ các mã giảm giá đã áp dụng
         // Hàm áp dụng mã giảm giá
-        function applyCoupon() {
-            const couponCode = document.getElementById("coupon_code").value.trim();
+        let appliedCoupons = []; // Mảng lưu trữ các voucher đã áp dụng
+let totalDiscount = 0; // Tổng giảm giá của tất cả các mã giảm giá đã áp dụng
 
-            // Xóa thông báo lỗi nếu có khi người dùng bắt đầu nhập mã mới
-            const discountInfo = document.getElementById("discount-info");
-            const couponInfo = document.getElementById("couponInfo");
-            if (!couponCode) {
+// Hàm áp dụng mã giảm giá
+function applyCoupon() {
+    const couponCode = document.getElementById("coupon_code").value.trim();
+
+    if (!couponCode) {
+        document.querySelector("#messageapplyCoupone .modal-body").innerHTML =
+            `<p style="color: red;">Vui lòng nhập mã giảm giá</p>`;
+        return;
+    }
+
+    const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
+
+    if (appliedCoupons.includes(couponCode)) {
+        document.querySelector("#messageapplyCoupone .modal-body").innerHTML =
+            `<p style="color: red;">Mã giảm giá này đã được áp dụng</p>`;
+        return;
+    }
+
+    // Gửi yêu cầu tới server để kiểm tra mã giảm giá
+    fetch("/apply-coupon", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+            },
+            body: JSON.stringify({
+                coupon_code: couponCode
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("coupon_code").value = "";
+
+            if (data.success) {
+                const discountInfo = document.getElementById("discount-info");
+                discountInfo.style.display = "block";
+                const couponInfo = document.getElementById("couponInfo");
+
+                // Lưu mã giảm giá vào danh sách đã áp dụng
+                appliedCoupons.push(couponCode);
+
+                // Cộng dồn giá trị giảm giá vào tổng giảm giá
+                totalDiscount += parseFloat(data.coupon.discount_amount);
+
+                // Hiển thị thông tin giảm giá
+                discountInfo.innerHTML += `
+                    <div class="alert-info position-relative">
+                        <p class="end position-absolute top-0 end-0 m-0" style="right: 10px; color: #b7062ef2;">Đang áp dụng</p>
+                        <p><strong>Mã giảm giá:</strong> ${data.coupon.code}</p>
+                        <p><strong>Giá trị giảm giá:</strong> ${formatCurrency2(data.coupon.discount_value)} ${data.coupon.discount_type === 'percentage' ? '%' : 'đ'}</p>
+                        <p><strong>Số tiền được giảm:</strong> ${formatCurrency(data.coupon.discount_amount)}</p>
+                    </div>`;
+
+                const newRow = `
+                    <tr>
+                        <td style="padding-left: 5px;">
+                            <h5 style="font-weight: 100; font-size: 11px; padding-left: 20px;margin: 0px;">${data.coupon.code}</h5>
+                        </td>
+                        <td class="price-col price-coupone">${formatCurrency(data.coupon.discount_amount)}</td>
+                    </tr>
+                    <input type="hidden" name="coupons[${data.coupon.code}][code]" value="${data.coupon.code}"/>
+                    <input type="hidden" name="coupons[${data.coupon.code}][discount_amount]" value="${data.coupon.discount_amount}"/>
+                `;
+                couponInfo.insertAdjacentHTML('beforebegin', newRow);
+
+                document.querySelector("#messageapplyCoupone .modal-body").innerHTML = `<p>${data.message}</p>`;
+
+                // Tính tổng mới sau khi áp dụng voucher
+                const subtotal = parseFloat('{{ $subTotal }}');
+                const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
+
+                let newTotal = subtotal + shippingCost - totalDiscount;
+                if (newTotal < 0) {
+                    newTotal = 0;
+                }
+
+                document.getElementById("totalPriceDisplay").innerText = formatCurrency(newTotal);
+
+            } else {
                 document.querySelector("#messageapplyCoupone .modal-body").innerHTML =
-                    `<p style="color: red;">Vui lòng nhập mã giảm giá</p>`
-                return;
+                    `<p style="color: red;">${data.message}</p>`;
             }
-            // Lấy giá trị của phí vận chuyển được chọn
-            const shippingCost = parseFloat(document.querySelector('input.shipp-fe:checked').value);
-
-            // Kiểm tra xem mã giảm giá đã được áp dụng hay chưa
-            if (appliedCoupons.includes(couponCode)) {
-                document.querySelector("#messageapplyCoupone .modal-body").innerHTML =
-                    `<p style="color: red;">Mã giảm giá này đã được áp dụng</p>`
-                return;
-            }
-
-            // Gửi yêu cầu tới server để kiểm tra mã giảm giá
-            fetch("/apply-coupon", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-                    },
-                    body: JSON.stringify({
-                        coupon_code: couponCode
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {    
-                    document.getElementById("coupon_code").value=""
-                 if (data.success) {
-                    const discountInfo = document.getElementById("discount-info");
-                    discountInfo.style.display="block";
-                    const couponInfo = document.getElementById("couponInfo");
-                        // Lưu mã giảm giá vào danh sách đã áp dụng
-                        appliedCoupons.push(couponCode);
-
-                        // Hiển thị thông tin giảm giá vào discountInfo
-                        discountInfo.innerHTML += `
-                        <div class="alert-info position-relative">
-                            <p class="end position-absolute top-0 end-0 m-0" style="right: 10px; color: #b7062ef2;">Đang áp dụng</p>
-                            <p><strong>Mã giảm giá:</strong> ${data.coupon.code}</p>
-                            <p><strong>Giá trị giảm giá:</strong> ${formatCurrency2(data.coupon.discount_value)} ${data.coupon.discount_type === 'percentage' ? '%' : 'đ'}</p>
-                            <p><strong>Số tiền được giảm:</strong> ${formatCurrency(data.coupon.discount_amount)}</p>
-                        </div>`;
-
-                        // Hiển thị thông tin giảm giá vào couponInfo
-                        const newRow = `
-                            <tr>
-                                <td style="padding-left: 5px;">
-                                    <h5 style="font-weight: 100; font-size: 11px; padding-left: 20px;margin: 0px;">${data.coupon.code}</h5>
-                                </td>
-                                <td class="price-col price-coupone" >${formatCurrency(data.coupon.discount_amount)}</td>
-                            </tr> 
-                             <input type="hidden" name="coupons[${data.coupon.code}][code]" value="${data.coupon.code}"/>
-                             <input type="hidden" name="coupons[${data.coupon.code}][discount_amount]" value="${data.coupon.discount_amount}"/>
-                            `;
-                        couponInfo.insertAdjacentHTML('beforebegin', newRow);
-
-                        document.querySelector("#messageapplyCoupone .modal-body").innerHTML= `<p style="">${data.message}</p>`
-                        // Tính tổng giảm giá từ tất cả các mã đã áp dụng
-                        const totalPriceDisplay = document.getElementById("totalPriceDisplay");
-                        const currentTotal = parseFloat(totalPriceDisplay.innerText.replace(/[^\d.-]/g, ''));
-                        const discountAmount = parseFloat(data.coupon.discount_amount);                    
-                        const newTotal = currentTotal*1000000 - discountAmount;
-                        console.log('currentTotal',currentTotal);
-                        console.log('discountAmount',discountAmount);
-                        console.log('newTotal',newTotal);                      
-                        if(newTotal<0){
-                            newTotal=0;
-                        }
-                        // Display the formatted new total (assuming formatCurrency handles formatting)
-                        totalPriceDisplay.innerText = formatCurrency(newTotal);
-
-                    } else {
-                        console.log(data.message);
-                        
-                         document.querySelector("#messageapplyCoupone .modal-body").innerHTML= `<p style="color: red;">${data.message}</p>`
-                       //  updateShipping(); // Cập nhật lại tổng với phí vận chuyển
-                    }
-                })
-                .catch(error => {
-                     document.getElementById("coupon_code").value=""
-                     document.querySelector("#messageapplyCoupone .modal-body").innerHTML= `<p style="color: red;">Đã có lỗi khi thêm mã giảm giá</p>`
-                });
-        }
+        })
+        .catch(error => {
+            document.getElementById("coupon_code").value = "";
+            document.querySelector("#messageapplyCoupone .modal-body").innerHTML =
+                `<p style="color: red;">Đã có lỗi khi thêm mã giảm giá</p>`;
+        });
+}
 
 
 
@@ -688,7 +695,7 @@
             const btnHuy = document.getElementById('btnHuy');
 
             // Nút thêm địa chỉ mới
-            btnAddAddress.addEventListener('click', function () {
+            btnAddAddress.addEventListener('click', function() {
                 $('#editAddressModal').modal('show');
                 let isUpdating = false;
                 const newCitySelect = document.querySelector("#newCity");
@@ -714,7 +721,8 @@
                             selectElement.innerHTML = '<option value="">Tỉnh/Thành phố</option>';
                             data.forEach(city => {
                                 const selected = city.name === isSelected ? ' selected' : '';
-                                selectElement.innerHTML += `<option value="${city.code}"${selected}>${city.name}</option>`;
+                                selectElement.innerHTML +=
+                                    `<option value="${city.code}"${selected}>${city.name}</option>`;
                             });
                         })
                         .catch(error => console.error('Error fetching cities:', error))
@@ -735,8 +743,10 @@
                         .then(data => {
                             newDistrictSelect.innerHTML = '<option value="">Quận/Huyện</option>';
                             data.districts.forEach(district => {
-                                const selected = district.name === isSelected ? ' selected' : '';
-                                newDistrictSelect.innerHTML += `<option value="${district.code}"${selected}>${district.name}</option>`;
+                                const selected = district.name === isSelected ? ' selected' :
+                                '';
+                                newDistrictSelect.innerHTML +=
+                                    `<option value="${district.code}"${selected}>${district.name}</option>`;
                             });
                             newDistrictSelect.disabled = false;
                             newWardSelect.innerHTML = '<option value="">Phường/Xã</option>';
@@ -761,7 +771,8 @@
                             newWardSelect.innerHTML = '<option value="">Phường/Xã</option>';
                             data.wards.forEach(ward => {
                                 const selected = ward.name === isSelected ? ' selected' : '';
-                                newWardSelect.innerHTML += `<option value="${ward.code}"${selected}>${ward.name}</option>`;
+                                newWardSelect.innerHTML +=
+                                    `<option value="${ward.code}"${selected}>${ward.name}</option>`;
                             });
                             newWardSelect.disabled = false;
                         })
@@ -784,11 +795,11 @@
                     const city = newCitySelect.options[newCitySelect.selectedIndex]?.text || '';
                     const district = newDistrictSelect.options[newDistrictSelect.selectedIndex]?.text || '';
                     const ward = newWardSelect.options[newWardSelect.selectedIndex]?.text || '';
-                    newAddressInput.value ='';
+                    newAddressInput.value = '';
                 }
 
                 // Event listener for city selection
-                newCitySelect.addEventListener("change", function () {
+                newCitySelect.addEventListener("change", function() {
                     const cityCode = this.value;
                     if (cityCode) {
                         resetDistrictAndWard();
@@ -800,7 +811,7 @@
                 });
 
                 // Event listener for district selection
-                newDistrictSelect.addEventListener("change", function () {
+                newDistrictSelect.addEventListener("change", function() {
                     const districtCode = this.value;
                     if (districtCode) {
                         newWardSelect.innerHTML = '<option value="">Loading...</option>';
@@ -862,7 +873,7 @@
             }
 
             // Function to fetch districts based on selected city
-            function getDistricts(cityCode, districtSelect, wardSelect, isSelected = '') {                
+            function getDistricts(cityCode, districtSelect, wardSelect, isSelected = '') {
                 fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
                     .then(response => {
                         if (!response.ok) throw new Error('Failed to fetch districts');
@@ -876,11 +887,11 @@
                                 `<option value="${district.code}"${selected}>${district.name}</option>`;
                         });
                         districtSelect.disabled = false;
-                        let tam =updateDistrictSelect.value;
-                        if(wardSelect!==''){
+                        let tam = updateDistrictSelect.value;
+                        if (wardSelect !== '') {
                             updateWardSelect.disabled = false;
-                            getWards(tam,updateWardSelect,wardSelect)
-                        } else{
+                            getWards(tam, updateWardSelect, wardSelect)
+                        } else {
                             wardSelect.innerHTML = '<option value="">Phường/Xã</option>'; // Reset wards
                             updateWardSelect.disabled = false; // Disable until district is selected
                         }
@@ -889,7 +900,7 @@
             }
 
             // Function to fetch wards based on selected district
-            function getWards(districtCode, updateWardSelect ,isSelected) {    
+            function getWards(districtCode, updateWardSelect, isSelected) {
 
                 fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
                     .then(response => {
@@ -897,11 +908,11 @@
                         return response.json();
                     })
                     .then(data => {
-                        
+
                         updateWardSelect.innerHTML = '<option value="">Phường/Xã</option>'; // Reset options
                         data.wards.forEach(ward => {
                             const selected = ward.name === isSelected ? ' selected' :
-                            ''; // Set selected
+                                ''; // Set selected
                             updateWardSelect.innerHTML +=
                                 `<option value="${ward.code}"${selected}>${ward.name}</option>`;
                         });
@@ -944,13 +955,13 @@
                     document.getElementById('updateName').value = name;
                     document.getElementById('updatePhone').value = phone;
                     document.getElementById('updateAddress').value = specificAddress;
-                
+
                     getCities(updateCitySelect, city); // Update city select
 
                     const cityChangeHandler = function() {
                         const cityCode = this.value;
                         if (cityCode) {
-                            getDistricts(cityCode, updateDistrictSelect,ward,
+                            getDistricts(cityCode, updateDistrictSelect, ward,
                                 district);
                         } else {
                             resetDistrictAndWard(updateDistrictSelect, updateWardSelect);
@@ -968,7 +979,7 @@
                             resetDistrictAndWard(updateWardSelect);
                         }
                     };
-                    
+
                     // Update event listeners
                     updateCitySelect.removeEventListener("change", cityChangeHandler);
                     updateCitySelect.addEventListener("change", cityChangeHandler);
@@ -1024,8 +1035,8 @@
                     .then(response => response.json())
                     .then(data => {
                         $('#addAddressModal').modal('hide');
-                        document.querySelector("#applyToCoupon .modal-body").innerHTML='';
-                         if (data.message) {
+                        document.querySelector("#applyToCoupon .modal-body").innerHTML = '';
+                        if (data.message) {
                             document.querySelector("#applyToCoupon .modal-body").innerHTML =
                                 `<p class='text-primary'>${data.message}</p>`
                             $('#applyToCoupon').modal('show');
@@ -1034,8 +1045,8 @@
                     })
                     .catch(error => {
                         $('#addAddressModal').modal('hide');
-                        document.querySelector("#applyToCoupon .modal-body").innerHTML='';
-                         if (error) {
+                        document.querySelector("#applyToCoupon .modal-body").innerHTML = '';
+                        if (error) {
                             document.querySelector("#applyToCoupon .modal-body").innerHTML =
                                 `<p style="color: red;">${error}</p>`
                             $('#applyToCoupon').modal('show');
@@ -1105,10 +1116,10 @@
                     type: 'POST',
                     url: '/update-address',
                     data: formData,
-                    success: function(response) {         
+                    success: function(response) {
                         $('#addAddressModal').modal('hide');
-                        document.querySelector("#applyToCoupon .modal-body").innerHTML='';
-                         if (response.success) {
+                        document.querySelector("#applyToCoupon .modal-body").innerHTML = '';
+                        if (response.success) {
                             document.querySelector("#applyToCoupon .modal-body").innerHTML =
                                 `<p class='text-primary'>${response.success}</p>`
                             $('#applyToCoupon').modal('show');
