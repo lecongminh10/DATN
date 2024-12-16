@@ -225,17 +225,10 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a href="#sidebarTag" class="nav-link" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebarTag" data-key="t-product">
+                                <a href="{{ route('admin.tags.index') }}" class="nav-link{{ request()->routeIs('admin.tags.index') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false">
                                     Thẻ
                                 </a>
-                                <div class="collapse menu-dropdown" id="sidebarTag">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.index') ? 'active' : '' }}" data-key="t-product-list">Danh sách</a>
-                                        </li>                                        
-                                    </ul>
-                                </div>
                             </li>
                             <li class="nav-item">
                                 <a href="#sidebarPage" class="nav-link" data-bs-toggle="collapse" role="button"

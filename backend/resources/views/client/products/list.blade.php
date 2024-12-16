@@ -297,7 +297,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                 <!-- End .row -->
                 <nav class="toolbox toolbox-pagination">
                     <div class="toolbox-item toolbox-show">
-                        <label style="margin-bottom: 50px;">Show:</label>
+                        <label>Show:</label>
                         <form action="{{ url()->current() }}" method="GET">
                             <div class="select-custom mt-5">
                                 <select name="count" class="form-control" onchange="this.form.submit()">
