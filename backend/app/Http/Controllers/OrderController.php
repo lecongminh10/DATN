@@ -3,34 +3,36 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Helpers\ApiHelper;
-use App\Mail\OrderCompletedMail;
-use App\Mail\OrderPlacedMail;
-use App\Models\Address;
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Coupon;
+use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\WishList;
 use App\Models\OrderItem;
+use App\Helpers\ApiHelper;
 use Illuminate\Http\Request;
+use App\Mail\OrderPlacedMail;
 use App\Models\OrderLocation;
 use App\Models\ProductVariant;
 use App\Services\OrderService;
 use App\Models\PaymentGateways;
 use App\Models\shippingMethods;
+use App\Mail\OrderCompletedMail;
 use Illuminate\Support\Facades\DB;
 use App\Events\AdminActivityLogged;
-use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Repositories\OrderRepository;
 use App\Services\OrderLocationService;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+
 class OrderController extends Controller
 {
 
@@ -231,7 +233,8 @@ class OrderController extends Controller
         $cartCount = $carts->sum('quantity');
         $categories = Category::with('children')->whereNull('parent_id')->get();
         $wishlistCount = WishList::where('user_id',$userId)->count();
-        return view('client.orders.shoppingcart', compact('categories', 'carts', 'cartCount','wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.orders.shoppingcart', compact('pages','categories', 'carts', 'cartCount','wishlistCount'));
     }
 
     public function showCheckOut()
@@ -303,8 +306,8 @@ class OrderController extends Controller
             $dataShippingMethod['shipp']=0;
         }
         $wishlistCount = WishList::where('user_id',$userId)->count();
-
-        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod','wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.orders.checkout', compact('pages','cartCheckout' ,'carts', 'cartCount','dataShippingMethod','wishlistCount'));
     }
 
     public function removeFromCart($id)
@@ -580,8 +583,8 @@ class OrderController extends Controller
         //     ->get();
         // dd($wishLists);
 
-
-        return view('client.products.wishlist', compact('wishLists', 'categories', 'carts', 'cartCount', 'wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.products.wishlist', compact('pages','wishLists', 'categories', 'carts', 'cartCount', 'wishlistCount'));
     }
 
     public function addWishList(Request $request)

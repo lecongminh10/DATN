@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Page;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 
@@ -48,7 +49,7 @@ class AnnouncementController extends Controller
                                    ->where('start_date', '<=', now())
                                    ->where('end_date', '>=', now())
                                    ->first();
-    
-        return view('client.advertising_bar.index', compact('announcement'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.advertising_bar.index', compact('announcement','pages'));
     }
 }

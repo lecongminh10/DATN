@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Coupon;
 use App\Models\Refund;
 use App\Models\Address;
 use App\Models\Payment;
@@ -26,7 +28,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserStoreRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UserUpdateRequest;
-use App\Models\Coupon;
 
 class UserController extends Controller
 {
@@ -247,7 +248,8 @@ class UserController extends Controller
         }
         $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCount = $carts->sum('quantity');
-        return view('client.users.index', compact('carts', 'cartCount','wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.users.index', compact('pages','carts', 'cartCount','wishlistCount'));
     }
 
     public function showClient($id)
@@ -262,7 +264,8 @@ class UserController extends Controller
         }
         $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCount = $carts->sum('quantity');
-        return view('client.users.show', compact('user', 'address', 'carts', 'cartCount','wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.users.show', compact('pages','user', 'address', 'carts', 'cartCount','wishlistCount'));
     }
 
     public function updateClient(Request $request, $id)
@@ -349,8 +352,8 @@ class UserController extends Controller
 
         $cartCount = $carts->sum('quantity');
         $wishlistCount = WishList::where('user_id',$userId)->count();
-
-        return view('client.users.show_order', compact('orders', 'totalOrders', 'status', 'carts', 'cartCount', 'wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.users.show_order', compact('pages','orders', 'totalOrders', 'status', 'carts', 'cartCount', 'wishlistCount'));
     }
 
 
@@ -406,6 +409,7 @@ class UserController extends Controller
             ->where('id', '!=', $firstProduct->id)
             ->take(5)
             ->get();
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         return view('client.users.show_detail_order', compact(
             'orders', 
             'locations', 
@@ -421,6 +425,7 @@ class UserController extends Controller
             'dateTimeOrders',
             'messageStatus',
             'wishlistCount',
+            'pages'
         ));
     }
 
@@ -556,7 +561,8 @@ class UserController extends Controller
         }
         $cartCount = $carts->sum('quantity');
         $wishlistCount = WishList::where('user_id',$user)->count();
-        return view('client.users.show_rank', compact('user','carts','cartCount','wishlistCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.users.show_rank', compact('pages','user','carts','cartCount','wishlistCount'));
     }
 
     public function cancelOrder($orderId)
@@ -648,8 +654,8 @@ class UserController extends Controller
 
         $cartCount = $carts->sum('quantity');
         $wishlistCount = WishList::where('user_id', $userId)->count();
-
-        return view('client.users.voucher', compact('cartCount', 'wishlistCount', 'coupons'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.users.voucher', compact('pages','cartCount', 'wishlistCount', 'coupons'));
     }
 
 }

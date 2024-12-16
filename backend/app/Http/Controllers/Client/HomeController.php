@@ -141,8 +141,8 @@ class HomeController extends Controller
         }
 
         $products = $query->paginate(12);
-
-        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount', 'wishlistCount', 'attributes'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.products.list', compact('pages','products', 'categories', 'carts', 'cartCount', 'wishlistCount', 'attributes'));
     }
     // lọc sản phẩm theo danh mục
     public function getByCategory($id)
@@ -158,8 +158,8 @@ class HomeController extends Controller
         $category = Category::with('products')->where('id', $id)->firstOrFail();
         $products = $category->products()->paginate(12);
         $attributes = Attribute::with('attributeValues')->get();
-
-        return view('client.products.list', compact('products', 'categories', 'carts', 'cartCount','wishlistCount', 'attributes'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.products.list', compact('pages','products', 'categories', 'carts', 'cartCount','wishlistCount', 'attributes'));
     }
 
     public function filterByProducts(Request $request)
@@ -200,7 +200,7 @@ class HomeController extends Controller
         $maxPriceFormatted = $request->input('max') != null ?
             number_format($maxPrice, 0, ',', '.') :
             null;
-
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         // Trả về view
         return view('client.products.list', compact(
             'products',
@@ -210,7 +210,8 @@ class HomeController extends Controller
             'maxPriceFormatted',
             'carts',
             'cartCount',
-            'wishlistCount'
+            'wishlistCount',
+            'pages'
         ));
     }
 

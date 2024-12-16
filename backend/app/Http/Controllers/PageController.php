@@ -257,7 +257,6 @@ class PageController extends Controller
         }
         $cartCount = $carts->sum('quantity');
         $wishlistCount = WishList::where('user_id', $userId)->count();
-        
         return view('client.pages.show', compact('page' ,'pages' , 'carts', 'cartCount', 'wishlistCount'));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Page;
 use App\Models\Product;
 use App\Models\UserReview;
 use Illuminate\Http\Request;
@@ -61,7 +62,8 @@ class UserReviewController extends Controller
             ->get();
 
         // Truyền sản phẩm và bình luận vào view
-        return view('client.product-detail', compact('product', 'comments'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.product-detail', compact('product', 'comments' ,'pages'));
     }
 // public function store(Request $request)
 // {
