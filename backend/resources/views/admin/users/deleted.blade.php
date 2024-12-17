@@ -41,9 +41,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Thêm ô tìm kiếm -->
                     </div>
-    
                     <div class="card-body">
                         <div class="table-responsive table-card mb-4">
                             <table class="table align-middle table-nowrap mb-0" id="tasksTable">
@@ -177,7 +175,6 @@
                         </div>
                     </div>
 
-                    <!-- Modal xác nhận xóa -->
                     <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -203,7 +200,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
+
         <div class="modal fade" id="userActionModal" tabindex="-1" role="dialog"
             aria-labelledby="userActionModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -239,7 +236,6 @@
                 const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
                 let selectedIds = [];
 
-                // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', function() {
                         const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
@@ -247,7 +243,6 @@
                     });
                 });
 
-                // Thêm sự kiện cho checkbox "Chọn tất cả"
                 checkAll.addEventListener('change', function() {
                     checkboxes.forEach(checkbox => {
                         checkbox.checked = checkAll.checked;
@@ -255,7 +250,6 @@
                     deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none';
                 });
 
-                // Thêm sự kiện click cho nút xóa nhiều
                 deleteMultipleBtn.addEventListener('click', function() {
                     selectedIds = Array.from(checkboxes)
                         .filter(checkbox => checkbox.checked)
@@ -266,7 +260,6 @@
                         return;
                     }
 
-                    // Hiển thị modal cho xóa nhiều
                     document.getElementById('modalUsername').innerText =
                         `Người dùng: ${selectedIds.length} người`;
                     document.getElementById('modalTitle').innerText =
@@ -275,7 +268,6 @@
                     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
                     const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-                    // Xóa sự kiện cũ để không gán nhiều lần
                     confirmDeleteBtn.onclick = function() {
                         const forceDeleteValue = 'true';
                         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute(
@@ -307,7 +299,6 @@
                     deleteModal.show();
                 });
 
-                // Chức năng tìm kiếm
                 const searchInput = document.getElementById('searchInput');
                 searchInput.addEventListener('input', function() {
                     const filter = searchInput.value.toLowerCase();
@@ -328,7 +319,6 @@
                         }
                     });
 
-                    // Hiển thị thông báo không tìm thấy kết quả nếu không có hàng nào
                     const noResultDiv = document.querySelector('.noresult');
                     noResultDiv.style.display = noResults ? 'block' : 'none';
                 });
@@ -340,13 +330,10 @@
                 const deleteBtn = document.getElementById('confirmDeleteBtn');
                 const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-                // Xóa sự kiện cũ để không gán nhiều lần
                 deleteBtn.onclick = function() {
-                    // Kiểm tra trạng thái checkbox và cập nhật giá trị vào form
                     const forceDeleteInput = document.getElementById(`forceDeleteInput-${userId}`);
                     forceDeleteInput.value = forceDeleteCheckbox.checked ? 'true' : 'false';
 
-                    // Gửi form
                     document.getElementById(`deleteForm-${userId}`).submit();
                 };
 
@@ -361,12 +348,12 @@
 
                 if (action === 'delete') {
                     message = 'Bạn có chắc chắn muốn xóa người dùng này không?';
-                    actionType = 'hard-delete'; // Đặt hành động xóa
+                    actionType = 'hard-delete'; 
                     document.getElementById("confirmAction").style.display = 'block';
                     document.getElementById("restoreAction").style.display = 'none';
                 } else if (action === 'restore') {
                     message = 'Bạn có chắc chắn muốn khôi phục người dùng này không?';
-                    actionType = 'restore'; // Đặt hành động khôi phục
+                    actionType = 'restore'; 
                     document.getElementById("restoreAction").style.display = 'block';
                     document.getElementById("confirmAction").style.display = 'none';
                 }
@@ -389,27 +376,23 @@
             }
 
             function performAction(action, userId) {
-                // Sử dụng template literal để xây dựng URL
                 let api_url = `{{ url('admin/users/manage') }}/${userId}`;
 
-                // Tạo dữ liệu để gửi trong request
                 const requestData = {
-                    action: action // Thay đổi để gửi action
+                    action: action 
                 };
 
-                fetch(api_url, { // Sửa url thành api_url
+                fetch(api_url, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
-                        body: JSON.stringify(requestData) // Gửi dữ liệu JSON
+                        body: JSON.stringify(requestData)
                     })
-                    .then(response => response.text()) // Chờ nhận dữ liệu kiểu text
+                    .then(response => response.text()) 
                     .then(data => {
-                        // Kiểm tra nếu thành công
                         if (data.includes('success')) {
-                            // Nếu thành công, tải lại trang và hiển thị thông báo
                             location.reload();
                         } else {
                             alert('Có lỗi xảy ra.');
@@ -417,7 +400,7 @@
                     })
                     .catch(error => console.error('Error:', error));
 
-                $('#userActionModal').modal('hide'); // Ẩn modal sau khi xác nhận
+                $('#userActionModal').modal('hide'); 
             }
         </script>
     @endsection
