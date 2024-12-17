@@ -151,9 +151,6 @@
         }
     </style>
 @endsection
-
-
-
 @section('content')
     <main class="main home">
         <div class="container mb-2">
@@ -195,7 +192,6 @@
                             </div>
                         </div>
                         <div id="dynamic-content" class="content-display">
-                            <!-- Nội dung sẽ thay đổi dựa trên lựa chọn -->
                             Vui lòng chọn hạng thành viên để xem chi tiết.
                         </div>
                     </div>
@@ -243,7 +239,6 @@
                     content = "Vui lòng chọn hạng thành viên để xem chi tiết.";
             }
 
-            // Cập nhật nội dung trong phần hiển thị
             document.getElementById('dynamic-content').innerHTML = content;
         }
     </script>
