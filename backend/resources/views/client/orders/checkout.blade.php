@@ -126,7 +126,6 @@
 
                                 {{-- Modal Địa chỉ --}}
                                 @include('client.orders.modal.index')
-                                {{-- End modal --}}
 
                                 <div class="form-group">
                                     <label class="order-comments">Sản phẩm</label>
@@ -244,7 +243,6 @@
                             </li>
                         </ul>
                     </div>
-                    <!-- End .col-lg-8 -->
 
                     <div class="col-lg-4">
                         <div class="order-summary">
