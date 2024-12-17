@@ -360,11 +360,6 @@
                                     SEO
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="" class="nav-link">
-                                    SALE
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>

@@ -169,7 +169,7 @@
                 var productId = productElement.data('product-id'); // Đảm bảo bạn có data-product-id trong HTML
                 var productVariantId = productElement.data('product-variant-id'); // Nếu cần
                 var cart_count = document.querySelector('.cart-count')
-                var quantity = 1; // Hoặc lấy từ một input nếu cần
+                var quantity = 1; 
                 $.ajax({
                     url: '{{ route('addCart') }}',
                     type: 'POST',
