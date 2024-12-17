@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class SeoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     protected $seoService;
     public function __construct(SeoService $seoService)
     {
@@ -25,20 +23,13 @@ class SeoController extends Controller
         return view('admin.seo.index', compact('seo'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
 
     {
         $products = Product::all();
-        // $posts = Post::all();
         return view('admin.seo.create', compact('products'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -64,9 +55,6 @@ class SeoController extends Controller
         if (!empty($data['product_id'])) {
             $seo->products()->attach($data['product_id']);
         }
-        // if (!empty($data['post_id'])) {
-        //     $seo->products()->sync($data['post_id']);
-        // }
 
         return redirect()->route('admin.seo.index')->with('success', 'Thêm SEO thành công!');
     }
@@ -80,9 +68,6 @@ class SeoController extends Controller
         return view('admin.seo.edit', compact('seo', 'products'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $data = $request->validate([
@@ -125,8 +110,6 @@ class SeoController extends Controller
 
         return redirect()->route('admin.seo.index')->with('success', 'Thuộc tính đã bị xóa vĩnh viễn');
     }
-
-
 
     public function showSotfDelete(Request $request)
     {
