@@ -279,7 +279,6 @@
         }
 
         window.addEventListener('beforeunload', function() {
-            // Send a GET request to the '/clear-coupons' route to clear the session
             fetch('/clear-coupons', {
                     method: 'GET', // Set the request method to GET
                     headers: {
