@@ -232,7 +232,6 @@
                 </div>
             </div>
         </div>
-        <!-- container-fluid -->
     </div>
 @endsection
 @section('script_libray')
@@ -327,8 +326,6 @@
                             5000); // Hiển thị thông báo lỗi và ẩn sau 5 giây
                         }
                     });
-
-                    // Đóng modal sau khi gửi yêu cầu
                     deleteModal.hide();
                 };
 
