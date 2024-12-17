@@ -154,9 +154,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             </div>
                         </form>
 
-                        <!-- End .toolbox-item -->
                     </div>
-                    <!-- End .toolbox-left -->
                 </nav>
 
                 @php
@@ -239,7 +237,6 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                         </div>
                                         <!-- End .product-ratings -->
                                     </div>
-                                    <!-- End .product-container -->
 
                                     <div class="price-box">
                                         <span class="new-price" style="color: #08c;  font-size: 1em;">{{number_format($minPrice, 0, ',', '.')}} đ ~ {{number_format($maxPrice, 0, ',', '.')}} đ</span>                                
