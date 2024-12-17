@@ -259,9 +259,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                             <span class="ratings" style="width:{{ $item->rating * 20 }}%"></span>
                                             <span class="tooltiptext tooltip-top">{{ $item->rating }} </span>
                                         </div>
-                                        <!-- End .product-ratings -->
                                     </div>
-                                    <!-- End .product-container -->
 
                                     <div class="price-box">
                                         <span class="new-price" style="color: #08c;  font-size: 1em;">{{number_format($minPrice, 0, ',', '.')}} đ ~ {{number_format($maxPrice, 0, ',', '.')}} đ</span>
