@@ -27,7 +27,7 @@
                         </div>
                         <form id="edit-seo-form" method="POST" action="{{ route('admin.seo.update', $seo->id) }}" autocomplete="off" class="needs-validation" novalidate>
                             @csrf
-                            @method('PUT')  <!-- Thêm phương thức PUT để chỉnh sửa -->
+                            @method('PUT') 
 
                             <div class="row">
                                 <div class="col-lg-12">
