@@ -11,27 +11,21 @@ class UserReviewController extends Controller
 {
     public function index(Request $request)
     {
-        // Khởi tạo query builder
         $query = UserReview::with(['user','product', 'productVariant.attributeValues.attribute', 'product.galleries']);
-        // dd($query);
-        // Lọc theo tên sản phẩm
         if ($request->has('product_name') && $request->product_name != '') {
             $query->whereHas('product', function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->product_name . '%');
             });
         }
 
-        // Lọc theo ngày bắt đầu
         if ($request->has('date_from') && $request->date_from != '') {
             $query->whereDate('review_date', '>=', $request->date_from);
         }
 
-        // Lọc theo ngày kết thúc
         if ($request->has('date_to') && $request->date_to != '') {
             $query->whereDate('review_date', '<=', $request->date_to);
         }
 
-        // Phân trang
         $comment = $query->paginate(10);
 
         return view('admin.comment.index', compact('comment'));
@@ -53,15 +47,12 @@ class UserReviewController extends Controller
     }
     public function showProductReviews($productId)
     {
-        // Lấy sản phẩm theo ID
         $product = Product::findOrFail($productId);
 
-        // Lấy các bình luận cho sản phẩm, kèm theo phần trả lời của admin
         $comments = UserReview::with(['user', 'product', 'productVariant.attributeValues.attribute'])
             ->where('product_id', $productId)
             ->get();
 
-        // Truyền sản phẩm và bình luận vào view
         $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         return view('client.product-detail', compact('product', 'comments' ,'pages'));
     }
