@@ -44,15 +44,13 @@ class PermissionController extends Controller
     }
     public function store(PermissionRequest $request)
     {
-        DB::beginTransaction(); // Bắt đầu giao dịch
+        DB::beginTransaction();
         try {
-            // Tạo mới quyền
             $permission = Permission::create([
                 'permission_name' => $request->permission_name,
                 'description' => $request->description1,
             ]);
 
-            // Tạo các giá trị quyền
             foreach ($request->value as $key => $value) {
                 PermissionValue::create([
                     'permissions_id' => $permission->id,
@@ -61,7 +59,6 @@ class PermissionController extends Controller
                 ]);
             }
 
-            // Ghi nhật ký hoạt động
             $logDetails = sprintf(
                 'Thêm quyền: Tên - %s',
                 $permission->permission_name,
@@ -73,16 +70,16 @@ class PermissionController extends Controller
                 $logDetails
             ));
 
-            DB::commit(); // Xác nhận giao dịch
+            DB::commit();
             return redirect()->route('admin.permissions.index')->with('success', 'Thêm mới quyền thành công.');
         } catch (\Illuminate\Database\QueryException $e) {
-            DB::rollBack(); // Hoàn tác giao dịch
-            if ($e->getCode() == '23000') { // Lỗi unique
+            DB::rollBack();
+            if ($e->getCode() == '23000') {
                 return redirect()->back()
                     ->withInput()
                     ->with('error', "Giá trị '{$value}' đã tồn tại. Vui lòng kiểm tra lại.");
             }
-            throw $e; // Ném lại lỗi nếu không phải unique
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack(); // Hoàn tác giao dịch
             return redirect()->back()->withInput()->with('error', 'Đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại.');
@@ -95,7 +92,6 @@ class PermissionController extends Controller
     }
     public function update(PermissionRequest $request, $id)
     {
-        // dd($request->all());
         $permission = Permission::findOrFail($id);
 
         $permission->update([
@@ -125,7 +121,6 @@ class PermissionController extends Controller
             $permission->permission_name,
         );
 
-        // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
             'Sửa',
