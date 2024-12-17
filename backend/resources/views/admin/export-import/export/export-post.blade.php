@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('title')
+    Xuất dữ liệu bài viết
+@endsection
 @section('style_css')
     <style>
         .total-category{
@@ -120,21 +123,13 @@
 @section('content')
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Xuất - Nhập</h4>
-
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Thương mại</a></li>
-                            <li class="breadcrumb-item active">Xuất bài viết</li>
-                        </ol>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+        @include('admin.layouts.component.page-header', [
+                'title' => 'Xuất - Nhập',
+                'breadcrumb' => [
+                    ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Xuất bài viết', 'url' => '#'],
+                ],
+            ])
 
         <div class="row">
             <div class="col-lg-12">
@@ -210,7 +205,8 @@
 
                         <div class="card-body border border-dashed border-end-0 border-start-0 border-bottom-0 button">
                             <div class="">
-                                <button class="btn btn-primary" id="exportButton" disabled>Xuất</button>
+                                <button class="btn btn-success me-2" id="exportButton" disabled>Xuất</button>
+                                <a href="{{ route('admin.export-import.view-export-import') }}"><button class="btn btn-primary me-2" >Quay lại</button></a>
                             </div>
                         </div>
                     </div>

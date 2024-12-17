@@ -23,7 +23,7 @@
 
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('themeclient/assets/images/icons/favicon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -91,159 +91,9 @@
 
     <div class="mobile-menu-overlay"></div>
     <!-- End .mobil-menu-overlay -->
-
-    <div class="mobile-menu-container">
-        <div class="mobile-menu-wrapper">
-            <span class="mobile-menu-close"><i class="fa fa-times"></i></span>
-            <nav class="mobile-nav">
-                <ul class="mobile-menu menu-with-icon">
-                    <li><a href="demo1.html"><i class="icon-home"></i>Home</a></li>
-                    <li>
-                        <a href="demo1-shop.html" class="sf-with-ul"><i class="sicon-badge"></i>Categories</a>
-                        <ul>
-                            <li><a href="category.html">Full Width Banner</a></li>
-                            <li><a href="category-banner-boxed-slider.html">Boxed Slider Banner</a></li>
-                            <li><a href="category-banner-boxed-image.html">Boxed Image Banner</a></li>
-                            <li><a href="https://www.portotheme.com/html/porto_ecommerce/category-sidebar-left.html">Left
-                                    Sidebar</a></li>
-                            <li><a href="category-sidebar-right.html">Right Sidebar</a></li>
-                            <li><a href="category-off-canvas.html">Off Canvas Filter</a></li>
-                            <li><a href="category-horizontal-filter1.html">Horizontal Filter 1</a></li>
-                            <li><a href="category-horizontal-filter2.html">Horizontal Filter 2</a></li>
-                            <li><a href="#">List Types</a></li>
-                            <li><a href="category-infinite-scroll.html">Ajax Infinite Scroll<span
-                                        class="tip tip-new">New</span></a></li>
-                            <li><a href="category.html">3 Columns Products</a></li>
-                            <li><a href="category-4col.html">4 Columns Products</a></li>
-                            <li><a href="category-5col.html">5 Columns Products</a></li>
-                            <li><a href="category-6col.html">6 Columns Products</a></li>
-                            <li><a href="category-7col.html">7 Columns Products</a></li>
-                            <li><a href="category-8col.html">8 Columns Products</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="demo1-product.html" class="sf-with-ul"><i class="sicon-basket"></i>Products</a>
-                        <ul>
-                            <li>
-                                <a href="#" class="nolink">PRODUCT PAGES</a>
-                                <ul>
-                                    <li><a href="product.html">SIMPLE PRODUCT</a></li>
-                                    <li><a href="product-variable.html">VARIABLE PRODUCT</a></li>
-                                    <li><a href="product.html">SALE PRODUCT</a></li>
-                                    <li><a href="product.html">FEATURED & ON SALE</a></li>
-                                    <li><a href="product-sticky-info.html">WIDTH CUSTOM TAB</a></li>
-                                    <li><a href="product-sidebar-left.html">WITH LEFT SIDEBAR</a></li>
-                                    <li><a href="product-sidebar-right.html">WITH RIGHT SIDEBAR</a></li>
-                                    <li><a href="product-addcart-sticky.html">ADD CART STICKY</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#" class="nolink">PRODUCT LAYOUTS</a>
-                                <ul>
-                                    <li><a href="product-extended-layout.html">EXTENDED LAYOUT</a></li>
-                                    <li><a href="product-grid-layout.html">GRID IMAGE</a></li>
-                                    <li><a href="product-full-width.html">FULL WIDTH LAYOUT</a></li>
-                                    <li><a href="product-sticky-info.html">STICKY INFO</a></li>
-                                    <li><a href="product-sticky-both.html">LEFT & RIGHT STICKY</a></li>
-                                    <li><a href="product-transparent-image.html">TRANSPARENT IMAGE</a></li>
-                                    <li><a href="product-center-vertical.html">CENTER VERTICAL</a></li>
-                                    <li><a href="#">BUILD YOUR OWN</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#" class="sf-with-ul"><i class="sicon-envelope"></i>Pages</a>
-                        <ul>
-                            <li>
-                                <a href="wishlist.html">Wishlist</a>
-                            </li>
-                            <li>
-                                <a href="cart.html">Shopping Cart</a>
-                            </li>
-                            <li>
-                                <a href="checkout.html">Checkout</a>
-                            </li>
-                            <li>
-                                <a href="dashboard.html">Dashboard</a>
-                            </li>
-                            <li>
-                                <a href="login.html">Login</a>
-                            </li>
-                            <li>
-                                <a href="forgot-password.html">Forgot Password</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><a href="blog.html"><i class="sicon-book-open"></i>Blog</a></li>
-                    <li><a href="demo1-about.html"><i class="sicon-users"></i>About Us</a></li>
-                </ul>
-
-                <ul class="mobile-menu menu-with-icon mt-2 mb-2">
-                    <li class="border-0">
-                        <a href="#" target="_blank"><i class="sicon-star"></i>Buy Porto!<span
-                                class="tip tip-hot">Hot</span></a>
-                    </li>
-                </ul>
-
-                <ul class="mobile-menu">
-                    <li><a href="login.html">My Account</a></li>
-                    <li><a href="demo1-contact.html">Contact Us</a></li>
-                    <li><a href="wishlist.html">My Wishlist</a></li>
-                    <li><a href="#">Site Map</a></li>
-                    <li><a href="cart.html">Cart</a></li>
-                    <li><a href="login.html" class="login-link">Log In</a></li>
-                </ul>
-            </nav>
-            <!-- End .mobile-nav -->
-
-            <form class="search-wrapper mb-2" action="#">
-                <input type="text" class="form-control mb-0" placeholder="Search..." required />
-                <button class="btn icon-search text-white bg-transparent p-0" type="submit"></button>
-            </form>
-
-            <div class="social-icons">
-                <a href="#" class="social-icon social-facebook icon-facebook" target="_blank">
-                </a>
-                <a href="#" class="social-icon social-twitter icon-twitter" target="_blank">
-                </a>
-                <a href="#" class="social-icon social-instagram icon-instagram" target="_blank">
-                </a>
-            </div>
-        </div>
-        <!-- End .mobile-menu-wrapper -->
-    </div>
+    @include('client.menu-mobile.index')
     <!-- End .mobile-menu-container -->
 
-    <div class="sticky-navbar">
-        <div class="sticky-info">
-            <a href="demo1.html">
-                <i class="icon-home"></i>Home
-            </a>
-        </div>
-        <div class="sticky-info">
-            <a href="demo1-shop.html" class="">
-                <i class="icon-bars"></i>Categories
-            </a>
-        </div>
-        <div class="sticky-info">
-            <a href="wishlist.html" class="">
-                <i class="icon-wishlist-2"></i>Wishlist
-            </a>
-        </div>
-        <div class="sticky-info">
-            <a href="login.html" class="">
-                <i class="icon-user-2"></i>Account
-            </a>
-        </div>
-        <div class="sticky-info">
-            <a href="cart.html" class="">
-                <i class="icon-shopping-cart position-relative">
-                    <span class="cart-count badge-circle">3</span>
-                </i>Cart
-            </a>
-        </div>
-    </div>
 
     <!-- Biểu tượng chat -->
     <div class="chat-icon" onclick="toggleChat()">
@@ -310,51 +160,127 @@
     </script>
 
     <script>
-        function removeFromCart(element) {
-            const cartId = element.getAttribute('data-id'); // Lấy ID của sản phẩm từ data-id
-
-            // Gửi yêu cầu xóa sản phẩm
-            fetch(`/remove/${cartId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'), // CSRF token
+        // Thêm cart
+        $(document).ready(function() {
+            $('.btn-add-cart').on('click', function(e) {
+                e.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ a
+                // Lấy thông tin sản phẩm từ thẻ cha của nút
+                var productElement = $(this).closest('.product-default');
+                var productId = productElement.data('product-id'); // Đảm bảo bạn có data-product-id trong HTML
+                var productVariantId = productElement.data('product-variant-id'); // Nếu cần
+                var cart_count = document.querySelector('.cart-count')
+                var quantity = 1; // Hoặc lấy từ một input nếu cần
+                $.ajax({
+                    url: '{{ route('addCart') }}',
+                    type: 'POST',
+                    data: {
+                        product_id: productId,
+                        product_variants_id: productVariantId,
+                        quantity: quantity,
+                        _token: '{{ csrf_token() }}' // Đừng quên CSRF token
                     },
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Xóa sản phẩm ra khỏi DOM
-                        const productElement = element.closest('.product'); // Tìm phần tử sản phẩm tương ứng
+                    success: function(response) {
+                        console.log(response);
+                        
+                        if (response.carts && response.carts.length > 0) {
+                            let cartHTML = '';
+                            let subTotal = 0;
+                            response.carts.forEach(item => {
+                                let price = 0;
+                                let sub = 0;
 
-                        // Tính toán subtotal
-                        const cartProductInfo = productElement.querySelector(
-                            '.cart-product-info'); // Thông tin giá và số lượng
-                        const [quantityText, priceText] = cartProductInfo.textContent.split('×').map(item => item
-                            .trim());
+                                if (item.product) {
+                                    price = item.product.price_sale > 0 ? item.product.price_sale : item.product.price_regular;
+                                    sub = price * item.quantity; 
+                                }
+                                subTotal += sub;
+                                const mainImage = item.product.galleries.find(gallery => gallery.is_main);
+                                cartHTML += `
+                                    <div class="product">
+                                        <div class="product-details">
+                                            <h4 class="product-title">
+                                                <a href="/product/${item.product.id}">${item.product.name}</a>
+                                            </h4>
+                                            <span class="cart-product-info">
+                                                <span class="cart-product-qty">${item.quantity}</span> × ${new Intl.NumberFormat().format(price)}₫
+                                            </span>
+                                        </div>
+                                        <figure class="product-image-container">
+                                            <a href="/product/${item.product.id}" class="product-image">
+                                                <img src="${mainImage ? '/storage/' + mainImage.image_gallery : ''}" style="width: 80px; height: 70px" alt="${item.product.name}" />
+                                            </a>
+                                            <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="${item.id}" onclick="removeFromCart(this)"></a>
+                                        </figure>
+                                    </div>
+                                `;
+                            });
+                            $('.dropdown-cart-products').html(cartHTML);
+                            $('.dropdown-cart-total .cart-total-price').text(new Intl.NumberFormat().format(subTotal) + '₫');
+                        } else {
+                            $('.dropdown-cart-products').html('<p>Trống.</p>');
+                            $('.dropdown-cart-total .cart-total-price').text('0₫');
+                        }
 
-                        const quantity = parseInt(quantityText.replace(/\D/g, ''), 10); // Lấy số lượng từ text
-                        const price = parseInt(priceText.replace(/\./g, '').replace('₫', ''), 10); // Lấy giá từ text
-                        const subtotalForProduct = quantity * price; // Tính subtotal cho sản phẩm
-
-                        // Cập nhật subtotal tổng
-                        const subtotalElement = document.querySelector('.cart-total-price');
-                        const currentSubtotal = parseInt(subtotalElement.textContent.replace(/\./g, '').replace('₫',
-                            ''), 10);
-                        const newSubtotal = currentSubtotal - subtotalForProduct;
-
-                        // Cập nhật DOM
-                        subtotalElement.textContent =
-                            `${newSubtotal.toLocaleString('vi-VN')}₫`; // Hiển thị subtotal mới
-                        productElement.remove(); // Xóa sản phẩm khỏi giao diện
-                    } else {
-                        console.error('Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng.');
+                        cart_count.innerHTML=response.totalQuantity
+                    },
+                    error: function(xhr) {
+                        var errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            $.each(errors, function(key, value) {
+                                alert(value[0]); 
+                            });
+                        }
                     }
-                })
-                .catch(error => {
-                    console.error('Lỗi kết nối hoặc xử lý:', error);
                 });
+            });
+        });
+    // Thêm vào yêu thích
+    function addToWishlist(element,productId, productVariantId) {
+        let wishlist=document.querySelector('.wishlist-count');
+        $.ajax({
+            type: "POST",
+            url: "{{ route('addWishList') }}",
+            data: {  
+                product_id: productId,
+                product_variants_id: productVariantId,
+                _token: '{{ csrf_token() }}'      
+            },
+            success: function(response) {             
+                if (!response.status) {
+                    $(element).removeClass('added-wishlist'); 
+                }
+                wishlist.innerHTML=response.count
+            }
+        });
+    }
+    </script>
+    <script>
+        function removeFromCart(element) {
+            const cartId = element.getAttribute('data-id');
+            $.ajax({
+                url: `/remove/${cartId}`, 
+                type: 'DELETE', 
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') 
+                },
+                success: function (response) {
+                    if (response.message === 'Product removed successfully') {
+                        const productElement = $(element).closest('.product'); 
+                        const totalCart = response.total; 
+                        const subtotalElement = $('.cart-total-price');
+                        subtotalElement.text(new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalCart)); 
+                        productElement.remove();
+                    } else {
+                        console.error(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Có lỗi xảy ra:', xhr.responseText);
+                }
+            });
         }
+
         window.addEventListener('beforeunload', function() {
             // Send a GET request to the '/clear-coupons' route to clear the session
             fetch('/clear-coupons', {

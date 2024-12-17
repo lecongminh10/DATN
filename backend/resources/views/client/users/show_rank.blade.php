@@ -166,13 +166,13 @@
                         </div>
                         <div>
                             <div class="hoten">
-                                Họ tên : <h5> {{ Auth::user()->username }}</h5>
+                                Họ tên: <h5 class="ms-3"> {{ Auth::user()->username }}</h5>
                             </div>
                             <div class="sdt">
-                                Số điện thoại : <h5> {{ Auth::user()->phone_number }}</h5>
+                                Số điện thoại: <h5 class="ms-3"> {{ Auth::user()->phone_number }}</h5>
                             </div>
                             <div class="diem">
-                                Điểm hạng : <h5> {{ Auth::user()->loyalty_points }}</h5>
+                                Điểm hạng: <h5 class="ms-3"> {{ Auth::user()->loyalty_points }}</h5>
                             </div>
                         </div>
                         <div class="hang">

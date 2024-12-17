@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('title')
+    Chat
+@endsection
 @section('style_css')
     <style>
         .chat-input-links {

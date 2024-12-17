@@ -89,4 +89,12 @@ class CategoryService extends BaseService
         return $parentCategories;
     }
     
+    public function getCategoriesByParentIdAndName($parentId ,$name)
+    {
+        return $this->categoryService->getCategoriesByParentIdAndName($parentId , $name);
+    }
+
+    public function show_soft_delete($search, $perPage) {
+        return $this->categoryService->show_soft_delete($search, $perPage);
+    }
 }

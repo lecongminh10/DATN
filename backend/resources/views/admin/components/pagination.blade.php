@@ -1,13 +1,13 @@
 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-    <div class="results-info ms-3">
+    <div class="results-info ms-3 me-3">
         <p class="pagination mb-0">
-            Showing
+            Hiện thị
             {{ $data->firstItem() }}
-            to
+            đến
             {{ $data->lastItem() }}
-            of
+            của
             {{ $data->total() }}
-            results
+            kết quả
         </p>
     </div>
     <div class="pagination-wrap me-3">

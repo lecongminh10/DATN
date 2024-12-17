@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -7,12 +10,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Coupons</h4>
+                        <h4 class="mb-sm-0">Mã Coupons</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">App</a></li>
-                                <li class="breadcrumb-item active">Coupons</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Quản lí</a></li>
+                                <li class="breadcrumb-item active">Mã Coupons</li>
                             </ol>
                         </div>
                     </div>
@@ -53,8 +56,7 @@
                                                     <select class="form-select" aria-label=".form-select-sm example"
                                                         id="idStatus" name="status">
                                                         <option value=""
-                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Select
-                                                            Status</option>
+                                                            {{ request()->get('status') == '' ? 'selected' : '' }}>Chọn trạng thái</option>
                                                         <option value="1"
                                                             {{ request()->get('status') == '1' ? 'selected' : '' }}>Active
                                                         </option>
@@ -67,20 +69,23 @@
                                                     <select id="idAppliesTo" name="applies_to" class="form-select">
                                                         <option value=""
                                                             {{ request()->get('applies_to') == '' ? 'selected' : '' }}>
-                                                            Applies To</option>
+                                                            Áp dụng cho</option>
                                                         <option value="product"
                                                             {{ request()->get('applies_to') == 'product' ? 'selected' : '' }}>
-                                                            Products</option>
+                                                            Sản phẩm</option>
                                                         <option value="category"
                                                             {{ request()->get('applies_to') == 'category' ? 'selected' : '' }}>
-                                                            Categories</option>
+                                                            Danh mục</option>
+                                                        <option value="user"
+                                                            {{ request()->get('applies_to') == 'user' ? 'selected' : '' }}>
+                                                            Người dùng</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <select id="idDiscountType" name="discount_type" class="form-select">
                                                         <option value=""
                                                             {{ request()->get('discount_type') == '' ? 'selected' : '' }}>
-                                                            Discount Type</option>
+                                                            Loại giảm giá</option>
                                                         <option value="percentage"
                                                             {{ request()->get('discount_type') == 'percentage' ? 'selected' : '' }}>
                                                             Percentage</option>
@@ -93,11 +98,11 @@
                                                     <div class="btn-group w-100" role="group" aria-label="Filter buttons">
                                                         <button type="button" class="btn btn-primary"
                                                             onclick="filterData();">
-                                                            <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                            <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm
                                                         </button>
                                                         <button type="button" class="btn btn-secondary"
                                                             onclick="clearFilters();">
-                                                            <i class="ri-close-circle-fill me-2 align-bottom"></i>Clear
+                                                            <i class="ri-close-circle-fill me-2 align-bottom"></i>Hủy
                                                         </button>
                                                     </div>
                                                 </div>
@@ -108,13 +113,8 @@
                                                         style="display: none;">
                                                         <i class="ri-delete-bin-5-fill"></i>
                                                     </button>
-                                                    <a class="btn btn-success add-btn me-1"
-                                                        href="{{ route('admin.coupons.create') }}">
-                                                        <i class="ri-add-box-fill"></i> Thêm
-                                                    </a>
                                                     <a href="{{ route('admin.coupons.index') }}"
-                                                        class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>
+                                                        class="btn btn-primary">Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -138,8 +138,6 @@
                                                 <th data-sort="discountValue">Giá Trị Giảm Giá</th>
                                                 <th data-sort="minOrderValue">Giá Trị Đơn Hàng Tối Thiểu</th>
                                                 <th data-sort="is_active">Trạng Thái</th>
-                                                <th data-sort="created_at">Ngày Tạo</th>
-                                                <th data-sort="updated_at">Cập Nhật</th>
                                                 <th data-sort="action">Hành Động</th>
                                             </tr>
                                         </thead>
@@ -169,8 +167,6 @@
                                                             {{ $item->is_active == 1 ? 'active' : 'inactive' }}
                                                         </span>
                                                     </td>
-                                                    <td>{{ $item->created_at->format('d-m-Y H:i:s') }}</td>
-                                                    <td>{{ $item->updated_at->format('d-m-Y H:i:s') }}</td>
                                                     <td>
                                                         <form action="{{ route('admin.coupons.restore', $item->id) }}"
                                                             method="POST" style="display:inline;">
@@ -439,7 +435,7 @@
             let status = document.getElementById('idStatus').value;
             let appliesTo = document.getElementById('idAppliesTo').value;
             let discountType = document.getElementById('idDiscountType').value;
-            let filterUrl = '/listsotfdeleted?';
+            let filterUrl = '/admin/listsotfdeleted?';
 
             if (status !== '') {
                 filterUrl += 'status=' + status + '&';
@@ -455,7 +451,7 @@
         }
 
         function clearFilters() {
-            window.location.href = '/listsotfdeleted';
+            window.location.href = '/admin/listsotfdeleted';
         }
     </script>
     <script>

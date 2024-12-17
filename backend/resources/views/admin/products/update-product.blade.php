@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Cập Nhật Sản Phẩm
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -643,14 +646,9 @@
                                                                                 <select
                                                                                     class="form-control status_attribute"
                                                                                     name="product_variants[{{ $i }}][status]">
-                                                                                    <option value="none">None
-                                                                                    </option>
-                                                                                    <option value="available">Available
-                                                                                    </option>
-                                                                                    <option value="out_of_stock">Out of
-                                                                                        Stock</option>
-                                                                                    <option value="discontinued">
-                                                                                        Discontinued</option>
+                                                                                    <option value="available">Có sẵn</option>
+                                                                                    <option value="out_of_stock">Hết hàng </option>
+                                                                                    <option value="discontinued">Đã ngừng sản xuất</option>
                                                                                 </select>
                                                                             </td>
                                                                             <td>
@@ -774,8 +772,8 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <button class="btn btn-primary" type="submit" id="uploadButton">Save</button>
-                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2">Trở về</a>
+                                        <button class="btn btn-success me-2" type="submit" id="uploadButton" style="cursor: pointer">Cập nhật</button>
+                                        <a href="{{route('admin.products.listProduct')}}" class="btn btn-primary mx-2" style="cursor: pointer">Quay lại</a>
                                     </div>
                                 </div>
                             </div>
@@ -790,7 +788,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="viewImageModalLabel">Variant Image</h5>
+          <h5 class="modal-title" id="viewImageModalLabel">Ảnh biến thể</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center">
@@ -918,9 +916,9 @@
                     <td>
                         <select class="form-control status_attribute" name="product_variants[${variantData.id}][status]">
                             <option value="none">None</option>
-                            <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Available</option>
-                            <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Out of Stock</option>
-                            <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Discontinued</option>
+                            <option value="available" ${variantData.status === 'available' ? 'selected' : ''}>Có sẵn</option>
+                            <option value="out_of_stock" ${variantData.status === 'out_of_stock' ? 'selected' : ''}>Hết hàng </option>
+                            <option value="discontinued" ${variantData.status === 'discontinued' ? 'selected' : ''}>Đã ngừng sản xuất</option>
                         </select>
                     </td>
                     <td>

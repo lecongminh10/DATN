@@ -22,11 +22,17 @@ class CategoryController extends Controller
     }
 
     public function index(Request $request)
-{
-    $perPage = 5;
-    $parentCategories = Category::whereNull('parent_id')->with('children.children')->paginate($perPage); // Tải cả danh mục con của danh mục con
-    return view(self::PATH_VIEW . __FUNCTION__, compact('parentCategories'));
-}
+    {
+        $parent_id = $request->parent_id;
+        $search = $request->search;
+        $perPage = 10;
+
+        $data = $this->categoryService->getCategoriesByParentIdAndName($parent_id, $search, $perPage);
+
+        $parentCategories = Category::whereNull('parent_id')->with('children')->get();
+
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data', 'parentCategories'));
+    }
 
     public function create()
     {
@@ -42,7 +48,6 @@ class CategoryController extends Controller
             $relativePath = $request->file('image')->store(self::PATH_UPLOAD);
             $data['image'] = $relativePath;
         }
-        // $result = $this->categoryService->saveOrUpdate($data);
         $this->categoryService->saveOrUpdate($data);
 
         $logDetails = sprintf(
@@ -58,7 +63,7 @@ class CategoryController extends Controller
         ));
 
 
-        return redirect()->route('admin.categories.index');
+        return redirect()->route('admin.categories.index')->with('success','Thêm mới danh mục thành công');
     }
 
     public function show($id)
@@ -106,90 +111,124 @@ class CategoryController extends Controller
             $logDetails         
         ));
 
-        return redirect()->route('admin.categories.index')->with('success', 'Update successful');
+        return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công');
     }
 
     public function destroy($id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
         $data = $this->categoryService->getById($id);
+
+        $user = auth()->user();
+        $data->deleted_by = $user->id;
+        $data->save();
+
         $data->delete();
 
         $logDetails = sprintf(
-            'Xóa danh mục: Tên - %s',
-            $data->name
+            'Xóa danh mục: Tên danh mục - %s, ID người xóa - %d, Tên người xóa - %s, Ngày xóa - %s',
+            $data->username,
+            $user->id,
+            $user->username,
+            now()->format('d-m-Y H:i:s')
         );
 
         // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
-            auth()->user()->id, 
+            $user->id, 
             'Xóa',         
-            $logDetails         
+            $logDetails     
         ));
 
-        return redirect()->route('admin.categories.index');
+        return redirect()->route('admin.categories.index')->with('success', 'Đã xóa danh mục thành công.');
     }
     public function deleteMultiple(Request $request)
     {
         $categoryIds = $request->input('category_ids', []);
-    if (empty($categoryIds)) {
-        return redirect()->route('admin.categories.index')->with('error', 'No categories selected for deletion.');
-    }
+        if (empty($categoryIds)) {
+            return redirect()->route('admin.categories.index')->with('error', 'Không có danh mục nào được chọn để xóa.');
+        }
 
-    Category::whereIn('id', $categoryIds)->delete();
-    return redirect()->route('admin.categories.index')->with('success', 'Selected categories deleted successfully.');
+        $user = auth()->user();
+
+        $categories = Category::whereIn('id', $categoryIds)->get();
+
+        foreach ($categories as $category) {
+            $logDetails = sprintf(
+                'Xóa danh mục: Tên danh mục - %s, ID danh mục - %d, ID người xóa - %d, Tên người xóa - %s, Ngày xóa - %s',
+                $category->name,
+                $category->id,
+                $user->id, 
+                $user->username,
+                now()->format('d-m-Y H:i:s')
+            );
+
+            event(new AdminActivityLogged(
+                $user->id,
+                'Xóa',
+                $logDetails 
+            ));
+        }
+
+        Category::whereIn('id', $categoryIds)
+        ->update(['deleted_by' => $user->id,
+                                'deleted_at' => now(),
+                                ]);
+        Category::whereIn('id', $categoryIds)->delete();
+
+        return redirect()->route('admin.categories.index')->with('success', 'Xóa thành công danh mục đã chọn.');
     }
-    public function trashed()
+    public function trashed(Request $request)
     {
-        // Sắp xếp theo thời gian xóa mới nhất
-        $trashedCategories = Category::onlyTrashed()
-            ->orderBy('deleted_at', 'desc') // Sắp xếp theo trường deleted_at giảm dần
-            ->paginate(5);
-        return view('admin.categories.trashed', compact('trashedCategories'));
+        $search = $request->input('search');
+        $perPage = $request->input('perpage', 5);
+
+        $trashedCategories = $this->categoryService->show_soft_delete($search, $perPage);
+
+        return view('admin.categories.trashed', compact('trashedCategories', 'search', 'perPage'));
     }
     public function restore($id)
     {
         $category = Category::onlyTrashed()->findOrFail($id);
         $category->restore();
-        return redirect()->route('admin.categories.trashed')->with('success', 'Category restored successfully.');
+        return redirect()->route('admin.categories.trashed')->with('success', 'Đã khôi phục danh mục thành công.');
     }
 
     public function hardDelete($id)
     {
         $category = Category::onlyTrashed()->findOrFail($id);
         $category->forceDelete();
-        return redirect()->route('admin.categories.trashed')->with('success', 'Category permanently deleted.');
-    }
-
-    public function searchTrashed(Request $request)
-    {
-        $search = $request->input('search'); // Lấy từ khóa tìm kiếm
-        $trashedCategories = Category::onlyTrashed()
-            ->where('name', 'like', "%{$search}%") // Tìm kiếm theo tên
-            ->paginate(30); // Phân trang kết quả
-        return view('admin.categories.trashed', compact('trashedCategories', 'search'));
+        return redirect()->route('admin.categories.trashed')->with('success', 'Danh mục bị xóa vĩnh viễn.');
     }
 
     public function restoreMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
+
         if (empty($categoryIds)) {
-            return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for restoration.');
+            return redirect()->route('admin.categories.trashed')->with('error', 'Không có danh mục nào được chọn để khôi phục.');
         }
 
+        if (is_string($categoryIds)) {
+            $categoryIds = explode(',', $categoryIds);
+        }
+
+        $categoryIds = array_map('intval', $categoryIds);
+
         Category::onlyTrashed()->whereIn('id', $categoryIds)->restore();
-        return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories restored successfully.');
+
+        return redirect()->route('admin.categories.trashed')->with('success', 'Khôi phục thành công các danh mục đã chọn.');
     }
 
     public function hardDeleteMultiple(Request $request)
     {
         $categoryIds = $request->input('categories', []);
         if (empty($categoryIds)) {
-            return redirect()->route('admin.categories.trashed')->with('error', 'No categories selected for deletion.');
+            return redirect()->route('admin.categories.trashed')->with('error', 'Không có danh mục nào được chọn để xóa.');
         }
         // Xóa cứng các danh mục đã chọn
         Category::onlyTrashed()->whereIn('id', $categoryIds)->forceDelete();
-        return redirect()->route('admin.categories.trashed')->with('success', 'Selected categories deleted permanently.');
+        return redirect()->route('admin.categories.trashed')->with('success', 'Các danh mục đã chọn đã bị xóa vĩnh viễn.');
     }
     public function updateParent(Request $request)
     {

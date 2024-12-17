@@ -22,5 +22,6 @@ class Page extends Model
         'seo_title',
         'seo_description',
         'deleted_at',
+        'image'
     ];
 }

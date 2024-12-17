@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Page;
 use App\Models\Product;
 use App\Models\UserReview;
 use Illuminate\Http\Request;
@@ -48,21 +49,22 @@ class UserReviewController extends Controller
             'reply_date' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Đã trả lời bình luận thành công!');
+        return redirect()->route('admin.comment.index')->with('success', 'Đã trả lời bình luận thành công!');
     }
     public function showProductReviews($productId)
-{
-    // Lấy sản phẩm theo ID
-    $product = Product::findOrFail($productId);
+    {
+        // Lấy sản phẩm theo ID
+        $product = Product::findOrFail($productId);
 
-    // Lấy các bình luận cho sản phẩm, kèm theo phần trả lời của admin
-    $comments = UserReview::with(['user', 'product', 'productVariant.attributeValues.attribute'])
-        ->where('product_id', $productId)
-        ->get();
+        // Lấy các bình luận cho sản phẩm, kèm theo phần trả lời của admin
+        $comments = UserReview::with(['user', 'product', 'productVariant.attributeValues.attribute'])
+            ->where('product_id', $productId)
+            ->get();
 
-    // Truyền sản phẩm và bình luận vào view
-    return view('client.product-detail', compact('product', 'comments'));
-}
+        // Truyền sản phẩm và bình luận vào view
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.product-detail', compact('product', 'comments' ,'pages'));
+    }
 // public function store(Request $request)
 // {
 //     dd($request->all()); // Kiểm tra tất cả dữ liệu form

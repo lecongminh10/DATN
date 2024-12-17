@@ -46,6 +46,6 @@ class PopuphomeController extends Controller
 
         $popuphome->save();
 
-        return redirect()->back()->with('success', 'Popup updated successfully.');
+        return redirect()->back()->with('success', 'Cập nhật popup thành công.');
     }
 }

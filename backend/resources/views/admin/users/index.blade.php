@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Tài Khoản
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -10,7 +13,7 @@
                     ['name' => 'Người dùng ', 'url' => '#'],
                 ],
             ])
-            <div class="roư">
+            <div class="row">
                 <div class="col-lg-12">
                     <div class="card" id="tasksList">
                         <div class="card-header border-0">
@@ -18,27 +21,30 @@
                                 <h5 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h5>
                                 <div class="flex-shrink-0">
                                     <div class="d-flex flex-wrap gap-2">
-                                        <div class="">
-                                            <input type="text" id="searchInput" class="form-control"
+                                        <div class="me-2">
+                                            <input type="text" id="searchInput" class="form-control "
                                                 placeholder="Tìm kiếm người dùng...">
                                         </div>
                                         <a href="{{ route('admin.users.add') }}">
-                                            <button class="btn btn-danger add-btn" data-bs-toggle="modal"
+                                            <button class="btn btn-success me-2 add-btn" data-bs-toggle="modal"
                                                 data-bs-target="#showModal">
-                                                <i class="ri-add-line align-bottom me-1"></i>Thêm mới
+                                                <i class="ri-add-line align-bottom "></i> Thêm mới
                                             </button>
                                         </a>
-                                        <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-primary">Đã
-                                            xóa</a>
+                                        <a href="{{ route('admin.users.listdeleteMultiple') }}" class="btn btn-warning me-2"><i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác</a>
                                         <button class="btn btn-soft-danger" id="remove-actions" style="display: none;">
-                                            <i class="ri-delete-bin-2-line"></i> Xóa Nhiều
+                                            <i class="ri-delete-bin-2-line align-bottom"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <!-- Thêm ô tìm kiếm -->
                         </div>
-
+                        @if (session('success'))
+                            <div class="w-full alert alert-success " style="margin-bottom: 20px">
+                                {{ session('success') }}
+                            </div>
+                        @endif
                         <div class="card-body">
                             <div class="table-responsive table-card mb-4">
                                 <table class="table align-middle table-nowrap mb-0" id="tasksTable">
@@ -50,15 +56,15 @@
                                                         value="option">
                                                 </div>
                                             </th>
-                                            <th class="sort" data-sort="id">ID</th>
-                                            <th class="sort" data-sort="username">Tên</th>
-                                            <th class="sort" data-sort="avatar">Ảnh</th>
-                                            <th class="sort" data-sort="email">Email</th>
-                                            <th class="sort" data-sort="permission">Quyền</th>
-                                            <th class="sort" data-sort="status">Status</th>
-                                            <th class="sort" data-sort="gender">Giới Tính</th>
-                                            <th class="sort" data-sort="date_of_birth">Ngày Sinh</th>
-                                            <th class="sort" data-sort="phone_number">Số Điện Thoại</th>
+                                            <th data-sort="id">ID</th>
+                                            <th data-sort="username">Tên</th>
+                                            <th data-sort="avatar">Ảnh</th>
+                                            <th data-sort="email">Email</th>
+                                            <th data-sort="permission">Quyền</th>
+                                            <th data-sort="status">Trạng thái</th>
+                                            <th data-sort="gender">Giới Tính</th>
+                                            <th data-sort="date_of_birth">Ngày Sinh</th>
+                                            <th data-sort="phone_number">Số Điện Thoại</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list form-check-all" id="userTableBody">
@@ -112,10 +118,13 @@
                                                 </td>
                                                 <td>
                                                     <?php
-                                                    $image = $value->profile_picture;
+                                                    // Lấy đường dẫn ảnh từ Storage
+                                                    $image = $value->profile_picture ? Storage::url($value->profile_picture) : null;
+                                                    // Đường dẫn ảnh mặc định từ mạng
+                                                    $defaultImage = 'https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png';
                                                     ?>
-                                                    <img src="{{ Storage::url($image) }}" alt="Ảnh đại diện" width="100px"
-                                                        height="100px">
+                                                    <img src="{{ $image ? $image : $defaultImage }}" alt="Ảnh đại diện"
+                                                        style="border-radius: 5px" width="80px" height="80px">
                                                 </td>
                                                 <td class="client_name">{{ $value->email }}</td>
                                                 <td class="project_name">
@@ -127,10 +136,12 @@
                                                     @endforeach
                                                 </td>
                                                 <td>
-                                                    <span
-                                                        class="badge {{ $value->status == 'active' ? 'bg-success' : 'bg-danger' }}">
-                                                        {{ $value->status == 'active' ? $value->status : 'Inactive' }}
-                                                    </span>
+                                                    @if ($value->status == 'active')
+                                                        <span class="badge bg-success">Kích hoạt</span>
+                                                    @else
+                                                        <span class="badge bg-danger">Không kích hoạt</span>
+                                                    @endif
+                                                    
                                                 </td>
                                                 <td class="assignedto">
                                                     @if ($value->gender === 'male')
@@ -141,7 +152,9 @@
                                                         <span class="badge bg-secondary">Khác</span>
                                                     @endif
                                                 </td>
-                                                <td class="due_date">{{ $value->date_of_birth }}</td>
+                                                <td class="due_date">
+                                                    {{ \Carbon\Carbon::parse($value->date_of_birth)->format('d-m-Y') }}
+                                                </td>
                                                 <td class="status">
                                                     <span
                                                         class="badge bg-secondary-subtle text-secondary text-uppercase">{{ $value->phone_number }}</span>
@@ -156,194 +169,159 @@
                                             colors="primary:#121331,secondary:#08a88a"
                                             style="width:75px;height:75px"></lord-icon>
                                         <h5 class="mt-2">Xin lỗi! Không tìm thấy kết quả</h5>
-                                        <p class="text-muted mb-0">Chúng tôi đã tìm kiếm hơn 200k+ nhiệm vụ nhưng không tìm
-                                            thấy nhiệm vụ nào cho bạn.</p>
+                                        <p class="text-muted mb-0"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal xác nhận xóa -->
+                            <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-body p-5 text-center">
+                                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                                                colors="primary:#405189,secondary:#f06548"
+                                                style="width:90px;height:90px"></lord-icon>
+                                            <div class="mt-4 text-center">
+                                                <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?
+                                                </h4>
+                                                <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="forceDeleteCheckbox">
+                                                    <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh
+                                                        viễn</label>
+                                                </div>
+                                                <div class="hstack gap-2 justify-content-center remove mt-3">
+                                                    <button
+                                                        class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
+                                                        id="deleteRecord-close" data-bs-dismiss="modal">
+                                                        <i class="ri-close-line me-1 align-middle"></i> Đóng
+                                                    </button>
+                                                    <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end mt-2">
-                                <div class="pagination-wrap hstack gap-2">
-                                    <a class="page-item pagination-prev disabled" href="#">
-                                        Previous
-                                    </a>
-                                    <ul class="pagination listjs-pagination mb-0"></ul>
-                                    <a class="page-item pagination-next" href="#">
-                                        Next
-                                    </a>
-                                </div>
+                                @include('admin.components.pagination', ['data' => $user])
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-body p-5 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-                                    colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
-                                <div class="mt-4 text-center">
-                                    <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?</h4>
-                                    <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="forceDeleteCheckbox">
-                                        <label class="form-check-label" for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
-                                    </div>
-                                    <div class="hstack gap-2 justify-content-center remove mt-3">
-                                        <button class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
-                                            id="deleteRecord-close" data-bs-dismiss="modal">
-                                            <i class="ri-close-line me-1 align-middle"></i> Đóng
-                                        </button>
-                                        <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkboxes = document.querySelectorAll('input[name="chk_child"]');
+            const deleteMultipleBtn = document.getElementById('remove-actions');
+            const checkAll = document.getElementById('checkAll');
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            let selectedIds = [];
 
-                                        <!-- Modal xác nhận xóa -->
-                                        <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-body p-5 text-center">
-                                                        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json"
-                                                            trigger="loop" colors="primary:#405189,secondary:#f06548"
-                                                            style="width:90px;height:90px"></lord-icon>
-                                                        <div class="mt-4 text-center">
-                                                            <h4 id="modalTitle">Bạn có chắc chắn muốn xóa người dùng này?
-                                                            </h4>
-                                                            <p class="text-muted fs-14 mb-4" id="modalUsername"></p>
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    id="forceDeleteCheckbox">
-                                                                <label class="form-check-label"
-                                                                    for="forceDeleteCheckbox">Xóa vĩnh viễn</label>
-                                                            </div>
-                                                            <div class="hstack gap-2 justify-content-center remove mt-3">
-                                                                <button
-                                                                    class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
-                                                                    id="deleteRecord-close" data-bs-dismiss="modal">
-                                                                    <i class="ri-close-line me-1 align-middle"></i> Đóng
-                                                                </button>
-                                                                <button class="btn btn-danger"
-                                                                    id="confirmDeleteBtn">Xóa</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                    deleteMultipleBtn.style.display = anyChecked ? 'block' : 'none';
+                });
+            });
 
-                                    </div>
-                                </div>
-                            </div>
+            checkAll.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = checkAll.checked;
+                });
+                deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none';
+            });
 
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function() {
-                                    const checkboxes = document.querySelectorAll('input[name="chk_child"]');
-                                    const deleteMultipleBtn = document.getElementById('remove-actions');
-                                    const checkAll = document.getElementById('checkAll');
-                                    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-                                    let selectedIds = [];
+            deleteMultipleBtn.addEventListener('click', function() {
+                selectedIds = Array.from(checkboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
 
-                                    checkboxes.forEach(checkbox => {
-                                        checkbox.addEventListener('change', function() {
-                                            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-                                            deleteMultipleBtn.style.display = anyChecked ? 'block' : 'none';
-                                        });
-                                    });
+                if (selectedIds.length === 0) {
+                    alert('Vui lòng chọn ít nhất một người dùng để xóa.');
+                    return;
+                }
 
-                                    checkAll.addEventListener('change', function() {
-                                        checkboxes.forEach(checkbox => {
-                                            checkbox.checked = checkAll.checked;
-                                        });
-                                        deleteMultipleBtn.style.display = checkAll.checked ? 'block' : 'none';
-                                    });
+                document.getElementById('modalUsername').innerText =
+                    `Người dùng: ${selectedIds.length} người`;
+                document.getElementById('modalTitle').innerText =
+                    'Bạn có chắc chắn muốn xóa những người dùng này?';
 
-                                    deleteMultipleBtn.addEventListener('click', function() {
-                                        selectedIds = Array.from(checkboxes)
-                                            .filter(checkbox => checkbox.checked)
-                                            .map(checkbox => checkbox.value);
+                const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+                const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-                                        if (selectedIds.length === 0) {
-                                            alert('Vui lòng chọn ít nhất một người dùng để xóa.');
-                                            return;
-                                        }
+                confirmDeleteBtn.onclick = function() {
+                    const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content');
 
-                                        document.getElementById('modalUsername').innerText =
-                                            `Người dùng: ${selectedIds.length} người`;
-                                        document.getElementById('modalTitle').innerText =
-                                            'Bạn có chắc chắn muốn xóa những người dùng này?';
+                    fetch('/admin/users/deleteMultiple', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                ids: JSON.stringify(selectedIds),
+                                forceDelete: forceDeleteValue,
+                            }),
+                        })
+                        .then(response => response.text()) // Nhận dữ liệu dưới dạng text
+                        .then(data => {
+                            // Tải lại trang để hiển thị thông báo
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                };
 
-                                        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-                                        const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
+                deleteModal.show();
+            });
 
-                                        confirmDeleteBtn.onclick = function() {
-                                            const forceDeleteValue = forceDeleteCheckbox.checked ? 'true' : 'false';
-                                            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                                'content');
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const filter = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#userTableBody tr');
+                let noResults = true;
 
-                                            fetch('/admin/users/deleteMultiple', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json',
-                                                        'X-CSRF-TOKEN': csrfToken,
-                                                    },
-                                                    body: JSON.stringify({
-                                                        ids: JSON.stringify(selectedIds),
-                                                        forceDelete: forceDeleteValue,
-                                                    }),
-                                                })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        location.reload();
-                                                    } else {
-                                                        alert('Có lỗi xảy ra khi xóa người dùng.');
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error('Error:', error);
-                                                });
-                                        };
+                rows.forEach(row => {
+                    const username = row.querySelector('.tasks_name').innerText.toLowerCase();
+                    const email = row.querySelector('.client_name').innerText.toLowerCase();
+                    const phoneNumber = row.querySelector('.status').innerText.toLowerCase();
 
-                                        deleteModal.show();
-                                    });
+                    if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(
+                            filter)) {
+                        row.style.display = '';
+                        noResults = false;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
 
-                                    const searchInput = document.getElementById('searchInput');
-                                    searchInput.addEventListener('input', function() {
-                                        const filter = searchInput.value.toLowerCase();
-                                        const rows = document.querySelectorAll('#userTableBody tr');
-                                        let noResults = true;
+                const noResultDiv = document.querySelector('.noresult');
+                noResultDiv.style.display = noResults ? 'block' : 'none';
+            });
+        });
 
-                                        rows.forEach(row => {
-                                            const username = row.querySelector('.tasks_name').innerText.toLowerCase();
-                                            const email = row.querySelector('.client_name').innerText.toLowerCase();
-                                            const phoneNumber = row.querySelector('.status').innerText.toLowerCase();
+        function confirmDelete(userId, username) {
+            document.getElementById('modalUsername').innerText = `Người dùng: ${username}`;
+            const deleteBtn = document.getElementById('confirmDeleteBtn');
+            const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
 
-                                            if (username.includes(filter) || email.includes(filter) || phoneNumber.includes(
-                                                    filter)) {
-                                                row.style.display = '';
-                                                noResults = false;
-                                            } else {
-                                                row.style.display = 'none';
-                                            }
-                                        });
+            deleteBtn.onclick = function() {
+                const forceDeleteInput = document.getElementById(`forceDeleteInput-${userId}`);
+                forceDeleteInput.value = forceDeleteCheckbox.checked ? 'true' : 'false';
 
-                                        const noResultDiv = document.querySelector('.noresult');
-                                        noResultDiv.style.display = noResults ? 'block' : 'none';
-                                    });
-                                });
+                document.getElementById(`deleteForm-${userId}`).submit();
+            };
 
-                                function confirmDelete(userId, username) {
-                                    document.getElementById('modalUsername').innerText = `Người dùng: ${username}`;
-                                    const deleteBtn = document.getElementById('confirmDeleteBtn');
-                                    const forceDeleteCheckbox = document.getElementById('forceDeleteCheckbox');
-
-                                    deleteBtn.onclick = function() {
-                                        const forceDeleteInput = document.getElementById(`forceDeleteInput-${userId}`);
-                                        forceDeleteInput.value = forceDeleteCheckbox.checked ? 'true' : 'false';
-
-                                        document.getElementById(`deleteForm-${userId}`).submit();
-                                    };
-
-                                    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-                                    deleteModal.show();
-                                }
-                            </script>
-                        @endsection
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+    </script>
+@endsection

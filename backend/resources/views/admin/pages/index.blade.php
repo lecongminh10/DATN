@@ -1,6 +1,18 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Trang
+@endsection
 @section('content')
+<style>
+    td.description, td.content {
+    white-space: nowrap; /* Không cho xuống dòng */
+    overflow: hidden; /* Ẩn phần vượt quá */
+    text-overflow: ellipsis; /* Thêm dấu "..." khi nội dung bị cắt */
+    max-width: 200px; /* Giới hạn chiều rộng */
+}
+
+</style>
     <div class="page-content">
         <div class="container-fluid">
 
@@ -21,20 +33,12 @@
                                 <div class="col-sm">
                                     <div>
                                         <a href="{{ route('admin.pages.index') }}">
-                                            <h5 class="card-title mb-0">Page List</h5>
+                                            <h5 class="card-title mb-0">Danh sách trang</h5>
                                         </a>
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button class="btn btn-soft-danger" id="deleteMultipleBtn" style="display: none;">
-                                            <i class="ri-delete-bin-5-fill"></i>
-                                        </button>
-                                        <a href="{{ route('admin.pages.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Add Page</a>
-                                        <a href="{{ route('admin.pages.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -53,8 +57,8 @@
                                             <div class="col-sm-3">
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
-                                                    <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                    <button type="submit" form="search-form" class="btn btn-primary">
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm
                                                     </button>
                                                 </div>
                                             </div>
@@ -63,8 +67,13 @@
                                     <div class="col-xl-4">
                                         <div class="row g-4 d-flex justify-content-end">
                                             <div class="col-sm-auto">
-                                                <a href="{{ route('admin.pages.deleted') }}" class="btn btn-soft-danger">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none;">
+                                                    <i class="ri-delete-bin-5-fill  align-bottom"></i>
+                                                </button>
+                                                <a href="{{ route('admin.pages.create') }}" class="btn btn-success me-2 add-btn"
+                                                    id="create-btn"><i class="ri-add-line align-bottom "></i> Thêm mới</a>
+                                                <a href="{{ route('admin.pages.deleted') }}" class="btn btn-warning">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
                                             </div>
                                         </div>
@@ -85,15 +94,13 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name"> Name</th>
-                                                <th data-sort="api_url">Permalink</th>
-                                                <th data-sort="api_token">Description</th>
-                                                <th data-sort="phone">Content</th>
-                                                <th data-sort="email">Status</th>
-                                                <th data-sort="is_active">template</th>
-                                                {{-- <th data-sort="is_active">seo_title</th>
-                                                <th data-sort="is_active">seo_description</th> --}}
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="carrier_name"> Tên</th>
+                                                <th data-sort="api_url">Liên kết cố định</th>
+                                                <th data-sort="api_token">Mô tả</th>
+                                                <th data-sort="phone">Nội dung</th>
+                                                <th data-sort="email">Trạng thái</th>
+                                                <th data-sort="is_active">Bản mẫu</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         @foreach ($pages as $item)

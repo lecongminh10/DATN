@@ -59,43 +59,62 @@ class StatsController extends Controller
         $this->orderService = $orderService;
         $this->orderLocationService = $orderLocationService;
     }
-    public function index()
+    public function index(Request $request)
     {
-        //top  sản phẩm bán chạy
-        $topSellingProducts = Product::select('name', 'buycount as value')
-            ->orderBy('buycount')
-            ->get();
-        //top sản phẩm view
-        $mostViewedProducts = Product::select('name', 'view as value')->get();
+        // Lấy tháng được chọn hoặc mặc định là tháng hiện tại
+        $selectedMonth = $request->input('month', now()->format('Y-m'));
+        $startDate = \Carbon\Carbon::parse($selectedMonth . '-01')->startOfMonth();
+        $endDate = $startDate->copy()->endOfMonth();
 
-        // số  lượng sản phẩm
-        $lowStockThreshold = 10;
-        $allProducts = Product::select('name', 'stock as value')->get();
-        $lowStockProducts = $allProducts->map(function ($product) {
-            return [
-                'name' => $product->name,
-                'value' => $product->value,
-            ];
-        });
-        //  Tổng số lượng sản phẩm bán ra theo ngày
+        // Top sản phẩm bán chạy
+        $topSellingProducts = OrderItem::select('products.name as name', DB::raw('SUM(order_items.quantity) as value'))
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->whereBetween('order_items.created_at', [$startDate, $endDate])
+            ->groupBy('products.name')
+            ->orderByDesc('value')
+            ->limit(10)
+            ->get();
+        // Top sản phẩm lượt xem cao
+        $mostViewedProducts = Product::select('name', 'view as value')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderByDesc('view')
+            ->get();
+
+        // Sản phẩm tồn kho
+        $productStockData = Product::select('name', 'stock as value')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get();
+
+        // Tổng số lượng sản phẩm bán ra theo ngày
         $totalSalesData = OrderItem::select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(quantity) as total'))
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();
-        // doanh thu theo danh mục
+
+        // Doanh thu theo danh mục
         $revenueData = Product::select('categories.name as category_name', DB::raw('SUM(price_regular * buycount) as total'))
             ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->whereBetween('products.created_at', [$startDate, $endDate])
             ->groupBy('categories.name')
             ->get();
-        // doanh thu theo từng sản phẩm
-        $profitData = Product::select('name', DB::raw('SUM(price_regular * buycount) as value'))
-            ->groupBy('name')->get();
-        // lợi nhuận theo từng sản phẩm
-        $productRevenueData = Product::select('name', DB::raw('SUM((price_regular - price_sale) * buycount) as total'))
-            ->groupBy('name')->get();
-        // đánh giá khách hàng
+
+        // Lợi nhuận theo từng sản phẩm
+        $profitData = Product::select('name', DB::raw('SUM((price_regular - price_sale) * buycount) as total'))
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('name')
+            ->get();
+
+        // Doanh thu theo từng sản phẩm
+        $productRevenueData = Product::select('name', DB::raw('SUM(price_regular * buycount) as value'))
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('name')
+            ->get();
+
+        // Đánh giá khách hàng
         $customerFeedback = DB::table('users_reviews')
             ->select('product_id', DB::raw('AVG(rating) as average_rating'))
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('product_id')
             ->get()
             ->map(function ($feedback) {
@@ -109,22 +128,23 @@ class StatsController extends Controller
                     return [
                         'name' => $product->name,
                         'value' => $feedback->average_rating,
-                        'reviews' => $reviews
+                        'reviews' => $reviews,
                     ];
                 }
                 return null;
             })->filter();
-        // tỉ lệ trả hàng
+
+        // Tỉ lệ hàng trả lại
         $returnRateData = OrderItem::select(
             'order_items.product_id',
             DB::raw('COUNT(*) as total_orders')
         )
             ->join('refunds', 'order_items.order_id', '=', 'refunds.order_id')
+            ->whereBetween('order_items.created_at', [$startDate, $endDate])
             ->groupBy('order_items.product_id')
             ->get()
             ->map(function ($order) {
                 $product = Product::find($order->product_id);
-                // tính số lượng hàng trả lại
                 if ($product) {
                     $totalReturns = DB::table('refunds')
                         ->where('product_id', $order->product_id)
@@ -132,18 +152,48 @@ class StatsController extends Controller
 
                     return [
                         'name' => $product->name,
-                        'value' => $order->total_orders > 0 ? ($totalReturns / $order->total_orders * 100) : 0
+                        'value' => $order->total_orders > 0 ? ($totalReturns / $order->total_orders * 100) : 0,
                     ];
                 }
                 return null;
             })->filter();
 
+        // Xu hướng bán hàng
         $salesTrends = OrderItem::select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(quantity) as total'))
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();
+        //Tổng sản phẩm ban đầu   
+        $totalProductStockAndBuycount = Product::select(DB::raw('SUM(stock) + SUM(buycount) as total'))
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->value('total') ?? 0;
+        // Tổng tồn kho
+        // Tổng tồn kho
+        $totalProductStock = Product::whereBetween('created_at', [$startDate, $endDate])
+            ->sum('stock') ?? 0;  // Nếu không có dữ liệu thì trả về 0
 
-        $data = collect(compact('salesTrends','returnRateData', 'customerFeedback', 'allProducts', 'topSellingProducts', 'mostViewedProducts', 'lowStockProducts', 'totalSalesData', 'revenueData', 'profitData', 'productRevenueData'));
-        return view('admin.statistics.index', $data->toArray());
+        // Tổng bán ra
+        $totalProductBuyCount = Product::whereBetween('created_at', [$startDate, $endDate])
+            ->sum('buycount') ?? 0;  // Nếu không có dữ liệu thì trả về 0
+
+
+        $data = collect(compact(
+            'salesTrends',
+            'returnRateData',
+            'customerFeedback',
+            'topSellingProducts',
+            'mostViewedProducts',
+            'productStockData',
+            'totalSalesData',
+            'revenueData',
+            'profitData',
+            'productRevenueData',
+            'totalProductStock',
+            'totalProductBuyCount',
+            'totalProductStockAndBuycount'
+        ));
+
+        return view('admin.statistics.index', $data->merge(['selectedMonth' => $selectedMonth])->toArray());
     }
 }

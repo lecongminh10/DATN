@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('title')
+   Thêm mới bài viết
+@endsection
 @section('style_css')
     <style>
         .cke_notification {
@@ -15,22 +18,14 @@
 
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Thêm mới Blog',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Thêm mới Blog', 'url' => '#'],
+                    ['name' => 'Thêm mới bài viết', 'url' => '#'],
                 ],
             ])
 
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            
 
             @if (session()->has('success') && session()->get('success'))
                 <div class="alert alert-primary" role="alert">
@@ -134,7 +129,7 @@
                                 
 
                                 <!-- Is Published -->
-                                <div class="mb-3">
+                                <div class="mb-2">
                                     <label class="form-label" for="is_published">Trạng thái</label>
                                     <select class="form-select" id="is_published" name="is_published" required>
                                         <option value="0" {{ old('is_published', 0) == 0 ? 'selected' : '' }}>Chưa
@@ -151,11 +146,9 @@
 
                             </div>
                             <!-- Submit Button -->
-                            <div class="text-end mb-3">
-                                <button type="submit" class="btn btn-success w-sm"><i
-                                        class="ri-check-double-line me-2"></i>Gửi</button>
-                                <a href="{{ route('admin.blogs.index') }}" class="btn btn-secondary w-sm"><i
-                                        class="ri-arrow-left-line"></i> Quay lại</a>
+                            <div class="text-start ms-3 mb-3">
+                                <button type="submit" class="btn btn-success w-sm me-2">Thêm mới</button>
+                                <a href="{{ route('admin.blogs.index') }}" class="btn btn-primary w-sm">Quay lại</a>
                             </div>
                         </div>
                     </div>

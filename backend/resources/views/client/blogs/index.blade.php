@@ -28,9 +28,10 @@
                                                 width="225" height="280">
                                         </a>
                                         <div class="post-date">
-                                            <span class="day">{{ $post->created_at->format('d') }}</span>
-                                            <span class="month">{{ $post->created_at->format('M') }}</span>
+                                            <span class="day">{{ \Carbon\Carbon::parse($post->published_at)->format('d') }}</span>
+                                            <span class="month">{{ \Carbon\Carbon::parse($post->published_at)->format('M') }}</span>
                                         </div>
+                                        
                                     </div><!-- End .post-media -->
 
                                     <div class="post-body">
@@ -38,10 +39,10 @@
                                             <a href="{{ route('client.blogs.show', $post->id) }}">{{ $post->title }}</a>
                                         </h2>
                                         <div class="post-content">
-                                            <p>{{ Str::limit($post->content, 100) }}</p>
-                                        </div><!-- End .post-content -->
+                                            <p>{{ Str::limit($post->meta_title, 80) }}</p>
+                                        </div><!-- End .post-content -->                                        
                                         <a href="{{ route('client.blogs.show', $post->id) }}" class="post-comment">0
-                                            Comments</a>
+                                            Bình luận</a>
                                     </div><!-- End .post-body -->
                                 </article><!-- End .post -->
                             </div>
@@ -58,7 +59,7 @@
                     <div class="sidebar-wrapper" data-sticky-sidebar-options='{"offsetTop": 72}'>
 
                         <div class="widget widget-post">
-                            <h4 class="widget-title">Recent Posts</h4>
+                            <h4 class="widget-title">Bài viết gần đây</h4>
 
                             <ul class="simple-post-list">
                                 @foreach ($posts->take(5) as $post)

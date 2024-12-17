@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -21,8 +24,7 @@
                                         <div class="col-sm">
                                             <div>
                                                 <h5 class="card-title mb-0 "><a class="text-dark"
-                                                        href="{{ route('admin.pages.deleted') }}">Pages List
-                                                        SotfDelete</a></h5>
+                                                        href="{{ route('admin.pages.deleted') }}">Thùng Rác</a></h5>
                                             </div>
                                         </div>
                                         <div class="col-sm-auto">
@@ -60,19 +62,14 @@
                                                     </button>
                                                 </div> --}}
                                             </div>
-                                            <div class="col-xl-6 d-flex justify-content-end align-items-center">
+                                            <div class="col-xl-6 d-flex justify-content-end align-items-center mb-3">
                                                 <div class="">
-                                                    <button class="btn btn-soft-danger me-1" id="deleteMultipleBtn"
+                                                    <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn"
                                                         style="display: none;">
-                                                        <i class="ri-delete-bin-5-fill"></i>
+                                                        <i class="ri-delete-bin-5-fill align-bottom"></i>
                                                     </button>
-                                                    <a class="btn btn-success add-btn me-1"
-                                                        href="{{ route('admin.pages.create') }}">
-                                                        <i class="ri-add-box-fill"></i> Thêm
-                                                    </a>
                                                     <a href="{{ route('admin.pages.index') }}"
-                                                        class="btn btn-soft-primary">
-                                                        <i class="ri-home-6-fill"></i>Trang list
+                                                        class="btn btn-primary">Quay lại
                                                     </a>
                                                 </div>
                                             </div>
@@ -90,15 +87,15 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name"> Name</th>
-                                                <th data-sort="api_url">Permalink</th>
-                                                <th data-sort="api_token">Description</th>
-                                                <th data-sort="phone">Content</th>
-                                                <th data-sort="email">Status</th>
-                                                <th data-sort="is_active">template</th>
-                                                <th data-sort="is_active">seo_title</th>
-                                                <th data-sort="is_active">seo_description</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="carrier_name"> Tên</th>
+                                                <th data-sort="api_url">Liên kết cố định</th>
+                                                <th data-sort="api_token">Mô tả</th>
+                                                <th data-sort="phone">Nội dung</th>
+                                                <th data-sort="email">Trạng thái</th>
+                                                <th data-sort="is_active">Bản mẫu</th>
+                                                <th data-sort="is_active">Tiêu đề SEO</th>
+                                                <th data-sort="is_active">Mô tả SEO</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         @foreach ($pages as $item)

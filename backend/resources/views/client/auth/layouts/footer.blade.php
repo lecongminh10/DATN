@@ -3,8 +3,8 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="text-center">
-                    <p class="mb-0 text-muted">&copy;
-                        <script>document.write(new Date().getFullYear())</script> Velzon. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand
+                    <p class="mb-0 text-muted">
+                        Website bán thiết bị công nghệ ZonMart. &copy; <script>document.write(new Date().getFullYear())</script> 
                     </p>
                 </div>
             </div>

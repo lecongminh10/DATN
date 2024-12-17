@@ -3,45 +3,52 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Helpers\ApiHelper;
-use App\Mail\OrderCompletedMail;
-use App\Mail\OrderPlacedMail;
-use App\Models\Address;
 use App\Models\Cart;
+use App\Models\Page;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Coupon;
+use App\Models\Address;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\WishList;
 use App\Models\OrderItem;
+use App\Helpers\ApiHelper;
 use Illuminate\Http\Request;
+use App\Mail\OrderPlacedMail;
 use App\Models\OrderLocation;
 use App\Models\ProductVariant;
 use App\Services\OrderService;
 use App\Models\PaymentGateways;
 use App\Models\shippingMethods;
+use App\Mail\OrderCompletedMail;
 use Illuminate\Support\Facades\DB;
 use App\Events\AdminActivityLogged;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Repositories\OrderRepository;
 use App\Services\OrderLocationService;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+
 class OrderController extends Controller
 {
 
     protected $orderService;
     protected $orderLocationService;
+    public $order;
 
     public function __construct(
         OrderService $orderService,
         OrderLocationService $orderLocationService,
+        Order $order,
 
     ) {
         $this->orderService = $orderService;
         $this->orderLocationService = $orderLocationService;
+        $this->order = $order;
     }
     /**
      * Display a listing of the resource.
@@ -154,45 +161,50 @@ class OrderController extends Controller
     {
         $data = $this->orderService->getById($id);
         $user = $data->user;
-        // $admin = User::join('permissions_value_users', 'users.id', '=', 'permissions_value_users.user_id')
-        // ->join('permissions_values', 'permissions_value_users.permission_value_id', '=', 'permissions_values.id')
-        // ->join('addresses', 'users.id', '=', 'addresses.user_id')
-        // ->where('permissions_values.value', 'admin_role')
-        // ->select('users.username', 'users.email', 'users.phone_number', 'addresses.address_line', 'addresses.address_line1', 'addresses.address_line2')
-        // ->first();
-        // dd($admin);
 
-        // $users = User::with('addresses')->first();
-        // dd($user);
-
+        // Lấy địa chỉ giao hàng của đơn hàng
         $orderLocation = $this->orderLocationService->getAll()->where('order_id', $id)->first();
 
-        $orderItems = $data->items()->with(['product', 'productVariant.attribute', 'productVariant.attributeValue'])->get();
-        // $productVar = ProductVariant::with(['attributes', 'attributes.attributeValues'])->find($idVar);
-        // // dd($productVar);
+        // Lấy danh sách sản phẩm trong đơn hàng
+        $orderItems = $data->items()->with(['product'])->get();
 
-
-        $subTotal = 0;
-        $totalDiscount = 0;
-
-        foreach ($orderItems as $value) {
-            if ($value->productVariant) {
-                $itemPrice = $value->productVariant->price_modifier * $value->quantity;
-                $subTotal += $itemPrice;
+        // Lấy ảnh sản phẩm (ưu tiên ảnh biến thể nếu có, hoặc ảnh chính nếu không có)
+        $images = [];
+        foreach ($orderItems as $item) {
+            if ($item->productVariant && !empty($item->productVariant->variant_image)) {
+                // Lấy ảnh từ biến thể sản phẩm
+                $images[] = Storage::url($item->productVariant->variant_image);
             } else {
-                $itemPrice = ($value->product->price_regular - $value->product->price_sale) * $value->quantity;
-                $subTotal += $itemPrice;
+                // Lấy ảnh chính từ sản phẩm
+                $mainImage = $item->product->getMainImage();
+                $images[] = $mainImage ? Storage::url($mainImage->image_gallery) : asset('images/default-image.jpg');
             }
-
-            $totalDiscount += $value->discount;
         }
 
-        $shippingCharge = $data->shippingMethod->amount ?? 0;
-        $total = $subTotal - $totalDiscount + $shippingCharge;
+        // Lấy phí vận chuyển từ bảng shipping_methods
+        $shippingFee = $data->shippingMethod->shipping_fee ?? 0;
 
-        $paymentGatewayName = $data->payment->paymentGateway->name ?? 'No Payment Gateway';
+        // Lấy giá trị giảm giá từ coupon_usage
+        $discount = 0;
+        if ($data->couponUsage) {
+            $discount = $data->couponUsage->discount_value ?? 0;
+        }
 
-        return view('admin.orders.order-detail', compact('data', 'user', 'orderLocation', 'orderItems', 'subTotal', 'totalDiscount', 'shippingCharge', 'total', 'paymentGatewayName'));
+        // Lấy thông tin thanh toán và cổng thanh toán
+        $payment = $data->payment()->with('paymentGateway')->first(); // Lấy thông tin thanh toán cùng cổng thanh toán
+        $paymentGateway = $payment->paymentGateway ?? null; // Lấy thông tin cổng thanh toán (nếu có)
+
+        return view('admin.orders.order-detail', compact(
+            'data',
+            'user',
+            'orderLocation',
+            'orderItems',
+            'discount',
+            'shippingFee',
+            'images', 
+            'payment',
+            'paymentGateway'
+        ));
     }
 
     public function showModalEdit($code)
@@ -219,8 +231,10 @@ class OrderController extends Controller
             ->get();
 
         $cartCount = $carts->sum('quantity');
-
-        return view('client.orders.shoppingcart', compact('carts', 'cartCount'));
+        $categories = Category::with('children')->whereNull('parent_id')->get();
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.orders.shoppingcart', compact('pages','categories', 'carts', 'cartCount','wishlistCount'));
     }
 
     public function showCheckOut()
@@ -236,7 +250,7 @@ class OrderController extends Controller
         }
 
         $cartCount = $carts->sum('quantity');
-
+        $wishlistCount = WishList::where('user_id',$userId)->count();
         $cartCheckout =Cart::with(['product', 'product.variants','productVariant.attributeValues.attribute', 'product.galleries','product.productDimension'])
                 ->where('user_id', $userId)
                 ->get();
@@ -291,17 +305,20 @@ class OrderController extends Controller
         }else{
             $dataShippingMethod['shipp']=0;
         }
-
-        return view('client.orders.checkout', compact('cartCheckout' ,'carts', 'cartCount','dataShippingMethod'));
+        $wishlistCount = WishList::where('user_id',$userId)->count();
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.orders.checkout', compact('pages','cartCheckout' ,'carts', 'cartCount','dataShippingMethod','wishlistCount'));
     }
 
     public function removeFromCart($id)
     {
-        $cartItem = Cart::find($id);
+        $userId = Auth::check() ? Auth::id() : '';
+        $cartItem = Cart::where('user_id',$userId)->findOrFail($id);
 
         if ($cartItem) {
             $cartItem->delete(); // Xóa sản phẩm khỏi giỏ hàng
-            return response()->json(['message' => 'Product removed successfully']);
+            $total = Cart::where('user_id',$userId)->sum('total_price');
+            return response()->json(['message' => 'Product removed successfully' ,'total'=> $total]);
         }
 
         return response()->json(['message' => 'Product not found'], 404);
@@ -556,20 +573,23 @@ class OrderController extends Controller
         if ($userId) {
             $carts = Cart::where('user_id', $userId)->with('product')->get();
         }
+        $categories = Category::with('children')->whereNull('parent_id')->get();
 
         $cartCount = $carts->sum('quantity');
+        $wishlistCount = WishList::where('user_id',$userId)->count();
 
         // $wishLists = WishList::with(['product', 'productVariant', 'attributeValues.attribute'])
         //     ->where('user_id', $userId)
         //     ->get();
         // dd($wishLists);
 
-
-        return view('client.products.wishlist', compact('wishLists', 'carts', 'cartCount'));
+        $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
+        return view('client.products.wishlist', compact('pages','wishLists', 'categories', 'carts', 'cartCount', 'wishlistCount'));
     }
 
     public function addWishList(Request $request)
     {
+        Log::info('test',$request->all());
         // Kiểm tra xác thực người dùng
         $userId = auth()->id();
         if (!$userId) {
@@ -591,7 +611,8 @@ class OrderController extends Controller
         if ($wishlist) {
             // Nếu sản phẩm đã tồn tại trong wishlist, thực hiện xóa
             $wishlist->delete();
-            // return response()->json(['success' => 'Product removed from wishlist']);
+            $count=WishList::count();
+            return response()->json(['status' => false,'count'=>$count]);
         } else {
             // Nếu sản phẩm chưa tồn tại trong wishlist, thực hiện thêm mới
             WishList::create([
@@ -599,8 +620,8 @@ class OrderController extends Controller
                 'product_id' => $request->input('product_id'),
                 'product_variants_id' => $request->input('product_variants_id'),
             ]);
-
-            return response()->json(['in_wishlist' => true]);
+            $count=WishList::count();
+            return response()->json(['status' => true ,'count'=>$count]);
         }
     }
 
@@ -703,6 +724,13 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Tổng đơn hàng chưa đủ điều kiện áp dụng mã giảm giá. Bạn cần mua thêm sản phẩm có giá trị tối thiểu là ' . number_format($coupon->min_order_value, 0, ',', '.') . ' đ.',
+            ]);
+        }
+
+        if($coupon->usage_limit ==0){
+            return response()->json([
+                'success' => false,
+                'message' => 'Số lần sử dụng đã hết'
             ]);
         }
 

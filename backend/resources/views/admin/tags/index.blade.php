@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Thẻ
+@endsection
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -9,7 +12,7 @@
                 'title' => 'thẻ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'thẻ', 'url' => '#'],
+                    ['name' => 'Thẻ', 'url' => '#'],
                 ],
             ])
 
@@ -21,30 +24,25 @@
                                 <div class="col-sm">
                                     <div>
                                         <a href="{{ route('admin.tags.index') }}">
-                                            <h5 class="card-title mb-0">Tags List</h5>
+                                            <h5 class="card-title mb-0">Danh sách thẻ</h5>
                                         </a>
-                                    </div>
-                                </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <button class="btn btn-soft-danger" id="deleteMultipleBtn" style="display: none;">
-                                            <i class="ri-delete-bin-5-fill"></i>
-                                        </button>
-                                        <a href="{{ route('admin.tags.create') }}" class="btn btn-success add-btn"
-                                            id="create-btn"><i class="ri-add-line align-bottom me-1"></i> Add Tags</a>
-                                        <a href="{{ route('admin.tags.create') }}" class="btn btn-info"><i
-                                                class="ri-file-download-line align-bottom me-1"></i> Import</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @if (session('success'))
+                            <div class="w-full alert alert-success " style="margin-bottom: 20px">
+                                {{ session('success') }}
+                            </div>
+                        @endif
                         <div class="card-body border-bottom-dashed border-bottom">
                             <form method="GET" action="{{ route('admin.tags.index') }}" id="search-form">
                                 <div class="row g-3">
                                     <div class="col-xl-3">
                                         <div class="search-box">
-                                                <input type="text" class="form-control search" name="search" placeholder="Nhập từ khóa tìm kiếm..."
-                                                    value="{{ request()->input('search') }}">
+                                            <input type="text" class="form-control search" name="search"
+                                                placeholder="Nhập từ khóa tìm kiếm..."
+                                                value="{{ request()->input('search') }}">
                                         </div>
                                     </div>
                                     <!--end col-->
@@ -53,8 +51,8 @@
                                             <div class="col-sm-3">
                                                 <div>
                                                     <!-- Nút Filters bây giờ là nút submit của form tìm kiếm -->
-                                                    <button type="submit" form="search-form" class="btn btn-primary w-100">
-                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                    <button type="submit" form="search-form" class="btn btn-primary">
+                                                        <i class="ri-equalizer-fill me-2 align-bottom"></i>Tìm
                                                     </button>
                                                 </div>
                                             </div>
@@ -63,9 +61,15 @@
                                     <div class="col-xl-4">
                                         <div class="row g-4 d-flex justify-content-end">
                                             <div class="col-sm-auto">
-                                                <a href="{{ route('admin.tags.deleted') }}" class="btn btn-soft-danger">
-                                                    <i class="ri-delete-bin-2-line"></i>Thùng rác
+                                                <button class="btn btn-soft-danger me-2" id="deleteMultipleBtn" style="display: none;">
+                                                    <i class="ri-delete-bin-5-fill  align-bottom"></i>
+                                                </button>
+                                                <a href="{{ route('admin.tags.create') }}" class="btn btn-success me-2 add-btn"
+                                                    id="create-btn"><i class="ri-add-line align-bottom"></i> Thêm mới</a>
+                                                <a href="{{ route('admin.tags.deleted') }}" class="btn btn-warning">
+                                                    <i class="ri-delete-bin-2-line align-bottom"></i> Thùng rác
                                                 </a>
+
                                             </div>
                                         </div>
                                     </div>
@@ -86,40 +90,41 @@
                                                     </div>
                                                 </th>
                                                 <th>ID</th>
-                                                <th data-sort="carrier_name">Tag Name</th>
-                                                <th data-sort="action">Action</th>
+                                                <th data-sort="carrier_name">Tên thẻ</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
-                                        @foreach ($tags as $item)
+                                        @foreach ($tags as $key => $value)
                                             <tbody class="list form-check-all">
                                                 <tr>
                                                     <th scope="row">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox" name="chk_child"
-                                                                value="{{ $item->id }}">
+                                                                value="{{ $value->id }}">
                                                         </div>
                                                     </th>
-                                                    <td>{{ $item->id }}</td>
-                                                    <td class="carrier_name">{{ $item->name }}</td>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td class="carrier_name">{{ $value->name }}</td>
                                                     <td>
                                                         <ul class="list-inline hstack gap-2 mb-0">
-                                                            <li class="list-inline-item edit" data-bs-toggle="tooltip"
+                                                            <li class="list-inline-itvalueem edit" data-bs-toggle="tooltip"
                                                                 data-bs-trigger="hover" data-bs-placement="top"
                                                                 title="Edit">
-                                                                <a href="{{ route('admin.tags.edit', $item->id) }}"
+                                                                <a href="{{ route('admin.tags.edit', $value->id) }}"
                                                                     class="text-primary d-inline-block edit-item-btn">
                                                                     <i class="ri-pencil-fill fs-16"></i>
                                                                 </a>
                                                             </li>
-                                                            <form action="{{ route('admin.tags.destroy', $item->id) }}"
-                                                                method="post">
+                                                            <button class="btn btn-link text-danger p-0" title="Xóa"
+                                                                onclick="confirmDelete('{{ $value->id }}', '{{ $value->name }}')">
+                                                                <i
+                                                                    class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                            </button>
+                                                            <form id="deleteForm-{{ $value->id }}"
+                                                                action="{{ route('admin.tags.destroy', $value->id) }}"
+                                                                method="POST" style="display:none;">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button onclick="return confirm('Bạn có chắc chắn không?')"
-                                                                    type="submit"
-                                                                    style="border: none; background: none; padding: 0; cursor: pointer; color: #F06549;">
-                                                                    <i class="ri-delete-bin-5-fill fs-16"></i>
-                                                                </button>
                                                             </form>
                                                         </ul>
                                                     </td>
@@ -131,13 +136,13 @@
                                 <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
                                     <div class="results-info ms-3">
                                         <p class="pagination mb-0">
-                                            Showing
+                                            Hiển thị
                                             {{ $tags->firstItem() }}
-                                            to
+                                            đến
                                             {{ $tags->lastItem() }}
-                                            of
+                                            của
                                             {{ $tags->total() }}
-                                            results
+                                            kết quả
                                         </p>
                                     </div>
                                     <div class="pagination-wrap me-3">
@@ -195,6 +200,32 @@
                                         </nav>
                                     </div>
                                 </div>
+
+                                {{-- modal --}}
+                                <div class="modal fade flip" id="deleteModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body text-center">
+                                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                                                    colors="primary:#405189,secondary:#f06548"
+                                                    style="width:90px;height:90px"></lord-icon>
+                                                <div class="mt-4 text-center">
+                                                    <h4 id="modalTitle">Bạn có chắc chắn muốn xóa thẻ này?
+                                                    </h4>
+                                                    <p class="text-muted fs-14 mb-4" id="modalName"></p>
+                                                    <div class="hstack gap-2 justify-content-center remove mt-3">
+                                                        <button
+                                                            class="btn btn-link btn-ghost-success fw-medium text-decoration-none"
+                                                            id="deleteRecord-close" data-bs-dismiss="modal">
+                                                            <i class="ri-close-line me-1 align-middle"></i> Đóng
+                                                        </button>
+                                                        <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -220,11 +251,16 @@
             }
         }
     </script>
-     <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxes = document.querySelectorAll('input[name="chk_child"]');
             const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
             const checkAll = document.getElementById('checkAll');
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            const modalTitle = document.getElementById('modalTitle');
+            const modalName = document.getElementById('modalName');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
             // Kiểm tra checkbox và hiển thị/ẩn nút xóa nhiều
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -233,27 +269,36 @@
                     checkAll.checked = Array.from(checkboxes).every(cb => cb.checked);
                 });
             });
+
             // Thêm sự kiện cho checkbox "Chọn tất cả"
             checkAll.addEventListener('change', function() {
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = checkAll.checked;
                 });
-                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' :
-                    'none';
+                deleteMultipleBtn.style.display = checkAll.checked ? 'inline-block' : 'none';
             });
-            // Thêm sự kiện click cho nút xóa nhều
+
+            // Thêm sự kiện click cho nút xóa nhiều
             deleteMultipleBtn.addEventListener('click', function() {
                 const selectedIds = Array.from(checkboxes)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
 
                 if (selectedIds.length === 0) {
-                    alert('Vui lòng chọn ít nhất một thuộc tính để xóa.');
+                    alert('Vui lòng chọn ít nhất một thẻ để xóa.');
                     return;
                 }
 
-                const action = 'soft_delete_tags';
-                if (confirm('Bạn có chắc chắn muốn xóa những thuộc tính đã chọn không?')) {
+                // Hiển thị danh sách các thẻ được chọn trong modal
+                modalTitle.innerText = 'Bạn có chắc chắn muốn xóa những thẻ này?';
+
+                // Hiển thị modal
+                deleteModal.show();
+
+                // Xử lý khi xác nhận xóa
+                confirmDeleteBtn.onclick = function() {
+                    const action = 'soft_delete_tags';
+
                     $.ajax({
                         url: `{{ route('admin.tags.deleteMultiple') }}`,
                         method: 'POST',
@@ -263,20 +308,44 @@
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
-                            alert(response.message);
-                            location.reload();
+                            // Hiển thị thông báo từ server
+                            if (response.message) {
+                                $('#messageBox').text(response.message).show().fadeOut(
+                                5000); // Hiển thị thông báo và ẩn sau 5 giây
+                            }
+                            location.reload(); // Reload trang sau khi xử lý xong
                         },
                         error: function(xhr) {
                             console.log(xhr);
+                            let errorMessage = 'Có lỗi xảy ra';
                             if (xhr.responseJSON && xhr.responseJSON.message) {
-                                alert('Có lỗi xảy ra: ' + xhr.responseJSON.message);
+                                errorMessage = 'Có lỗi xảy ra: ' + xhr.responseJSON.message;
                             } else {
-                                alert('Có lỗi xảy ra: ' + xhr.statusText);
+                                errorMessage = 'Có lỗi xảy ra: ' + xhr.statusText;
                             }
+                            $('#messageBox').text(errorMessage).show().fadeOut(
+                            5000); // Hiển thị thông báo lỗi và ẩn sau 5 giây
                         }
                     });
-                }
+
+                    // Đóng modal sau khi gửi yêu cầu
+                    deleteModal.hide();
+                };
+
+
             });
         });
+
+        function confirmDelete(nameId, name) {
+            document.getElementById('modalName').innerText = `Thẻ: ${name}`;
+            const deleteBtn = document.getElementById('confirmDeleteBtn');
+
+            deleteBtn.onclick = function() {
+                document.getElementById(`deleteForm-${nameId}`).submit();
+            };
+
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
     </script>
 @endsection

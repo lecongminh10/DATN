@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Danh Sách Đơn Hàng
+@endsection
 @section('libray_css')
     <!-- Sweet Alert css-->
     <link href="{{ asset('theme/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -67,8 +70,8 @@ if (!function_exists('isStatus')) {
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
-                                        <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16"></i></button>
-                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-danger"><i class="ri-delete-bin-5-fill fs-16"></i> Thùng rác</a>
+                                        <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-16 align-bottom"></i></button>
+                                        <a href="{{ route('admin.orders.listTrashOrder') }}" class="btn btn-warning"><i class="ri-delete-bin-5-fill fs-16 align-bottom"></i> Thùng rác</a>
                                     </div>
                                 </div>
                             </div>
@@ -87,15 +90,15 @@ if (!function_exists('isStatus')) {
                                     <!-- Date Filter -->
                                     <div class="col-xxl-2 col-sm-6">
                                         <div>
-                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Select date" value="{{ request('date') }}">
+                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Chọn ngày" value="{{ request('date') }}">
                                         </div>
                                     </div>
                                     <!-- Status Filter -->
                                     <div class="col-xxl-2 col-sm-4">
                                         <div>
                                             <select class="form-control" name="status" data-choices data-choices-search-false id="idStatus">
-                                                <option class="bg-light" value="" disabled>Status</option>
-                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All</option>
+                                                <option class="bg-light" value="" disabled>Trạng thái</option>
+                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tất cả</option>
                                                 <option value="Chờ xác nhận" {{ request('status') == 'Chờ xác nhận' ? 'selected' : '' }}>Chờ xác nhận</option>
                                                 <option value="Đã xác nhận" {{ request('status') == 'Đã xác nhận' ? 'selected' : '' }}>Đã xác nhận</option>
                                                 <option value="Đang giao" {{ request('status') == 'Đang giao' ? 'selected' : '' }}>Đang giao</option>
@@ -132,37 +135,37 @@ if (!function_exists('isStatus')) {
                             <div>
                                 <ul class="nav nav-tabs nav-tabs-custom nav-success mb-3" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active py-3" data-bs-toggle="tab" id="All" href="#all" role="tab" aria-selected="true">
+                                        <a class="nav-menu nav-link active py-3" data-bs-toggle="tab" id="All" href="#all" role="tab" aria-selected="true">
                                             <i class="ri-store-2-fill me-1 align-bottom"></i> All Orders
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Chờ xác nhận" href="#choxacnhan" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Chờ xác nhận" href="#choxacnhan" role="tab" aria-selected="false">
                                             <i class="ri-file-list-3-line me-1 align-bottom"></i> Chờ xác nhận
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đã xác nhận" href="#daxacnhan" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đã xác nhận" href="#daxacnhan" role="tab" aria-selected="false">
                                             <i class="ri-checkbox-line me-1 align-bottom"></i> Đã xác nhận
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đang giao" href="#danggiao" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đang giao" href="#danggiao" role="tab" aria-selected="false">
                                             <i class="ri-truck-line me-1 align-bottom"></i> Đang giao
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Hoàn thành" href="#hoanthanh" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Hoàn thành" href="#hoanthanh" role="tab" aria-selected="false">
                                             <i class="ri-checkbox-circle-line me-1 align-bottom"></i> Hoàn thành
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Hàng thất lạc" href="#hangthatlac" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Hàng thất lạc" href="#hangthatlac" role="tab" aria-selected="false">
                                             <i class="ri-spam-3-line me-1 align-bottom"></i> Hàng thất lạc
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-3" data-bs-toggle="tab" id="Đã hủy" href="#dahuy" role="tab" aria-selected="false">
+                                        <a class="nav-menu nav-link py-3" data-bs-toggle="tab" id="Đã hủy" href="#dahuy" role="tab" aria-selected="false">
                                             <i class="ri-close-circle-line me-1 align-bottom"></i> Đã hủy
                                         </a>
                                     </li>
@@ -177,15 +180,15 @@ if (!function_exists('isStatus')) {
                                                         <input class="form-check-input" type="checkbox" id="checkAll" value="0">
                                                     </div>
                                                 </th>
-                                                <th class="sort" data-sort="stt">STT</th>
-                                                <th class="sort" data-sort="customer_email">Khách hàng </th>
-                                                <th class="sort" data-sort="code">Mã</th>
-                                                <th class="sort" data-sort="total_price">Tổng giá</th>
-                                                <th class="sort" data-sort="payment">Phương thức thanh toán</th>
-                                                <th class="sort" data-sort="transport">Mã giao dịch</th>
-                                                <th class="sort" data-sort="status">Trạng thái</th>
-                                                <th class="sort" data-sort="created_at">Ngày mua</th>
-                                                <th class="sort" data-sort="action">Hành động</th>
+                                                <th data-sort="stt">STT</th>
+                                                <th data-sort="customer_email">Khách hàng </th>
+                                                <th data-sort="code">Mã</th>
+                                                <th data-sort="total_price">Tổng giá</th>
+                                                <th data-sort="payment">Phương thức thanh toán</th>
+                                                <th data-sort="transport">Mã giao dịch</th>
+                                                <th data-sort="status">Trạng thái</th>
+                                                <th data-sort="created_at">Ngày mua</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -573,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Bắt sự kiện khi nhấp tab
-    document.querySelectorAll('.nav-link').forEach(tab => {
+    document.querySelectorAll('.nav-menu').forEach(tab => {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
             let status = this.id; // Lấy status từ ID của tab

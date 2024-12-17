@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Chi tiết bài viết
+@endsection
 @section('content')
 
     {{-- <style>
@@ -14,10 +16,10 @@
         <div class="container-fluid">
             <!-- start page title -->
             @include('admin.layouts.component.page-header', [
-                'title' => 'Chi tiết Blog',
+                'title' => 'Bài viết',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Blogs', 'url' => '#'],
+                    ['name' => 'Chi tiết bài viết', 'url' => '#'],
                 ],
             ])
             <div class="row">
@@ -39,16 +41,6 @@
                                 <label for="title" class="form-label fw-semibold">Tiêu đề</label>
                                 <input type="text" id="title" class="form-control border-0 bg-white p-3 shadow-sm"
                                     value="{{ $blog->title }}" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="content" class="form-label fw-semibold">Nội dung</label>
-                                <div class="col-md-12">
-                                    <div class="form-control border-0 bg-white p-3 shadow-sm">
-                                        <p id="content" class="mb-0">
-                                            {{ $blog->content }}
-                                        </p>
-                                    </div>
-                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="content" class="form-label fw-semibold">Slug</label>
@@ -89,6 +81,17 @@
                                         @else
                                             <p class="mb-0">Chưa có ảnh</p>
                                         @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="content" class="form-label fw-semibold">Nội dung</label>
+                                <div class="col-md-12">
+                                    <div class="form-control border-0 bg-white p-3 shadow-sm">
+                                        <p id="content" class="mb-0">
+                                            {!! $blog->content !!} 
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -144,16 +147,15 @@
                                 <div class="col-md-12">
                                     <div class="form-control border-0 bg-white p-3 shadow-sm">
                                         <p id="content" class="mb-0">
-                                            {{ $blog->created_at }}
+                                            {{ $blog->created_at->format('H:i d-m-Y') }}
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="text-end mb-3">
-                            <a href="{{ route('admin.blogs.index') }}" class="btn btn-secondary btn w-sm"><i
-                                    class="ri-arrow-left-line"></i> Quay lại</a>
+                        <div class="text-start mb-3">
+                            <a href="{{ route('admin.blogs.index') }}" class="btn btn-primary btn w-sm"> Quay lại</a>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thùng Rác
+@endsection
 @section('libray_css')
     <!-- Sweet Alert css-->
     <link href="{{ asset('theme/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -39,21 +42,13 @@ if (!function_exists('isStatus')) {
         <div class="container-fluid">
 
             <!-- start page title -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Orders</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                                <li class="breadcrumb-item active">Orders Trash </li>
-                            </ol>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+            @include('admin.layouts.component.page-header', [
+                    'title' => 'Đơn hàng',
+                    'breadcrumb' => [
+                        ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                        ['name' => 'Đơn hàng', 'url' => '#']
+                    ]
+                ])
             <!-- end page title -->
 
             <div class="row">
@@ -62,13 +57,13 @@ if (!function_exists('isStatus')) {
                         <div class="card-header border-0">
                             <div class="row align-items-center gy-3">
                                 <div class="col-sm">
-                                    <h5 class="card-title mb-0">Order Trash</h5>
+                                    <h5 class="card-title mb-0">Thùng rác</h5>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex gap-1 flex-wrap">
                                         <button id="restorySelected" class="btn btn-info waves-effect waves-light d-none"><i class="ri-pencil-fill fs-12"></i></button>
                                         <button id="deleteSelected" class="btn btn-soft-danger d-none"><i class="ri-delete-bin-5-fill fs-12"></i></button>
-                                        <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary"><i class="las la-arrow-left fs-15"></i> Quay lại</a>
+                                        <a href="{{ route('admin.orders.listOrder') }}" class="btn btn-primary"> Quay lại</a>
                                     </div>
                                 </div>
                             </div>
@@ -80,14 +75,14 @@ if (!function_exists('isStatus')) {
                                     <!-- Search -->
                                     <div class="col-xxl-5 col-sm-6">
                                         <div class="search-box">
-                                            <input type="text" name="search" class="form-control search" placeholder="Search for order ID, customer, order status or something..." value="{{ request('search') }}">
+                                            <input type="text" name="search" class="form-control search" placeholder="Tìm kiếm ..." value="{{ request('search') }}">
                                             <i class="ri-search-line search-icon"></i>
                                         </div>
                                     </div>
                                     <!-- Date Filter -->
                                     <div class="col-xxl-2 col-sm-6">
                                         <div>
-                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Select date" value="{{ request('date') }}">
+                                            <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="d-m-Y" id="demo-datepicker" placeholder="Chọn ngày" value="{{ request('date') }}">
                                         </div>
                                     </div>
                                     <!-- Status Filter -->
@@ -95,7 +90,7 @@ if (!function_exists('isStatus')) {
                                         <div>
                                             <select class="form-control" name="status" id="idStatus">
                                                 <option value="" disabled>Status</option>
-                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All</option>
+                                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tất cả</option>
                                                 <option value="Chờ xác nhận" {{ request('status') == 'Chờ xác nhận' ? 'selected' : '' }}>Chờ xác nhận</option>
                                                 <option value="Đã xác nhận" {{ request('status') == 'Đã xác nhận' ? 'selected' : '' }}>Đã xác nhận</option>
                                                 <option value="Đang giao" {{ request('status') == 'Đang giao' ? 'selected' : '' }}>Đang giao</option>
@@ -109,7 +104,7 @@ if (!function_exists('isStatus')) {
                                     <div class="col-xxl-1 col-sm-4">
                                         <div>
                                             <button id="filterButton" type="submit" class="btn btn-primary w-100">
-                                                <i class="ri-equalizer-fill fs-13 align-bottom"></i> Filters
+                                                <i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm
                                             </button>
                                         </div>
                                     </div>
@@ -128,15 +123,15 @@ if (!function_exists('isStatus')) {
                                                         <input class="form-check-input" type="checkbox" id="checkAll" value="0">
                                                     </div>
                                                 </th>
-                                                <th class="sort" data-sort="stt">STT</th>
-                                                <th class="sort" data-sort="customer_email">Customer</th>
-                                                <th class="sort" data-sort="code">CODE</th>
-                                                <th class="sort" data-sort="total_price">Price total</th>
-                                                <th class="sort" data-sort="payment">Payment Method</th>
-                                                <th class="sort" data-sort="transport">Transport</th>
-                                                <th class="sort" data-sort="status">Status</th>
-                                                <th class="sort" data-sort="created_at">Order date</th>
-                                                <th class="sort" data-sort="action">Action</th>
+                                                <th data-sort="stt">STT</th>
+                                                <th data-sort="customer_email">Khách hàng </th>
+                                                <th data-sort="code">Mã</th>
+                                                <th data-sort="total_price">Tổng giá</th>
+                                                <th data-sort="payment">Phương thức thanh toán</th>
+                                                <th data-sort="transport">Mã giao dịch</th>
+                                                <th data-sort="status">Trạng thái</th>
+                                                <th data-sort="created_at">Ngày mua</th>
+                                                <th data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -183,8 +178,7 @@ if (!function_exists('isStatus')) {
                                     <div class="noresult" style="display: none">
                                         <div class="text-center">
                                             <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:75px;height:75px"></lord-icon>
-                                            <h5 class="mt-2">Sorry! No Result Found</h5>
-                                            <p class="text-muted">We've searched more than 150+ Orders We did not find any orders for you search.</p>
+                                            <h5 class="mt-2">Xin lỗi! Không tìm thấy kết quả</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -260,7 +254,7 @@ if (!function_exists('isStatus')) {
                                         </div>
                                         <div class="modal-footer">
                                             {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button> --}}
-                                            <button type="button" class="btn btn-primary" id="reloadRestory">Quay về</button>
+                                            <button type="button" class="btn btn-primary" id="reloadRestory">Quay lại</button>
                                         </div>
                                     </div>
                                 </div>

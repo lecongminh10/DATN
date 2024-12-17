@@ -12,8 +12,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\FooterController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\CarrierController;
 use App\Http\Controllers\InfoBoxController;
 use App\Http\Controllers\PayMentController;
@@ -25,6 +27,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PopuphomeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BannerLeftController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserReviewController;
 use App\Http\Controllers\Client\HomeController;
@@ -32,6 +35,7 @@ use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ExportImportController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\InfoBoxFooterController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PaymentGatewayController;
@@ -40,8 +44,8 @@ use App\Http\Controllers\AdminActivityLogController;
 use App\Http\Controllers\CategoryStatisticsController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\RefundController;
 
 Route::group([
     'prefix' => 'admin',
@@ -107,7 +111,7 @@ Route::group([
         // Xóa cứng carrier
         Route::delete('/{id}/hard-delete', [CarrierController::class, 'hardDeleteCarrier'])->name('carriers.hardDelete');
         // Xóa nhiều
-        Route::post('/delete-multiple', [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
+        Route::post('/carriers/delete-multiple', [CarrierController::class, 'deleteMuitpalt'])->name('carriers.deleteMultiple');
     });
 
     //tags
@@ -220,8 +224,8 @@ Route::group([
         Route::get('/home',                                [HomeController::class, 'index'])->name('home.index');
     });
     Route::get('/categoryTrashed', [CategoryController::class, 'trashed'])->name('categories.trashed');
-    Route::get('/categoriesTrashed/search', [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
-    Route::post('/categories/trashed/restore-multiple', [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
+    // Route::get('/categories/trashed/search', [CategoryController::class, 'searchTrashed'])->name('categories.trashed.search');
+    Route::put('/categories/trashed/restore-multiple', [CategoryController::class, 'restoreMultiple'])->name('categories.trashed.restoreMultiple');
     Route::post('/categories/trashed/hard-delete-multiple', [CategoryController::class, 'hardDeleteMultiple'])->name('categories.trashed.hardDeleteMultiple');
 
     //Users
@@ -310,34 +314,21 @@ Route::group([
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('blogs.index');
         Route::get('/create', [BlogController::class, 'create'])->name('blogs.create');
-        Route::post('/', [BlogController::class, 'store'])->name('blogs.store');
+        Route::post('/store', [BlogController::class, 'store'])->name('blogs.store');
         Route::get('{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
-        Route::put('/{id}', [BlogController::class, 'update'])->name('blogs.update'); // Route để cập nhật blog
-        Route::get('/{id}', [BlogController::class, 'show'])->name('blogs.show');
-        Route::delete('/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
-        Route::get('/shortdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
-        Route::get('/trash', [BlogController::class, 'trash'])->name('blogs.trash'); // Route để hiển thị danh sách blog đã xóa
-        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); // Khôi phục blog đã xóa
-        // Route cho danh sách blog đã bị xóa mềm
-        // Route::get('/listsotfdeleted', [BlogController::class, 'showSoftDelete'])->name('blogs.deleted');
-
-        // Route khôi phục blog đã xóa mềm
-        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore');
-
-        // Route cho xóa cứng blog
+        Route::put('/update/{id}', [BlogController::class, 'update'])->name('blogs.update');
+        Route::get('/show/{id}', [BlogController::class, 'show'])->name('blogs.show');
+        Route::get('/listTrash', [BlogController::class, 'listTrash'])->name('blogs.listTrash'); 
+        Route::delete('/delete/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+        Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('blogs.restore'); 
         Route::delete('/{id}/hard-delete', [BlogController::class, 'hardDeleteBlog'])->name('blogs.hardDelete');
-
-        // Route cho xóa mềm blog values (nếu có blog values)
         Route::delete('/values/{id}', [BlogController::class, 'destroyValue'])->name('blogValues.destroy');
-
-        // Route cho xóa cứng blog values (nếu có blog values)
         Route::delete('/values/{id}/hard-delete', [BlogController::class, 'hardDeleteBlogValue'])->name('blogValues.hardDelete');
-
-        // Route cho xóa nhiều blog
         Route::post('/delete-multiple', [BlogController::class, 'deleteMultiple'])->name('blogs.deleteMultiple');
-
         Route::get('/blogshortdeleted', [BlogController::class, 'showSotfDelete'])->name('blogs.blogshortdeleted');
     });
+    Route::get('/admin/blog/delete_trashfer', [BlogController::class, 'listTrashDelete'])->name('blogs.listTrash'); 
+
 
     // statistic
     Route::prefix('statistics')->as('statistics.')->group(
@@ -396,29 +387,89 @@ Route::group([
         }
     );
 
-        //////popuphome
-        Route::group(
-            [
-                'prefix' => 'popuphome',
-                'as' => 'popuphome.',
-            ],
-            function () {
-                Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
-                Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
-            }
-        );
-        
-        //////comment
-        Route::group(
-            [
-                'prefix' => 'comment',
-                'as' => 'comment.',
-            ],
-            function () {
-                Route::get('/', [UserReviewController::class, 'index'])->name('index');
-                Route::post('/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
-            }
-        );
+    //////info_boxes_footer
+    Route::group(
+        [
+            'prefix' => 'info-boxes-footer',
+            'as' => 'info_boxes_footer.',
+        ],
+        function () {
+            Route::get('info_boxes_footer/edit', [InfoBoxFooterController::class, 'edit'])->name('edit');
+            Route::post('info_boxes_footer/update', [InfoBoxFooterController::class, 'update'])->name('update');
+        }
+    );
+
+    //////banner
+    Route::group(
+        [
+            'prefix' => 'banner',
+            'as' => 'banner.',
+        ],
+        function () {
+            // banner chính
+            Route::get('list_banner_main', [BannerController::class, 'list_banner_main'])->name('list_banner_main');
+
+            Route::get('banner_main_view_add', [BannerController::class, 'banner_main_view_add'])->name('banner_main_view_add');
+            Route::post('banner_main_add', [BannerController::class, 'banner_main_add'])->name('banner_main_add');
+
+            Route::get('banner_main/edit/{id}', [BannerController::class, 'banner_main_edit'])->name('banner_main_edit');
+            Route::post('banner_main/update/{id}', [BannerController::class, 'banner_main_update'])->name('banner_main_update');
+
+            // banner phụ
+            Route::get('banner_extra/edit', [BannerController::class, 'banner_extra_edit'])->name('banner_extra_edit');
+            Route::post('banner_extra/update', [BannerController::class, 'banner_extra_update'])->name('banner_extra_update');
+            // banner left
+            Route::get('list_banner', [BannerLeftController::class, 'index'])->name('index');
+
+            Route::get('banner_left_add', [BannerLeftController::class, 'create'])->name('banner_left_add');
+            Route::post('banner_left_add', [BannerLeftController::class, 'store'])->name('banner_left_add');
+
+
+            Route::get('banner_left/edit/{id}', [BannerLeftController::class, 'edit'])->name('banner_left_edit');
+            Route::post('banner_left/update/{id}', [BannerLeftController::class, 'update'])->name('banner_left_update');
+        }
+    );
+    // brand
+    Route::group(
+        [
+            'prefix' => 'brand',
+            'as' => 'brand.',
+        ],
+        function () {
+            // brand
+            Route::get('list', [BrandController::class, 'index'])->name('index');
+
+            Route::get('add', [BrandController::class, 'create'])->name('add');
+            Route::post('add', [BrandController::class, 'store'])->name('add');
+
+            Route::get('edit/{id}', [BrandController::class, 'edit'])->name('edit');
+            Route::post('update/{id}', [BrandController::class, 'update'])->name('update');
+        }
+    );
+
+    //////popuphome
+    Route::group(
+        [
+            'prefix' => 'popuphome',
+            'as' => 'popuphome.',
+        ],
+        function () {
+            Route::get('popuphome/edit', [PopuphomeController::class, 'edit'])->name('edit');
+            Route::post('popuphome/update', [PopuphomeController::class, 'update'])->name('update');
+        }
+    );
+
+    //////comment
+    Route::group(
+        [
+            'prefix' => 'comment',
+            'as' => 'comment.',
+        ],
+        function () {
+            Route::get('/', [UserReviewController::class, 'index'])->name('index');
+            Route::post('/{id}/reply', [UserReviewController::class, 'reply'])->name('reply');
+        }
+    );
 
     // Export Import
     Route::group([

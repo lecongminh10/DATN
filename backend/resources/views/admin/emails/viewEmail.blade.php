@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
-
+@section('title')
+    Gửi email
+@endsection
 @section('libray_css')
     <!-- quill css -->
     <link href="{{ asset('theme/assets/libs/quill/quill.core.css') }}" rel="stylesheet" type="text/css" />
@@ -31,21 +33,13 @@
 <div class="page-content">
     <div class="container-fluid">
         <!-- start page title -->
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Email</h4>
-
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
-                            <li class="breadcrumb-item active">Email</li>
-                        </ol>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+        @include('admin.layouts.component.page-header', [
+                'title' => 'Email',
+                'breadcrumb' => [
+                    // ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
+                    ['name' => 'Email', 'url' => '#'],
+                ],
+            ])
         <!-- end page title -->
 
         <div class="row">
@@ -114,11 +108,7 @@
 
                             <input type="hidden" name="scheduleDate" id="hiddenScheduleDate">
                 
-                            <!-- Footer Buttons -->
                             <div class="d-flex justify-content-start align-items-center">
-                                <button type="reset" class="btn btn-ghost-danger waves-effect waves-light me-3">Xóa bỏ</button>
-                
-                                <!-- Send Button with Dropdown -->
                                 <div class="btn-group">
                                     <button type="submit" class="btn btn-success">Gửi</button>
                                     <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" style="border-radius: 0 4px 4px 0 " data-bs-toggle="dropdown" aria-expanded="false">
@@ -132,10 +122,11 @@
                                         </li>
                                     </ul>
                                 </div>
+                                <button type="reset" class="btn btn-ghost-danger waves-effect waves-light me-3">Xóa bỏ</button>
                             </div>
                         </div>
                     </form>
-                    <!-- Schedule Send Modal -->
+                    <!-- Modal đặt lịch gửi -->
                     <div class="modal fade" id="scheduleSendModal" tabindex="-1" aria-labelledby="scheduleSendLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">

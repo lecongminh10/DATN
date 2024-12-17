@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('title')
-    Danh sách đơn hàng
+    Danh sách hoàn trả
 @endsection
 @section('style_css')
     <style>
@@ -68,10 +68,10 @@
     <div class="page-content">
         <div class="container-fluid">
             @include('admin.layouts.component.page-header', [
-                'title' => 'Danh mục ',
+                'title' => 'Hoàn trả ',
                 'breadcrumb' => [
                     ['name' => 'Quản lí', 'url' => 'javascript: void(0);'],
-                    ['name' => 'Danh mục', 'url' => '#'],
+                    ['name' => 'Hoàn trả', 'url' => '#'],
                 ],
             ])
             <div class="row">
@@ -102,7 +102,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                    <button type="submit" class="btn btn-primary"><i class="ri-equalizer-fill fs-13 align-bottom"></i> Tìm</button>
                                 </div>
                             </form>
 
@@ -203,8 +203,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" id="submit-refund">Xác nhận</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-success" id="submit-refund">Xác nhận</button>
                 </div>
             </div>
         </div>
@@ -225,7 +225,7 @@
                     <div id="image-preview-container" class="row gx-2 gy-2"></div> <!-- Ảnh nhỏ sẽ được hiển thị tại đây -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>

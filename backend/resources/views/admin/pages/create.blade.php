@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 
+@section('title')
+    Thêm Mới Trang
+@endsection
 @section('libray_css')
     <!-- dropzone css -->
     <link rel="stylesheet" href="{{ asset('theme/assets/libs/dropzone/dropzone.css') }}" type="text/css" />
@@ -54,6 +57,9 @@
             color: #545454;
             line-height: 1.5;
         }
+        .cke_notification {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -75,13 +81,13 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0 flex-grow-1">Thông tin</h4>
+                                        <h4 class="card-title mb-0 flex-grow-1">Thêm mới trang</h4>
                                     </div>
                                     <div class="card-body">
                                         <div class="live-preview">
                                             <div class="row gy-4">
                                                 <div class="col-md-12">
-                                                    <label for="name" class="form-label">Name <span
+                                                    <label for="name" class="form-label">Tên <span
                                                             class="text-danger">*</span></label>
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
@@ -91,11 +97,11 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="description" class="form-label">Description</label>
+                                                    <label for="description" class="form-label">Mô tả</label>
                                                     <textarea class="form-control" name="description" id="description">{{ old('description') }}</textarea>
                                                 </div>
                                                 <div class="col-md-8 mt-3">
-                                                    <label for="permalink" class="form-label">Permalink <span
+                                                    <label for="permalink" class="form-label">Liên kết cố định <span
                                                             class="text-danger">*</span></label>
                                                     <textarea class="form-control @error('permalink') is-invalid @enderror" name="permalink" id="permalink" readonly>{{ old('permalink') }}</textarea>
                                                     @error('permalink')
@@ -112,8 +118,8 @@
                                                         <div class="card-body">
                                                             <select class="form-select @error('is_active') is-invalid @enderror" name="is_active">
                                                                 <option value="" disabled {{ old('is_active') ? '' : 'selected' }}>-- Chọn Trạng thái --</option>
-                                                                <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Active</option>
-                                                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
+                                                                <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Kích hoạt</option>
+                                                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Không kích hoạt</option>
                                                             </select>
                                                             @error('is_active')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -122,23 +128,23 @@
                                                     </div>
                                                     <div class="card mt-3">
                                                         <div class="card-header">
-                                                            <h4 class="card-title mb-0">Template<span
+                                                            <h4 class="card-title mb-0">Bản mẫu<span
                                                                     class="text-danger">*</span></h4>
                                                         </div>
                                                         <div class="card-body">
                                                             <select
                                                                 class="form-select @error('template') is-invalid @enderror"
                                                                 id="templateSelect" name="template">
-                                                                <option value="" disabled selected>-- Chọn Template --
+                                                                <option value="" disabled selected>-- Chọn bản mẫu --
                                                                 </option>
                                                                 <option value="default"
                                                                     {{ old('template') == 'default' ? 'selected' : '' }}>
-                                                                    Default</option>
+                                                                    Mặc định</option>
                                                                 <option value="coming_soon"
                                                                     {{ old('template') == 'coming_soon' ? 'selected' : '' }}>
-                                                                    Coming Soon</option>
+                                                                   Ra mắt</option>
                                                                 <option value="blog"
-                                                                    {{ old('template') == 'blog' ? 'selected' : '' }}>Blog
+                                                                    {{ old('template') == 'blog' ? 'selected' : '' }}>Bài viết 
                                                                 </option>
                                                             </select>
                                                             @error('template')
@@ -156,7 +162,7 @@
                                 <!-- Content -->
                                 <div class="card mt-3">
                                     <div class="card-header align-items-center d-flex">
-                                        <h4 class="card-title mb-0">Content <span class="text-danger">*</span></h4>
+                                        <h4 class="card-title mb-0">Nội dung <span class="text-danger">*</span></h4>
                                     </div>
                                     <div class="card-body">
                                         <textarea name="content" id="editor-container" style="height: 300px;">{{ old('content') }}</textarea>
@@ -199,9 +205,8 @@
                                 <!-- Submit Button -->
                                 <div class="card mt-3">
                                     <div class="card-header align-items-center d-flex">
-                                        <button class="btn btn-primary" type="submit" id="uploadButton">Save</button>
-                                        <a href="{{ route('admin.pages.index') }}" class="btn btn-primary mx-2">Trở
-                                            về</a>
+                                        <button class="btn btn-success me-2" type="submit" id="uploadButton" style="cursor: pointer;">Thêm mới</button>
+                                        <a href="{{ route('admin.pages.index') }}" class="btn btn-primary mx-2" style="cursor: pointer;">Quay lại</a>
                                     </div>
                                 </div>
                             </div>
@@ -222,14 +227,14 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="seoTitle" class="form-label">SEO Title</label>
+                        <label for="seoTitle" class="form-label">Tiêu đề SEO</label>
                         <input type="text" class="form-control @error('seo_title') is-invalid @enderror" id="seoTitle" name="seo_title" value="{{ old('seo_title') }}">
                         @error('seo_title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="seoDescription" class="form-label">SEO Description</label>
+                        <label for="seoDescription" class="form-label">Mô tả SEO</label>
                         <textarea class="form-control @error('seo_description') is-invalid @enderror" id="seoDescription" name="seo_description" rows="3">{{ old('seo_description') }}</textarea>
                         @error('seo_description')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -276,10 +281,23 @@
         CKEDITOR.replace('editor-container');
     </script>
     <script>
-        document.getElementById('name').addEventListener('input', function() {
-            const name = this.value.trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-            document.getElementById('permalink').textContent = `http://127.0.0.1:8000/${name}`;
+        document.getElementById('name').addEventListener('input', function () {
+            // Hàm chuyển đổi tất cả các ký tự có dấu thành không dấu
+            const removeAccents = (str) => {
+                return str
+                    .normalize("NFD") // Chuẩn hóa Unicode để tách ký tự gốc và dấu
+                    .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu (như sắc, huyền, hỏi, ngã, nặng)
+            };
+
+            const name = this.value.trim();
+            const slug = removeAccents(name) // Loại bỏ dấu
+                .toLowerCase() // Chuyển thành chữ thường
+                .replace(/[^a-zA-Z0-9]+/g, '-') // Thay thế các ký tự không hợp lệ bằng dấu '-'
+                .replace(/^-+|-+$/g, ''); // Xóa dấu '-' ở đầu và cuối chuỗi
+
+            document.getElementById('permalink').textContent = `http://127.0.0.1:8000/${slug}`;
         });
+
     </script>
     <script>
         // Get a reference to the modal element
