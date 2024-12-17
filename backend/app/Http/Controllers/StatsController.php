@@ -123,7 +123,6 @@ class StatsController extends Controller
                 return null;
             })->filter();
 
-        // Tỉ lệ hàng trả lại
         $returnRateData = OrderItem::select(
             'order_items.product_id',
             DB::raw('COUNT(*) as total_orders')
@@ -147,25 +146,20 @@ class StatsController extends Controller
                 return null;
             })->filter();
 
-        // Xu hướng bán hàng
         $salesTrends = OrderItem::select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(quantity) as total'))
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();
-        //Tổng sản phẩm ban đầu
         $totalProductStockAndBuycount = Product::select(DB::raw('SUM(stock) + SUM(buycount) as total'))
             ->whereBetween('created_at', [$startDate, $endDate])
             ->value('total') ?? 0;
-        // Tổng tồn kho
-        // Tổng tồn kho
         $totalProductStock = Product::whereBetween('created_at', [$startDate, $endDate])
-            ->sum('stock') ?? 0;  // Nếu không có dữ liệu thì trả về 0
+            ->sum('stock') ?? 0;
 
         // Tổng bán ra
         $totalProductBuyCount = Product::whereBetween('created_at', [$startDate, $endDate])
-            ->sum('buycount') ?? 0;  // Nếu không có dữ liệu thì trả về 0
-
+            ->sum('buycount') ?? 0; 
 
         $data = collect(compact(
             'salesTrends',
