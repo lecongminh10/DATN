@@ -133,7 +133,7 @@
         }
 
         td .attribute-item span {
-            font-weight: normal; /* Chữ mỏng cho giá trị thuộc tính */
+            font-weight: normal;
             color: #333; /* Màu chữ dễ nhìn */
         }
 
