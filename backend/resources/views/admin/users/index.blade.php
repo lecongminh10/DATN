@@ -38,7 +38,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Thêm ô tìm kiếm -->
                         </div>
                         @if (session('success'))
                             <div class="w-full alert alert-success " style="margin-bottom: 20px">
@@ -118,9 +117,7 @@
                                                 </td>
                                                 <td>
                                                     <?php
-                                                    // Lấy đường dẫn ảnh từ Storage
                                                     $image = $value->profile_picture ? Storage::url($value->profile_picture) : null;
-                                                    // Đường dẫn ảnh mặc định từ mạng
                                                     $defaultImage = 'https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png';
                                                     ?>
                                                     <img src="{{ $image ? $image : $defaultImage }}" alt="Ảnh đại diện"
@@ -270,9 +267,8 @@
                                 forceDelete: forceDeleteValue,
                             }),
                         })
-                        .then(response => response.text()) // Nhận dữ liệu dưới dạng text
+                        .then(response => response.text()) 
                         .then(data => {
-                            // Tải lại trang để hiển thị thông báo
                             location.reload();
                         })
                         .catch(error => {
