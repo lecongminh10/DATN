@@ -64,19 +64,15 @@ class UserController extends Controller
         try {
             $data = $request->validated();
 
-            // Hash mật khẩu
             $data['password'] = bcrypt($data['password']);
 
-            // Xử lý ảnh đại diện nếu có
             if ($request->hasFile('profile_picture')) {
                 $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
                 $data['profile_picture'] = $imagePath;
             }
 
-            // Tạo người dùng
             $user = $this->userService->createUser($data);
 
-            // Ghi nhật ký
             $logDetails = sprintf(
                 'Thêm người dùng: Tên - %s',
                 $user->username
@@ -87,7 +83,6 @@ class UserController extends Controller
                 $logDetails
             ));
 
-            // Xử lý quyền
             if ($user && $request->has('permissions')) {
                 $user->permissionsValues()->attach($request->input('permissions'));
             }
@@ -139,13 +134,11 @@ class UserController extends Controller
 
         $user = $this->userService->updateUser($id, $data);
 
-        //nhật ký
         $logDetails = sprintf(
             'Sửa người dùng: Tên - %s',
             $user->username,
         );
 
-        // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
             'Sửa',
@@ -163,7 +156,7 @@ class UserController extends Controller
             $path = $request->file('profile_picture')->storeAs('profile_pictures', $filename, 'public');
 
             $user->profile_picture = $path;
-            $user->save(); // Lưu lại thông tin người dùng cùng ảnh mới
+            $user->save(); 
         }
 
         if ($request->has('id_permissions')) {
@@ -176,10 +169,8 @@ class UserController extends Controller
 
     public function destroy($id, Request $request)
     {
-        // Tìm người dùng cần xóa
         $user = User::findOrFail($id);
 
-        // Kiểm tra xem có yêu cầu xóa cứng (force delete) không
         if ($request->forceDelete === 'true') {
             $user->forceDelete();
         } else {
@@ -188,13 +179,11 @@ class UserController extends Controller
             $user->delete(); 
         }
 
-        // Nhật ký hành động
         $logDetails = sprintf(
             'Xóa người dùng: Tên - %s',
             $user->username
         );
 
-        // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
             'Xóa',
