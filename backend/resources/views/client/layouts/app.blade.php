@@ -285,7 +285,7 @@
                         'Content-Type': 'application/json', 
                     },
                 })
-                .then(response => response.json()) // Parse the JSON response
+                .then(response => response.json())
                 .then(data => {
                     console.log('Coupons session cleared:', data); // Log success
                 })
