@@ -280,7 +280,7 @@
 
         window.addEventListener('beforeunload', function() {
             fetch('/clear-coupons', {
-                    method: 'GET', // Set the request method to GET
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json', // Set the content type to JSON
                     },
