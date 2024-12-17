@@ -26,16 +26,6 @@
                 <div class="card-body">
                     <form action="{{ route('admin.permissions.store') }}" method="POST">
                         @csrf
-                        {{-- @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif --}}
-
                         <div class="mb-3">
                             <label for="permission_name" class="form-label">Tên <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('permission_name') is-invalid @enderror" id="permission_name" name="permission_name" >
@@ -83,7 +73,6 @@
 
     <script>
         document.getElementById('add-more').addEventListener('click', function() {
-            // Template for a new row of permission values
             var newPermissionValue = `
                 <div class="row mb-3 permission-value-item">
                     <div class="col-md-6">
@@ -96,7 +85,6 @@
                     </div>
                 </div>`;
 
-            // Append the new row to the container
             document.getElementById('permission-values-container').insertAdjacentHTML('beforeend', newPermissionValue);
         });
     </script>
