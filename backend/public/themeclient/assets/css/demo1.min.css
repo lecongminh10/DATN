@@ -5832,7 +5832,7 @@ figure .porto-loading-icon {
 }
 .ratings-container .ratings:before {
     content: "";
-    color: #6a6a6d;
+    color: #ffc107;
 }
 .product-select-group {
     display: flex;
