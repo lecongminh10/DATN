@@ -101,7 +101,7 @@
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
-                                        
+
                                         <!-- Submit Button -->
                                         <div class="text-start  mb-3">
                                             <button type="submit" class="btn btn-success w-sm me-2">Cập nhật
@@ -119,3 +119,4 @@
         </div>
     </div>
 @endsection
+
