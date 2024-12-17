@@ -115,7 +115,7 @@
         }
 
         td .product-details {   
-            margin-top: 10px; /* Tạo khoảng cách giữa tên sản phẩm và chi tiết sản phẩm */
+            margin-top: 10px;
         }
 
         td .attribute-list {
