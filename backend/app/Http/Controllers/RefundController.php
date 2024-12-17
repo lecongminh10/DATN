@@ -20,22 +20,16 @@ class RefundController extends Controller
     }
     public function index(Request $request)
     {
-        // Truyền dữ liệu tìm kiếm từ request vào service
-        $filters = $request->all(); // Lấy tất cả các tham số tìm kiếm từ request
+        $filters = $request->all();
 
-        // Gọi hàm tìm kiếm từ service và lấy dữ liệu hoàn trả
         $refunds = $this->refundService->searchRefund($filters);
 
-        // Trả về view cùng với dữ liệu refund
         return view('admin.orders.refund', compact('refunds'));
     }
 
     public function store(Request $request)
     {
-        // Hiển thị dữ liệu để debug (chỉ để kiểm tra)
-        // dd($request->all());
 
-        // Kiểm tra nếu đơn hàng đã được xử lý hoàn trả trước đó
         $existingRefund = Refund::where('order_id', $request->order_code)
             ->where('status', Refund::STATUS_PENDING)
             ->first();
@@ -44,10 +38,8 @@ class RefundController extends Controller
             return redirect()->back()->with('error', 'Đơn hàng này đã được yêu cầu hoàn trả trước đó.');
         }
 
-        // Xử lý lưu dữ liệu hoàn trả
         $order = $this->orderService->getDataOrderRefund($request->order_code);
 
-        // Xử lý ảnh
         $imagePaths = [];
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $file) {
@@ -56,7 +48,6 @@ class RefundController extends Controller
             }
         }
 
-        // Lưu yêu cầu hoàn trả vào database
         Refund::create([
             'user_id' => auth()->id(),
             'order_id' => $order->order_id,
