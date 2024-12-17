@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\OrderRepository;
+use App\Services\AddressServices;
 use App\Services\OrderLocationService;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
@@ -39,16 +40,20 @@ class OrderController extends Controller
     protected $orderService;
     protected $orderLocationService;
     public $order;
-
+    protected $addressService;
+    
     public function __construct(
         OrderService $orderService,
         OrderLocationService $orderLocationService,
         Order $order,
+        AddressServices $addressService,
 
     ) {
         $this->orderService = $orderService;
         $this->orderLocationService = $orderLocationService;
         $this->order = $order;
+        $this->addressService = $addressService;
+
     }
     /**
      * Display a listing of the resource.
@@ -165,6 +170,11 @@ class OrderController extends Controller
 
         // Lấy địa chỉ giao hàng của đơn hàng
         $orderLocation = $this->orderLocationService->getAll()->where('order_id', $id)->first();
+        
+        $address = Address::where('user_id', $user->id)
+        ->where('active', true)
+        ->first();
+        // dd($address);
 
         // Lấy danh sách sản phẩm trong đơn hàng
         $orderItems = $data->items()->with(['product'])->get();
@@ -204,7 +214,8 @@ class OrderController extends Controller
             'shippingFee',
             'images', 
             'payment',
-            'paymentGateway'
+            'paymentGateway',
+            'address'
         ));
     }
 

@@ -21,7 +21,7 @@ class TagController extends Controller
     {
         $this->tagService = $tagService;
     }
-    public function index(TagRequest $request)
+    public function index(Request $request)
     {
         $search = $request->input('search');
         $perPage = $request->input('perPage', 10);

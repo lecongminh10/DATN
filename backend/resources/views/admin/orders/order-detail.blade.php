@@ -162,122 +162,85 @@
                 <!--end card-->
                 <div class="card">
                     <div class="card-header">
-                        <div class="d-sm-flex align-items-center">
-                            <h5 class="card-title flex-grow-1 mb-0">Trạng thái đơn hàng</h5>
-                            <div class="flex-shrink-0 mt-2 mt-sm-0">
-                                <a href="javascript:void(0);" class="btn btn-soft-info btn-sm mt-2 mt-sm-0"><i class="ri-map-pin-line align-middle me-1"></i> Change Address</a>
-                                <a href="javascript:void(0);" class="btn btn-soft-danger btn-sm mt-2 mt-sm-0"><i class="mdi mdi-archive-remove-outline align-middle me-1"></i> Cancel Order</a>
-                            </div>
-                        </div>
+                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i>Địa chỉ giao hàng</h5>
                     </div>
                     <div class="card-body">
-                        <div class="profile-timeline">
-                            <div class="accordion accordion-flush" id="accordionFlushExample">
-                                <div class="accordion-item border-0">
-                                    <div class="accordion-header" id="headingOne">
-                                        <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0 avatar-xs">
-                                                    <div class="avatar-title bg-success rounded-circle">
-                                                        <i class="ri-shopping-bag-line"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="fs-15 mb-0 fw-semibold">Order Placed - <span class="fw-normal">Wed, 15 Dec 2021</span></h6>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body ms-2 ps-5 pt-0">
-                                            <h6 class="mb-1">An order has been placed.</h6>
-                                            <p class="text-muted">Wed, 15 Dec 2021 - 05:34PM</p>
+                        <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
+                            <li class="fw-medium fs-14">{{ $user->username }}</li>
+                            <li>{{ $user->phone_number }}</li>
+                            <li>{{ $address->specific_address }}</li>
+                            <li>{{ $address->ward }} - {{ $address->district }}</li>
+                            <li>{{ $address->city }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <!--end card-->
 
-                                            <h6 class="mb-1">Seller has processed your order.</h6>
-                                            <p class="text-muted mb-0">Thu, 16 Dec 2021 - 5:48AM</p>
-                                        </div>
-                                    </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="ri-secure-payment-line align-bottom me-1 text-muted"></i>Chi tiết thanh toán</h5>
+                    </div>
+                    <div class="card-body">
+                        @if ($payment)
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="flex-shrink-0">
+                                    <p class="text-muted mb-0">Giao dịch:</p>
                                 </div>
-                                <div class="accordion-item border-0">
-                                    <div class="accordion-header" id="headingTwo">
-                                        <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0 avatar-xs">
-                                                    <div class="avatar-title bg-success rounded-circle">
-                                                        <i class="mdi mdi-gift-outline"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="fs-15 mb-1 fw-semibold">Packed - <span class="fw-normal">Thu, 16 Dec 2021</span></h6>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body ms-2 ps-5 pt-0">
-                                            <h6 class="mb-1">Your Item has been picked up by courier partner</h6>
-                                            <p class="text-muted mb-0">Fri, 17 Dec 2021 - 9:45AM</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-item border-0">
-                                    <div class="accordion-header" id="headingThree">
-                                        <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0 avatar-xs">
-                                                    <div class="avatar-title bg-success rounded-circle">
-                                                        <i class="ri-truck-line"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="fs-15 mb-1 fw-semibold">Shipping - <span class="fw-normal">Thu, 16 Dec 2021</span></h6>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body ms-2 ps-5 pt-0">
-                                            <h6 class="fs-14">RQK Logistics - MFDS1400457854</h6>
-                                            <h6 class="mb-1">Your item has been shipped.</h6>
-                                            <p class="text-muted mb-0">Sat, 18 Dec 2021 - 4.54PM</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-item border-0">
-                                    <div class="accordion-header" id="headingFour">
-                                        <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse" href="#collapseFour" aria-expanded="false">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0 avatar-xs">
-                                                    <div class="avatar-title bg-light text-success rounded-circle">
-                                                        <i class="ri-takeaway-fill"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="fs-14 mb-0 fw-semibold">Out For Delivery</h6>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="accordion-item border-0">
-                                    <div class="accordion-header" id="headingFive">
-                                        <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse" href="#collapseFile" aria-expanded="false">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0 avatar-xs">
-                                                    <div class="avatar-title bg-light text-success rounded-circle">
-                                                        <i class="mdi mdi-package-variant"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="fs-14 mb-0 fw-semibold">Delivered</h6>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <h6 class="mb-0">
+                                        {{ substr($payment->transaction_id, 0, 20) }}...
+                                    </h6>
                                 </div>
                             </div>
-                            <!--end accordion-->
-                        </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="flex-shrink-0">
+                                    <p class="text-muted mb-0">Phương thức thanh toán:</p>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    @php
+                                        if($paymentGateway->name == 'Cash'){
+                                            $paymentGateway = 'Thanh toán sau khi nhận hàng ';
+                                        }else{
+                                            $paymentGateway = 'Thanh toán online VNPay';
+                                        }
+                                    @endphp
+                                        <h6 class="mb-0">{{ $paymentGateway }}</h6>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="flex-shrink-0">
+                                    <p class="text-muted mb-0">Trạng thái thanh toán:</p>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    @php
+                                        if($payment->status=='completed'){
+                                            $payementStatus = 'Đã thanh toán';
+                                        }
+                                        if($payment->status=='pending')
+                                        {
+                                            $payementStatus = 'Chưa thanh toán';
+                                        }
+                                        if($payment->status=='failed')
+                                        {
+                                            $payementStatus = 'Đã hủy thanh toán';
+                                        }
+                                        if($payment->status=='refunded')
+                                        {
+                                            $payementStatus = 'Đã hoàn trả';
+                                        }
+                                    @endphp
+                                    <h6 class="mb-0">{{$payementStatus}}</h6>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <p class="text-muted mb-0">Tổng số tiền:</p>
+                                </div>
+                                <div class="flex-grow-1 ms-2">
+                                    <h6 class="mb-0">{{ number_format($payment->amount, 0, ',', '.') }} ₫</h6>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <!--end card-->
@@ -342,93 +305,17 @@
                         <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Địa chỉ cửa hàng</h5>
                     </div>
                     <div class="card-body">
-                        {{-- <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-                            <li class="fw-medium fs-14">{{ $admin->username }}</li>
-                            <li>{{ $admin->phone_number }}</li>
-                            <li>{{ $admin->address_line }}</li>
-                            <li>{{ $admin->address_line2 }}</li>
-                            <li>{{ $admin->address_line1 }}</li>
-                        </ul> --}}
-
                         <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-                            <li class="fw-medium fs-14">Admin</li>
+                            <li class="fw-medium fs-14">ZonMart</li>
                             <li>09864736527</li>
-                            <li>753 Đường Võ Chí Công</li>
-                            <li>Phường Xuân La</li>
-                            <li>Quận Tây Hồ, Hà Nội</li>
+                            <li>13 P. Trịnh Văn Bô</li>
+                            <li>Trường Cao đẳng FPT Polytechnic</li>
+                            <li>Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội</li>
                         </ul>
                     </div>
                 </div>
                 <!--end card-->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i>Địa chỉ giao hàng</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-                            <li class="fw-medium fs-14">{{ $user->username }}</li>
-                            <li>{{ $user->phone_number }}</li>
-                            <li>{{ $orderLocation->address }}</li>
-                            <li>{{ $orderLocation->ward }} - {{ $orderLocation->district }}</li>
-                            <li>{{ $orderLocation->city }}</li>
-                        </ul>
-                    </div>
-                </div>
-                <!--end card-->
-
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="ri-secure-payment-line align-bottom me-1 text-muted"></i>Chi tiết thanh toán</h5>
-                    </div>
-                    <div class="card-body">
-                        @if ($payment)
-                            <div class="d-flex align-items-center mb-2">
-                                <div class="flex-shrink-0">
-                                    <p class="text-muted mb-0">Giao dịch:</p>
-                                </div>
-                                <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-0">
-                                        {{ substr($payment->transaction_id, 0, 20) }}...
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <div class="flex-shrink-0">
-                                    <p class="text-muted mb-0">Phương thức thanh toán:</p>
-                                </div>
-                                <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-0">{{ $paymentGateway->name }}</h6>
-                                </div>
-                            </div>
-                            @if ($paymentGateway->gateway_type == 'online')
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="flex-shrink-0">
-                                        <p class="text-muted mb-0">Tên chủ thẻ:</p>
-                                    </div>
-                                    <div class="flex-grow-1 ms-2">
-                                        <h6 class="mb-0">Joseph Parker</h6>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="flex-shrink-0">
-                                        <p class="text-muted mb-0">Số thẻ:</p>
-                                    </div>
-                                    <div class="flex-grow-1 ms-2">
-                                        <h6 class="mb-0">xxxx xxxx xxxx 2456</h6>
-                                    </div>
-                                </div>
-                            @endif
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <p class="text-muted mb-0">Tổng số tiền:</p>
-                                </div>
-                                <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-0">{{ number_format($payment->amount, 0, ',', '.') }} ₫</h6>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+                
                 <!--end card-->
             </div>
             <!--end col-->

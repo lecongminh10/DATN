@@ -7,7 +7,14 @@
 <div class="products-slider owl-carousel owl-theme dots-top dots-small m-b-1 pb-1 appear-animate"
     data-animation-name="fadeInUpShorter">
     @foreach ($products as $item)
-        <div class="product-default inner-quickview inner-icon" data-product-id="{{ $item->id }}" data-product-variant-id="{{ $item->product_variant_id }}">
+        @php
+          $minPriceVariant = $item->variants
+            ->sortBy(function($variant) {
+                return $variant->price_modifier ?? $variant->original_price;
+            })
+            ->first();
+        @endphp
+        <div class="product-default inner-quickview inner-icon" data-product-id="{{ $item->id }}"  data-product-variant-id="{{ $minPriceVariant ? $minPriceVariant->id : '' }}">
             <figure class="img-effect">
                 <a href="{{route('client.showProduct',$item->id)}}">
                     @php
