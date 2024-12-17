@@ -738,6 +738,11 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
+                        var stockAlertMmessage = document.querySelector('#stock-alert-message');
+                        if(response.status==false){
+                            stockAlertMmessage.innerHTML=response.message;
+                            showCartModal();
+                        }
                         showCartModal();
                     },
                     error: function(xhr) {
