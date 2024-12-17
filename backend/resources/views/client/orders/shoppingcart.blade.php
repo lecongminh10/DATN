@@ -310,7 +310,7 @@
                     </div><!-- End .cart-summary -->
                 </div><!-- End .col-lg-4 -->
             </div><!-- End .row -->
-        </div><!-- End .container -->
+        </div>
 
         <div class="mb-6"></div><!-- margin -->
     </main><!-- End .main -->
@@ -397,7 +397,6 @@
                     console.error('Error:', error);
                 });
         }
-
         // Update cart
         document.querySelector('.btn-update-cart').addEventListener('click', function() {
             const cartItems = [];
@@ -411,7 +410,6 @@
                     quantity
                 }); // Đưa vào mảng cartItems
             });
-
             // Gửi yêu cầu cập nhật
             fetch('update-cart', {
                     method: 'POST',
