@@ -290,7 +290,7 @@
                     console.log('Coupons session cleared:', data); // Log success
                 })
                 .catch(error => {
-                    console.error('Error:', error); // Log any error
+                    console.error('Error:', error); 
                 });
         });
 
