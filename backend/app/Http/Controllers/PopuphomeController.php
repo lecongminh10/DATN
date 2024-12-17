@@ -12,7 +12,6 @@ class PopuphomeController extends Controller
 
     public function edit()
     {
-        // Lấy thông tin từ DB
         $popuphome = Popuphome::first();
         return view('admin.popuphome.edit', compact('popuphome'));
     }
@@ -29,17 +28,15 @@ class PopuphomeController extends Controller
         if (!$popuphome) {
             $popuphome = new Popuphome();
         }
-        
+
         $popuphome->title = $request->input('title');
         $popuphome->description = $request->input('description');
         $popuphome->active = $request->has('active') ? 1 : 0;
 
         if ($request->hasFile('image')) {
-            // Xóa ảnh cũ nếu có
             if ($popuphome->image) {
                 Storage::delete($popuphome->image);
             }
-            // Lưu ảnh mới và lấy đường dẫn
             $path = $request->file('image')->store(self::PATH_UPLOAD);
             $popuphome->image = $path;
         }
