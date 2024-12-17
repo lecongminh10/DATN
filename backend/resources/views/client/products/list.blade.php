@@ -331,7 +331,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                                     aria-expanded="{{ $category->children->isNotEmpty() ? 'true' : 'false' }}"
                                                     aria-controls="widget-category-{{ $category->id }}">
                                                     {{ $category->name }}
-                                                    <span class="products-count">({{ $category->products_count }})</span>
+                                                    {{-- <span class="products-count">({{ $category->products_count }})</span> --}}
                                                 </a>
                                                 <span class="toggle" data-target="#widget-category-{{ $category->id }}"></span>
                                             @endif
@@ -342,7 +342,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                                             <li>
                                                                 <a href="{{ route('client.products.Category', $subcategory->id) }}">
                                                                     {{ $subcategory->name }}
-                                                                    <span class="products-count">({{ $subcategory->products_count }})</span>
+                                                                    {{-- <span class="products-count">({{ $subcategory->products_count }})</span> --}}
                                                                 </a>
                                                             </li>
                                                         @endforeach
@@ -511,7 +511,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             }
                         });
                     } else {
-                        alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
+                        alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
                     }
                 });
             });
