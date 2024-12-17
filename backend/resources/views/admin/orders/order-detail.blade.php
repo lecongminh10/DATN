@@ -168,9 +168,9 @@
                         <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
                             <li class="fw-medium fs-14">{{ $user->username }}</li>
                             <li>{{ $user->phone_number }}</li>
-                            <li>{{ $orderLocation->address }}</li>
-                            <li>{{ $orderLocation->ward }} - {{ $orderLocation->district }}</li>
-                            <li>{{ $orderLocation->city }}</li>
+                            <li>{{ $address->specific_address }}</li>
+                            <li>{{ $address->ward }} - {{ $address->district }}</li>
+                            <li>{{ $address->city }}</li>
                         </ul>
                     </div>
                 </div>
@@ -197,7 +197,14 @@
                                     <p class="text-muted mb-0">Phương thức thanh toán:</p>
                                 </div>
                                 <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-0">{{ $paymentGateway->name }}</h6>
+                                    @php
+                                        if($paymentGateway->name == 'Cash'){
+                                            $paymentGateway = 'Thanh toán sau khi nhận hàng ';
+                                        }else{
+                                            $paymentGateway = 'Thanh toán online VNPay';
+                                        }
+                                    @endphp
+                                        <h6 class="mb-0">{{ $paymentGateway }}</h6>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center mb-2">
@@ -298,20 +305,12 @@
                         <h5 class="card-title mb-0"><i class="ri-map-pin-line align-middle me-1 text-muted"></i> Địa chỉ cửa hàng</h5>
                     </div>
                     <div class="card-body">
-                        {{-- <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-                            <li class="fw-medium fs-14">{{ $admin->username }}</li>
-                            <li>{{ $admin->phone_number }}</li>
-                            <li>{{ $admin->address_line }}</li>
-                            <li>{{ $admin->address_line2 }}</li>
-                            <li>{{ $admin->address_line1 }}</li>
-                        </ul> --}}
-
                         <ul class="list-unstyled vstack gap-2 fs-13 mb-0">
-                            <li class="fw-medium fs-14">Admin</li>
+                            <li class="fw-medium fs-14">ZonMart</li>
                             <li>09864736527</li>
-                            <li>753 Đường Võ Chí Công</li>
-                            <li>Phường Xuân La</li>
-                            <li>Quận Tây Hồ, Hà Nội</li>
+                            <li>13 P. Trịnh Văn Bô</li>
+                            <li>Trường Cao đẳng FPT Polytechnic</li>
+                            <li>Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội</li>
                         </ul>
                     </div>
                 </div>
