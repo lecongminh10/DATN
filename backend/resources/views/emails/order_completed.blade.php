@@ -119,7 +119,7 @@
         }
 
         td .attribute-list {
-            padding: 0; /* Loại bỏ padding mặc định nếu có */
+            padding: 0; 
             margin: 0; /* Loại bỏ khoảng cách mặc định */
         }
 
