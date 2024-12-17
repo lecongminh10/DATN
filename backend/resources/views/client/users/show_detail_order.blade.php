@@ -470,7 +470,7 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Modal xác nhận hủy đơn hàng -->
+
                     <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
@@ -494,7 +494,6 @@
                         </div>
                     </div>
 
-                    <!-- Đánh giá sản phẩm Modal -->
                     <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
@@ -590,12 +589,10 @@
                 const value = this.getAttribute('data-value');
                 document.getElementById('rating').value = value;
 
-                // Xóa lớp 'selected' khỏi tất cả các sao
                 document.querySelectorAll('.star-rating .star').forEach(function(s) {
                     s.classList.remove('selected');
                 });
 
-                // Thêm lớp 'selected' cho các sao đã chọn
                 this.classList.add('selected');
                 let previousSibling = this.previousElementSibling;
                 while (previousSibling) {
@@ -618,23 +615,19 @@
 document.getElementById('image').addEventListener('change', function (event) {
     const files = event.target.files;
     const previewContainer = document.getElementById('preview-container');
-    previewContainer.innerHTML = ''; // Xóa nội dung cũ trước khi thêm mới
+    previewContainer.innerHTML = ''; 
 
-    // Duyệt qua các file đã chọn
     Array.from(files).forEach((file, index) => {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
 
             reader.onload = (e) => {
-                // Tạo thẻ div chứa ảnh và nút xóa
                 const previewItem = document.createElement('div');
                 previewItem.classList.add('preview-item');
 
-                // Tạo ảnh
                 const img = document.createElement('img');
                 img.src = e.target.result;
 
-                // Tạo nút xóa
                 const removeBtn = document.createElement('button');
                 removeBtn.classList.add('remove-btn');
                 removeBtn.innerHTML = '×';
