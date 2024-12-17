@@ -99,20 +99,6 @@
                                                 @enderror
                                             </div>
 
-                                            {{-- <div class="mb-3">
-                                                <label class="form-label" for="product-id-select">Post</label>
-                                                <select class="form-control" id="product-id-select" name="post_id[]" multiple>
-                                                    @foreach ($posts as $post)
-                                                        <option value="{{ $post->id }}">
-                                                            {{ $post->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('post_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div> --}}
-
 
                                             <!-- Submit Button -->
                                             <div class="text-start mt-2 mb-3">
