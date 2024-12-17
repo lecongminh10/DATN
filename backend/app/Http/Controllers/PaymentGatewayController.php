@@ -42,7 +42,6 @@ class PaymentGatewayController extends Controller
         try {
             $data = $request->only(['name', 'api_key', 'secret_key', 'gateway_type']);
 
-            // Kiểm tra tên có trùng không
             $existing = PaymentGateway::where('name', $data['name'])->exists();
             if ($existing) {
                 return redirect()->back()->withErrors(['name' => 'Tên đã tồn tại'])->withInput();
@@ -50,7 +49,6 @@ class PaymentGatewayController extends Controller
 
             $paymentGateway = $this->paymentGatewayService->createPaymentGateway($data);
 
-            // Ghi nhật ký hoạt động
             $logDetails = sprintf(
                 'Thêm mới cổng thanh toán: Tên - %s',
                 $paymentGateway->name,
@@ -88,9 +86,8 @@ class PaymentGatewayController extends Controller
         try {
             $data = $request->only(['name', 'api_key', 'secret_key', 'gateway_type']);
 
-            // Kiểm tra tên có trùng với tên khác không
             $existing = PaymentGateway::where('name', $data['name'])
-                ->where('id', '!=', $id) // Loại trừ chính bản ghi đang chỉnh sửa
+                ->where('id', '!=', $id)
                 ->exists();
             if ($existing) {
                 return redirect()->back()->withErrors(['name' => 'Tên đã tồn tại'])->withInput();
@@ -131,7 +128,6 @@ class PaymentGatewayController extends Controller
             $paymentGateway->name,
         );
 
-        // Ghi nhật ký hoạt động
         event(new AdminActivityLogged(
             auth()->user()->id,
             'Xóa',
