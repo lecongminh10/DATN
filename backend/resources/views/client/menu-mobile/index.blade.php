@@ -4,27 +4,6 @@
         <nav class="mobile-nav">
             <ul class="mobile-menu menu-with-icon">
                 <li><a href="{{route('client')}}"><i class="icon-home"></i>Trang chủ</a></li>
-                {{-- <li>
-                    <a href="{{route('client.products')}}" class="sf-with-ul"><i class="sicon-badge"></i>Danh mục</a>
-                    <div class="megamenu megamenu-fixed-width megamenu-3cols">
-                        <div class="row">
-                            @foreach ($categories as $parent)
-                                <ul>
-                                    <div class="col-lg-4">
-                                        <a href="{{ route('client.products.Category',$parent->id) }}" class="nolink pl-0">{{ $parent->name }}</a>
-                                        @if($parent->children->isNotEmpty())
-                                            <ul class="submenu">
-                                                @foreach ($parent->children as $child)
-                                                    <li><a href="{{ route('client.products.Category',$child->id) }}">{{ $child->name }}</a></li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
-                                    </div>
-                                </ul>
-                            @endforeach
-                        </div>
-                    </div>
-                </li> --}}
                 <li>
                     <a href=" {{route('client.products') }}" class="sf-with-ul"><i class="sicon-basket"></i>Sản phẩm</a>
                 </li>
