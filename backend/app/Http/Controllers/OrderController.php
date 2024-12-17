@@ -577,14 +577,14 @@ class OrderController extends Controller
             ->where('user_id', $userId)
             ->get();
         // Trả về phản hồi JSON
-        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng', 'totalQuantity' => $totalQuantity, 'carts' => $carts ,'status' => true]);
+        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng', 'totalQuantity' => $totalQuantity, 'carts' => $carts, 'status' => true]);
     }
 
-    public function wishList()
+    public function wishList(Request $request)
     {
         $userId = auth()->id();
 
-        $wishLists = WishList::with(['product', 'productVariant'])
+        $wishLists = WishList::with(['product', 'product.variants'])
             ->where('user_id', $userId)
             ->get();
 
@@ -597,10 +597,6 @@ class OrderController extends Controller
         $cartCount = $carts->sum('quantity');
         $wishlistCount = WishList::where('user_id', $userId)->count();
 
-        // $wishLists = WishList::with(['product', 'productVariant', 'attributeValues.attribute'])
-        //     ->where('user_id', $userId)
-        //     ->get();
-        // dd($wishLists);
 
         $pages = Page::where('is_active', true)->select('name', 'permalink')->get();
         return view('client.products.wishlist', compact('pages', 'wishLists', 'categories', 'carts', 'cartCount', 'wishlistCount'));

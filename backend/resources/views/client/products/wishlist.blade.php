@@ -68,85 +68,79 @@
             <h2 class="p-2">Danh sách yêu thích</h2>
         </div>
         <div class="wishlist-table-container">
-            <table class="table table-wishlist mb-0">
-                <thead>
-                    <tr>
-                        <th class="thumbnail-col"></th>
-                        <th class="product-col">Sản phẩm</th>
-                        <th class="price-col">Giá</th>
-                        <th class="status-col">Trạng thái</th>
-                        <th class="action-col">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($wishLists->isEmpty())
-                        <tr class="product-row">
-                            <td colspan="5" class="text-center">
-                                <h4>Bạn chưa có sản phẩm yêu thích</h3>
-                            </td>
-                        </tr>
-                    @else
-                        @foreach ($wishLists as $value)
-                        <tr class="product-row">
-                            <td>
-                                <figure class="product-image-container">
-                                    <a href="{{ route('client.showProduct', $value->product->id) }}" class="product-image">
-                                        @php
-                                        if ($value->productVariant && !empty($value->productVariant->variant_image)) {
-                                            $url = $value->productVariant->variant_image; 
+            <div class="row" style="margin-top: -5px">
+                @foreach ($wishLists as $item)
+                    <div class="col-5 col-sm-3">
+                        <div class="product-default">
+                            <figure>
+                                <a href="{{ route('client.showProduct', $item->product->id) }}" class="product-image">
+                                    @php
+                                        if ($item->productVariant && !empty($item->productVariant->variant_image)) {
+                                            $url = $item->productVariant->variant_image; 
                                         } else {
-                                            $mainImage = $value->product->getMainImage(); 
+                                            $mainImage = $item->product->getMainImage(); 
                                             $url = $mainImage && !empty($mainImage->image_gallery) ? $mainImage->image_gallery : 'default-image-path.jpg';
                                         }
-                                        @endphp
-                                        <img src="{{ $url ? Storage::url($url) : asset('default-image-path.jpg') }}" 
-                                            alt="{{ $value->product->name ?? 'No image available' }}" />
-                                    </a>
-
-                                    <a href="javascript:void(0);" class="btn-remove icon-cancel" 
-                                        title="Remove Product" data-id="{{ $value->id }}" 
-                                        onclick="removeFromWishlist({{ $value->id }})"></a>
-                                </figure>
-                            </td>
-                            <td>
-                                <h5 class="product-title">
-                                    <a href="product.html">{{ $value->product->name }}</a>
-                                </h5>
-                            </td>
-                            <td class="price-box">
-                                @if ($value->product && is_null($value->productVariant)) 
-                                    @if (!is_null($value->product->price_sale) && $value->product->price_sale > 0) 
-                                        {{ number_format($value->product->price_sale, 0, ',', '.') }} ₫
-                                    @else
-                                        {{ number_format($value->product->price_regular, 0, ',', '.') }} ₫
-                                    @endif
-                                @elseif ($value->product && $value->productVariant) 
-                                    {{ number_format($value->productVariant->price_modifier, 0, ',', '.') }} ₫
+                                    @endphp
+                                    <img src="{{ $url ? Storage::url($url) : asset('default-image-path.jpg') }}" 
+                                         alt="{{ $item->product->name ?? 'No image available' }}" />
+                                </a>
+                            </figure>
+            
+                            <div class="label-group">
+                                @if ($item->is_hot_deal == 1)
+                                    <div class="product-label label-hot">HOT</div>
                                 @endif
-                            </td>
-                            <td>
-                            @if ($value->product->stock == 0 )
-                            <span class="stock-status1">Hết hàng</span>
-                            @else
-                            <span class="stock-status2">Còn hàng</span>
-                            @endif
-                                
-                            </td>
-                            <td class="">
-                                <a href="{{ route('client.showProduct', $value->product->id) }}" 
-                                    title=""><button class="btn btn-quickview mt-1 mt-md-0">Xem</button></a>
-                                <button 
-                                    class="btn btn-dark btn-add-cart product-type-simple btn-shop" 
-                                    data-product-id="{{ $value->product->id }}" 
-                                    data-product-variant-id="{{ $productVariant->id ?? '' }}">
-                                    Thêm vào giỏ hàng
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
+                            </div>
+            
+                            <div class="product-details">
+                                <h3 class="product-title">
+                                    <a href="{{ route('client.showProduct', $item->product->id) }}">{{ $item->product->name }}</a>
+                                </h3>
+            
+                                <div class="ratings-container">
+                                    <div class="product-ratings">
+                                        <span class="ratings" style="width:{{ $item->product->rating * 20 }}%"></span>
+                                        <span class="tooltiptext tooltip-top">{{ $item->product->rating }} </span>
+                                    </div>
+                                </div>
+
+                                @php
+                                    if (isset($item->product->variants) && $item->product->variants->isNotEmpty()) {
+                                        $minPrice = $item->product->variants->filter(function ($variant) {
+                                            return $variant->price_modifier !== null;
+                                        })->isNotEmpty()
+                                            ? $item->product->variants->min('price_modifier')
+                                            : $item->product->variants->min('original_price');
+                                        
+                                        $maxPrice = $item->product->variants->filter(function ($variant) {
+                                            return $variant->price_modifier !== null;
+                                        })->isNotEmpty()
+                                            ? $item->product->variants->max('price_modifier')
+                                            : $item->product->variants->max('original_price');
+                                    } else {
+                                        $minPrice = $item->price_sale;
+                                        $maxPrice = $item->price_regular;
+                                    }
+                                @endphp
+            
+                                <div class="price-box">
+                                    <span class="new-price" style="color: #08c; font-size: 1em;">
+                                        <span class="new-price" style="color: #08c;  font-size: 1em;">{{number_format($minPrice, 0, ',', '.')}} đ ~ {{number_format($maxPrice, 0, ',', '.')}} đ</span>
+                                    </span>
+                                </div>
+            
+                                <div class="product-action">
+                                    <a href="#" class="btn-icon btn-add-cart add-cart" data-product-id="{{ $item->product->id }}" data-toggle="modal">
+                                        <i class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
         </div><!-- End .cart-table-container -->
 
         {{-- Thông báo --}}

@@ -330,7 +330,7 @@
                                             </div>
                                             <div class="mt-4">
                                                 <div class="alert alert-info">
-                                                    <p class="mb-0"><span class="fw-semibold">NOTES:</span>
+                                                    <p class="mb-0"><span class="fw-semibold">GHI CHÚ:</span>
                                                         <span id="note">{{$order->note}}
                                                         </span>
                                                     </p>
@@ -338,7 +338,7 @@
                                             </div>
                                             <div class="hstack gap-2 justify-content-end d-print-none mt-4">
                                                 {{-- <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Print</a> --}}
-                                                <a href="/" class="btn btn-primary">back</a>
+                                                <a href="/" class="btn btn-primary">Quay lại</a>
                                             </div>
                                         </div>
                                         <!--end card-body-->

@@ -318,7 +318,7 @@
                                 </strong>
                             </li>
                             <li>
-                                Thời giàn bảo hành:
+                                Thời gian bảo hành:
                                 <strong> {{ $data->warranty_period }} tháng</strong>
                             </li>
                             <li>
@@ -542,6 +542,7 @@
 @endsection
 @section('scripte_logic')
     <script>
+  
         (function() {
             var js =
                 "window['__CF$cv$params']={r:'820525e73bc48b57',t:'MTY5OTAyMDA3NC4zNDIwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/61b90d1d/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";
