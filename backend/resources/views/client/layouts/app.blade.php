@@ -287,7 +287,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Coupons session cleared:', data); // Log success
+                    console.log('Coupons session cleared:', data); 
                 })
                 .catch(error => {
                     console.error('Error:', error); 
