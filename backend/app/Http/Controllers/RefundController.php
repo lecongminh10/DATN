@@ -18,7 +18,6 @@ class RefundController extends Controller
         $this->orderService = $orderService;
         $this->refundService = $refundService;
     }
-    // Trong Controller của bạn
     public function index(Request $request)
     {
         // Truyền dữ liệu tìm kiếm từ request vào service
@@ -79,7 +78,7 @@ class RefundController extends Controller
     }
     public function createRefundForm($orderId)
     {
-        $order = Order::findOrFail($orderId); // Tìm đơn hàng theo ID
+        $order = Order::findOrFail($orderId);
         return view('refunds.create', compact('order'));
     }
 }

@@ -37,7 +37,6 @@ class OrderStatisticsController extends Controller
         $totalEarnings = $completedOrders->sum('total_price') ?: 0;
         $totalCanceledOrders = $canceledOrders->count();
         $totalLostOrders = $lostOrders->count();
-
         return view('admin.orders.statistics', compact(
             'totalOrders',
             'totalEarnings',

@@ -3,32 +3,7 @@
 @section('keywords', $meta_keywords)
 @extends('client.layouts.app')
 @section('style_css')
-    <style>
-        /* .icon-wishlist-2 {
-                                                                                     color: #ccc;
-                                                                                     }
-
-                                                                                      .icon-wishlist-filled {
-                                                                                     } */
-
-        /* .wishlist-modal {
-                                                                                                                                                                                                                                            position: fixed;
-                                                                                                                                                                                                                                            right: 20px;
-                                                                                                                                                                                                                                            bottom: 20px;
-                                                                                                                                                                                                                                            background-color: #333;
-                                                                                                                                                                                                                                            color: #fff;
-                                                                                                                                                                                                                                            padding: 10px 15px;
-                                                                                                                                                                                                                                            border-radius: 5px;
-                                                                                                                                                                                                                                            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-                                                                                                                                                                                                                                            z-index: 9999;
-                                                                                                                                                                                                                                            opacity: 0;
-                                                                                transition: opacity 0.3s, bottom 0.3s;
-                                                                                                                                                                                                                                            }
-
-                                                                                                                                                                                                                                            .wishlist-modal.show {
-                                                                                                                                                                                                                                                opacity: 1;
-                                                                                                                                                                                                                                                bottom: 40px;
-                                                                                                                                                                                                                                            } */
+    <style>                                                                                                                                                                                        } */
         #priceBox {
             display: flex;
             align-items: center;

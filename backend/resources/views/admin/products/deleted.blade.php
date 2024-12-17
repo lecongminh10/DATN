@@ -10,7 +10,6 @@
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
-            <!-- start page title -->
             @include('admin.layouts.component.page-header', [
                 'title' => 'Sản phẩm đã xóa',
                 'breadcrumb' => [
