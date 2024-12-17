@@ -169,9 +169,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                 </div>
                             </div>
                         </form>
-                        <!-- End .toolbox-item -->
                     </div>
-                    <!-- End .toolbox-left -->
                 </nav>
 
                 @php
