@@ -454,11 +454,14 @@
                                     <tr>
                                         <td>Loại thanh toán:</td>
                                         <td>
-                                            @if ($value->gateway_name == 'cash')
-                                                Thanh toán tiền mặt
-                                            @else
-                                                {{ $value->gateway_name }}
-                                            @endif
+                                            @php
+                                                if($value->gateway_name == 'Cash'){
+                                                    $paymentGateway = 'Thanh toán sau khi nhận hàng ';
+                                                }else{
+                                                    $paymentGateway = 'Thanh toán online VNPay';
+                                                }
+                                            @endphp
+                                                {{ $paymentGateway }}
                                         </td>
                                     </tr>
                                     <tr>
