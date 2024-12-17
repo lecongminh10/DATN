@@ -40,7 +40,6 @@
     <div class="container mb-2">
         <div class="row mb-3 pb-3">
             <div class="col-lg-9">
-                <!-- Voucher Header -->
                 <div class="container pl-5 pr-5 pb-3 voucher-container">
                     <div class="bg-white p-3 rounded shadow-sm">
                         <div class="voucher-header d-flex justify-content-between mt-3">
@@ -53,7 +52,6 @@
                             </div>
                         </div>
                 
-                        <!-- Voucher Items -->
                         @foreach ($coupons as $key => $item)
                             <div class="voucher-items mt-3">
                                 <div class="voucher-item border p-3 mb-3 d-flex">

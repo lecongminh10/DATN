@@ -50,9 +50,7 @@
                     'nav': false
                 }">
                         @include('client.advertising_bar.slide-home')
-                        <!-- End .home-slide -->
                     </div>
-                    <!-- End .home-slider -->
 
                     <div class="banners-container m-b-2 owl-carousel owl-theme"
                         data-owl-options="{
@@ -69,7 +67,6 @@
                     }
                 }">
                         @include('client.banner.banner2')
-                        <!-- End .banner -->
                     </div>
 
                     @include('client.components-home.products', [
@@ -86,13 +83,10 @@
                         'title' => 'Lượt mua nhiều nhất',
                         'products' => $buyCountProducts,
                     ])
-                    <!-- End .brands-slider -->
                     @include('client.banner.trademark')
                     <div class="row products-widgets">
                         @include('client.banner.product-widgets-home')
-                        <!-- End .col-md-4 -->
                     </div>
-                    <!-- End .row -->
 
                     <hr class="mt-1 mb-3 pb-2">
 
@@ -113,11 +107,8 @@
 
                                         <p>{{ $infoBoxFooter->description_support }}</p>
                                     </div>
-                                    <!-- End .feature-box-content -->
                                 </div>
-                                <!-- End .feature-box -->
                             </div>
-                            <!-- End .col-md-4 -->
 
                             <div class="col-md-4 appear-animate" data-animation-name="fadeInRightShorter"
                                 data-animation-delay="400">
@@ -130,11 +121,8 @@
 
                                         <p>{{ $infoBoxFooter->description_payment }}</p>
                                     </div>
-                                    <!-- End .feature-box-content -->
                                 </div>
-                                <!-- End .feature-box -->
                             </div>
-                            <!-- End .col-md-4 -->
 
                             <div class="col-md-4 appear-animate" data-animation-name="fadeInRightShorter"
                                 data-animation-delay="600">
@@ -147,27 +135,18 @@
 
                                         <p>{{ $infoBoxFooter->description_return }}</p>
                                     </div>
-                                    <!-- End .feature-box-content -->
                                 </div>
-                                <!-- End .feature-box -->
                             </div>
-                            <!-- End .col-md-4 -->
                         </div>
-                        <!-- End .row -->
                     </div>
-                    <!-- End .feature-boxes-container -->
                 </div>
-                <!-- End .col-lg-9 -->
 
                 <div class="sidebar-overlay"></div>
                 <div class="sidebar-toggle custom-sidebar-toggle"><i class="fas fa-sliders-h"></i></div>
                 @include('client.components-home.sidebar')
                 {{-- @include('client.products.search-results') --}}
-                <!-- End .col-lg-3 -->
             </div>
-            <!-- End .row -->
         </div>
-        <!-- End .container -->
     </main>
 @endsection
 @section('scripte_logic')
