@@ -22,19 +22,16 @@ class PaymentGatewayRepository extends BaseRepository
         if ($search) {
             $query->where('name', 'like', '%' . $search . '%');  // Tìm kiếm theo tên
         }
-        return $query->get();  // Trả về kết quả sau khi tìm kiếm
+        return $query->get();  
     }
-
     public function create(array $data)
     {
         return PaymentGateway::create($data);
     }
-
     public function findById($id)
     {
         return PaymentGateway::findOrFail($id);
     }
-
     public function update($id, array $data)
     {
         $paymentGateway = PaymentGateway::findOrFail($id);

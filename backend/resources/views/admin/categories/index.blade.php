@@ -248,6 +248,5 @@
         
     @endsection
     @section('script_libray')
-        <!-- prismjs plugin -->
         <script src="{{ asset('theme/assets/libs/prismjs/prism.js') }}"></script>
     @endsection

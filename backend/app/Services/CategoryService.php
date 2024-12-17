@@ -54,7 +54,7 @@ class CategoryService extends BaseService
             $category = Category::findOrFail($id);
             $category->update($data);
         } else {
-            Category::create($data); // Tạo mới danh mục
+            Category::create($data);
         }
     }
   
