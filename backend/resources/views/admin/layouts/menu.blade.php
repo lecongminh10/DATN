@@ -225,8 +225,7 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.tags.index') }}" class="nav-link{{ request()->routeIs('admin.tags.index') ? 'active' : '' }}" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false">
+                                <a href="{{ route('admin.tags.index') }}" class="nav-link" >
                                     Thẻ
                                 </a>
                             </li>
