@@ -150,7 +150,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                             {{ request('orderby') == 'popularity' ? 'selected' : '' }}>Xem nhiều</option>
                                     </select>
                                 </div>
-                                <!-- End .select-custom -->
+
                             </div>
                         </form>
 
