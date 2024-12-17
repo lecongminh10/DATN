@@ -16,11 +16,9 @@
                 <li> <a href="{{ Auth::check() ? route('users.indexClient') : route('client.login') }}" >
                     Hồ sơ của tôi </a>
                 </li>
-                {{-- <li><a href="demo1-contact.html">Liên hệ</a></li> --}}
                 <li><a href="{{ route('wishList') }}">Mục yêu thích</a></li>
             </ul>
         </nav>
         <!-- End .mobile-nav -->
     </div>
-    <!-- End .mobile-menu-wrapper -->
 </div>
