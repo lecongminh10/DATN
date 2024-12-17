@@ -12,13 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class FeedbackController extends Controller
 {
-    // public function create()
-    // {
-    //     // Logic xử lý khi hiển thị form tạo feedback
-    //     return view('client.feedbacks.create');
-
-    // }
-
     public function create()
     {
         $userId = auth()->id();
@@ -27,10 +20,8 @@ class FeedbackController extends Controller
             ->get();
 
         $cartCount = $carts->sum('quantity');
-        // Lấy thông tin người dùng đang đăng nhập
         $user = Auth::user();
         $wishlistCount = WishList::where('user_id',$userId)->count();
-        // Truyền dữ liệu vào view
         $pages = Page::where('is_active', true) ->select('name', 'permalink')->get();
         return view('client.feedbacks.create', compact('pages','user','carts', 'cartCount','wishlistCount'));
     }
