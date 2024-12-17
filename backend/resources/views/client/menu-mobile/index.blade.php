@@ -18,9 +18,6 @@
                 </li>
                 {{-- <li><a href="demo1-contact.html">Liên hệ</a></li> --}}
                 <li><a href="{{ route('wishList') }}">Mục yêu thích</a></li>
-                {{-- <li><a href="#">Site Map</a></li>
-                <li><a href="cart.html">Cart</a></li>
-                <li><a href="login.html" class="login-link">Log In</a></li> --}}
             </ul>
         </nav>
         <!-- End .mobile-nav -->
