@@ -4,9 +4,6 @@
     Danh Sách Cổng Thanh Toán
 @endsection
 @section('content')
-    <?php
-    // $paymentGateway = ['VNPay', 'Cash'];
-    ?>
     <div class="page-content">
         <div class="container-fluid">
             <div class="col-lg-12">

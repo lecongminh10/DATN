@@ -113,7 +113,6 @@
                                                         @csrf
                                                         @method('DELETE')
                                                     </form>
-                                                    <!-- Hard delete form -->
                                                     <form id="hard-delete-permission-{{ $item->id }}"
                                                         action="{{ route('admin.permissions.destroyPermissionHard', $item->id) }}"
                                                         method="POST" style="display: none;">
@@ -130,7 +129,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div><!--end col-->
+                    </div>
                 </div><!--end row-->
                 <!-- Modal xác nhận xóa -->
                 <div class="modal fade" id="deletePermissionModal" tabindex="-1"
