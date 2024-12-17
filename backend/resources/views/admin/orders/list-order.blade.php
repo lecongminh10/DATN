@@ -185,7 +185,7 @@ if (!function_exists('isStatus')) {
                                                 <th data-sort="code">Mã</th>
                                                 <th data-sort="total_price">Tổng giá</th>
                                                 <th data-sort="payment">Phương thức thanh toán</th>
-                                                <th data-sort="transport">Mã giao dịch</th>
+                                                {{-- <th data-sort="transport">Mã giao dịch</th> --}}
                                                 <th data-sort="status">Trạng thái</th>
                                                 <th data-sort="created_at">Ngày mua</th>
                                                 <th data-sort="action">Hành động</th>
@@ -210,9 +210,9 @@ if (!function_exists('isStatus')) {
                                                         <span class="text-muted">Không có </span>
                                                     @endif
                                                 </td>
-                                                <td class="transport">{{ $order->tracking_number }}</td>
+                                                {{-- <td class="transport">{{ $order->tracking_number }}</td> --}}
                                                 <td class="status">{!! isStatus($order->status) !!}</td>
-                                                <td class="created_at">{{ $order->created_at->format('d-m-Y') }}</td>
+                                                <td class="created_at">{{ $order->created_at->format('H:i d-m-Y') }}</td>
                                                 <td>
                                                     <ul class="list-inline hstack gap-2 mb-0">
                                                         <li class="list-inline-item">

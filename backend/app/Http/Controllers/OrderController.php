@@ -96,6 +96,7 @@ class OrderController extends Controller
         }
 
         // Phân trang kết quả
+        $orders = $orders->orderBy('created_at', 'desc');
         $orders = $orders->paginate($perPage);
 
         // Kiểm tra xem có yêu cầu AJAX hay không
