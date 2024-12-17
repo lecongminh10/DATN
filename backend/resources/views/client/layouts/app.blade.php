@@ -282,7 +282,7 @@
             fetch('/clear-coupons', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json', // Set the content type to JSON
+                        'Content-Type': 'application/json', 
                     },
                 })
                 .then(response => response.json()) // Parse the JSON response
