@@ -252,12 +252,10 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                         </a>
                                     </div>
                                 </div>
-                                <!-- End .product-details -->
                             </div>
                         </div>
                     @endforeach
                 </div>
-                <!-- End .row -->
                 <nav class="toolbox toolbox-pagination">
                     <div class="toolbox-item toolbox-show">
                         <label style="margin-bottom: 50px;">Show:</label>
