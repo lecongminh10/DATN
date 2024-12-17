@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ApiHelper;
 use App\Mail\OrderOnlineMail; //
-use App\Mail\OrderPlacedMail; // 
+use App\Mail\OrderPlacedMail; //
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Coupon;
@@ -39,7 +39,7 @@ class PayMentController extends Controller
     protected $carrierService;
 
     protected $couponService;
-    
+
     public function __construct(
         OrderService $orderService,
         OrderLocationService $orderLocationService,
@@ -55,7 +55,6 @@ class PayMentController extends Controller
     }
     public function addOrder(Request $request)
     {
-        // dd($request->all());
         $couponCode=[];
         $priceCoupone=0;
         if($request->has('coupons'))
@@ -66,7 +65,6 @@ class PayMentController extends Controller
                 $priceCoupone  +=$val['discount_amount'];
             }
         }
-        // Validate request data
         $subTotal = 0;
         if ($request->has('order_item')) {
             foreach ($request->order_item as $item) {
@@ -82,8 +80,8 @@ class PayMentController extends Controller
                 } else {
                     $price = $product->price_sale ?: $product->price_regular;
                 }
-                
-                $quantity = $item['quantity'] ?? 1; 
+
+                $quantity = $item['quantity'] ?? 1;
                 $subTotal += $price * $quantity;
             }
         }
@@ -152,7 +150,6 @@ class PayMentController extends Controller
         $couponUsage = $this->couponService->getByCouponUsage($order->id);
         $this->couponService->updateByOrderCoupon($order->id);
 
-        // Gửi mail xác nhận
         Mail::to($order->user->email)->send(new OrderPlacedMail($order));
 
         $responseData= [
@@ -171,10 +168,10 @@ class PayMentController extends Controller
                     'address' => $shopData['address']
                 ];
             } else {
-                $addressShop = null; 
+                $addressShop = null;
             }
         } else {
-            $addressShop = null; 
+            $addressShop = null;
         }
         return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop','couponUsage'));
     }
@@ -199,7 +196,6 @@ class PayMentController extends Controller
                 }else{
                     $idCard[] = $value['id_cart'];
                     session(['id_cart' => $idCard]);
-                    //check
                 }
             }
         }
@@ -221,20 +217,20 @@ class PayMentController extends Controller
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-        $vnp_TmnCode = env('VNP_TMN_CODE'); 
+        $vnp_TmnCode = env('VNP_TMN_CODE');
         $vnp_HashSecret = env('VNP_HASH_SECRET');
         $vnp_Url = env('VNP_URL');
         $vnp_Returnurl = route('vnpay.return');
 
         $startTime = date("YmdHis");
         $expire = date('YmdHis',timestamp: strtotime('+15 minutes',strtotime($startTime)));
-        $vnp_TxnRef = $data['code']; 
-        $vnp_Amount = $data['total_price']; 
-        $vnp_Locale = 'vn'; 
-        $vnp_BankCode =''; 
+        $vnp_TxnRef = $data['code'];
+        $vnp_Amount = $data['total_price'];
+        $vnp_Locale = 'vn';
+        $vnp_BankCode ='';
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
         $vnp_OrderInfo = "Thanh toan GD:". $data['code']. "-". $data['total_price'];
-        
+
         $inputData = array(
             "vnp_Version" => "2.1.0",
             "vnp_TmnCode" => $vnp_TmnCode,
@@ -250,11 +246,11 @@ class PayMentController extends Controller
             "vnp_TxnRef" => $vnp_TxnRef,
             "vnp_ExpireDate"=>$expire,
         );
-        
+
         if (isset($vnp_BankCode) && $vnp_BankCode != "") {
             $inputData['vnp_BankCode'] = $vnp_BankCode;
         }
-        
+
         ksort($inputData);
         $query = "";
         $i = 0;
@@ -268,10 +264,10 @@ class PayMentController extends Controller
             }
             $query .= urlencode($key) . "=" . urlencode($value) . '&';
         }
-        
+
         $vnp_Url = $vnp_Url . "?" . $query;
         if (isset($vnp_HashSecret)) {
-            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//  
+            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
         header('Location: ' . $vnp_Url);
@@ -284,16 +280,16 @@ class PayMentController extends Controller
         // Retrieve the response from VNPAY
         $vnp_SecureHash = $request->input('vnp_SecureHash');
         $inputData = array();
-    
+
         foreach ($request->input() as $key => $value) {
             if (substr($key, 0, 4) == "vnp_") {
                 $inputData[$key] = $value;
             }
         }
-    
+
         unset($inputData['vnp_SecureHash']);
         ksort($inputData);
-    
+
         $i = 0;
         $hashData = "";
         foreach ($inputData as $key => $value) {
@@ -304,11 +300,10 @@ class PayMentController extends Controller
                 $i = 1;
             }
         }
-    
+
         $vnp_HashSecret = "KWVSKMORO004EISIYKM91EVS2X5GSLH0"; // Your secret key
         $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-    
-        // Prepare data for the view
+
         $responseData = [
             'order_code' => $request->input('vnp_TxnRef'),
             'amount' => $request->input('vnp_Amount'),
@@ -322,14 +317,13 @@ class PayMentController extends Controller
 
 
             'result' => ($secureHash == $vnp_SecureHash && $request->input('vnp_ResponseCode') == '00')
-                ? 'GD Thanh cong' 
+                ? 'GD Thanh cong'
                 : 'GD Khong thanh cong hoặc Chu ky khong hop le',
         ];
-    
+
         $order= $this->orderService->getbyCode($responseData['order_code']);
         $check= $this->paymentService->getCheckOrderById($order->id);
         if(!$check){
-            // Save order information to the database if the transaction was successful
             if ($responseData['result'] == 'GD Thanh cong') {
                 $payment= Payment::create(['order_id'=>$order->id , 'payment_gateway_id'=>$order->payment_id, 'amount'=> substr($responseData['amount'], 0, -2) ,'status'=>Payment::Pending , 'transaction_id'=> $responseData['transaction_no']]);
                 Payment::where('id',$payment->id)->update(['status'=>Payment::Completed]);
@@ -337,7 +331,6 @@ class PayMentController extends Controller
                 $this->couponService->updateByOrderCoupon($order->id);
                 $this->placeOrder($order ,3);
 
-                // Gửi email xác nhận
                 Mail::to($order->user->email)->send(new OrderOnlineMail($order));
             }else
             {
@@ -368,16 +361,15 @@ class PayMentController extends Controller
                     'address' => $shopData['address']
                 ];
             } else {
-                $addressShop = null; 
+                $addressShop = null;
             }
         } else {
-            $addressShop = null; 
+            $addressShop = null;
         }
         $check=true;
         return view('client.orders.payment.return', compact('check','responseData', 'order','address','addressShop','couponUsage'));
     }
-
-
+    
     public function removeFromCart($id)
     {
         $cartItem = Cart::find($id);
@@ -394,20 +386,20 @@ class PayMentController extends Controller
         $payments = Payment::join('payment_gateways', 'payments.payment_gateway_id', '=', 'payment_gateways.id')
                            ->select('payments.*', 'payment_gateways.name as gateway_name')
                            ->get();
-    
+
         return view('admin.payments.index', compact('payments'));
     }
-    
+
         public function add()
         {
             $paymentGateways = PaymentGateway::all();
-            return view('admin.payments.create', compact('paymentGateways')); 
+            return view('admin.payments.create', compact('paymentGateways'));
         }
-    
+
         public function store(Request $request)
         {
             try {
-    
+
                 $data = $request->only([
                     'order_id',
                     'payment_gateway_id',
@@ -415,9 +407,9 @@ class PayMentController extends Controller
                     'status',
                     'transaction_id',
                 ]);
-    
+
                 $payments = $this->paymentService->createPayment($data);
-    
+
                 return redirect()->route('admin.payments.index')->with([
                     'payments' => $payments
                 ]);
@@ -426,60 +418,60 @@ class PayMentController extends Controller
                 return redirect()->back()->with('error', 'Có lỗi xảy ra khi tạo người dùng.');
             }
         }
-    
+
         public function show($id)
         {
             $payments = Payment::with('paymentGateway')->findOrFail($id);
-    
+
             return view('admin.payments.show', compact('payments'));
         }
-    
+
         public function edit($id)
         {
             $payments = Payment::findOrFail($id);
             $paymentGateways = PaymentGateway::all();
-    
+
             return view('admin.payments.update', compact('payments', 'paymentGateways'));
         }
-    
+
         public function update(Request $request, $id)
         {
             $data = $request->all();
-    
+
             $payments = $this->paymentService->updatePayment($id, $data);
-    
+
             return redirect()->route('admin.payments.index')->with([
                 'payments' => $payments
             ]);
         }
-    
+
         public function destroy($id, Request $request)
         {
             $payments = Payment::findOrFail($id);
-    
+
             if ($request->forceDelete === 'true') {
                 $payments->forceDelete();
             } else {
                 $payments->delete();
             }
-            
+
             return redirect()->route('admin.payments.index');
         }
-    
+
         public function deleteMultiple(Request $request)
         {
-            $ids = json_decode($request->ids); 
-            $forceDelete = $request->forceDelete === 'true'; 
-    
+            $ids = json_decode($request->ids);
+            $forceDelete = $request->forceDelete === 'true';
+
             foreach ($ids as $id) {
                 $payments = Payment::find($id);
                 if ($forceDelete) {
-                    $payments->forceDelete(); 
+                    $payments->forceDelete();
                 } else {
                     $payments->delete();
                 }
             }
-    
+
             return response()->json(['success' => true, 'message' => 'Người dùng đã được xóa.']);
         }
 
@@ -509,12 +501,12 @@ class PayMentController extends Controller
             } catch (\Exception $e) {
                 Log::error("Error creating CouponUsage: " . $e->getMessage());
             }
-            
+
         }
         private function placeOrder($order, $status)
         {
             $user = auth()->user();
-        
+
             if ($order) {
                 if ($status == 1) {
                     $message = "Đơn hàng $order->code | đã đặt với số tiền " . number_format($order->total_price, 0, ',', '.') . "₫";
@@ -523,10 +515,10 @@ class PayMentController extends Controller
                 } elseif ($status == 3) {
                     $message = "Đơn hàng $order->code | thanh toán thành công với số tiền " . number_format($order->total_price, 0, ',', '.') . "₫";
                 }
-        
+
                 broadcast(new OrderPlaced($order, $user, $message));
             }
-        }      
+        }
         private function updateCountProducts($productId , $products_variant_id, $quantity)
         {
             $product = Product::find($productId);
@@ -534,13 +526,13 @@ class PayMentController extends Controller
                 $productVariant = ProductVariant::find($products_variant_id);
 
                 $newStockVariant = $productVariant->stock - $quantity;
-  
+
                 $productVariant->update(['stock' => $newStockVariant]);
             }
             $newStockProduct = $product->stock - $quantity;
             $newBuyCount = $product->buycount + $quantity;
             $product->update(['stock' => $newStockProduct ,'buycount' =>$newBuyCount]);
-        } 
+        }
         private function restoreStock($productId, $productVariantId, $quantity)
         {
             $product = Product::find($productId);
