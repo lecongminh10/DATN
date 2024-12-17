@@ -2,29 +2,27 @@
 @section('style_css')
 <style>
 .card-header img {
-    border: 2px solid #007bff; /* Change to your desired color */
-    /* Add other custom styles here if needed */
+    border: 2px solid #007bff; 
 }
 .custom-select {
-    width: 100%; /* Full width */
-    padding: 0.5rem; /* Padding for spacing */
-    border: 1px solid #ced4da; /* Light gray border */
-    border-radius: 0.25rem; /* Slightly rounded corners */
-    background-color: #ffffff; /* White background */
-    font-size: 1rem; /* Font size */
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Transition for effects */
+    width: 100%;
+    padding: 0.5rem; 
+    border: 1px solid #ced4da; 
+    border-radius: 0.25rem; 
+    background-color: #ffffff; 
+    font-size: 1rem; 
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     max-height: 46px !important;
 }
 
 .custom-select:focus {
-    border-color: #80bdff; /* Blue border on focus */
-    outline: 0; /* Remove default outline */
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Add a shadow effect */
+    border-color: #80bdff; 
+    outline: 0; 
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); 
 }
 
-/* Optional: Styling for the option elements (not all browsers support this) */
 .custom-select option {
-    padding: 1rem; /* Padding for options */
+    padding: 1rem; 
 }
 
 
