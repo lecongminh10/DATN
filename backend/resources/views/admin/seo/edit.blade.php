@@ -101,7 +101,6 @@
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
-
                                         
                                         <!-- Submit Button -->
                                         <div class="text-start  mb-3">
