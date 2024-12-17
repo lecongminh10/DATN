@@ -7,9 +7,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-<!-- Mirrored from portotheme.com/html/porto_ecommerce/demo1.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 03 Nov 2023 14:02:32 GMT -->
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
