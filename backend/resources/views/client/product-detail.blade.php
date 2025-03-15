@@ -293,7 +293,7 @@
                                 </strong>
                             </li>
                             <li>
-                                Thời giàn bảo hành:
+                                Thời gian bảo hành:
                                 <strong> {{ $data->warranty_period }} tháng</strong>
                             </li>
                             <li>
@@ -365,7 +365,7 @@
                         <div class="product-action">
                             <a href="javascript:;" data-quantity-product="1" onchange="updateQuantity()"
                                 data-product-id="{{ $data->id }}" data-variant-id="" id="product-variant-id"
-                                class="btn btn-dark add-cart mr-2" title="Add to Cart">Thêm vào giỏ hàng</a>
+                                class="btn btn-dark add-cart mr-2 disabled" title="Add to Cart">Thêm vào giỏ hàng</a>
                             <a href="{{ route('shopping-cart') }}" class="btn btn-gray view-cart d-none">Xem giỏ hàng</a>
                         </div>
                     </div>
@@ -517,6 +517,7 @@
 @endsection
 @section('scripte_logic')
     <script>
+  
         (function() {
             var js =
                 "window['__CF$cv$params']={r:'820525e73bc48b57',t:'MTY5OTAyMDA3NC4zNDIwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='../../cdn-cgi/challenge-platform/h/b/scripts/jsd/61b90d1d/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);";
@@ -614,15 +615,23 @@
                             ${parseInt(lowestPriceVariant.price_modifier).toLocaleString('vi-VN')} VNĐ
                         </span>
                     `;
+                    var variantId =document.querySelector('#product-variant-id')
+                    variantId.setAttribute("data-variant-id", lowestPriceVariant.id);        
                     lowestPriceVariant.attributes.forEach(attr => {
-                        const attributeLink = document.querySelector(
+                        const attributeLinks = document.querySelectorAll(
                             `.attribute-link[data-attribute-name="${attr.attribute_name}"][data-attribute-value="${attr.attribute_value}"]`
                         );
-                        if (attributeLink) {
-                            attributeLink.classList.add(
-                                'active');
+                        if (attributeLinks.length > 0) {
+                            attributeLinks.forEach(link => {
+                                link.classList.add('active');
+                                const parentLi = link.closest('li');
+                                if (parentLi) {
+                                    parentLi.classList.add('active');
+                                }
+                            });
                         }
                     });
+
                 } else {
                     priceBox.innerHTML = `<p class="new-price">Không có biến thể nào khả dụng</p>`;
                 }
@@ -705,6 +714,11 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
+                        var stockAlertMmessage = document.querySelector('#stock-alert-message');
+                        if(response.status==false){
+                            stockAlertMmessage.innerHTML=response.message;
+                            showCartModal();
+                        }
                         showCartModal();
                     },
                     error: function(xhr) {

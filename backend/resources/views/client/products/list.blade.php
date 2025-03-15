@@ -132,7 +132,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                 <path d="M16.5,22.92A2.6,2.6,0,0,1,14,25.5a2.6,2.6,0,0,1-2.5-2.58,2.5,2.5,0,0,1,5,0Z"
                                     class="cls-2"></path>
                             </svg>
-                            <span>Filter</span>
+                            <span>Lọc</span>
                         </a>
                         <form action="{{ route('client.products.sort') }}" method="GET">
                             <div class="toolbox-item toolbox-sort ">
@@ -266,12 +266,20 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                     </div>
 
                                     <!-- End .price-box -->
-
+                                    @php
+                                        $minPriceVariant = $item->variants
+                                        ->sortBy(function($variant) {
+                                            return $variant->price_modifier ?? $variant->original_price;
+                                        })
+                                        ->first();
+                                    @endphp
                                     <div class="product-action">
                                         <a href="#" class="btn-icon-wish" title="wishlist"
                                             data-product-id="{{ $item->id }}"><i class="icon-heart"></i></a>
                                         <a href="#" class="btn-icon btn-add-cart add-cart"
-                                            data-product-id="{{ $item->id }}" data-toggle="modal"><i
+                                            data-product-id="{{ $item->id }}" 
+                                            data-product-variant-id="{{ $minPriceVariant ? $minPriceVariant->id : '' }}"
+                                            data-toggle="modal"><i
                                                 class="fa fa-arrow-right"></i><span>Thêm vào giỏ hàng</span></a>
                                         <a href="{{ route('client.showProduct', $item->id) }}" class="btn-quickview"
                                             title="Quick View">
@@ -327,7 +335,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                                     aria-expanded="{{ $category->children->isNotEmpty() ? 'true' : 'false' }}"
                                                     aria-controls="widget-category-{{ $category->id }}">
                                                     {{ $category->name }}
-                                                    <span class="products-count">({{ $category->products_count }})</span>
+                                                    {{-- <span class="products-count">({{ $category->products_count }})</span> --}}
                                                 </a>
                                                 <span class="toggle" data-target="#widget-category-{{ $category->id }}"></span>
                                             @endif
@@ -338,7 +346,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                                                             <li>
                                                                 <a href="{{ route('client.products.Category', $subcategory->id) }}">
                                                                     {{ $subcategory->name }}
-                                                                    <span class="products-count">({{ $subcategory->products_count }})</span>
+                                                                    {{-- <span class="products-count">({{ $subcategory->products_count }})</span> --}}
                                                                 </a>
                                                             </li>
                                                         @endforeach
@@ -479,6 +487,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                 button.addEventListener('click', function(event) {
                     event.preventDefault(); // Ngăn chặn chuyển trang
                     const productId = button.getAttribute('data-product-id');
+                    const productVariantId = button.getAttribute('data-product-variant-id');
                     if (isLoggedIn) {
                         // Gọi AJAX để thêm sản phẩm vào giỏ hàng
                         $.ajax({
@@ -486,6 +495,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             url: "{{ route('addCart') }}", // Thay bằng route tương ứng
                             data: {
                                 product_id: productId,
+                                product_variants_id: productVariantId,
                                 quantity: 1, // Thiết lập số lượng mặc định là 1
                                 _token: '{{ csrf_token() }}' // CSRF token
                             },
@@ -507,7 +517,7 @@ $maxPrice = \App\Models\Product::max('price_sale'); // Lấy giá trị max
                             }
                         });
                     } else {
-                        alert("Bạn cần đăng nhập để thêm sản phẩm vào danh sách yêu thích.");
+                        alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
                     }
                 });
             });
