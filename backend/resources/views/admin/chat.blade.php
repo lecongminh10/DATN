@@ -600,12 +600,8 @@
                     </div>
                 </div>
             `;
-
-                    // Gắn phần tử vào danh sách chat
                     chatList.appendChild(messageElementPath);
                 }
-
-                // Cuộn xuống cuối danh sách
                 chatList.scrollTop = chatList.scrollHeight;
             }
 
