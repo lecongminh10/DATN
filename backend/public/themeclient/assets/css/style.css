@@ -8891,6 +8891,8 @@ header .separator {
 
 .cart-product-info {
   color: #696969;
+  font-family: Poppins, sans-serif;
+  font-size: 1.4rem;
 }
 
 .cart-opened .cart-overlay {
@@ -9071,16 +9073,16 @@ header .separator {
   align-items: center;
   margin-top: 1.5rem;
   margin-bottom: 1.4rem;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-family: Poppins, sans-serif;
 }
 .dropdown-cart-total .cart-total-price {
   margin-left: auto;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .dropdown-cart-header {
-  font-size: 2rem;
+  font-size: 1.4rem;
   font-family: Poppins, sans-serif;
 }
 .dropdown-cart-header a:hover {
@@ -9092,7 +9094,7 @@ header .separator {
   border-radius: 0.2rem;
   color: #fff;
   height: auto;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 600;
   font-family: Poppins, sans-serif;
   letter-spacing: 0.025em;

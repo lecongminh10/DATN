@@ -94,6 +94,79 @@
             font-weight: 300;
             font-size: 12px !important;
         }
+
+        /* Unified Font Family */
+        body, main, table, .cart-summary, .product-name, .product-title, .btn, .form-control {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        /* Touchspin styling */
+        .bootstrap-touchspin .form-control {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 14px;
+        }
+
+        .bootstrap-touchspin .btn {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        /* Toast Notification Styling */
+        .stock-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            min-width: 280px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            display: none;
+            transition: all 0.3s ease-in-out;
+            border-left: 4px solid #e74c3c; /* Red for alert */
+            padding: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .stock-toast.show {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .stock-toast .toast-icon {
+            color: #e74c3c;
+            font-size: 20px;
+        }
+
+        .stock-toast .toast-message {
+            margin: 0;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .stock-toast .toast-close {
+            margin-left: auto;
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+
+        .stock-toast .toast-close:hover {
+            color: #333;
+        }
     </style>
 @endsection
 @section('content')
@@ -222,7 +295,7 @@
                                                                 $value->product->price_regular)
                                                             : 0) }}"
                                                     value="{{ $value->quantity }}"
-                                                    data-stock="{{ $value->productVariant && $value->productVariant->stock ? $value->productVariant->stock : 0 }}"
+                                                    data-stock="{{ $value->productVariant ? $value->productVariant->stock : ($value->product ? $value->product->stock : 0) }}"
                                                     onchange="updateSubtotal(this)">
 
                                             </div>
@@ -314,21 +387,12 @@
 
         <div class="mb-6"></div><!-- margin -->
     </main><!-- End .main -->
-    <div class="modal fade" id="stockAlertModal" tabindex="-1" aria-labelledby="stockAlertModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm"> 
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="stockAlertModalLabel">Thông Báo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="stock-alert-message">Số lượng bạn nhập vượt quá giới hạn kho.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
-            </div>
+    <div id="stockToast" class="stock-toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-icon">
+            <i class="icon-cancel-circled"></i>
         </div>
+        <p class="toast-message" id="stock-alert-message">Số lượng bạn nhập vượt quá giới hạn kho.</p>
+        <span class="toast-close" onclick="hideStockToast()">&times;</span>
     </div>
 @endsection
 
@@ -348,13 +412,7 @@
 
             // Kiểm tra nếu số lượng vượt quá kho
             if (quantity > maxStock) {
-                // Hiển thị thông báo trong modal
-                const stockAlertMessage = document.getElementById('stock-alert-message');
-
-                // Hiển thị modal
-                const stockAlertModal = new bootstrap.Modal(document.getElementById('stockAlertModal'));
-                stockAlertModal.show();
-
+                showStockToast();
                 inputElement.value = maxStock;
                 return; // Không tính tổng nếu vượt quá kho
             }
@@ -367,6 +425,21 @@
 
             const subTotalElement = inputElement.closest('tr').querySelector('.subtotal-price');
             subTotalElement.textContent = formatCurrency(subTotal);
+        }
+
+        function showStockToast() {
+            var stockToast = document.getElementById('stockToast');
+            stockToast.classList.add('show');
+            
+            // Tự động ẩn sau 3 giây
+            setTimeout(function() {
+                hideStockToast();
+            }, 3000);
+        }
+
+        window.hideStockToast = function() {
+            var stockToast = document.getElementById('stockToast');
+            stockToast.classList.remove('show');
         }
 
 

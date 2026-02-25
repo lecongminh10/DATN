@@ -129,6 +129,69 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0);
             /* Thêm bóng mờ nhẹ */
         }
+
+        /* Unified Font Family */
+        body, main, .product-single-details, .product-title, .price-box, .product-desc, .single-info-list, .btn, .nav-tabs, .tab-content {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        /* Toast Notification Styling */
+        .cart-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            min-width: 250px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            display: none;
+            transition: all 0.3s ease-in-out;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .cart-toast.show {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .cart-toast .toast-icon {
+            color: #28a745;
+            font-size: 20px;
+        }
+
+        .cart-toast .toast-message {
+            margin: 0;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .cart-toast .toast-close {
+            margin-left: auto;
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+
+        .cart-toast .toast-close:hover {
+            color: #333;
+        }
     </style>
 @endsection
 @section('content')
@@ -517,21 +580,12 @@
     <!-- Modal thông báo thêm vào giỏ hàng -->
     <!-- Modal thông báo khi xóa danh mục -->
     <!-- Modal thông báo khi thêm vào giỏ hàng -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModal" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cartModal">Thông Báo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="stock-alert-message">Sản phẩm đã được thêm vào giỏ hàng.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
-            </div>
+    <div id="cartToast" class="cart-toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-icon">
+            <i class="icon-ok-circled"></i>
         </div>
+        <p class="toast-message" id="stock-alert-message">Sản phẩm đã được thêm vào giỏ hàng.</p>
+        <span class="toast-close" onclick="hideCartToast()">&times;</span>
     </div>
 @endsection
 @section('script_libray')
@@ -756,10 +810,20 @@
                 });
             });
 
-            // Hàm hiển thị modal khi thêm sản phẩm vào giỏ hàng thành công
+            // Hàm hiển thị toast khi thêm sản phẩm vào giỏ hàng thành công
             function showCartModal() {
-                var cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
-                cartModal.show(); // Hiển thị modal
+                var cartToast = document.getElementById('cartToast');
+                cartToast.classList.add('show');
+                
+                // Tự động ẩn sau 3 giây
+                setTimeout(function() {
+                    hideCartToast();
+                }, 3000);
+            }
+
+            window.hideCartToast = function() {
+                var cartToast = document.getElementById('cartToast');
+                cartToast.classList.remove('show');
             }
         }
     </script>
