@@ -70,24 +70,24 @@
                                 @endphp            
                                @if (isset($carts))
                                @foreach ($carts as $item)
+                               @if ($item->product)
                                <div class="product">
                                    <div class="product-details">
                                        <h4 class="product-title">
                                            <a href="{{ route('client.showProduct', $item->product->id ) }}">{{ $item->product->name }}</a>
                                        </h4>
                                        @php
-                                            if ($item->product) {
-                                                if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
-                                                    $price = $item->product->price_sale;
-                                                } else {
-                                                    $price = $item->product->price_regular; 
-                                                }
-                                                $sub = $price * $item->quantity; 
+                                            $price = 0;
+                                            $sub = 0;
+                                            if (!is_null($item->product->price_sale) && $item->product->price_sale > 0) {
+                                                $price = $item->product->price_sale;
+                                            } else {
+                                                $price = $item->product->price_regular; 
                                             }
-                                           $subTotal += $sub; 
+                                            $sub = $price * $item->quantity; 
+                                            $subTotal += $sub; 
                                        @endphp
                                        <span class="cart-product-info">
-                                           {{-- <input type="hidden" name="" value="{{ number_format($item->total_price, 0, ',', '.') }}"> --}}
                                            <span class="cart-product-qty">{{ $item->quantity }}</span> × {{ number_format( $price, 0, ',', '.') }}₫
                                        </span>
                                    </div>
@@ -95,9 +95,10 @@
                                     <figure class="product-image-container">
                                             <a href="{{ route('client.showProduct', $item->product->id ) }}" class="product-image">
                                             @php
-                                            $url = $item->product->getMainImage() && $item->product->getMainImage()->image_gallery
-                                            ? $item->product->getMainImage()->image_gallery
-                                            : 'path/to/default-image.jpg'; // Đường dẫn tới ảnh mặc định
+                                            $mainImage = $item->product->getMainImage();
+                                            $url = $mainImage && $mainImage->image_gallery
+                                            ? $mainImage->image_gallery
+                                            : 'path/to/default-image.jpg';
                                             @endphp
                                             <img src="{{ Storage::url($url)}}" style="width: 80px; height: 70px" alt="{{ $item->product->name }}" />
                                             </a>
@@ -105,6 +106,7 @@
                                             <a href="#" class="btn-remove icon-cancel" title="Remove Product" data-id="{{ $item->id }}" onclick="removeFromCart(this)"></a>
                                     </figure>
                                </div>
+                               @endif
                                @endforeach
                                @endif
                                 <!-- End .product -->

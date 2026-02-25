@@ -205,6 +205,7 @@
                                 $totalQuantity = null;
                                 ?>
                                 @foreach ($carts as $value)
+                                    @if ($value->product)
                                     <tr class="product-row">
                                         <td>
                                             <figure class="product-image-container">
@@ -302,7 +303,7 @@
                                         </td>
                                         <?php
                                         $price = 0;
-                                        $subTotal = 0;
+                                        $subTotalCalculation = 0;
                                         if ($value->product) {
                                             if ($value->productVariant) {
                                                 // Use price modifier if it exists, otherwise use original price
@@ -319,21 +320,22 @@
                                                 }
                                             }
 
-                                            $subTotal = $price * $value->quantity;
+                                            $subTotalCalculation = $price * $value->quantity;
                                         } else {
-                                            $subTotal = 0; // Default to 0 if no product
+                                            $subTotalCalculation = 0; // Default to 0 if no product
                                         }
 
                                         // Accumulate total amount and quantity
-                                        $totalAmount += $subTotal; // Accumulate total amount
+                                        $totalAmount += $subTotalCalculation; // Accumulate total amount
                                         $totalQuantity += $value->quantity; // Accumulate total quantity
                                         ?>
                                         <td class="text-right">
-                                            <span class="subtotal-price">{{ number_format($subTotal, 0, ',', '.') }}
+                                            <span class="subtotal-price">{{ number_format($subTotalCalculation, 0, ',', '.') }}
                                                 đ</span>
                                         </td>
 
                                     </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                             <tfoot>

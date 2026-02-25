@@ -284,11 +284,12 @@
                                                         </tr>
                                                     @else
                                                         @foreach ($bestSellingProducts as $orderItem)
+                                                            @if ($orderItem->product)
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
                                                                         <div class="avatar-sm bg-light rounded p-1 me-2">
-                                                                            <img src="{{ Storage::url($orderItem->product->getMainImage()->image_gallery ?? 'default-image.jpg') }}"
+                                                                            <img src="{{ $orderItem->image_url ? $orderItem->image_url : asset('theme/assets/images/products/default-image.jpg') }}"
                                                                                 alt="Product Image"
                                                                                 class="img-fluid d-block" />
                                                                         </div>
@@ -329,6 +330,7 @@
 
                                                                 </td>
                                                             </tr>
+                                                            @endif
                                                         @endforeach
                                                     @endif
                                                 </tbody>

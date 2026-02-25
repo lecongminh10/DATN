@@ -243,9 +243,15 @@ class PageController extends Controller
 
     public function showPage($permalink)
     {
-        $fullUrl = 'http://127.0.0.1:8000/' . $permalink;
+        // Tìm theo slug trực tiếp (hỗ trợ cả dạng 'slug', '/slug', và 'http://..../slug')
+        $page = Page::where('is_active', true)
+            ->where(function ($query) use ($permalink) {
+                $query->where('permalink', $permalink)
+                    ->orWhere('permalink', '/' . $permalink)
+                    ->orWhere('permalink', url('/' . $permalink));
+            })
+            ->first();
 
-        $page = Page::where('permalink', $fullUrl)->first();
         if (!$page) {
             abort(404, 'Trang không tồn tại');
         }

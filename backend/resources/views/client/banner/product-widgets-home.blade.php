@@ -1,3 +1,4 @@
+@if(isset($ratingProducts) && $ratingProducts->isNotEmpty())
 <div class="col-sm-6 col-md-4 pb-4 pb-md-0 appear-animate" data-animation-name="fadeInLeftShorter" data-animation-delay="200">
     <div class="product-column">
         <h3 class="section-sub-title ls-n-20">Sản phẩm đánh giá hàng đầu</h3>
@@ -15,8 +16,8 @@
                             <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $value->name }}" />
                         @endif
                         
-                        @foreach ($otherImages as $value)
-                            <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $value->name }}" />
+                        @foreach ($otherImages as $galleryImage)
+                            <img src="{{ \Storage::url($galleryImage->image_gallery) }}" width="205" height="205" alt="" />
                         @endforeach
                         </a>
                 </figure>
@@ -59,7 +60,9 @@
     <!-- End .product-column -->
 </div>
 <!-- End .col-md-4 -->
+@endif
 
+@if(isset($products) && $products->isNotEmpty())
 <div class="col-sm-6 col-md-4 pb-4 pb-md-0 appear-animate" data-animation-name="fadeInLeftShorter" data-animation-delay="500">
     <div class="product-column">
         <h3 class="section-sub-title ls-n-20">Sản phẩm bán chạy nhất</h3>
@@ -76,8 +79,8 @@
                             <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $value->name }}" />
                         @endif
                         
-                        @foreach ($otherImages as $value)
-                            <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $value->name }}" />
+                        @foreach ($otherImages as $galleryImage)
+                            <img src="{{ \Storage::url($galleryImage->image_gallery) }}" width="205" height="205" alt="" />
                         @endforeach
                         </a>
                 </figure>
@@ -114,7 +117,9 @@
     <!-- End .product-column -->
 </div>
 <!-- End .col-md-4 -->
+@endif
 
+@if(isset($latestProducts) && $latestProducts->isNotEmpty())
 <div class="col-sm-6 col-md-4 pb-4 pb-md-0 appear-animate" data-animation-name="fadeInLeftShorter" data-animation-delay="800">
     <div class="product-column">
         <h3 class="section-sub-title ls-n-20">Sản phẩm mới nhất</h3>
@@ -132,8 +137,8 @@
                             <img src="{{ \Storage::url($mainImage->image_gallery) }}" width="205" height="205" alt="{{ $value->name }}" />
                         @endif
                         
-                        @foreach ($otherImages as $value)
-                            <img src="{{ \Storage::url($value->image_gallery) }}" width="205" height="205" alt="{{ $value->name }}" />
+                        @foreach ($otherImages as $galleryImage)
+                            <img src="{{ \Storage::url($galleryImage->image_gallery) }}" width="205" height="205" alt="" />
                         @endforeach
                         </a>
                 </figure>
@@ -168,3 +173,4 @@
     </div>
     <!-- End .product-column -->
 </div>
+@endif

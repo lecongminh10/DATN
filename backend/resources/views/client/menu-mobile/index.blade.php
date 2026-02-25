@@ -29,7 +29,20 @@
                     <a href=" {{route('client.products') }}" class="sf-with-ul"><i class="sicon-basket"></i>Sản phẩm</a>
                 </li>
                 <li><a href="{{route('client.blogs.index')}}"><i class="sicon-book-open"></i>Bài viết</a></li>
-                {{-- <li><a href="demo1-about.html"><i class="sicon-users"></i>About Us</a></li> --}}
+                @if(isset($pages) && $pages->count() > 0)
+                <li>
+                    <a href="#" class="sf-with-ul"><i class="sicon-badge"></i>Trang</a>
+                    <ul class="submenu">
+                        @foreach ($pages as $item)
+                        <li>
+                            <a href="{{ route('pages.show', ltrim(parse_url($item->permalink, PHP_URL_PATH), '/')) }}">
+                                {{ $item->name }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </li>
+                @endif
             </ul>
 
             <ul class="mobile-menu">

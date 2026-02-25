@@ -19,9 +19,20 @@
                         <a href="#">Trang</a>
                     </li> --}}
                     <li><a href="{{route('client.blogs.index')}}">Bài viết</a></li>
-                    @foreach ($pages as $item)
-                    <li><a href="{{ url($item->permalink) }}">{{$item->name}}</a></li> 
-                    @endforeach
+                    @if($pages->count() > 0)
+                    <li>
+                        <a href="#" class="sf-with-ul">Trang</a>
+                        <ul class="submenu">
+                            @foreach ($pages as $item)
+                            <li>
+                                <a href="{{ route('pages.show', ltrim(parse_url($item->permalink, PHP_URL_PATH), '/')) }}">
+                                    {{ $item->name }}
+                                </a>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    @endif
                 </ul>
             </nav>
         </div>

@@ -70,6 +70,7 @@
         <div class="wishlist-table-container">
             <div class="row" style="margin-top: -5px">
                 @foreach ($wishLists as $item)
+                    @if ($item->product)
                     <div class="col-5 col-sm-3">
                         <div class="product-default">
                             <figure>
@@ -138,6 +139,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 @endforeach
             </div>
             

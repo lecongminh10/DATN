@@ -30,7 +30,12 @@ class DashboardController extends Controller
 
         // Nạp mối quan hệ galleries cho mỗi sản phẩm
         $bestSellingProducts->each(function ($item) {
-            $item->image_url = $item->product->getMainImage() ? Storage::url($item->product->getMainImage()->image_gallery) : null;
+            if ($item->product) {
+                $mainImage = $item->product->getMainImage();
+                $item->image_url = $mainImage ? Storage::url($mainImage->image_gallery) : null;
+            } else {
+                $item->image_url = null;
+            }
         });
 
         // Lọc đơn hàng, khách hàng, sản phẩm theo tháng

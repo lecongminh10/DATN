@@ -104,5 +104,5 @@ Route::get('/feedbacks/create', [ClientFeedbackController::class, 'create'])->na
 Route::post('/feedbacks', [ClientFeedbackController::class, 'store'])->name('feedbacks.store');
 
 Route::get('/{permalink}', [PageController::class, 'showPage'])
-    ->where('permalink', '^[a-zA-Z0-9-]+$') 
+    ->where('permalink', '[a-zA-Z0-9-]+')
     ->name('pages.show');

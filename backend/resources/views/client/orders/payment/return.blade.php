@@ -30,10 +30,10 @@
 <body>
     <?php
      if($check){
-        $vnp_TmnCode = env('VNP_TMN_CODE'); 
-        $vnp_HashSecret = env('VNP_HASH_SECRET');
-        $vnp_Url = env('VNP_URL');
-        $vnp_Returnurl = "http://localhost/vnpay_php/vnpay_return.php";
+        $vnp_TmnCode = config('services.vnpay.tmn_code'); 
+        $vnp_HashSecret = config('services.vnpay.hash_secret');
+        $vnp_Url = config('services.vnpay.url');
+        $vnp_Returnurl = route('vnpay.return');
         $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
         $apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
         $startTime = date("YmdHis");
@@ -84,17 +84,10 @@
                                                     <img src="{{asset('logo.png')}}" class="card-logo card-logo-light" alt="logo light" width="100px" height="60px">
                                                     <div class="mt-sm-5 mt-4">
                                                         <h6 class="text-muted text-uppercase fw-semibold">Địa chỉ : 
-                                                             @if ($addressShop && $addressShop['address']!==null)
-                                                            {{ $addressShop['address']}}
-                                                           @else
-                                                            Trường CĐ FPT
-                                                           @endif</h6>
+                                                            Đại Học Thành Đô
+                                                        </h6>
                                                         <p class="text-muted mb-1" id="address-details">Số điện thoại :
-                                                            @if ($addressShop && $addressShop['phone']!==null)
-                                                            {{ $addressShop['phone']}}
-                                                            @else
-                                                            0392853609
-                                                            @endif  
+                                                            0900000000
                                                         </p>
                                                     </div>
                                                 </div>

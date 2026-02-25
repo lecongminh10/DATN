@@ -259,6 +259,9 @@ class PayMentController extends Controller
         $query = "";
         $i = 0;
         $hashdata = "";
+
+        Log::info('VNPAY Input Data:', $inputData);
+
         foreach ($inputData as $key => $value) {
             if ($i == 1) {
                 $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
@@ -274,6 +277,9 @@ class PayMentController extends Controller
             $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//  
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
+
+        Log::info('VNPAY Full URL:', ['url' => $vnp_Url]);
+
         header('Location: ' . $vnp_Url);
         die();
     }
