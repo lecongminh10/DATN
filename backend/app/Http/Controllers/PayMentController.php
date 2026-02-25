@@ -221,9 +221,9 @@ class PayMentController extends Controller
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-        $vnp_TmnCode = env('VNP_TMN_CODE'); 
-        $vnp_HashSecret = env('VNP_HASH_SECRET');
-        $vnp_Url = env('VNP_URL');
+        $vnp_TmnCode = config('services.vnpay.tmn_code'); 
+        $vnp_HashSecret = config('services.vnpay.hash_secret');
+        $vnp_Url = config('services.vnpay.url');
         $vnp_Returnurl = route('vnpay.return');
 
         $startTime = date("YmdHis");
@@ -305,7 +305,7 @@ class PayMentController extends Controller
             }
         }
     
-        $vnp_HashSecret = "KWVSKMORO004EISIYKM91EVS2X5GSLH0"; // Your secret key
+        $vnp_HashSecret = config('services.vnpay.hash_secret');
         $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
     
         // Prepare data for the view

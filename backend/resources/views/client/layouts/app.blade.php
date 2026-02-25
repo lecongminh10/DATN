@@ -57,6 +57,15 @@
     @yield('style_css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/client.css') }}">
+    <style>
+        .banner .owl-carousel .owl-item img {
+            background-color: #fff !important;
+            object-fit: scale-down !important;
+        }
+        .banner2 img{
+            border:none !important;
+        }
+    </style>
 </head>
 
 <body>
