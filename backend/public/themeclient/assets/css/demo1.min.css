@@ -15184,7 +15184,6 @@ body {
     font-size: 3em;
 }
 .banner-hover-shadow img {
-    height: 170px;
     object-fit: cover;
 }
 .banner-hover-shadow:hover {
